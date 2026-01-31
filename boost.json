@@ -1,0 +1,20 @@
+{
+    "agents": [
+        "claude_code",
+        "opencode",
+        "gemini"
+    ],
+    "guidelines": true,
+    "herd_mcp": false,
+    "mcp": true,
+    "sail": false,
+    "skills": [
+        "folio-routing",
+        "wayfinder-development",
+        "livewire-development",
+        "volt-development",
+        "pest-testing",
+        "inertia-react-development",
+        "tailwindcss-development"
+    ]
+}
