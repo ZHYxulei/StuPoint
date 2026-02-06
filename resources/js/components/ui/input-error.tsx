@@ -44,4 +44,18 @@ const AlertDescription = React.forwardRef<
 ))
 AlertDescription.displayName = "AlertDescription"
 
+// 创建 InputError 组件
+const InputError = ({ message }: { message?: string }) => {
+    if (!message) return null;
+
+    return (
+        <Alert variant="destructive">
+            <AlertDescription>{message}</AlertDescription>
+        </Alert>
+    )
+}
+
+InputError.displayName = "InputError"
+
 export { Alert, AlertDescription }
+export default InputError
