@@ -3,16 +3,10 @@ name: linter
 on:
   push:
     branches:
-      - develop
       - main
-      - master
-      - workos
   pull_request:
     branches:
-      - develop
       - main
-      - master
-      - workos
 
 permissions:
   contents: write
@@ -26,7 +20,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.2'
 
       - name: Install Dependencies
         run: |
@@ -34,7 +28,7 @@ jobs:
           npm install
 
       - name: Run Pint
-        run: composer lint
+        run: vendor/bin/pint --test
 
       - name: Format Frontend
         run: npm run format
