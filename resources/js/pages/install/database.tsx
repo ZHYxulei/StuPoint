@@ -75,7 +75,7 @@ export default function InstallDatabase() {
                                     <input
                                         type="text"
                                         name="database"
-                                        defaultValue={connectionType === 'sqlite' ? 'database.sqlite' : 'laravel_demo'}
+                                        defaultValue={connectionType === 'sqlite' ? 'database.sqlite' : 'StuPoint'}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                     />
                                     <p className="mt-1 text-xs text-gray-500">SQLite使用相对路径，MySQL/PostgreSQL使用数据库名</p>
