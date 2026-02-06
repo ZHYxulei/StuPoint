@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -97,7 +97,7 @@ export default function ShowClass({ class: classData, availableTeachers, availab
 
     const removeTeacher = (teacherId: string) => {
         if (confirm('确认移除该任课老师？')) {
-            useForm({}).delete(`/admin/classes/${classData.id}/teachers/${teacherId}`, {
+            router.delete(`/admin/classes/${classData.id}/teachers/${teacherId}`, {
                 preserveScroll: true,
             });
         }
@@ -105,7 +105,7 @@ export default function ShowClass({ class: classData, availableTeachers, availab
 
     const removeStudent = (studentId: string) => {
         if (confirm('确认移除该学生？')) {
-            useForm({}).delete(`/admin/classes/${classData.id}/students/${studentId}`, {
+            router.delete(`/admin/classes/${classData.id}/students/${studentId}`, {
                 preserveScroll: true,
             });
         }

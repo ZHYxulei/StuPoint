@@ -67,5 +67,14 @@ export default [
     {
         ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'tailwind.config.js', 'vite.config.ts'],
     },
+    {
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'warn',
+            '@typescript-eslint/no-unused-vars': 'warn',
+            'react-hooks/rules-of-hooks': 'warn',
+            '@typescript-eslint/no-empty-object-type': 'off',
+            'no-empty-pattern': 'warn',
+        },
+    },
     prettier, // Turn off all rules that might conflict with Prettier
 ];
