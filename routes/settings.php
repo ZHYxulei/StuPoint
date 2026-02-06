@@ -9,6 +9,7 @@ use Inertia\Inertia;
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', '/settings/profile');
 
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
 });

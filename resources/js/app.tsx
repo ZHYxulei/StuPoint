@@ -15,6 +15,9 @@ createInertiaApp({
             import.meta.glob('./pages/**/*.tsx'),
         ),
     setup({ el, App, props }) {
+        // Make page props available globally for i18n
+        (window as any).pageProps = props.initialPage.props;
+
         const root = createRoot(el);
 
         root.render(

@@ -1,0 +1,29 @@
+{
+    "name": "ExamplePlugin",
+    "slug": "example-plugin",
+    "version": "1.0.0",
+    "description": "这是一个示例插件，展示了 plugin.json 的格式",
+    "author": "Your Name",
+    "class": "App\\Plugins\\ExamplePlugin\\ExamplePlugin",
+    "dependencies": [
+        {
+            "slug": "another-plugin",
+            "version": ">=1.0.0"
+        }
+    ],
+    "config": {
+        "some_setting": "value",
+        "another_setting": 123
+    },
+    "permissions": [
+        {
+            "name": "access_feature",
+            "label": "访问功能",
+            "description": "允许访问插件的特定功能"
+        }
+    ],
+    "requires": {
+        "php": ">=8.2",
+        "laravel": ">=12.0"
+    }
+}

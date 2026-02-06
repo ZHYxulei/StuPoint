@@ -26,3 +26,17 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# AI 工具生成的文件
+/.claude
+skills
+MCP
+agents
+
+# 数据库文件
+/database/database.sqlite
+/database/*.sqlite
+/database/*.sqlite3
+*.sqlite
+*.sqlite3
+/storage/installed

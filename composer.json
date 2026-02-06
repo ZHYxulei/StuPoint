@@ -1,11 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/react-starter-kit",
+    "name": "zhjxulei/stupoint",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "学生积分管理系统 - A comprehensive student points management system.",
     "keywords": [
         "laravel",
-        "framework"
+        "framework",
+        "student",
+        "points",
+        "management",
+        "school"
     ],
     "license": "MIT",
     "require": {
@@ -42,7 +46,8 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Plugins\\": "plugins/"
         }
     },
     "autoload-dev": {

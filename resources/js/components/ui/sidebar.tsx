@@ -364,17 +364,28 @@ function SidebarSeparator({
   )
 }
 
-function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
+function SidebarContent({ className, children, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden group-data-[collapsible=icon]:overflow-hidden relative",
+        "[&::-webkit-scrollbar]:hidden",
+        "[&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar]:h-0",
+        "[&::-webkit-scrollbar]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-transparent",
+        "[&]:-ms-overflow-style-none [&]:scrollbar-width:none",
         className
       )}
+      style={{
+        WebkitOverflowScrolling: 'touch',
+      }}
       {...props}
-    />
+    >
+      {children}
+      {/* Fade gradient at bottom to indicate scrollable */}
+      <div className="sticky bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-sidebar to-transparent pointer-events-none shrink-0" />
+    </div>
   )
 }
 
