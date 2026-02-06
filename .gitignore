@@ -29,6 +29,14 @@ yarn-error.log
 
 # AI 工具生成的文件
 /.claude
+/.gemini
+/.opencode
+.claude
+.gemini
+.opencode
+.mcp.json
+AGENTS.md
+GEMINI.md
 skills
 MCP
 agents
