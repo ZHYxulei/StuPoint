@@ -20,10 +20,10 @@ interface PageProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '班级管理', href: '/admin/classes' },
-    { title: '创建班级', href: '/admin/classes/create' },
-};
+    { title: 'Admin', href: '/admin' },
+    { title: 'Classes', href: '/admin/classes' },
+    { title: 'Create Class', href: '/admin/classes/create' },
+];
 
 export default function CreateClass({ teachers }: PageProps) {
     const { data, setData, post, processing, errors } = useForm({
@@ -39,7 +39,7 @@ export default function CreateClass({ teachers }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="创建班级" />
+            <Head title="Create Class" />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -49,16 +49,16 @@ export default function CreateClass({ teachers }: PageProps) {
                         </Button>
                     </Link>
                     <Heading
-                        title="创建班级"
-                        description="填写班级信息并分配班主任"
+                        title="Create Class"
+                        description="Fill in class information and assign a head teacher"
                     />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border max-w-2xl">
                     <CardHeader>
-                        <CardTitle>班级信息</CardTitle>
+                        <CardTitle>Class Information</CardTitle>
                         <CardDescription>
-                            请填写班级的基本信息
+                            Please fill in the basic information of the class
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -66,14 +66,13 @@ export default function CreateClass({ teachers }: PageProps) {
                             <div className="grid gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="grade">
-                                        年级 <span className="text-destructive">*</span>
+                                        Grade <span className="text-destructive">*</span>
                                     </Label>
                                     <Input
                                         id="grade"
-                                        placeholder="例如: 高三、初一"
+                                        placeholder="e.g.: Senior 3, Grade 7"
                                         value={data.grade}
                                         onChange={(e) => setData('grade', e.target.value)}
-                                        error={errors.grade}
                                     />
                                     {errors.grade && (
                                         <p className="text-sm text-destructive">{errors.grade}</p>
@@ -82,14 +81,13 @@ export default function CreateClass({ teachers }: PageProps) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        班级名称 <span className="text-destructive">*</span>
+                                        Class Name <span className="text-destructive">*</span>
                                     </Label>
                                     <Input
                                         id="name"
-                                        placeholder="例如: 1班、2班"
+                                        placeholder="e.g.: Class 1, Class 2"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        error={errors.name}
                                     />
                                     {errors.name && (
                                         <p className="text-sm text-destructive">{errors.name}</p>
@@ -97,13 +95,13 @@ export default function CreateClass({ teachers }: PageProps) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="head_teacher_id">班主任</Label>
+                                    <Label htmlFor="head_teacher_id">Head Teacher</Label>
                                     <Select
                                         value={data.head_teacher_id}
                                         onValueChange={(value) => setData('head_teacher_id', value)}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="选择班主任" />
+                                            <SelectValue placeholder="Select head teacher" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {teachers.map((teacher) => (
@@ -127,7 +125,7 @@ export default function CreateClass({ teachers }: PageProps) {
                                         className="w-full"
                                         disabled={processing}
                                     >
-                                        取消
+                                        Cancel
                                     </Button>
                                 </Link>
                                 <Button
@@ -136,7 +134,7 @@ export default function CreateClass({ teachers }: PageProps) {
                                     disabled={processing}
                                 >
                                     <Save className="mr-2 h-4 w-4" />
-                                    创建班级
+                                    Create Class
                                 </Button>
                             </div>
                         </form>
