@@ -108,11 +108,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
     };
 
     // Check if user has permission to verify orders
-    const canVerifyOrder = auth.user && (
-        auth.user.email === 'admin@example.com' ||
-        auth.user.is_head_teacher ||
-        (auth.user as any).roles?.some((r: any) => ['admin', 'head_teacher', 'grade_director'].includes(r.slug))
-    );
+    const canVerifyOrder = auth.user && true; // 所有登录的管理员都可以核销订单
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
