@@ -959,9 +959,11 @@ $user->save();
 
 ## 贡献者
 
-感谢所有为本项目做出贡献的开发者：
+### 感谢所有为本项目做出贡献的开发者朋友们，是大家们的帮助让StuPoint越来越好！
 
-- **ZHYxulei** - 项目创始人，主要开发者
+以下为贡献者列表：
+
+[![Contributors](https://contrib.rocks/image?repo=ZHYxulei/StuPoint&repo=ZHYxulei/Laravel-Dome)](https://github.com/ZHYxulei/StuPoint/graphs/contributors)
 
 欢迎通过 Pull Request 贡献代码！
 
@@ -969,7 +971,7 @@ $user->save();
 
 ## 参考项目
 
-本项目的开发过程中参考了以下优秀的开源项目和技术：
+本项目的开发过程中参考使用了以下优秀的开源项目和技术：
 
 ### 核心框架
 
@@ -1056,7 +1058,7 @@ $user->save();
 
 ## 联系方式
 
-- **作者**: ZHYxulei
+- **作者**: [ZHYxulei](https://github.com/ZHYxulei)
 - **邮箱**: ZHYxulei@outlook.com
 - **项目地址**: https://github.com/ZHYxulei/StuPoint
 - **问题反馈**: https://github.com/ZHYxulei/StuPoint/issues
@@ -1068,6 +1070,16 @@ $user->save();
 感谢所有为本项目添加 Star 的开发者！
 
 如果您觉得这个项目对您有帮助，请给它一个 Star ⭐
+
+<p align="center">
+  <a href="https://www.star-history.com/#ZHYxulei/StuPoint&type=date&legend=top-left">
+    <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ZHYxulei/StuPoint&type=date&theme=dark&legend=top-left" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ZHYxulei/StuPoint&type=date&legend=top-left" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ZHYxulei/StuPoint&type=date&legend=top-left" />
+    </picture>
+  </a>
+</p>
 
 ---
 
