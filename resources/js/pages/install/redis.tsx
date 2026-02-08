@@ -1,6 +1,8 @@
 import { Head } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { ChevronRight } from 'lucide-react';
 
 export default function InstallRedis() {
@@ -30,22 +32,46 @@ export default function InstallRedis() {
 
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            主机
-                                        </label>
-                                        <input type="text" name="host" defaultValue="127.0.0.1" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                        <Label htmlFor="host">主机</Label>
+                                        <input
+                                            id="host"
+                                            type="text"
+                                            name="host"
+                                            defaultValue="127.0.0.1"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            端口
-                                        </label>
-                                        <input type="text" name="port" defaultValue="6379" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                        <Label htmlFor="port">端口</Label>
+                                        <input
+                                            id="port"
+                                            type="text"
+                                            name="port"
+                                            defaultValue="6379"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            密码（可选）
-                                        </label>
-                                        <input type="password" name="password" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                        <Label htmlFor="database">数据库 (0-15)</Label>
+                                        <input
+                                            id="database"
+                                            type="number"
+                                            name="database"
+                                            min="0"
+                                            max="15"
+                                            defaultValue="0"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        />
+                                        <p className="mt-1 text-xs text-gray-500">Redis支持0-15共16个数据库，默认使用0</p>
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="password">密码（可选）</Label>
+                                        <input
+                                            id="password"
+                                            type="password"
+                                            name="password"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        />
                                     </div>
                                 </div>
 

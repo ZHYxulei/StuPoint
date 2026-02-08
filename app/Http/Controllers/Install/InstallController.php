@@ -201,6 +201,7 @@ class InstallController extends Controller
             'host' => 'required_if:enabled,true',
             'port' => 'required_if:enabled,true',
             'password' => 'nullable',
+            'database' => 'required_if:enabled,true|integer|min:0|max:15',
         ]);
 
         if ($validated['enabled']) {
@@ -208,6 +209,8 @@ class InstallController extends Controller
                 'REDIS_HOST' => $validated['host'] ?? '127.0.0.1',
                 'REDIS_PASSWORD' => $validated['password'] ?? 'null',
                 'REDIS_PORT' => $validated['port'] ?? '6379',
+                'REDIS_DB' => $validated['database'] ?? '0',
+                'REDIS_CACHE_DB' => $validated['database'] ?? '0',
                 'CACHE_STORE' => 'redis',
             ]);
         } else {
