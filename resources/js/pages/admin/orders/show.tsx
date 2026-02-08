@@ -283,37 +283,43 @@ export default function OrderShow({ order, verification_code, verification_code_
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {order.statusHistory.map((history, index) => (
-                                        <div key={history.id} className="flex gap-3">
-                                            <div className="flex flex-col items-center">
-                                                <div className={`w-3 h-3 rounded-full ${
-                                                    index === 0 ? 'bg-primary' : 'bg-muted'
-                                                }`} />
-                                                {index < order.statusHistory.length - 1 && (
-                                                    <div className="w-0.5 flex-1 bg-muted mt-1" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1 pb-4">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <p className="font-medium capitalize">
-                                                        {history.to_status.replace('_', ' ')}
-                                                    </p>
-                                                    <Badge variant="outline" className="text-xs">
-                                                        <Calendar className="h-3 w-3 mr-1" />
-                                                        {new Date(history.created_at).toLocaleString()}
-                                                    </Badge>
+                                    {order.statusHistory && order.statusHistory.length > 0 ? (
+                                        order.statusHistory.map((history, index) => (
+                                            <div key={history.id} className="flex gap-3">
+                                                <div className="flex flex-col items-center">
+                                                    <div className={`w-3 h-3 rounded-full ${
+                                                        index === 0 ? 'bg-primary' : 'bg-muted'
+                                                    }`} />
+                                                    {index < order.statusHistory.length - 1 && (
+                                                        <div className="w-0.5 flex-1 bg-muted mt-1" />
+                                                    )}
                                                 </div>
-                                                {history.note && (
-                                                    <p className="text-sm text-muted-foreground">{history.note}</p>
-                                                )}
-                                                {history.operator && (
-                                                    <p className="text-xs text-muted-foreground mt-1">
-                                                        操作者: {history.operator.name}
-                                                    </p>
-                                                )}
+                                                <div className="flex-1 pb-4">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <p className="font-medium capitalize">
+                                                            {history.to_status.replace('_', ' ')}
+                                                        </p>
+                                                        <Badge variant="outline" className="text-xs">
+                                                            <Calendar className="h-3 w-3 mr-1" />
+                                                            {new Date(history.created_at).toLocaleString()}
+                                                        </Badge>
+                                                    </div>
+                                                    {history.note && (
+                                                        <p className="text-sm text-muted-foreground">{history.note}</p>
+                                                    )}
+                                                    {history.operator && (
+                                                        <p className="text-xs text-muted-foreground mt-1">
+                                                            操作者: {history.operator.name}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground text-center py-4">
+                                            暂无订单状态历史记录
+                                        </p>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>

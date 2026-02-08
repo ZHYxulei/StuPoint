@@ -111,6 +111,11 @@ class OrderController extends Controller
             return back()->with('error', '已取消的订单无法生成验证码');
         }
 
+        // Check if order is completed
+        if ($order->status === 'completed') {
+            return back()->with('error', '已完成的订单无法生成验证码');
+        }
+
         // Generate new verification code
         $newCode = sprintf('%06d', mt_rand(0, 999999));
 

@@ -146,7 +146,7 @@ export default function ShopOrderDetail({ order, verification_code, verification
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Verification Code Card */}
-                        {!order.verified_at && (
+                        {!order.verified_at && order.status !== 'completed' && order.status !== 'cancelled' && (
                             <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
@@ -218,7 +218,7 @@ export default function ShopOrderDetail({ order, verification_code, verification
                                         </Alert>
                                     )}
 
-                                    {!order.verification_code && (
+                                    {!verification_code && (
                                         <Button
                                             onClick={handleRegenerateCode}
                                             disabled={processing}
@@ -244,6 +244,37 @@ export default function ShopOrderDetail({ order, verification_code, verification
                                                 核销时间：{new Date(order.verified_at).toLocaleString()}
                                             </p>
                                         </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {/* Order Status Alert for Completed/Cancelled */}
+                        {(order.status === 'completed' || order.status === 'cancelled') && !order.verified_at && (
+                            <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+                                <CardContent className="pt-6">
+                                    <div className="flex items-center gap-3">
+                                        {order.status === 'completed' ? (
+                                            <>
+                                                <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+                                                <div>
+                                                    <p className="font-semibold text-green-900 dark:text-green-100">订单已完成</p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        该订单已完成，无法生成验证码
+                                                    </p>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+                                                <div>
+                                                    <p className="font-semibold text-red-900 dark:text-red-100">订单已取消</p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        该订单已取消，无法生成验证码
+                                                    </p>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>
