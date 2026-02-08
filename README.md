@@ -976,61 +976,39 @@ $user->save();
 ### 核心框架
 
 - **[Laravel Framework](https://laravel.com)** - 优雅的 PHP Web 应用框架，具有表达力强、语法优雅的特点，提供了丰富的功能组件，包括路由、中间件、Eloquent ORM、模板引擎等，是现代 PHP 开发的首选框架。
-
 - **[Symfony Components](https://symfony.com)** - 高性能的 PHP 组件库，Laravel 的底层依赖，提供了大量可复用的组件，如 HttpFoundation、Console、EventDispatcher 等，是 PHP 生态系统的基石。
-
 - **[React](https://react.dev)** - 由 Meta (Facebook) 开发的前端库，用于构建用户界面，采用组件化开发模式，具有虚拟 DOM、单向数据流等特点，是目前最流行的前端框架之一。
-
 - **[Vite](https://vitejs.dev)** - 下一代前端构建工具，由 Vue.js 作者尤雨溪开发，利用浏览器原生 ES 模块导入实现极速冷启动，支持热模块替换 (HMR)，提供极佳的开发体验。
 
 ### Laravel 生态系统
 
 - **[Laravel Fortify](https://github.com/laravel/fortify)** - Laravel 的无头身份验证后端，提供完整的认证功能实现，包括登录、注册、双因素认证、密码重置等，不包含前端 UI，可与任何前端框架配合使用。
-
 - **[Laravel Folio](https://github.com/laravel/folio)** - 基于文件的路由系统，灵感来自 Ruby on Rails，通过在 resources/views/pages 目录下创建 Blade 文件即可自动定义路由，极大简化了路由管理。
-
 - **[Laravel Horizon](https://github.com/laravel/horizon)** - Redis 队列的优雅仪表板和管理工具，提供美观的界面监控队列任务执行情况、任务失败率、作业吞吐量等关键指标，支持多队列管理和标签监控。
-
 - **[Laravel Passport](https://github.com/laravel/passport)** - Laravel 的 OAuth2 服务器和 API 认证管理包，可在几分钟内让 Laravel 应用成为 OAuth2 服务提供者，支持授权码、个人访问、密码授权、客户端凭证等授权类型。
-
 - **[Laravel Pulse](https://github.com/laravel/pulse)** - Laravel 的应用性能监控工具，实时捕获请求、异常、数据库查询、队列任务等性能指标，提供直观的仪表板，帮助开发者快速发现和解决性能瓶颈。
-
 - **[Laravel Scout](https://github.com/laravel/scout)** - 基于驱动的全文搜索解决方案，为 Eloquent 模型提供简单的全文搜索功能，支持 Algolia、Meilisearch、MySQL Full-Text 等多种驱动，轻松实现搜索功能。
-
 - **[Laravel Socialite](https://github.com/laravel/socialite)** - OAuth 社交登录支持，支持通过 Facebook、Twitter、LinkedIn、Google、GitHub 等社交平台进行身份认证，提供统一的 API 接口，简化社交登录集成。
-
 - **[Laravel Telescope](https://github.com/laravel/telescope)** - 优雅的调试助手和请求监控工具，提供友好的界面查看请求、异常、数据库查询、缓存操作、队列任务、邮件发送等应用运行情况，是开发调试的利器。
-
 - **[Laravel Wayfinder](https://github.com/laravel/wayfinder)** - TypeScript 路由生成器，自动将 Laravel 路由转换为类型安全的 TypeScript 函数，在 Inertia 和 React 应用中提供智能的路由类型提示和自动完成功能。
-
 - **[Livewire](https://livewire.laravel.com)** - 全栈框架，用 PHP 构建动态界面，无需编写复杂的 JavaScript，在 Laravel 应用中实现实时交互功能，提供类似 SPA 的用户体验。
-
 - **[Volt](https://github.com/laravel/volt)** - Laravel Livewire 的单文件组件，允许在单个 Blade 文件中编写 Livewire 组件，支持函数式和类式 API，简化组件开发流程。
-
 - **[Pest](https://pestphp.com)** - 优雅的 PHP 测试框架，提供简洁的语法和丰富的断言，支持并行测试、快照测试、数据集等高级功能，让编写测试成为一种享受。
 
 ### 前端组件库
 
 - **[Inertia.js](https://inertiajs.com)** - 现代单页应用解决方案，在不改变传统服务器端路由模式的前提下，构建类似 SPA 的用户体验，通过适配器连接 React、Vue、Svelte 等前端框架，实现无刷新页面切换。
-
 - **[Tailwind CSS](https://tailwindcss.com)** - 功能类优先的 CSS 框架，提供大量预定义的工具类，通过组合这些类快速构建自定义设计，无需离开 HTML 即可完成样式编写，支持响应式设计和暗黑模式。
-
 - **[Radix UI](https://www.radix-ui.com)** - 无样式的可访问 UI 组件库，采用原始 Web Component 和 React 构建，提供对话框、下拉菜单、标签页等复杂交互组件，注重无障碍访问和键盘导航。
-
 - **[Headless UI](https://headlessui.com)** - 完全无样式的 UI 组件库，由 Tailwind CSS 团队开发，为 React 和 Vue 提供下拉菜单、对话框、切换开关等组件，设计精美且完全可访问。
-
 - **[Lucide Icons](https://lucide.dev)** - 美观一致的图标库，是从 Feather Icons 分支发展而来，提供 1000+ 精心设计的开源图标，支持 React、Vue、Svelte 等框架，是现代 Web 应用的理想选择。
-
 - **[shadcn/ui](https://ui.shadcn.com)** - 基于 Radix UI 和 Tailwind CSS 构建的组件集合，可通过 CLI 直接复制组件代码到项目中，完全可定制，是构建现代 Web 应用的理想基础。
 
 ### 开发工具
 
 - **[TypeScript](https://www.typescript.com)** - JavaScript 的超集，添加静态类型检查，提升代码质量和开发效率，提供强大的 IDE 支持和智能提示，是大型前端项目的首选语言。
-
 - **[ESLint](https://eslint.org)** - JavaScript 和 TypeScript 代码检查工具，发现和修复代码中的问题，支持自定义规则和插件，帮助团队保持一致的代码风格。
-
 - **[Prettier](https://prettier.io)** - 代码格式化工具，支持多种语言，自动格式化代码，消除团队中的代码风格争论，提高代码可读性。
-
 - **[PHPStan](https://phpstan.org)** - PHP 静态分析工具，在运行前发现代码中的错误，支持多种分析级别，帮助编写更安全、更健壮的 PHP 代码。
 
 ### 参考项目
