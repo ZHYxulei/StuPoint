@@ -13,6 +13,10 @@ StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分
 
 ---
 
+![Alt](https://repobeats.axiom.co/api/embed/c649eb6b5bf3af52e2ce2d7cf12dd6dd5100c5b9.svg "Repobeats analytics image")
+
+---
+
 ## 目录
 
 - [主要功能](#主要功能)
