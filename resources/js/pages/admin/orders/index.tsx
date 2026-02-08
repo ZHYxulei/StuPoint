@@ -38,6 +38,7 @@ interface Order {
     points_spent: number;
     status: string;
     created_at: string;
+    verified_at: string | null;
     product: Product;
     user: UserInfo;
 }
