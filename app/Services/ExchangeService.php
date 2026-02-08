@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\DB;
 class ExchangeService
 {
     public function __construct(
-        protected PointService $pointService
+        protected PointService $pointService,
+        private VerificationCodeService $verificationCodeService
     ) {}
 
     /**
@@ -41,9 +42,16 @@ class ExchangeService
                 ]
             );
 
+            // Generate order number
+            $orderNo = $this->generateOrderNo();
+
+            // Generate and store verification code in Redis (24 hours expiry)
+            $verificationCode = $this->generateVerificationCode();
+            $this->verificationCodeService->store($orderNo, $verificationCode);
+
             // Create order
             $order = Order::create([
-                'order_no' => $this->generateOrderNo(),
+                'order_no' => $orderNo,
                 'user_id' => $user->id,
                 'product_id' => $product->id,
                 'points_spent' => $product->points_required,
@@ -69,6 +77,14 @@ class ExchangeService
     protected function generateOrderNo(): string
     {
         return 'ORD'.date('Ymd').strtoupper(substr(uniqid(), -6));
+    }
+
+    /**
+     * Generate 6-digit verification code.
+     */
+    protected function generateVerificationCode(): string
+    {
+        return sprintf('%06d', mt_rand(0, 999999));
     }
 
     /**

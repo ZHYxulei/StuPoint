@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\VerificationCodeService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function __construct(
+        private VerificationCodeService $verificationCodeService
+    ) {}
+
     /**
      * Display list of all orders.
      */
@@ -48,10 +53,18 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
-        $order = Order::with(['product.category', 'user', 'statusHistory.operator'])->findOrFail($id);
+        $order = Order::with(['product.category', 'user', 'statusHistory.operator', 'verifiedBy'])->findOrFail($id);
+
+        // Get verification code from Redis
+        $verificationCode = $this->verificationCodeService->get($order->order_no);
+        $ttl = $this->verificationCodeService->getTTL($order->order_no);
+        $isExpired = ! $this->verificationCodeService->exists($order->order_no);
 
         return inertia('admin/orders/show', [
             'order' => $order,
+            'verification_code' => $verificationCode,
+            'verification_code_expires_at' => $ttl > 0 ? now()->addSeconds($ttl) : null,
+            'verification_code_expired' => $isExpired,
         ]);
     }
 

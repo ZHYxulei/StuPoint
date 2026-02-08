@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->prefix('shop')->name('shop.')->group(fu
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/regenerate-code', [OrderController::class, 'regenerateVerificationCode'])->name('orders.regenerate-code');
 });
 
 // Parent routes

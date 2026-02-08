@@ -17,6 +17,10 @@ class Order extends Model
         'shipping_info',
         'third_party_order_id',
         'metadata',
+        'verification_code',
+        'verification_code_expires_at',
+        'verified_at',
+        'verified_by',
     ];
 
     protected function casts(): array
@@ -25,6 +29,8 @@ class Order extends Model
             'points_spent' => 'integer',
             'shipping_info' => 'array',
             'metadata' => 'array',
+            'verified_at' => 'datetime',
+            'verification_code_expires_at' => 'datetime',
         ];
     }
 
@@ -36,6 +42,11 @@ class Order extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function verifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 
     public function statusHistory(): HasMany
@@ -85,5 +96,24 @@ class Order extends Model
     public function isCancelled(): bool
     {
         return $this->status === 'cancelled';
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->verified_at !== null;
+    }
+
+    public function isVerificationCodeExpired(): bool
+    {
+        if (! $this->verification_code_expires_at) {
+            return true;
+        }
+
+        return $this->verification_code_expires_at->isPast();
+    }
+
+    public function scopePendingVerification($query)
+    {
+        return $query->whereNull('verified_at')->where('status', '!=', 'cancelled');
     }
 }

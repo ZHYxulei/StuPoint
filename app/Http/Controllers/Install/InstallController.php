@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules;
 
 class InstallController extends Controller
@@ -207,6 +208,11 @@ class InstallController extends Controller
                 'REDIS_HOST' => $validated['host'] ?? '127.0.0.1',
                 'REDIS_PASSWORD' => $validated['password'] ?? 'null',
                 'REDIS_PORT' => $validated['port'] ?? '6379',
+                'CACHE_STORE' => 'redis',
+            ]);
+        } else {
+            $this->updateEnvFile([
+                'CACHE_STORE' => 'file',
             ]);
         }
 
@@ -229,6 +235,18 @@ class InstallController extends Controller
         $validated = $request->validate([
             'driver' => 'required|in:file,database,redis',
         ]);
+
+        // Check if Redis is selected but not configured
+        if ($validated['driver'] === 'redis') {
+            $redisHost = env('REDIS_HOST');
+            $redisPort = env('REDIS_PORT');
+
+            if (! $redisHost || ! $redisPort) {
+                return back()->withErrors([
+                    'driver' => '选择Redis缓存需要先配置Redis服务器，请返回上一步配置Redis或选择其他缓存方式',
+                ]);
+            }
+        }
 
         $this->updateEnvFile([
             'CACHE_STORE' => $validated['driver'],
@@ -284,18 +302,35 @@ class InstallController extends Controller
      */
     public function storeAccount(Request $request)
     {
+        $emailRules = ['required', 'string', 'email', 'max:255'];
+
+        // Only check uniqueness if the users table exists
+        if (Schema::hasTable('users')) {
+            $emailRules[] = 'unique:users';
+        }
+
         $validated = $request->validate([
             'nickname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => $emailRules,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'nickname.required' => '请输入昵称',
+            'email.required' => '请输入邮箱地址',
+            'email.email' => '请输入有效的邮箱地址',
+            'email.unique' => '该邮箱已被使用',
+            'password.required' => '请输入密码',
+            'password.confirmed' => '两次输入的密码不一致',
         ]);
 
         try {
-            // Run migrations
-            Artisan::call('migrate', ['--force' => true]);
+            // Only run migrations if tables don't exist yet
+            if (! Schema::hasTable('users') || User::count() === 0) {
+                // Run migrations
+                Artisan::call('migrate', ['--force' => true]);
 
-            // Run seeders to create roles and permissions
-            Artisan::call('db:seed', ['--force' => true]);
+                // Run seeders to create roles and permissions
+                Artisan::call('db:seed', ['--force' => true]);
+            }
 
             // Create admin user
             $user = User::create([

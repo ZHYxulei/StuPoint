@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ClassManagementController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\OrderVerificationController;
 use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -51,6 +52,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('/{id}', [AdminOrderController::class, 'show'])->name('show');
         Route::put('/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/statistics', [AdminOrderController::class, 'statistics'])->name('statistics');
+        Route::post('/{id}/verify', [OrderVerificationController::class, 'verify'])->name('verify');
     });
 
     // Plugin Management

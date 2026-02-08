@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import InputError from '@/components/ui/input-error';
-import { ArrowLeft, Save, User, GraduationCap, Baby } from 'lucide-react';
+import { ArrowLeft, Save, User, GraduationCap, Baby, Crown, Shield, Users, UserCog } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { useState } from 'react';
@@ -45,6 +45,19 @@ const roleDescriptions = {
     student: '需要填写身份证号、姓名、班级等信息',
     teacher: '需要选择授课班级和科目',
     parent: '只需填写联系方式，后续可绑定子女',
+    head_teacher: '班级的班主任，负责管理班级学生',
+    grade_director: '负责管理整个年级的事务',
+    principal: '学校校长，负责学校整体管理',
+};
+
+const roleIcons: Record<string, any> = {
+    student: User,
+    teacher: GraduationCap,
+    parent: Baby,
+    head_teacher: Users,
+    grade_director: Shield,
+    principal: Crown,
+    super_admin: UserCog,
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -119,7 +132,7 @@ export default function CreateUser({ roles, classes, subjects, defaultRole }: Pa
                         <RadioGroup value={data.role_id?.toString()} onValueChange={handleRoleChange}>
                             <div className="grid gap-4 md:grid-cols-3">
                                 {roles.map((role) => {
-                                    const Icon = role.slug === 'student' ? User : role.slug === 'teacher' ? GraduationCap : Baby;
+                                    const Icon = roleIcons[role.slug] || User;
                                     return (
                                         <div key={role.id} className="flex items-center gap-2 p-4 border rounded-lg">
                                             <RadioGroupItem value={role.id.toString()} id={`role-${role.id}`} />
@@ -129,7 +142,7 @@ export default function CreateUser({ roles, classes, subjects, defaultRole }: Pa
                                                     <div>
                                                         <div className="font-semibold">{role.name}</div>
                                                         <div className="text-sm text-muted-foreground">
-                                                            {roleDescriptions[role.slug as keyof typeof roleDescriptions]}
+                                                            {roleDescriptions[role.slug as keyof typeof roleDescriptions] || role.name}
                                                         </div>
                                                     </div>
                                                 </div>

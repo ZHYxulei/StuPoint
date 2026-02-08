@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('max_participants');
             $table->integer('points_reward');
             $table->enum('status', ['draft', 'active', 'closed'])->default('draft');
-            $table->foreignId('organizer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('organizer_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
 
             $table->index('status');

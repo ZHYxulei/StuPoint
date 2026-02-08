@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Search, Eye, Package, User, Calendar, TrendingUp, ShoppingCart } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Search, Eye, Package, User, Calendar, TrendingUp, ShoppingCart, ShieldCheck } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, SharedData } from '@/types';
 import { useState } from 'react';
+import InputError from '@/components/input-error';
 
 interface ProductCategory {
     id: number;
@@ -71,6 +73,8 @@ interface PageProps {
     };
 }
 
+type VerificationMethod = 'code' | 'password' | 'id_card' | 'direct';
+
 const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
     pending: { label: '待处理', variant: 'warning' },
     processing: { label: '处理中', variant: 'default' },
@@ -85,6 +89,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function OrderIndex({ orders, stats, filters }: PageProps) {
+    const { auth } = usePage<SharedData>().props;
     const [successMessage, setSuccessMessage] = useState('');
 
     const { get, processing } = useForm({
@@ -100,6 +105,13 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
             preserveState: true,
         });
     };
+
+    // Check if user has permission to verify orders
+    const canVerifyOrder = auth.user && (
+        auth.user.email === 'admin@example.com' ||
+        auth.user.is_head_teacher ||
+        (auth.user as any).roles?.some((r: any) => ['admin', 'head_teacher', 'grade_director'].includes(r.slug))
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -241,7 +253,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                             </div>
                                             <div className="space-y-1 text-sm">
                                                 <p className="text-muted-foreground">
-                                                    <Product className="h-4 w-4 inline mr-1" />
+                                                    <Package className="h-4 w-4 inline mr-1" />
                                                     {order.product.name}
                                                 </p>
                                                 <p className="text-muted-foreground">
@@ -268,6 +280,13 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                                 查看详情
                                             </Button>
                                         </Link>
+                                        {canVerifyOrder && !order.verified_at && order.status !== 'cancelled' && (
+                                            <VerifyOrderDialog
+                                                orderId={order.id}
+                                                orderNo={order.order_no}
+                                                onSuccess={() => setSuccessMessage('订单核销成功')}
+                                            />
+                                        )}
                                         {order.status === 'pending' && (
                                             <UpdateStatusDialog orderId={order.id} currentStatus={order.status} onSuccess={() => setSuccessMessage('订单状态已更新')} />
                                         )}
@@ -312,14 +331,14 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
 }
 
 function UpdateStatusDialog({ orderId, currentStatus, onSuccess }: { orderId: string | number; currentStatus: string; onSuccess: () => void }) {
-    const { data, setData, post, processing, reset } = useForm({
+    const { data, setData, put, processing, reset } = useForm({
         status: currentStatus,
         note: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(`/admin/orders/${orderId}/status`, {
+        put(`/admin/orders/${orderId}/status`, {
             onSuccess: () => {
                 onSuccess();
                 // Reload page after short delay
@@ -381,6 +400,150 @@ function UpdateStatusDialog({ orderId, currentStatus, onSuccess }: { orderId: st
                         </DialogTrigger>
                         <Button type="submit" disabled={processing} className="flex-1">
                             {processing ? '更新中...' : '确认更新'}
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | number; orderNo: string; onSuccess: () => void }) {
+    const { data, setData, post, processing, reset } = useForm({
+        method: 'code' as VerificationMethod,
+        code: '',
+        password: '',
+        id_number: '',
+        name: '',
+        admin_password: '',
+    });
+
+    const [activeTab, setActiveTab] = useState<VerificationMethod>('code');
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setData('method', activeTab);
+        post(`/admin/orders/${orderId}/verify`, {
+            onSuccess: () => {
+                onSuccess();
+                setTimeout(() => window.location.reload(), 500);
+            },
+        });
+    };
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="default" size="sm">
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                    核销
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                    <DialogTitle>订单核销</DialogTitle>
+                    <DialogDescription>
+                        订单号: {orderNo}
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as VerificationMethod)}>
+                        <TabsList className="grid grid-cols-4 w-full">
+                            <TabsTrigger value="code" className="text-xs">验证码</TabsTrigger>
+                            <TabsTrigger value="password" className="text-xs">密码</TabsTrigger>
+                            <TabsTrigger value="id_card" className="text-xs">身份证</TabsTrigger>
+                            <TabsTrigger value="direct" className="text-xs">直接核销</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="code" className="space-y-3 mt-4">
+                            <div className="bg-muted/50 p-3 rounded-lg">
+                                <p className="text-xs text-muted-foreground">使用6位验证码进行核销</p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="code">验证码</Label>
+                                <Input
+                                    id="code"
+                                    placeholder="请输入6位验证码"
+                                    maxLength={6}
+                                    value={data.code}
+                                    onChange={(e) => setData('code', e.target.value)}
+                                    className="font-mono text-center text-lg tracking-wider"
+                                />
+                                <InputError message={undefined} />
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="password" className="space-y-3 mt-4">
+                            <div className="bg-muted/50 p-3 rounded-lg">
+                                <p className="text-xs text-muted-foreground">使用下单账号的密码进行核销</p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password">密码</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="请输入用户密码"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                />
+                                <InputError message={undefined} />
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="id_card" className="space-y-3 mt-4">
+                            <div className="bg-muted/50 p-3 rounded-lg">
+                                <p className="text-xs text-muted-foreground">使用下单人的身份证号和姓名进行核销</p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="id_number">身份证号</Label>
+                                <Input
+                                    id="id_number"
+                                    placeholder="请输入身份证号"
+                                    value={data.id_number}
+                                    onChange={(e) => setData('id_number', e.target.value)}
+                                />
+                                <InputError message={undefined} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="name">姓名</Label>
+                                <Input
+                                    id="name"
+                                    placeholder="请输入姓名"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                />
+                                <InputError message={undefined} />
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="direct" className="space-y-3 mt-4">
+                            <div className="bg-muted/50 p-3 rounded-lg">
+                                <p className="text-sm text-muted-foreground text-center">
+                                    直接核销需要输入当前管理员密码确认
+                                </p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="admin_password">管理员密码</Label>
+                                <Input
+                                    id="admin_password"
+                                    type="password"
+                                    placeholder="请输入您的密码"
+                                    value={data.admin_password}
+                                    onChange={(e) => setData('admin_password', e.target.value)}
+                                />
+                                <InputError message={undefined} />
+                            </div>
+                        </TabsContent>
+                    </Tabs>
+
+                    <div className="flex gap-3 pt-2">
+                        <DialogTrigger asChild>
+                            <Button type="button" variant="outline" className="flex-1">
+                                取消
+                            </Button>
+                        </DialogTrigger>
+                        <Button type="submit" disabled={processing} className="flex-1">
+                            {processing ? '核销中...' : '确认核销'}
                         </Button>
                     </div>
                 </form>

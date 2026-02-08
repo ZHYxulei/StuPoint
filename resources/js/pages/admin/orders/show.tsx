@@ -1,12 +1,28 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Package, User, MapPin, Phone, Calendar, Coins, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import InputError from '@/components/input-error';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { ArrowLeft, Package, User, MapPin, Phone, Calendar, Coins, Clock, CheckCircle2, AlertCircle, Shield, ShieldCheck, ShieldX } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, SharedData } from '@/types';
 
 interface ProductCategory {
     id: number;
@@ -50,16 +66,23 @@ interface Order {
         address: string;
     };
     third_party_order_id: string | null;
+    verified_at: string | null;
+    verified_by: number | null;
     created_at: string;
     updated_at: string;
     product: Product;
     user: UserInfo;
+    verifiedBy?: UserInfo | null;
     statusHistory: StatusHistory[];
 }
 
 interface PageProps {
     order: Order;
+    verification_code: string | null;
+    verification_code_expired: boolean;
 }
+
+type VerificationMethod = 'code' | 'password' | 'id_card' | 'direct';
 
 const statusConfig: Record<string, {
     label: string;
@@ -105,8 +128,59 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '订单详情', href: '' },
 ];
 
-export default function OrderShow({ order }: PageProps) {
+export default function OrderShow({ order, verification_code, verification_code_expired }: PageProps) {
+    const { auth } = usePage<SharedData>().props;
     const StatusIcon = statusConfig[order.status].icon;
+    const currentUser = auth.user;
+
+    // Check if user has permission to verify orders (admin, head_teacher, grade_director, etc.)
+    const canVerifyOrder = currentUser && (
+        currentUser.email === 'admin@example.com' ||
+        currentUser.is_head_teacher ||
+        (currentUser as any).roles?.some((r: any) => ['admin', 'head_teacher', 'grade_director'].includes(r.slug))
+    );
+
+    const isOrderVerified = !!order.verified_at;
+    const canVerifyThisOrder = canVerifyOrder && !isOrderVerified && order.status !== 'cancelled';
+
+    // Verification form state
+    const verificationForm = useForm({
+        method: 'code' as VerificationMethod,
+        code: '',
+        password: '',
+        id_number: '',
+        name: '',
+        admin_password: '',
+    });
+
+    const [activeTab, setActiveTab] = React.useState<VerificationMethod>('code');
+    const [showDirectVerifyDialog, setShowDirectVerifyDialog] = React.useState(false);
+
+    const handleVerification = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (activeTab === 'direct') {
+            setShowDirectVerifyDialog(true);
+            return;
+        }
+
+        verificationForm.setData('method', activeTab);
+        verificationForm.post(`/admin/orders/${order.id}/verify`, {
+            onSuccess: () => {
+                verificationForm.reset();
+            },
+        });
+    };
+
+    const handleDirectVerify = () => {
+        verificationForm.setData('method', 'direct');
+        verificationForm.post(`/admin/orders/${order.id}/verify`, {
+            onSuccess: () => {
+                setShowDirectVerifyDialog(false);
+                verificationForm.reset();
+            },
+        });
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -303,8 +377,203 @@ export default function OrderShow({ order }: PageProps) {
                                 </CardContent>
                             </Card>
                         )}
+
+                        {/* Order Verification */}
+                        {canVerifyOrder && (
+                            <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+                                <CardHeader>
+                                    <CardTitle className="text-base flex items-center gap-2">
+                                        <Shield className="h-4 w-4" />
+                                        订单核销
+                                    </CardTitle>
+                                    <CardDescription>
+                                        {isOrderVerified ? '该订单已完成核销' : '请选择核销方式'}
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    {isOrderVerified ? (
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                                                <ShieldCheck className="h-5 w-5" />
+                                                <span className="font-medium">已核销</span>
+                                            </div>
+                                            <Separator />
+                                            {verification_code && (
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground mb-1">验证码</p>
+                                                    <p className="font-mono font-bold text-lg tracking-wider">{verification_code}</p>
+                                                </div>
+                                            )}
+                                            <Separator />
+                                            <div>
+                                                <p className="text-sm text-muted-foreground mb-1">核销时间</p>
+                                                <p className="text-sm">{new Date(order.verified_at!).toLocaleString()}</p>
+                                            </div>
+                                            {order.verifiedBy && (
+                                                <>
+                                                    <Separator />
+                                                    <div>
+                                                        <p className="text-sm text-muted-foreground mb-1">核销人</p>
+                                                        <p className="text-sm font-medium">{order.verifiedBy.name}</p>
+                                                        <p className="text-xs text-muted-foreground">{order.verifiedBy.email}</p>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    ) : canVerifyThisOrder ? (
+                                        <form onSubmit={handleVerification} className="space-y-4">
+                                            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as VerificationMethod)}>
+                                                <TabsList className="grid grid-cols-4 w-full">
+                                                    <TabsTrigger value="code" className="text-xs">验证码</TabsTrigger>
+                                                    <TabsTrigger value="password" className="text-xs">密码</TabsTrigger>
+                                                    <TabsTrigger value="id_card" className="text-xs">身份证</TabsTrigger>
+                                                    <TabsTrigger value="direct" className="text-xs">直接核销</TabsTrigger>
+                                                </TabsList>
+
+                                                <TabsContent value="code" className="space-y-3 mt-4">
+                                                    {verification_code ? (
+                                                        <>
+                                                            <div className="bg-muted/50 p-3 rounded-lg text-center">
+                                                                <p className="text-xs text-muted-foreground mb-1">验证码</p>
+                                                                <p className="font-mono font-bold text-xl tracking-wider">{verification_code}</p>
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <Label htmlFor="code">输入验证码</Label>
+                                                                <Input
+                                                                    id="code"
+                                                                    placeholder="请输入6位验证码"
+                                                                    maxLength={6}
+                                                                    value={verificationForm.data.code}
+                                                                    onChange={(e) => verificationForm.setData('code', e.target.value)}
+                                                                    className="font-mono text-center text-lg tracking-wider"
+                                                                />
+                                                                <InputError message={verificationForm.errors.code} />
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <p className="text-sm text-muted-foreground text-center py-4">
+                                                            该订单暂未生成验证码
+                                                        </p>
+                                                    )}
+                                                </TabsContent>
+
+                                                <TabsContent value="password" className="space-y-3 mt-4">
+                                                    <div className="bg-muted/50 p-3 rounded-lg">
+                                                        <p className="text-xs text-muted-foreground">使用下单账号的密码进行核销</p>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="password">密码</Label>
+                                                        <Input
+                                                            id="password"
+                                                            type="password"
+                                                            placeholder="请输入用户密码"
+                                                            value={verificationForm.data.password}
+                                                            onChange={(e) => verificationForm.setData('password', e.target.value)}
+                                                        />
+                                                        <InputError message={verificationForm.errors.password} />
+                                                    </div>
+                                                </TabsContent>
+
+                                                <TabsContent value="id_card" className="space-y-3 mt-4">
+                                                    <div className="bg-muted/50 p-3 rounded-lg">
+                                                        <p className="text-xs text-muted-foreground">使用下单人的身份证号和姓名进行核销</p>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="id_number">身份证号</Label>
+                                                        <Input
+                                                            id="id_number"
+                                                            placeholder="请输入身份证号"
+                                                            value={verificationForm.data.id_number}
+                                                            onChange={(e) => verificationForm.setData('id_number', e.target.value)}
+                                                        />
+                                                        <InputError message={verificationForm.errors.id_number} />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="name">姓名</Label>
+                                                        <Input
+                                                            id="name"
+                                                            placeholder="请输入姓名"
+                                                            value={verificationForm.data.name}
+                                                            onChange={(e) => verificationForm.setData('name', e.target.value)}
+                                                        />
+                                                        <InputError message={verificationForm.errors.name} />
+                                                    </div>
+                                                </TabsContent>
+
+                                                <TabsContent value="direct" className="space-y-3 mt-4">
+                                                    <div className="bg-muted/50 p-3 rounded-lg">
+                                                        <p className="text-sm text-muted-foreground text-center">
+                                                            直接核销需要输入当前管理员密码确认
+                                                        </p>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="admin_password">管理员密码</Label>
+                                                        <Input
+                                                            id="admin_password"
+                                                            type="password"
+                                                            placeholder="请输入您的密码"
+                                                            value={verificationForm.data.admin_password}
+                                                            onChange={(e) => verificationForm.setData('admin_password', e.target.value)}
+                                                        />
+                                                        <InputError message={verificationForm.errors.admin_password} />
+                                                    </div>
+                                                </TabsContent>
+                                            </Tabs>
+
+                                            <Button
+                                                type="submit"
+                                                className="w-full"
+                                                disabled={verificationForm.processing}
+                                            >
+                                                {verificationForm.processing ? '核销中...' : '确认核销'}
+                                            </Button>
+                                        </form>
+                                    ) : order.status === 'cancelled' ? (
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <ShieldX className="h-5 w-5" />
+                                            <span className="text-sm">已取消的订单无法核销</span>
+                                        </div>
+                                    ) : null}
+                                </CardContent>
+                            </Card>
+                        )}
                     </div>
                 </div>
+
+                {/* Direct Verification Confirmation Dialog */}
+                <AlertDialog open={showDirectVerifyDialog} onOpenChange={setShowDirectVerifyDialog}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>确认直接核销</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                您确定要直接核销订单 {order.order_no} 吗？此操作需要输入您的管理员密码进行确认，核销后订单状态将变更为已完成。
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <div className="space-y-2 py-4">
+                            <Label htmlFor="dialog_admin_password">管理员密码</Label>
+                            <Input
+                                id="dialog_admin_password"
+                                type="password"
+                                placeholder="请输入您的密码"
+                                value={verificationForm.data.admin_password}
+                                onChange={(e) => verificationForm.setData('admin_password', e.target.value)}
+                            />
+                            <InputError message={verificationForm.errors.admin_password} />
+                        </div>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel disabled={verificationForm.processing}>取消</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleDirectVerify();
+                                }}
+                                disabled={verificationForm.processing || !verificationForm.data.admin_password}
+                            >
+                                {verificationForm.processing ? '核销中...' : '确认核销'}
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </AppLayout>
     );

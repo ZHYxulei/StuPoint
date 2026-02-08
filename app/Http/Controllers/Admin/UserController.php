@@ -50,7 +50,10 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $roles = Role::orderBy('level')->get();
+        // Exclude super_admin role from being selectable through UI
+        $roles = Role::orderBy('level')
+            ->where('slug', '!=', 'super_admin')
+            ->get();
         $classes = SchoolClass::select('id', 'name', 'grade')
             ->orderBy('grade')
             ->orderBy('name')
@@ -91,6 +94,11 @@ class UserController extends Controller
 
         return DB::transaction(function () use ($validated) {
             $role = Role::findOrFail($validated['role_id']);
+
+            // Prevent assignment of super_admin role
+            if ($role->slug === 'super_admin') {
+                abort(403, '无法分配超级管理员角色');
+            }
 
             // Prepare user data
             $userData = [

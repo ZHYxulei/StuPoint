@@ -22,9 +22,8 @@ class PluginController extends Controller
     {
         $plugins = Plugin::withCount('permissions')->latest()->get();
 
-        // Get all available plugin files
+        // Auto-register plugins from plugins/ folder
         $pluginFiles = glob(base_path('plugins/*/*Plugin.php'));
-        $availablePlugins = [];
 
         foreach ($pluginFiles as $file) {
             $className = $this->getClassNameFromFile($file);
@@ -32,20 +31,31 @@ class PluginController extends Controller
                 $pluginInstance = new $className;
                 if ($pluginInstance instanceof \App\Plugins\Plugin) {
                     $slug = $pluginInstance->getSlug();
-                    $availablePlugins[$slug] = [
-                        'name' => $pluginInstance->getName(),
-                        'version' => $pluginInstance->getVersion(),
-                        'description' => $pluginInstance->getDescription() ?? '',
-                        'author' => $pluginInstance->getAuthor() ?? '',
-                        'installed' => Plugin::where('slug', $slug)->exists(),
-                    ];
+
+                    // Auto-create plugin record if not exists
+                    if (! Plugin::where('slug', $slug)->exists()) {
+                        Plugin::create([
+                            'name' => $pluginInstance->getName(),
+                            'slug' => $slug,
+                            'version' => $pluginInstance->getVersion(),
+                            'description' => $pluginInstance->getDescription() ?? '',
+                            'author' => $pluginInstance->getAuthor() ?? '',
+                            'status' => 'disabled', // Default to disabled, user can enable
+                        ]);
+                    }
                 }
             }
         }
 
+        // Reload plugins after auto-registration
+        $plugins = Plugin::withCount('permissions')->latest()->get();
+
+        // Get plugin sources for the settings
+        $pluginSources = \App\Models\PluginSource::orderBy('sort_order')->orderBy('name')->get();
+
         return inertia('admin/plugins/index', [
             'plugins' => $plugins,
-            'availablePlugins' => $availablePlugins,
+            'pluginSources' => $pluginSources,
         ]);
     }
 
