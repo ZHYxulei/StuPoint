@@ -38,16 +38,9 @@ class RolePermissionSeeder extends Seeder
             [
                 'name' => 'Teacher',
                 'slug' => 'teacher',
-                'description' => 'Teacher',
+                'description' => 'Teacher (head teachers are marked with is_head_teacher flag)',
                 'is_system' => false,
                 'level' => 60,
-            ],
-            [
-                'name' => 'Head Teacher',
-                'slug' => 'head_teacher',
-                'description' => 'Head teacher/Class teacher',
-                'is_system' => false,
-                'level' => 65,
             ],
             [
                 'name' => 'Student',
@@ -66,7 +59,7 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
-            Role::firstOrCreate(
+            Role::updateOrCreate(
                 ['slug' => $role['slug']],
                 $role
             );

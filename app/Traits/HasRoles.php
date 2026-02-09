@@ -37,7 +37,7 @@ trait HasRoles
 
     public function isHeadTeacher(): bool
     {
-        return $this->is_head_teacher || $this->hasRole('head_teacher');
+        return (bool) $this->is_head_teacher;
     }
 
     public function assignRole(Role|string $role, ?array $metadata = null): self

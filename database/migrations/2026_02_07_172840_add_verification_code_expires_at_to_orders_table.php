@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->timestamp('verification_code_expires_at')->nullable()->after('verification_code')->comment('验证码过期时间');
-        });
+        if (! Schema::hasColumn('orders', 'verification_code_expires_at')) {
+            Schema::table('orders', function (Blueprint $table) {
+                $table->timestamp('verification_code_expires_at')->nullable()->after('verification_code')->comment('验证码过期时间');
+            });
+        }
     }
 
     /**
