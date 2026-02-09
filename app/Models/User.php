@@ -214,6 +214,8 @@ class User extends Authenticatable
 
     public function approve(User $reviewer, ?string $note = null): void
     {
+        $oldStatus = $this->registration_status;
+
         $this->update([
             'registration_status' => 'approved',
             'reviewer_id' => $reviewer->id,
@@ -221,11 +223,20 @@ class User extends Authenticatable
             'requires_review' => false,
         ]);
 
-        // Send approval notification/email
+        // Dispatch registration status changed event
+        event(new \App\Events\RegistrationStatusChanged(
+            $this,
+            $oldStatus,
+            'approved',
+            $reviewer,
+            $note
+        ));
     }
 
     public function reject(User $reviewer, string $reason): void
     {
+        $oldStatus = $this->registration_status;
+
         $this->update([
             'registration_status' => 'rejected',
             'reviewer_id' => $reviewer->id,
@@ -234,7 +245,14 @@ class User extends Authenticatable
             'requires_review' => false,
         ]);
 
-        // Send rejection notification/email
+        // Dispatch registration status changed event
+        event(new \App\Events\RegistrationStatusChanged(
+            $this,
+            $oldStatus,
+            'rejected',
+            $reviewer,
+            $reason
+        ));
     }
 
     /**

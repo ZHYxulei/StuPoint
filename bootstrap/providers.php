@@ -2,6 +2,7 @@
 
 return [
     App\Providers\AppServiceProvider::class,
+    App\Providers\EventServiceProvider::class,
     App\Providers\FolioServiceProvider::class,
     App\Providers\FortifyServiceProvider::class,
     App\Providers\HorizonServiceProvider::class,
