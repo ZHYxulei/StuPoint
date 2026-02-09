@@ -107,6 +107,9 @@ class FortifyServiceProvider extends ServiceProvider
             'subjects' => \App\Models\Subject::active()
                 ->ordered()
                 ->get(['id', 'name', 'code']),
+            'grades' => \App\Models\Grade::active()
+                ->orderBy('name')
+                ->get(['id', 'name']),
         ]));
 
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));

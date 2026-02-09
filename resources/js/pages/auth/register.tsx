@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import AuthLayout from '@/layouts/auth-layout';
 import { login } from '@/routes';
 import { useState } from 'react';
-import { UserPlus, GraduationCap, Baby, User } from 'lucide-react';
+import { UserPlus, GraduationCap, Baby, User, Users } from 'lucide-react';
 
 interface Role {
     value: string;
@@ -30,7 +30,13 @@ const roles: Role[] = [
         value: 'teacher',
         label: '教师',
         icon: GraduationCap,
-        description: '我是教师，需要选择授课班级和科目',
+        description: '我是教师，需要选择年级、授课班级和科目',
+    },
+    {
+        value: 'student_union_member',
+        label: '学生会成员',
+        icon: Users,
+        description: '我是学生会成员，需要填写部门和班级信息',
     },
     {
         value: 'parent',
@@ -51,12 +57,18 @@ interface Subject {
     code: string;
 }
 
+interface Grade {
+    id: number;
+    name: string;
+}
+
 interface PageProps {
     classes?: SchoolClass[];
     subjects?: Subject[];
+    grades?: Grade[];
 }
 
-export default function Register({ classes = [], subjects = [] }: PageProps) {
+export default function Register({ classes = [], subjects = [], grades = [] }: PageProps) {
     const [selectedRole, setSelectedRole] = useState<string>('student');
     const [selectedClasses, setSelectedClasses] = useState<number[]>([]);
     const [selectedSubjects, setSelectedSubjects] = useState<number[]>([]);
@@ -68,6 +80,8 @@ export default function Register({ classes = [], subjects = [] }: PageProps) {
         id_number: '',
         nickname: '',
         class_id: '',
+        grade_id: '',
+        student_union_department: '',
         email: '',
         phone: '',
         password: '',
@@ -90,6 +104,8 @@ export default function Register({ classes = [], subjects = [] }: PageProps) {
             id_number: '',
             nickname: '',
             class_id: '',
+            grade_id: '',
+            student_union_department: '',
             email: '',
             phone: '',
             password: '',
@@ -119,7 +135,7 @@ export default function Register({ classes = [], subjects = [] }: PageProps) {
 
             <div className="space-y-6">
                 {/* Role Selector */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     {roles.map((role) => {
                         const Icon = role.icon;
                         return (
@@ -208,13 +224,15 @@ export default function Register({ classes = [], subjects = [] }: PageProps) {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="class_id">所在班级</Label>
+                                        <Label htmlFor="class_id">
+                                            所在班级 <span className="text-destructive">*</span>
+                                        </Label>
                                         <Select
                                             value={data.class_id}
                                             onValueChange={(value) => setData('class_id', value)}
                                         >
                                             <SelectTrigger>
-                                                <SelectValue placeholder="选择班级（可选）" />
+                                                <SelectValue placeholder="选择班级" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {classes.map((cls) => (
@@ -225,6 +243,9 @@ export default function Register({ classes = [], subjects = [] }: PageProps) {
                                             </SelectContent>
                                         </Select>
                                         <InputError message={errors.class_id} />
+                                        <p className="text-xs text-muted-foreground">
+                                            注册后需要班主任审核通过才能使用
+                                        </p>
                                     </div>
 
                                     <div className="grid gap-2">
@@ -257,6 +278,31 @@ export default function Register({ classes = [], subjects = [] }: PageProps) {
                             {/* Teacher Fields */}
                             {selectedRole === 'teacher' && (
                                 <>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="grade_id">
+                                            所属年级 <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Select
+                                            value={data.grade_id}
+                                            onValueChange={(value) => setData('grade_id', value)}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="选择年级" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {grades.map((grade) => (
+                                                    <SelectItem key={grade.id} value={grade.id.toString()}>
+                                                        {grade.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.grade_id} />
+                                        <p className="text-xs text-muted-foreground">
+                                            注册后需要该年级的年级主任审核通过才能使用
+                                        </p>
+                                    </div>
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="teacher_email">
                                             电子邮箱 <span className="text-destructive">*</span>
@@ -343,6 +389,123 @@ export default function Register({ classes = [], subjects = [] }: PageProps) {
                                         </Label>
                                     </div>
                                     <InputError message={errors.is_head_teacher} />
+                                </>
+                            )}
+
+                            {/* Student Union Member Fields */}
+                            {selectedRole === 'student_union_member' && (
+                                <>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="id_number">
+                                            身份证号/学号 <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Input
+                                            id="id_number"
+                                            type="text"
+                                            required
+                                            autoFocus
+                                            autoComplete="off"
+                                            value={data.id_number}
+                                            onChange={(e) => setData('id_number', e.target.value)}
+                                            placeholder="身份证号或学号"
+                                        />
+                                        <InputError message={errors.id_number} />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="name">
+                                            姓名 <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            required
+                                            autoComplete="name"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            placeholder="真实姓名"
+                                        />
+                                        <InputError message={errors.name} />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="nickname">昵称</Label>
+                                        <Input
+                                            id="nickname"
+                                            type="text"
+                                            autoComplete="nickname"
+                                            value={data.nickname}
+                                            onChange={(e) => setData('nickname', e.target.value)}
+                                            placeholder="昵称（可选）"
+                                        />
+                                        <InputError message={errors.nickname} />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="class_id">
+                                            所在班级 <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Select
+                                            value={data.class_id}
+                                            onValueChange={(value) => setData('class_id', value)}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="选择班级" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {classes.map((cls) => (
+                                                    <SelectItem key={cls.id} value={cls.id.toString()}>
+                                                        {cls.full_name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.class_id} />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="student_union_department">
+                                            学生会部门 <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Input
+                                            id="student_union_department"
+                                            type="text"
+                                            required
+                                            autoComplete="organization"
+                                            value={data.student_union_department}
+                                            onChange={(e) => setData('student_union_department', e.target.value)}
+                                            placeholder="例如：学习部、文艺部、体育部"
+                                        />
+                                        <InputError message={errors.student_union_department} />
+                                        <p className="text-xs text-muted-foreground">
+                                            注册后需要班主任和年级主任双重审核通过才能使用
+                                        </p>
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="email_or_phone">
+                                            手机号或电子邮箱 <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Input
+                                            id="email_or_phone"
+                                            type="text"
+                                            required
+                                            autoComplete="username"
+                                            value={data.email || data.phone}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                if (value.includes('@')) {
+                                                    setData('email', value);
+                                                    setData('phone', '');
+                                                } else {
+                                                    setData('phone', value);
+                                                    setData('email', '');
+                                                }
+                                            }}
+                                            placeholder="手机号或电子邮箱"
+                                        />
+                                        <InputError message={errors.email || errors.phone} />
+                                    </div>
                                 </>
                             )}
 
