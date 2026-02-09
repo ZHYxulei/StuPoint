@@ -13,8 +13,14 @@ class SchoolClass extends Model
     protected $fillable = [
         'name',
         'grade',
+        'grade_id',
         'head_teacher_id',
     ];
+
+    public function grade(): BelongsTo
+    {
+        return $this->belongsTo(Grade::class);
+    }
 
     public function headTeacher(): BelongsTo
     {

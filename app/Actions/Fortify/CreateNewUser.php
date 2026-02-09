@@ -36,9 +36,13 @@ class CreateNewUser implements CreatesNewUsers
             // Prepare user data based on role
             $userData = $this->prepareUserData($input, $role);
 
+            // Set approval status based on role
+            $approvalData = $this->getApprovalData($role, $input);
+
             // Create user
             $user = User::create([
                 ...$userData,
+                ...$approvalData,
                 'password' => Hash::make($input['password']),
             ]);
 
@@ -61,12 +65,40 @@ class CreateNewUser implements CreatesNewUsers
     }
 
     /**
+     * Get approval status based on role.
+     */
+    protected function getApprovalData(string $role, array $input): array
+    {
+        return match ($role) {
+            'parent' => [
+                'registration_status' => 'approved',
+                'requires_review' => false,
+                'email_verified_at' => now(),
+            ],
+            'student' => [
+                'registration_status' => 'pending',
+                'requires_review' => true,
+                'class_id' => $input['class_id'] ?? null,
+            ],
+            'teacher' => [
+                'registration_status' => 'pending',
+                'requires_review' => true,
+                'grade_id' => $input['grade_id'] ?? null,
+            ],
+            default => [
+                'registration_status' => 'pending',
+                'requires_review' => false,
+            ],
+        };
+    }
+
+    /**
      * Get validation rules for specific role.
      */
     protected function getRulesForRole(string $role): array
     {
         $baseRules = [
-            'role' => ['required', 'in:student,teacher,parent'],
+            'role' => ['required', 'in:student,teacher,parent,student_union_member'],
             'password' => $this->passwordRules(),
         ];
 
@@ -76,7 +108,7 @@ class CreateNewUser implements CreatesNewUsers
                 'id_number' => ['required', 'string', 'max:50', 'unique:users,id_number'],
                 'name' => ['required', 'string', 'max:255'],
                 'nickname' => ['nullable', 'string', 'max:255'],
-                'class_id' => ['nullable', 'exists:classes,id'],
+                'class_id' => ['required', 'exists:classes,id'],
                 'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
                 'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
                 'email_or_phone' => ['required_without:email,phone', function ($attribute, $value, $fail) {
@@ -95,6 +127,9 @@ class CreateNewUser implements CreatesNewUsers
             'teacher' => [
                 ...$baseRules,
                 'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+                'name' => ['required', 'string', 'max:255'],
+                'nickname' => ['nullable', 'string', 'max:255'],
+                'grade_id' => ['required', 'exists:grades,id'],
                 'teaching_classes' => ['nullable', 'array'],
                 'teaching_classes.*' => ['exists:classes,id'],
                 'subjects' => ['nullable', 'array'],
@@ -103,6 +138,27 @@ class CreateNewUser implements CreatesNewUsers
             ],
             'parent' => [
                 ...$baseRules,
+                'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+                'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
+                'email_or_phone' => ['required_without:email,phone', function ($attribute, $value, $fail) {
+                    if (! $value) {
+                        return;
+                    }
+                    $isEmail = filter_var($value, FILTER_VALIDATE_EMAIL);
+                    $isPhone = preg_match('/^[0-9+\s\-]+$/', $value);
+
+                    if (! $isEmail && ! $isPhone) {
+                        $fail('请输入有效的手机号或电子邮箱');
+                    }
+                }],
+            ],
+            'student_union_member' => [
+                ...$baseRules,
+                'id_number' => ['required', 'string', 'max:50', 'unique:users,id_number'],
+                'name' => ['required', 'string', 'max:255'],
+                'nickname' => ['nullable', 'string', 'max:255'],
+                'class_id' => ['required', 'exists:classes,id'],
+                'student_union_department' => ['required', 'string', 'max:100'],
                 'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
                 'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
                 'email_or_phone' => ['required_without:email,phone', function ($attribute, $value, $fail) {
@@ -135,17 +191,30 @@ class CreateNewUser implements CreatesNewUsers
                 'nickname' => $input['nickname'] ?? null,
                 'grade' => null, // Will be set from class if provided
                 'class' => null, // Will be set from class if provided
+                'class_id' => $input['class_id'] ?? null,
             ],
             'teacher' => [
-                'name' => null, // Will be set later
+                'name' => $input['name'] ?? null,
                 'email' => $input['email'],
                 'phone' => null,
                 'is_head_teacher' => $input['is_head_teacher'] ?? false,
+                'grade_id' => $input['grade_id'] ?? null,
             ],
             'parent' => [
                 'name' => null,
                 'email' => $input['email'] ?: null,
                 'phone' => $input['phone'] ?: null,
+            ],
+            'student_union_member' => [
+                'name' => $input['name'] ?? null,
+                'email' => $input['email'] ?: null,
+                'phone' => $input['phone'] ?: null,
+                'id_number' => $input['id_number'],
+                'nickname' => $input['nickname'] ?? null,
+                'student_union_department' => $input['student_union_department'],
+                'class_id' => $input['class_id'],
+                'grade' => null,
+                'class' => null,
             ],
             default => [],
         };
@@ -159,6 +228,7 @@ class CreateNewUser implements CreatesNewUsers
         match ($role) {
             'student' => $this->handleStudentData($user, $input),
             'teacher' => $this->handleTeacherData($user, $input),
+            'student_union_member' => $this->handleStudentUnionData($user, $input),
             'parent' => null,
             default => null,
         };
@@ -182,6 +252,30 @@ class CreateNewUser implements CreatesNewUsers
                 $user->update([
                     'grade' => $class->grade,
                     'class' => $class->name,
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Handle student union member data.
+     */
+    protected function handleStudentUnionData(User $user, array $input): void
+    {
+        // Assign student union member to class if provided
+        if (! empty($input['class_id'])) {
+            $class = SchoolClass::find($input['class_id']);
+            if ($class) {
+                ClassStudent::create([
+                    'class_id' => $class->id,
+                    'student_id' => $user->id,
+                ]);
+
+                // Update user's grade and class from the school class
+                $user->update([
+                    'grade' => $class->grade,
+                    'class' => $class->name,
+                    'grade_id' => $class->grade_id,
                 ]);
             }
         }
