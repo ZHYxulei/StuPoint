@@ -277,15 +277,15 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                                 查看详情
                                             </Button>
                                         </Link>
+                                        {order.status === 'pending' && (
+                                            <UpdateStatusDialog orderId={order.id} currentStatus={order.status} onSuccess={() => setSuccessMessage('订单状态已更新')} />
+                                        )}
                                         {canVerifyOrder && !order.verified_at && order.status !== 'cancelled' && (
                                             <VerifyOrderDialog
                                                 orderId={order.id}
                                                 orderNo={order.order_no}
                                                 onSuccess={() => setSuccessMessage('订单核销成功')}
                                             />
-                                        )}
-                                        {order.status === 'pending' && (
-                                            <UpdateStatusDialog orderId={order.id} currentStatus={order.status} onSuccess={() => setSuccessMessage('订单状态已更新')} />
                                         )}
                                     </div>
                                 </div>
