@@ -58,13 +58,20 @@ class FortifyServiceProvider extends ServiceProvider
             if ($user->registration_status === 'pending') {
                 \Illuminate\Support\Facades\Session::flash('error', '您的账号正在审核中，暂时无法登录');
 
-                return false;
+                // Throw validation exception to show proper error message
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    Fortify::username() => '您的账号正在审核中，暂时无法登录',
+                ]);
             }
 
             if ($user->registration_status === 'rejected') {
-                \Illuminate\Support\Facades\Session::flash('error', '您的账号审核未通过，无法登录');
+                $reason = $user->rejection_reason ?: '未提供具体原因';
+                \Illuminate\Support\Facades\Session::flash('error', "您的账号审核未通过，无法登录。原因：{$reason}");
 
-                return false;
+                // Throw validation exception to show proper error message
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    Fortify::username() => "您的账号审核未通过。原因：{$reason}",
+                ]);
             }
 
             return $user;
