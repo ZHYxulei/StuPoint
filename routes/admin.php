@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SubjectController;
+use App\Http\Controllers\Admin\UserApprovalController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,15 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::put('/plugin-sources/{id}', [SettingsController::class, 'updatePluginSource'])->name('plugin-sources.update');
         Route::delete('/plugin-sources/{id}', [SettingsController::class, 'deletePluginSource'])->name('plugin-sources.delete');
         Route::post('/plugin-sources/{id}/test', [SettingsController::class, 'testPluginSource'])->name('plugin-sources.test');
+    });
+
+    // User Approvals
+    Route::prefix('approvals')->name('approvals.')->group(function () {
+        Route::get('/', [UserApprovalController::class, 'index'])->name('index');
+        Route::get('/all', [UserApprovalController::class, 'all'])->name('all');
+        Route::get('/{id}', [UserApprovalController::class, 'show'])->name('show');
+        Route::post('/{id}/approve', [UserApprovalController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [UserApprovalController::class, 'reject'])->name('reject');
     });
 
     // User Management
