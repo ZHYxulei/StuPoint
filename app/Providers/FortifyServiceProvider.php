@@ -40,6 +40,35 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+
+        // Customize authentication to check registration status
+        Fortify::authenticateUsing(function (Request $request) {
+            $request->validate([
+                Fortify::username() => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            $user = \App\Models\User::where(Fortify::username(), $request->input(Fortify::username()))->first();
+
+            if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+                return false;
+            }
+
+            // Check registration status
+            if ($user->registration_status === 'pending') {
+                \Illuminate\Support\Facades\Session::flash('error', '您的账号正在审核中，暂时无法登录');
+
+                return false;
+            }
+
+            if ($user->registration_status === 'rejected') {
+                \Illuminate\Support\Facades\Session::flash('error', '您的账号审核未通过，无法登录');
+
+                return false;
+            }
+
+            return $user;
+        });
     }
 
     /**
