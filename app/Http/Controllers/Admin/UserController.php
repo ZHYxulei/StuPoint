@@ -268,6 +268,7 @@ class UserController extends Controller
     public function adjustPoints(Request $request, string $id)
     {
         $user = User::findOrFail($id);
+        $operator = $request->user();
 
         $validated = $request->validate([
             'type' => 'required|in:add,deduct',
@@ -275,7 +276,11 @@ class UserController extends Controller
             'reason' => 'required|string|max:500',
         ]);
 
+        // Check if operator has permission to modify this user's points
         $pointService = app(\App\Services\PointService::class);
+        if (! $pointService->canModifyPoints($operator, $user)) {
+            return back()->with('error', '您没有权限修改该用户的积分');
+        }
 
         if ($validated['type'] === 'add') {
             $pointService->addPoints(
@@ -284,7 +289,8 @@ class UserController extends Controller
                 'manual_adjust',
                 [
                     'description' => $validated['reason'],
-                    'operator_id' => $request->user()->id,
+                    'operator_id' => $operator->id,
+                    'operator_type' => $operator->roles->first()?->slug ?? 'unknown',
                 ]
             );
         } else {
@@ -295,7 +301,8 @@ class UserController extends Controller
                     'manual_adjust',
                     [
                         'description' => $validated['reason'],
-                        'operator_id' => $request->user()->id,
+                        'operator_id' => $operator->id,
+                        'operator_type' => $operator->roles->first()?->slug ?? 'unknown',
                     ]
                 );
             } catch (\Exception $e) {

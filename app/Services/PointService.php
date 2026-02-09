@@ -108,4 +108,40 @@ class PointService
 
         return $query->limit($limit)->get();
     }
+
+    /**
+     * Check if operator can modify target user's points.
+     * Student union members can modify points of students from other classes.
+     */
+    public function canModifyPoints(User $operator, User $target): bool
+    {
+        // Users cannot modify their own points through this method
+        if ($operator->id === $target->id) {
+            return false;
+        }
+
+        // Only approved users can modify points
+        if ($operator->registration_status !== 'approved') {
+            return false;
+        }
+
+        // Student union members can modify any student's points
+        if ($operator->hasRole('student_union_member') && $target->hasRole('student')) {
+            return true;
+        }
+
+        // Teachers can modify points of students in their teaching classes
+        if ($operator->hasRole('teacher') && $target->hasRole('student')) {
+            $teachingClassIds = $operator->teachingClasses()->pluck('classes.id')->toArray();
+
+            return in_array($target->class_id, $teachingClassIds);
+        }
+
+        // Admins can modify anyone's points
+        if ($operator->hasRole(['admin', 'super_admin'])) {
+            return true;
+        }
+
+        return false;
+    }
 }
