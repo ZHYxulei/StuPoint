@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ClassManagementController;
+use App\Http\Controllers\Admin\GradeController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderVerificationController;
 use App\Http\Controllers\Admin\PluginController;
@@ -75,6 +76,17 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::post('/{id}/disable', [PluginController::class, 'disable'])->name('disable');
         Route::delete('/{id}', [PluginController::class, 'uninstall'])->name('uninstall');
         Route::put('/{id}/config', [PluginController::class, 'updateConfig'])->name('updateConfig');
+    });
+
+    // Grade Management
+    Route::prefix('grades')->name('grades.')->group(function () {
+        Route::get('/', [GradeController::class, 'index'])->name('index');
+        Route::get('/create', [GradeController::class, 'create'])->name('create');
+        Route::post('/', [GradeController::class, 'store'])->name('store');
+        Route::get('/{id}', [GradeController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [GradeController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [GradeController::class, 'update'])->name('update');
+        Route::delete('/{id}', [GradeController::class, 'destroy'])->name('destroy');
     });
 
     // Class Management
