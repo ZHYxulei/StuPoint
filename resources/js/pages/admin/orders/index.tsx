@@ -318,7 +318,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
 }
 
 function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | number; orderNo: string; onSuccess: () => void }) {
-    const { data, setData, post, processing, reset, errors } = useForm({
+    const { data, setData, processing, reset } = useForm({
         method: 'code' as VerificationMethod,
         code: '',
         password: '',
@@ -329,6 +329,7 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
 
     const [activeTab, setActiveTab] = useState<VerificationMethod>('code');
     const [codeDigits, setCodeDigits] = useState(['', '', '', '', '', '']);
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const codeInputRefs = Array(6).fill(null).map(() => useState<HTMLInputElement | null>(null));
 
     const handleCodeChange = (index: number, value: string) => {
@@ -378,18 +379,58 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
         codeInputRefs[lastIndex][0]?.focus();
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setData('method', activeTab);
-        post(`/admin/orders/${orderId}/verify`, {
-            onSuccess: () => {
+        setErrors({}); // Clear previous errors
+
+        const url = `/admin/orders/${orderId}/verify`;
+        console.log('Verification request:', { url, orderId, activeTab, data });
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+                },
+                body: JSON.stringify({
+                    method: activeTab,
+                    code: data.code,
+                    password: data.password,
+                    id_number: data.id_number,
+                    name: data.name,
+                    admin_password: data.admin_password,
+                }),
+            });
+
+            const result = await response.json();
+            console.log('Verification response:', result);
+
+            if (result.success) {
                 onSuccess();
                 setTimeout(() => window.location.reload(), 500);
-            },
-            onError: () => {
-                // Keep the dialog open to show errors
-            },
-        });
+            } else {
+                // Handle validation errors
+                const newErrors: Record<string, string> = {};
+                if (result.errors) {
+                    Object.keys(result.errors).forEach((key) => {
+                        const errorArray = result.errors[key];
+                        newErrors[key] = Array.isArray(errorArray) ? errorArray[0] : errorArray;
+                    });
+                }
+
+                // Add global error message
+                if (result.message) {
+                    newErrors.__all__ = result.message;
+                }
+
+                setErrors(newErrors);
+            }
+        } catch (error) {
+            console.error('Verification failed:', error);
+            setErrors({ __all__: '核销失败，请稍后重试' });
+        }
     };
 
     const handleOpenChange = (open: boolean) => {
@@ -397,6 +438,7 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
             // Reset form when dialog closes
             reset();
             setCodeDigits(['', '', '', '', '', '']);
+            setErrors({});
         }
     };
 
@@ -428,11 +470,7 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
                     <Tabs value={activeTab} onValueChange={(v) => {
                         setActiveTab(v as VerificationMethod);
                         // Clear errors when switching tabs
-                        if (errors.code) delete errors.code;
-                        if (errors.password) delete errors.password;
-                        if (errors.id_number) delete errors.id_number;
-                        if (errors.name) delete errors.name;
-                        if (errors.admin_password) delete errors.admin_password;
+                        setErrors({});
                     }}>
                         <TabsList className="grid grid-cols-4 w-full">
                             <TabsTrigger value="code" className="text-xs">验证码</TabsTrigger>

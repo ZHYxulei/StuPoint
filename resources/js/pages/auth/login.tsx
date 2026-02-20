@@ -24,10 +24,10 @@ export default function Login({
 }: Props) {
     return (
         <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
+            title="登录您的账户"
+            description="请输入邮箱和密码登录"
         >
-            <Head title="Log in" />
+            <Head title="登录" />
 
             <Form
                 {...store.form()}
@@ -38,7 +38,7 @@ export default function Login({
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">邮箱地址</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -54,14 +54,14 @@ export default function Login({
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
+                                    <Label htmlFor="password">密码</Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
                                             className="ml-auto text-sm"
                                             tabIndex={5}
                                         >
-                                            Forgot password?
+                                            忘记密码？
                                         </TextLink>
                                     )}
                                 </div>
@@ -72,7 +72,7 @@ export default function Login({
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="Password"
+                                    placeholder="密码"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -83,7 +83,7 @@ export default function Login({
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <Label htmlFor="remember">记住我</Label>
                             </div>
 
                             <Button
@@ -94,15 +94,15 @@ export default function Login({
                                 data-test="login-button"
                             >
                                 {processing && <Spinner />}
-                                Log in
+                                登录
                             </Button>
                         </div>
 
                         {canRegister && (
                             <div className="text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
+                                还没有账户？{' '}
                                 <TextLink href={register()} tabIndex={5}>
-                                    Sign up
+                                    立即注册
                                 </TextLink>
                             </div>
                         )}
