@@ -16,6 +16,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     // System Settings
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');
+        Route::post('/site', [SettingsController::class, 'updateSiteSettings'])->name('site.update');
+        Route::post('/contact', [SettingsController::class, 'updateContactSettings'])->name('contact.update');
+        Route::post('/footer', [SettingsController::class, 'updateFooterSettings'])->name('footer.update');
+        Route::post('/social', [SettingsController::class, 'updateSocialSettings'])->name('social.update');
         Route::post('/plugin-sources', [SettingsController::class, 'storePluginSource'])->name('plugin-sources.store');
         Route::put('/plugin-sources/{id}', [SettingsController::class, 'updatePluginSource'])->name('plugin-sources.update');
         Route::delete('/plugin-sources/{id}', [SettingsController::class, 'deletePluginSource'])->name('plugin-sources.delete');

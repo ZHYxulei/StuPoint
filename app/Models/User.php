@@ -73,6 +73,7 @@ class User extends Authenticatable
             'is_head_teacher' => 'boolean',
             'requires_review' => 'boolean',
             'reviewed_at' => 'datetime',
+            'last_login_at' => 'datetime',
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PluginSource;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,8 +24,32 @@ class SettingsController extends Controller
 
         $pluginSources = PluginSource::ordered()->get();
 
+        // Get site settings
+        $siteSettings = Setting::where('group', 'site')->get()->mapWithKeys(function ($setting) {
+            return [$setting->key => $setting->value];
+        });
+
+        // Get contact settings
+        $contactSettings = Setting::where('group', 'contact')->get()->mapWithKeys(function ($setting) {
+            return [$setting->key => $setting->value];
+        });
+
+        // Get footer settings
+        $footerSettings = Setting::where('group', 'footer')->get()->mapWithKeys(function ($setting) {
+            return [$setting->key => $setting->value];
+        });
+
+        // Get social settings
+        $socialSettings = Setting::where('group', 'social')->get()->mapWithKeys(function ($setting) {
+            return [$setting->key => $setting->value];
+        });
+
         return inertia('admin/settings/index', [
             'pluginSources' => $pluginSources,
+            'siteSettings' => $siteSettings,
+            'contactSettings' => $contactSettings,
+            'footerSettings' => $footerSettings,
+            'socialSettings' => $socialSettings,
         ]);
     }
 
@@ -115,5 +140,110 @@ class SettingsController extends Controller
         // TODO: Implement actual API test
         // For now, just return success
         return back()->with('success', '连接测试成功');
+    }
+
+    /**
+     * Update site settings.
+     */
+    public function updateSiteSettings(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        $validated = $request->validate([
+            'site_name' => 'nullable|string|max:255',
+            'site_description' => 'nullable|string|max:500',
+            'site_keywords' => 'nullable|string|max:255',
+            'site_logo' => 'nullable|string|max:500',
+            'site_favicon' => 'nullable|string|max:500',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            if ($value !== null) {
+                Setting::set($key, $value, 'string', 'site');
+            }
+        }
+
+        return back()->with('success', '站点设置已更新');
+    }
+
+    /**
+     * Update contact settings.
+     */
+    public function updateContactSettings(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        $validated = $request->validate([
+            'contact_email' => 'nullable|email|max:255',
+            'contact_phone' => 'nullable|string|max:50',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            if ($value !== null) {
+                Setting::set($key, $value, 'string', 'contact');
+            }
+        }
+
+        return back()->with('success', '联系信息已更新');
+    }
+
+    /**
+     * Update footer settings.
+     */
+    public function updateFooterSettings(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        $validated = $request->validate([
+            'footer_copyright' => 'nullable|string|max:500',
+            'footer_icp' => 'nullable|string|max:100',
+            'footer_police' => 'nullable|string|max:100',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            if ($value !== null) {
+                Setting::set($key, $value, 'string', 'footer');
+            }
+        }
+
+        return back()->with('success', '页脚设置已更新');
+    }
+
+    /**
+     * Update social settings.
+     */
+    public function updateSocialSettings(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        $validated = $request->validate([
+            'social_wechat' => 'nullable|string|max:255',
+            'social_weibo' => 'nullable|string|max:255',
+            'social_qq' => 'nullable|string|max:50',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            if ($value !== null) {
+                Setting::set($key, $value, 'string', 'social');
+            }
+        }
+
+        return back()->with('success', '社交媒体设置已更新');
     }
 }

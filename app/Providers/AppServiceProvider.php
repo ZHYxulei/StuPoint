@@ -3,12 +3,14 @@
 namespace App\Providers;
 
 use App\Listeners\LogUserLogin;
+use App\Services\SettingsService;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureLocale();
         $this->configureEvents();
+        $this->configureViewShare();
     }
 
     protected function configureDefaults(): void
@@ -69,5 +72,30 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register login event listener
         Event::listen(Login::class, LogUserLogin::class);
+    }
+
+    protected function configureViewShare(): void
+    {
+        // Share site settings with all views
+        View::composer('*', function ($view) {
+            $view->with('siteSettings', [
+                'site_name' => SettingsService::getSiteName(),
+                'site_description' => SettingsService::get('site_description'),
+                'site_keywords' => SettingsService::get('site_keywords'),
+                'site_logo' => SettingsService::getSiteLogo(),
+                'site_favicon' => SettingsService::getSiteFavicon(),
+            ]);
+
+            $view->with('footerSettings', [
+                'copyright' => SettingsService::getFooterCopyright(),
+                'icp' => SettingsService::getFooterIcp(),
+                'police' => SettingsService::getFooterPolice(),
+            ]);
+
+            $view->with('contactSettings', [
+                'email' => SettingsService::getContactEmail(),
+                'phone' => SettingsService::getContactPhone(),
+            ]);
+        });
     }
 }

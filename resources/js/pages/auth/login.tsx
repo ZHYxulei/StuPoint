@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, router } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
-import { register } from '@/routes';
+import { register, dashboard } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 
@@ -23,16 +23,16 @@ export default function Login({
     canRegister,
 }: Props) {
     return (
-        <AuthLayout
-            title="登录您的账户"
-            description="请输入邮箱和密码登录"
-        >
+        <AuthLayout title="登录您的账户" description="请输入邮箱和密码登录">
             <Head title="登录" />
 
             <Form
                 {...store.form()}
                 resetOnSuccess={['password']}
                 className="flex flex-col gap-6"
+                onSuccess={() => {
+                    router.visit(dashboard().url);
+                }}
             >
                 {({ processing, errors }) => (
                     <>

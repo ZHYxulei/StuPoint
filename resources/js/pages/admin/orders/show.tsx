@@ -1,6 +1,12 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +26,21 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Package, User, MapPin, Phone, Calendar, Coins, Clock, CheckCircle2, AlertCircle, Shield, ShieldCheck, ShieldX } from 'lucide-react';
+import {
+    ArrowLeft,
+    Package,
+    User,
+    MapPin,
+    Phone,
+    Calendar,
+    Coins,
+    Clock,
+    CheckCircle2,
+    AlertCircle,
+    Shield,
+    ShieldCheck,
+    ShieldX,
+} from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
 
@@ -84,12 +104,21 @@ interface PageProps {
 
 type VerificationMethod = 'code' | 'password' | 'id_card' | 'direct';
 
-const statusConfig: Record<string, {
-    label: string;
-    variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning';
-    icon: React.ElementType;
-    color: string;
-}> = {
+const statusConfig: Record<
+    string,
+    {
+        label: string;
+        variant:
+            | 'default'
+            | 'secondary'
+            | 'destructive'
+            | 'outline'
+            | 'success'
+            | 'warning';
+        icon: React.ElementType;
+        color: string;
+    }
+> = {
     pending: {
         label: '待处理',
         variant: 'warning',
@@ -128,26 +157,41 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '订单详情', href: '' },
 ];
 
-export default function OrderShow({ order: initialOrder, verification_code, verification_code_expired }: PageProps) {
+export default function OrderShow({
+    order: initialOrder,
+    verification_code,
+    verification_code_expired,
+}: PageProps) {
     const { auth } = usePage<SharedData>().props;
     const [localOrder, setLocalOrder] = React.useState(initialOrder);
     const currentUser = auth.user;
-    const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+    const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
     // Check if user has permission to verify orders (admin, head_teacher, grade_director, etc.)
-    const canVerifyOrder = currentUser && (
-        currentUser.email === 'admin@example.com' ||
-        currentUser.is_head_teacher ||
-        (currentUser as any).roles?.some((r: any) => ['admin', 'head_teacher', 'grade_director'].includes(r.slug))
-    );
+    const canVerifyOrder =
+        currentUser &&
+        (currentUser.email === 'admin@example.com' ||
+            currentUser.is_head_teacher ||
+            (currentUser as any).roles?.some((r: any) =>
+                ['admin', 'head_teacher', 'grade_director'].includes(r.slug),
+            ));
 
     // Computed values that will update when localOrder changes
-    const isOrderVerified = React.useMemo(() => !!localOrder.verified_at, [localOrder.verified_at]);
-    const canVerifyThisOrder = React.useMemo(
-        () => canVerifyOrder && !isOrderVerified && localOrder.status !== 'cancelled',
-        [canVerifyOrder, isOrderVerified, localOrder.status]
+    const isOrderVerified = React.useMemo(
+        () => !!localOrder.verified_at,
+        [localOrder.verified_at],
     );
-    const StatusIcon = React.useMemo(() => statusConfig[localOrder.status].icon, [localOrder.status]);
+    const canVerifyThisOrder = React.useMemo(
+        () =>
+            canVerifyOrder &&
+            !isOrderVerified &&
+            localOrder.status !== 'cancelled',
+        [canVerifyOrder, isOrderVerified, localOrder.status],
+    );
+    const StatusIcon = React.useMemo(
+        () => statusConfig[localOrder.status].icon,
+        [localOrder.status],
+    );
 
     // Verification form state
     const verificationForm = useForm({
@@ -159,12 +203,10 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
         admin_password: '',
     });
 
-    const [activeTab, setActiveTab] = React.useState<VerificationMethod>('code');
-    const [showDirectVerifyDialog, setShowDirectVerifyDialog] = React.useState(false);
-
-    const [isVerifying, setIsVerifying] = React.useState(false);
-    const [verificationError, setVerificationError] = React.useState('');
-    const [verificationSuccess, setVerificationSuccess] = React.useState('');
+    const [activeTab, setActiveTab] =
+        React.useState<VerificationMethod>('code');
+    const [showDirectVerifyDialog, setShowDirectVerifyDialog] =
+        React.useState(false);
 
     const [isVerifying, setIsVerifying] = React.useState(false);
     const [verificationError, setVerificationError] = React.useState('');
@@ -183,20 +225,28 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
         setVerificationSuccess('');
 
         try {
-            const response = await fetch(`/admin/orders/${localOrder.id}/verify`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+            const response = await fetch(
+                `/admin/orders/${localOrder.id}/verify`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN':
+                            (
+                                document.querySelector(
+                                    'meta[name="csrf-token"]',
+                                ) as HTMLMetaElement
+                            )?.content || '',
+                    },
+                    body: JSON.stringify({
+                        method: activeTab,
+                        code: verificationForm.data.code,
+                        password: verificationForm.data.password,
+                        id_number: verificationForm.data.id_number,
+                        name: verificationForm.data.name,
+                    }),
                 },
-                body: JSON.stringify({
-                    method: activeTab,
-                    code: verificationForm.data.code,
-                    password: verificationForm.data.password,
-                    id_number: verificationForm.data.id_number,
-                    name: verificationForm.data.name,
-                }),
-            });
+            );
 
             const data = await response.json();
 
@@ -229,17 +279,25 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
         setVerificationSuccess('');
 
         try {
-            const response = await fetch(`/admin/orders/${localOrder.id}/verify`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+            const response = await fetch(
+                `/admin/orders/${localOrder.id}/verify`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN':
+                            (
+                                document.querySelector(
+                                    'meta[name="csrf-token"]',
+                                ) as HTMLMetaElement
+                            )?.content || '',
+                    },
+                    body: JSON.stringify({
+                        method: 'direct',
+                        admin_password: verificationForm.data.admin_password,
+                    }),
                 },
-                body: JSON.stringify({
-                    method: 'direct',
-                    admin_password: verificationForm.data.admin_password,
-                }),
-            });
+            );
 
             const data = await response.json();
 
@@ -288,9 +346,14 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                         </Button>
                     </Link>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl font-bold">{localOrder.order_no}</h1>
-                        <Badge variant={statusConfig[localOrder.status].variant} className="text-sm px-3 py-1">
-                            <StatusIcon className="h-4 w-4 mr-1" />
+                        <h1 className="text-2xl font-bold">
+                            {localOrder.order_no}
+                        </h1>
+                        <Badge
+                            variant={statusConfig[localOrder.status].variant}
+                            className="px-3 py-1 text-sm"
+                        >
+                            <StatusIcon className="mr-1 h-4 w-4" />
                             {statusConfig[localOrder.status].label}
                         </Badge>
                     </div>
@@ -298,7 +361,7 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     {/* Main Content */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="space-y-6 lg:col-span-2">
                         {/* Product Info */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
@@ -306,14 +369,21 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                             </CardHeader>
                             <CardContent>
                                 <div className="flex gap-4">
-                                    <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center shrink-0">
+                                    <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-lg bg-muted">
                                         <Package className="h-16 w-16 text-muted-foreground" />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-lg mb-2">{localOrder.product.name}</h3>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="mb-2 text-lg font-semibold">
+                                            {localOrder.product.name}
+                                        </h3>
                                         <div className="flex items-center gap-2">
                                             {localOrder.product.category && (
-                                                <Badge variant="outline">{localOrder.product.category.name}</Badge>
+                                                <Badge variant="outline">
+                                                    {
+                                                        localOrder.product
+                                                            .category.name
+                                                    }
+                                                </Badge>
                                             )}
                                         </div>
                                     </div>
@@ -328,10 +398,14 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-start gap-3">
-                                    <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                    <User className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
-                                        <p className="font-medium">{localOrder.user.name}</p>
-                                        <p className="text-sm text-muted-foreground">{localOrder.user.email}</p>
+                                        <p className="font-medium">
+                                            {localOrder.user.name}
+                                        </p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {localOrder.user.email}
+                                        </p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -344,26 +418,38 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-start gap-3">
-                                    <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                    <User className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-sm text-muted-foreground">收货人</p>
-                                        <p className="font-medium">{localOrder.shipping_info.name}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            收货人
+                                        </p>
+                                        <p className="font-medium">
+                                            {localOrder.shipping_info.name}
+                                        </p>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="flex items-start gap-3">
-                                    <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                    <Phone className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-sm text-muted-foreground">联系电话</p>
-                                        <p className="font-medium">{localOrder.shipping_info.phone}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            联系电话
+                                        </p>
+                                        <p className="font-medium">
+                                            {localOrder.shipping_info.phone}
+                                        </p>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="flex items-start gap-3">
-                                    <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                    <MapPin className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-sm text-muted-foreground">收货地址</p>
-                                        <p className="font-medium whitespace-pre-wrap">{localOrder.shipping_info.address}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            收货地址
+                                        </p>
+                                        <p className="font-medium whitespace-pre-wrap">
+                                            {localOrder.shipping_info.address}
+                                        </p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -376,40 +462,69 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {localOrder.statusHistory && localOrder.statusHistory.length > 0 ? (
-                                        localOrder.statusHistory.map((history, index) => (
-                                            <div key={history.id} className="flex gap-3">
-                                                <div className="flex flex-col items-center">
-                                                    <div className={`w-3 h-3 rounded-full ${
-                                                        index === 0 ? 'bg-primary' : 'bg-muted'
-                                                    }`} />
-                                                    {index < localOrder.statusHistory.length - 1 && (
-                                                        <div className="w-0.5 flex-1 bg-muted mt-1" />
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 pb-4">
-                                                    <div className="flex items-center gap-2 mb-1">
-                                                        <p className="font-medium capitalize">
-                                                            {history.to_status.replace('_', ' ')}
-                                                        </p>
-                                                        <Badge variant="outline" className="text-xs">
-                                                            <Calendar className="h-3 w-3 mr-1" />
-                                                            {new Date(history.created_at).toLocaleString()}
-                                                        </Badge>
+                                    {localOrder.statusHistory &&
+                                    localOrder.statusHistory.length > 0 ? (
+                                        localOrder.statusHistory.map(
+                                            (history, index) => (
+                                                <div
+                                                    key={history.id}
+                                                    className="flex gap-3"
+                                                >
+                                                    <div className="flex flex-col items-center">
+                                                        <div
+                                                            className={`h-3 w-3 rounded-full ${
+                                                                index === 0
+                                                                    ? 'bg-primary'
+                                                                    : 'bg-muted'
+                                                            }`}
+                                                        />
+                                                        {index <
+                                                            localOrder
+                                                                .statusHistory
+                                                                .length -
+                                                                1 && (
+                                                            <div className="mt-1 w-0.5 flex-1 bg-muted" />
+                                                        )}
                                                     </div>
-                                                    {history.note && (
-                                                        <p className="text-sm text-muted-foreground">{history.note}</p>
-                                                    )}
-                                                    {history.operator && (
-                                                        <p className="text-xs text-muted-foreground mt-1">
-                                                            操作者: {history.operator.name}
-                                                        </p>
-                                                    )}
+                                                    <div className="flex-1 pb-4">
+                                                        <div className="mb-1 flex items-center gap-2">
+                                                            <p className="font-medium capitalize">
+                                                                {history.to_status.replace(
+                                                                    '_',
+                                                                    ' ',
+                                                                )}
+                                                            </p>
+                                                            <Badge
+                                                                variant="outline"
+                                                                className="text-xs"
+                                                            >
+                                                                <Calendar className="mr-1 h-3 w-3" />
+                                                                {new Date(
+                                                                    history.created_at,
+                                                                ).toLocaleString()}
+                                                            </Badge>
+                                                        </div>
+                                                        {history.note && (
+                                                            <p className="text-sm text-muted-foreground">
+                                                                {history.note}
+                                                            </p>
+                                                        )}
+                                                        {history.operator && (
+                                                            <p className="mt-1 text-xs text-muted-foreground">
+                                                                操作者:{' '}
+                                                                {
+                                                                    history
+                                                                        .operator
+                                                                        .name
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))
+                                            ),
+                                        )
                                     ) : (
-                                        <p className="text-sm text-muted-foreground text-center py-4">
+                                        <p className="py-4 text-center text-sm text-muted-foreground">
                                             暂无订单状态历史记录
                                         </p>
                                     )}
@@ -426,33 +541,58 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                                 <CardTitle>订单摘要</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">订单号</span>
-                                    <span className="font-mono font-medium text-sm">{localOrder.order_no}</span>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        订单号
+                                    </span>
+                                    <span className="font-mono text-sm font-medium">
+                                        {localOrder.order_no}
+                                    </span>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">下单时间</span>
-                                    <span className="text-sm">{new Date(localOrder.created_at).toLocaleString()}</span>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        下单时间
+                                    </span>
+                                    <span className="text-sm">
+                                        {new Date(
+                                            localOrder.created_at,
+                                        ).toLocaleString()}
+                                    </span>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">最后更新</span>
-                                    <span className="text-sm">{new Date(localOrder.updated_at).toLocaleString()}</span>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        最后更新
+                                    </span>
+                                    <span className="text-sm">
+                                        {new Date(
+                                            localOrder.updated_at,
+                                        ).toLocaleString()}
+                                    </span>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">消耗积分</span>
-                                    <div className="flex items-center gap-1 text-primary font-bold text-lg">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        消耗积分
+                                    </span>
+                                    <div className="flex items-center gap-1 text-lg font-bold text-primary">
                                         <Coins className="h-5 w-5" />
                                         {localOrder.points_spent.toLocaleString()}
                                     </div>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">订单状态</span>
-                                    <Badge variant={statusConfig[localOrder.status].variant}>
-                                        <StatusIcon className="h-3 w-3 mr-1" />
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        订单状态
+                                    </span>
+                                    <Badge
+                                        variant={
+                                            statusConfig[localOrder.status]
+                                                .variant
+                                        }
+                                    >
+                                        <StatusIcon className="mr-1 h-3 w-3" />
                                         {statusConfig[localOrder.status].label}
                                     </Badge>
                                 </div>
@@ -463,15 +603,19 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                         {localOrder.third_party_order_id && (
                             <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader>
-                                    <CardTitle className="text-base flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-base">
                                         <Package className="h-4 w-4" />
                                         第三方订单
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-2">
-                                        <p className="text-sm text-muted-foreground">外部订单ID</p>
-                                        <p className="font-mono text-sm">{localOrder.third_party_order_id}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            外部订单ID
+                                        </p>
+                                        <p className="font-mono text-sm">
+                                            {localOrder.third_party_order_id}
+                                        </p>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -481,12 +625,14 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                         {canVerifyOrder && (
                             <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader>
-                                    <CardTitle className="text-base flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-base">
                                         <Shield className="h-4 w-4" />
                                         订单核销
                                     </CardTitle>
                                     <CardDescription>
-                                        {isOrderVerified ? '该订单已完成核销' : '请选择核销方式'}
+                                        {isOrderVerified
+                                            ? '该订单已完成核销'
+                                            : '请选择核销方式'}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -494,139 +640,317 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                                                 <ShieldCheck className="h-5 w-5" />
-                                                <span className="font-medium">已核销</span>
+                                                <span className="font-medium">
+                                                    已核销
+                                                </span>
                                             </div>
                                             <Separator />
                                             {verification_code && (
                                                 <div>
-                                                    <p className="text-sm text-muted-foreground mb-1">验证码</p>
-                                                    <p className="font-mono font-bold text-lg tracking-wider">{verification_code}</p>
+                                                    <p className="mb-1 text-sm text-muted-foreground">
+                                                        验证码
+                                                    </p>
+                                                    <p className="font-mono text-lg font-bold tracking-wider">
+                                                        {verification_code}
+                                                    </p>
                                                 </div>
                                             )}
                                             <Separator />
                                             <div>
-                                                <p className="text-sm text-muted-foreground mb-1">核销时间</p>
-                                                <p className="text-sm">{new Date(localOrder.verified_at!).toLocaleString()}</p>
+                                                <p className="mb-1 text-sm text-muted-foreground">
+                                                    核销时间
+                                                </p>
+                                                <p className="text-sm">
+                                                    {new Date(
+                                                        localOrder.verified_at!,
+                                                    ).toLocaleString()}
+                                                </p>
                                             </div>
                                             {localOrder.verifiedBy && (
                                                 <>
                                                     <Separator />
                                                     <div>
-                                                        <p className="text-sm text-muted-foreground mb-1">核销人</p>
-                                                        <p className="text-sm font-medium">{localOrder.verifiedBy.name}</p>
-                                                        <p className="text-xs text-muted-foreground">{localOrder.verifiedBy.email}</p>
+                                                        <p className="mb-1 text-sm text-muted-foreground">
+                                                            核销人
+                                                        </p>
+                                                        <p className="text-sm font-medium">
+                                                            {
+                                                                localOrder
+                                                                    .verifiedBy
+                                                                    .name
+                                                            }
+                                                        </p>
+                                                        <p className="text-xs text-muted-foreground">
+                                                            {
+                                                                localOrder
+                                                                    .verifiedBy
+                                                                    .email
+                                                            }
+                                                        </p>
                                                     </div>
                                                 </>
                                             )}
                                         </div>
                                     ) : canVerifyThisOrder ? (
-                                        <form onSubmit={handleVerification} className="space-y-4">
+                                        <form
+                                            onSubmit={handleVerification}
+                                            className="space-y-4"
+                                        >
                                             {verificationSuccess && (
-                                                <Alert variant="default" className="bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
+                                                <Alert
+                                                    variant="default"
+                                                    className="border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400"
+                                                >
                                                     <CheckCircle2 className="h-4 w-4" />
-                                                    <AlertDescription>{verificationSuccess}</AlertDescription>
+                                                    <AlertDescription>
+                                                        {verificationSuccess}
+                                                    </AlertDescription>
                                                 </Alert>
                                             )}
                                             {verificationError && (
                                                 <Alert variant="destructive">
                                                     <AlertCircle className="h-4 w-4" />
-                                                    <AlertDescription>{verificationError}</AlertDescription>
+                                                    <AlertDescription>
+                                                        {verificationError}
+                                                    </AlertDescription>
                                                 </Alert>
                                             )}
-                                            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as VerificationMethod)}>
-                                                <TabsList className="grid grid-cols-4 w-full">
-                                                    <TabsTrigger value="code" className="text-xs">验证码</TabsTrigger>
-                                                    <TabsTrigger value="password" className="text-xs">密码</TabsTrigger>
-                                                    <TabsTrigger value="id_card" className="text-xs">身份证</TabsTrigger>
-                                                    <TabsTrigger value="direct" className="text-xs">直接核销</TabsTrigger>
+                                            <Tabs
+                                                value={activeTab}
+                                                onValueChange={(v) =>
+                                                    setActiveTab(
+                                                        v as VerificationMethod,
+                                                    )
+                                                }
+                                            >
+                                                <TabsList className="grid w-full grid-cols-4">
+                                                    <TabsTrigger
+                                                        value="code"
+                                                        className="text-xs"
+                                                    >
+                                                        验证码
+                                                    </TabsTrigger>
+                                                    <TabsTrigger
+                                                        value="password"
+                                                        className="text-xs"
+                                                    >
+                                                        密码
+                                                    </TabsTrigger>
+                                                    <TabsTrigger
+                                                        value="id_card"
+                                                        className="text-xs"
+                                                    >
+                                                        身份证
+                                                    </TabsTrigger>
+                                                    <TabsTrigger
+                                                        value="direct"
+                                                        className="text-xs"
+                                                    >
+                                                        直接核销
+                                                    </TabsTrigger>
                                                 </TabsList>
 
-                                                <TabsContent value="code" className="space-y-3 mt-4">
+                                                <TabsContent
+                                                    value="code"
+                                                    className="mt-4 space-y-3"
+                                                >
                                                     {verification_code ? (
                                                         <>
-                                                            <div className="bg-muted/50 p-3 rounded-lg text-center">
-                                                                <p className="text-xs text-muted-foreground mb-1">验证码</p>
-                                                                <p className="font-mono font-bold text-xl tracking-wider">{verification_code}</p>
+                                                            <div className="rounded-lg bg-muted/50 p-3 text-center">
+                                                                <p className="mb-1 text-xs text-muted-foreground">
+                                                                    验证码
+                                                                </p>
+                                                                <p className="font-mono text-xl font-bold tracking-wider">
+                                                                    {
+                                                                        verification_code
+                                                                    }
+                                                                </p>
                                                             </div>
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="code">输入验证码</Label>
+                                                                <Label htmlFor="code">
+                                                                    输入验证码
+                                                                </Label>
                                                                 <Input
                                                                     id="code"
                                                                     placeholder="请输入6位验证码"
-                                                                    maxLength={6}
-                                                                    value={verificationForm.data.code}
-                                                                    onChange={(e) => verificationForm.setData('code', e.target.value)}
-                                                                    className="font-mono text-center text-lg tracking-wider"
+                                                                    maxLength={
+                                                                        6
+                                                                    }
+                                                                    value={
+                                                                        verificationForm
+                                                                            .data
+                                                                            .code
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        verificationForm.setData(
+                                                                            'code',
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                        )
+                                                                    }
+                                                                    className="text-center font-mono text-lg tracking-wider"
                                                                 />
-                                                                <InputError message={verificationForm.errors.code} />
+                                                                <InputError
+                                                                    message={
+                                                                        verificationForm
+                                                                            .errors
+                                                                            .code
+                                                                    }
+                                                                />
                                                             </div>
                                                         </>
                                                     ) : (
-                                                        <p className="text-sm text-muted-foreground text-center py-4">
+                                                        <p className="py-4 text-center text-sm text-muted-foreground">
                                                             该订单暂未生成验证码
                                                         </p>
                                                     )}
                                                 </TabsContent>
 
-                                                <TabsContent value="password" className="space-y-3 mt-4">
-                                                    <div className="bg-muted/50 p-3 rounded-lg">
-                                                        <p className="text-xs text-muted-foreground">使用下单账号的密码进行核销</p>
+                                                <TabsContent
+                                                    value="password"
+                                                    className="mt-4 space-y-3"
+                                                >
+                                                    <div className="rounded-lg bg-muted/50 p-3">
+                                                        <p className="text-xs text-muted-foreground">
+                                                            使用下单账号的密码进行核销
+                                                        </p>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label htmlFor="password">密码</Label>
+                                                        <Label htmlFor="password">
+                                                            密码
+                                                        </Label>
                                                         <Input
                                                             id="password"
                                                             type="password"
                                                             placeholder="请输入用户密码"
-                                                            value={verificationForm.data.password}
-                                                            onChange={(e) => verificationForm.setData('password', e.target.value)}
+                                                            value={
+                                                                verificationForm
+                                                                    .data
+                                                                    .password
+                                                            }
+                                                            onChange={(e) =>
+                                                                verificationForm.setData(
+                                                                    'password',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError message={verificationForm.errors.password} />
+                                                        <InputError
+                                                            message={
+                                                                verificationForm
+                                                                    .errors
+                                                                    .password
+                                                            }
+                                                        />
                                                     </div>
                                                 </TabsContent>
 
-                                                <TabsContent value="id_card" className="space-y-3 mt-4">
-                                                    <div className="bg-muted/50 p-3 rounded-lg">
-                                                        <p className="text-xs text-muted-foreground">使用下单人的身份证号和姓名进行核销</p>
+                                                <TabsContent
+                                                    value="id_card"
+                                                    className="mt-4 space-y-3"
+                                                >
+                                                    <div className="rounded-lg bg-muted/50 p-3">
+                                                        <p className="text-xs text-muted-foreground">
+                                                            使用下单人的身份证号和姓名进行核销
+                                                        </p>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label htmlFor="id_number">身份证号</Label>
+                                                        <Label htmlFor="id_number">
+                                                            身份证号
+                                                        </Label>
                                                         <Input
                                                             id="id_number"
                                                             placeholder="请输入身份证号"
-                                                            value={verificationForm.data.id_number}
-                                                            onChange={(e) => verificationForm.setData('id_number', e.target.value)}
+                                                            value={
+                                                                verificationForm
+                                                                    .data
+                                                                    .id_number
+                                                            }
+                                                            onChange={(e) =>
+                                                                verificationForm.setData(
+                                                                    'id_number',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError message={verificationForm.errors.id_number} />
+                                                        <InputError
+                                                            message={
+                                                                verificationForm
+                                                                    .errors
+                                                                    .id_number
+                                                            }
+                                                        />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label htmlFor="name">姓名</Label>
+                                                        <Label htmlFor="name">
+                                                            姓名
+                                                        </Label>
                                                         <Input
                                                             id="name"
                                                             placeholder="请输入姓名"
-                                                            value={verificationForm.data.name}
-                                                            onChange={(e) => verificationForm.setData('name', e.target.value)}
+                                                            value={
+                                                                verificationForm
+                                                                    .data.name
+                                                            }
+                                                            onChange={(e) =>
+                                                                verificationForm.setData(
+                                                                    'name',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError message={verificationForm.errors.name} />
+                                                        <InputError
+                                                            message={
+                                                                verificationForm
+                                                                    .errors.name
+                                                            }
+                                                        />
                                                     </div>
                                                 </TabsContent>
 
-                                                <TabsContent value="direct" className="space-y-3 mt-4">
-                                                    <div className="bg-muted/50 p-3 rounded-lg">
-                                                        <p className="text-sm text-muted-foreground text-center">
+                                                <TabsContent
+                                                    value="direct"
+                                                    className="mt-4 space-y-3"
+                                                >
+                                                    <div className="rounded-lg bg-muted/50 p-3">
+                                                        <p className="text-center text-sm text-muted-foreground">
                                                             直接核销需要输入当前管理员密码确认
                                                         </p>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label htmlFor="admin_password">管理员密码</Label>
+                                                        <Label htmlFor="admin_password">
+                                                            管理员密码
+                                                        </Label>
                                                         <Input
                                                             id="admin_password"
                                                             type="password"
                                                             placeholder="请输入您的密码"
-                                                            value={verificationForm.data.admin_password}
-                                                            onChange={(e) => verificationForm.setData('admin_password', e.target.value)}
+                                                            value={
+                                                                verificationForm
+                                                                    .data
+                                                                    .admin_password
+                                                            }
+                                                            onChange={(e) =>
+                                                                verificationForm.setData(
+                                                                    'admin_password',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError message={verificationForm.errors.admin_password} />
+                                                        <InputError
+                                                            message={
+                                                                verificationForm
+                                                                    .errors
+                                                                    .admin_password
+                                                            }
+                                                        />
                                                     </div>
                                                 </TabsContent>
                                             </Tabs>
@@ -636,13 +960,17 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                                                 className="w-full"
                                                 disabled={isVerifying}
                                             >
-                                                {isVerifying ? '核销中...' : '确认核销'}
+                                                {isVerifying
+                                                    ? '核销中...'
+                                                    : '确认核销'}
                                             </Button>
                                         </form>
                                     ) : localOrder.status === 'cancelled' ? (
                                         <div className="flex items-center gap-2 text-muted-foreground">
                                             <ShieldX className="h-5 w-5" />
-                                            <span className="text-sm">已取消的订单无法核销</span>
+                                            <span className="text-sm">
+                                                已取消的订单无法核销
+                                            </span>
                                         </div>
                                     ) : null}
                                 </CardContent>
@@ -652,47 +980,74 @@ export default function OrderShow({ order: initialOrder, verification_code, veri
                 </div>
 
                 {/* Direct Verification Confirmation Dialog */}
-                <AlertDialog open={showDirectVerifyDialog} onOpenChange={setShowDirectVerifyDialog}>
+                <AlertDialog
+                    open={showDirectVerifyDialog}
+                    onOpenChange={setShowDirectVerifyDialog}
+                >
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>确认直接核销</AlertDialogTitle>
                             <AlertDialogDescription>
-                                您确定要直接核销订单 {localOrder.order_no} 吗？此操作需要输入您的管理员密码进行确认，核销后订单状态将变更为已完成。
+                                您确定要直接核销订单 {localOrder.order_no}{' '}
+                                吗？此操作需要输入您的管理员密码进行确认，核销后订单状态将变更为已完成。
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         {verificationSuccess && (
-                            <Alert variant="default" className="my-4 bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
+                            <Alert
+                                variant="default"
+                                className="my-4 border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400"
+                            >
                                 <CheckCircle2 className="h-4 w-4" />
-                                <AlertDescription>{verificationSuccess}</AlertDescription>
+                                <AlertDescription>
+                                    {verificationSuccess}
+                                </AlertDescription>
                             </Alert>
                         )}
                         {verificationError && (
                             <Alert variant="destructive" className="my-4">
                                 <AlertCircle className="h-4 w-4" />
-                                <AlertDescription>{verificationError}</AlertDescription>
+                                <AlertDescription>
+                                    {verificationError}
+                                </AlertDescription>
                             </Alert>
                         )}
                         <div className="space-y-2 py-4">
-                            <Label htmlFor="dialog_admin_password">管理员密码</Label>
+                            <Label htmlFor="dialog_admin_password">
+                                管理员密码
+                            </Label>
                             <Input
                                 id="dialog_admin_password"
                                 type="password"
                                 placeholder="请输入您的密码"
                                 value={verificationForm.data.admin_password}
-                                onChange={(e) => verificationForm.setData('admin_password', e.target.value)}
+                                onChange={(e) =>
+                                    verificationForm.setData(
+                                        'admin_password',
+                                        e.target.value,
+                                    )
+                                }
                             />
-                            <InputError message={verificationForm.errors.admin_password} />
+                            <InputError
+                                message={verificationForm.errors.admin_password}
+                            />
                         </div>
                         <AlertDialogFooter>
-                            <AlertDialogCancel disabled={isVerifying}>取消</AlertDialogCancel>
+                            <AlertDialogCancel disabled={isVerifying}>
+                                取消
+                            </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleDirectVerify();
                                 }}
-                                disabled={isVerifying || !verificationForm.data.admin_password}
+                                disabled={
+                                    isVerifying ||
+                                    !verificationForm.data.admin_password
+                                }
                             >
-                                {verificationForm.processing ? '核销中...' : '确认核销'}
+                                {verificationForm.processing
+                                    ? '核销中...'
+                                    : '确认核销'}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

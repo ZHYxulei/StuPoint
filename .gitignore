@@ -31,6 +31,7 @@ yarn-error.log
 /.claude
 /.gemini
 /.opencode
+/.sisyphus
 .claude
 .gemini
 .opencode

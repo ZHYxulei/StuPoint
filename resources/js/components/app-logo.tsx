@@ -1,8 +1,10 @@
+import { Link } from '@inertiajs/react';
 import AppLogoIcon from './app-logo-icon';
+import { home } from '@/routes';
 
 export default function AppLogo() {
     return (
-        <>
+        <Link href={home().url} className="flex items-center gap-2">
             <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
                 <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
             </div>
@@ -11,6 +13,6 @@ export default function AppLogo() {
                     Laravel Starter Kit
                 </span>
             </div>
-        </>
+        </Link>
     );
 }
