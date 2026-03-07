@@ -63,7 +63,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('/{id}', [AdminOrderController::class, 'show'])->name('show');
         Route::put('/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/statistics', [AdminOrderController::class, 'statistics'])->name('statistics');
-        Route::post('/{id}/verify', [OrderVerificationController::class, 'verify'])->name('verify');
+
+        // Verification endpoint - exclude Inertia middleware by using 'withoutMiddleware' on specific route
+        Route::post('/{id}/verify', [OrderVerificationController::class, 'verify'])
+            ->name('verify')
+            ->withoutMiddleware([\App\Http\Middleware\HandleInertiaRequests::class]);
     });
 
     // Plugin Management

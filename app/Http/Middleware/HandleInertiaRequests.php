@@ -49,4 +49,18 @@ class HandleInertiaRequests extends Middleware
                 : [],
         ];
     }
+
+    /**
+     * Determine if the request should be handled by Inertia.
+     * Skip Inertia for API endpoints that expect JSON responses.
+     */
+    protected function shouldInertia(Request $request): bool
+    {
+        // Skip Inertia for verification endpoint
+        if ($request->is('admin/orders/*/verify')) {
+            return false;
+        }
+
+        return parent::shouldInertia($request);
+    }
 }

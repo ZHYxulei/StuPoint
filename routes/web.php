@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\Points\PointController;
 use App\Http\Controllers\RankingController;
@@ -10,11 +11,12 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// API route for user stats (called by frontend)
+Route::get('/api/user-stats', [HomeController::class, 'userStats'])
+    ->middleware(['auth', 'verified'])
+    ->name('api.user-stats');
 
 Route::get('dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
@@ -28,28 +30,3 @@ Route::middleware(['auth', 'verified'])->prefix('points')->name('points.')->grou
     Route::get('/', [PointController::class, 'index'])->name('index');
     Route::get('/history', [PointController::class, 'history'])->name('history');
 });
-
-// Shop routes
-Route::middleware(['auth', 'verified'])->prefix('shop')->name('shop.')->group(function () {
-    Route::get('/', [ProductController::class, 'index'])->name('index');
-    Route::get('/product/{id}', [ProductController::class, 'show'])->name('product');
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
-    Route::post('/orders/{id}/regenerate-code', [OrderController::class, 'regenerateVerificationCode'])->name('orders.regenerate-code');
-});
-
-// Parent routes
-Route::middleware(['auth', 'verified'])->prefix('parent')->name('parent.')->group(function () {
-    Route::prefix('children')->name('children.')->group(function () {
-        Route::get('/', [ParentController::class, 'index'])->name('index');
-        Route::get('/create', [ParentController::class, 'create'])->name('create');
-        Route::post('/', [ParentController::class, 'store'])->name('store');
-        Route::get('/{childId}', [ParentController::class, 'show'])->name('show');
-        Route::delete('/{childId}', [ParentController::class, 'destroy'])->name('destroy');
-        Route::get('/{childId}/transactions', [ParentController::class, 'transactions'])->name('transactions');
-        Route::get('/{childId}/orders', [ParentController::class, 'orders'])->name('orders');
-    });
-});
-
-require __DIR__.'/settings.php';

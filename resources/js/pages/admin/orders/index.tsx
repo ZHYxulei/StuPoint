@@ -1,4 +1,4 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Eye, Package, User, Calendar, TrendingUp, ShoppingCart, ShieldCheck, AlertCircle } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import InputError from '@/components/input-error';
 
 interface ProductCategory {
@@ -330,6 +330,10 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
     const [activeTab, setActiveTab] = useState<VerificationMethod>('code');
     const [codeDigits, setCodeDigits] = useState(['', '', '', '', '', '']);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [successMessage, setSuccessMessage] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const verificationSuccessfulRef = useRef(false);
     const codeInputRefs = Array(6).fill(null).map(() => useState<HTMLInputElement | null>(null));
 
     const handleCodeChange = (index: number, value: string) => {
@@ -383,9 +387,9 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
         e.preventDefault();
         setData('method', activeTab);
         setErrors({}); // Clear previous errors
+        setSuccessMessage(''); // Clear previous success message
 
         const url = `/admin/orders/${orderId}/verify`;
-        console.log('Verification request:', { url, orderId, activeTab, data });
 
         try {
             const response = await fetch(url, {
@@ -405,11 +409,20 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
             });
 
             const result = await response.json();
-            console.log('Verification response:', result);
 
             if (result.success) {
-                onSuccess();
-                setTimeout(() => window.location.reload(), 500);
+                setSuccessMessage(result.message || '核销成功！');
+                setShowSuccess(true);
+                verificationSuccessfulRef.current = true;
+                reset();
+                // Close dialog after 2 seconds and refresh page
+                setTimeout(() => {
+                    setIsDialogOpen(false);
+                    // Directly refresh page after closing dialog
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                }, 2000);
             } else {
                 // Handle validation errors
                 const newErrors: Record<string, string> = {};
@@ -439,11 +452,17 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
             reset();
             setCodeDigits(['', '', '', '', '', '']);
             setErrors({});
+            setSuccessMessage('');
+            setShowSuccess(false);
+            verificationSuccessfulRef.current = false;
         }
     };
 
     return (
-        <Dialog onOpenChange={handleOpenChange}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            handleOpenChange(open);
+        }}>
             <DialogTrigger asChild>
                 <Button variant="default" size="sm">
                     <ShieldCheck className="mr-2 h-4 w-4" />
@@ -466,7 +485,15 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Show success message if any */}
+                {showSuccess && successMessage && (
+                    <div className="mb-4 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg flex items-center gap-2 text-sm">
+                        <ShieldCheck className="h-4 w-4 shrink-0" />
+                        <span>{successMessage}</span>
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className={showSuccess ? 'hidden' : 'space-y-4'}>
                     <Tabs value={activeTab} onValueChange={(v) => {
                         setActiveTab(v as VerificationMethod);
                         // Clear errors when switching tabs
