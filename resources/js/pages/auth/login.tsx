@@ -30,7 +30,7 @@ export default function Login({
                 {...store.form()}
                 resetOnSuccess={['password']}
                 className="flex flex-col gap-6"
-                onSuccess={() => {
+                onSuccess={(page) => {
                     router.visit(dashboard().url);
                 }}
             >
