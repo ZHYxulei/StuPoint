@@ -59,13 +59,34 @@ class AppServiceProvider extends ServiceProvider
 
     protected function configureLocale(): void
     {
-        // Share current locale with Inertia
         if (class_exists('Inertia\Inertia')) {
-            \Inertia\Inertia::share([
+            \Inertia\Inertia::share(array_merge([
                 'locale' => App::getLocale(),
                 'fallback_locale' => config('app.fallback_locale'),
-            ]);
+            ], $this->getSharedSettings()));
         }
+    }
+
+    protected function getSharedSettings(): array
+    {
+        return [
+            'siteSettings' => [
+                'site_name' => SettingsService::getSiteName(),
+                'site_description' => SettingsService::get('site_description'),
+                'site_keywords' => SettingsService::get('site_keywords'),
+                'site_logo' => SettingsService::getSiteLogo(),
+                'site_favicon' => SettingsService::getSiteFavicon(),
+            ],
+            'footerSettings' => [
+                'copyright' => SettingsService::getFooterCopyright(),
+                'icp' => SettingsService::getFooterIcp(),
+                'police' => SettingsService::getFooterPolice(),
+            ],
+            'contactSettings' => [
+                'email' => SettingsService::getContactEmail(),
+                'phone' => SettingsService::getContactPhone(),
+            ],
+        ];
     }
 
     protected function configureEvents(): void
