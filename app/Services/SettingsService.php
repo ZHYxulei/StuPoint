@@ -54,6 +54,18 @@ class SettingsService
         return self::get('site_favicon');
     }
 
+    public static function getSiteFaviconData(): ?string
+    {
+        return self::get('site_favicon_data');
+    }
+
+    public static function getSiteFaviconHref(): string
+    {
+        return self::getSiteFaviconData()
+            ?? self::getSiteFavicon()
+            ?? '/favicon.ico';
+    }
+
     /**
      * Get footer ICP number.
      */

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -69,13 +70,17 @@ class AppServiceProvider extends ServiceProvider
 
     protected function getSharedSettings(): array
     {
+        if (! Schema::hasTable('settings')) {
+            return [];
+        }
+
         return [
             'siteSettings' => [
                 'site_name' => SettingsService::getSiteName(),
                 'site_description' => SettingsService::get('site_description'),
                 'site_keywords' => SettingsService::get('site_keywords'),
                 'site_logo' => SettingsService::getSiteLogo(),
-                'site_favicon' => SettingsService::getSiteFavicon(),
+                'site_favicon' => SettingsService::getSiteFaviconHref(),
             ],
             'footerSettings' => [
                 'copyright' => SettingsService::getFooterCopyright(),
@@ -99,12 +104,16 @@ class AppServiceProvider extends ServiceProvider
     {
         // Share site settings with all views
         View::composer('*', function ($view) {
+            if (! Schema::hasTable('settings')) {
+                return;
+            }
+
             $view->with('siteSettings', [
                 'site_name' => SettingsService::getSiteName(),
                 'site_description' => SettingsService::get('site_description'),
                 'site_keywords' => SettingsService::get('site_keywords'),
                 'site_logo' => SettingsService::getSiteLogo(),
-                'site_favicon' => SettingsService::getSiteFavicon(),
+                'site_favicon' => SettingsService::getSiteFaviconHref(),
             ]);
 
             $view->with('footerSettings', [

@@ -5,7 +5,10 @@ import { createRoot } from 'react-dom/client';
 import '../css/app.css';
 import { initializeTheme } from './hooks/use-appearance';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName =
+    document.querySelector('title')?.textContent ||
+    import.meta.env.VITE_APP_NAME ||
+    'Laravel';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -16,7 +19,8 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         // Make page props available globally for i18n
-        (window as unknown as { pageProps: unknown }).pageProps = props.initialPage.props;
+        (window as unknown as { pageProps: unknown }).pageProps =
+            props.initialPage.props;
 
         const root = createRoot(el);
 
