@@ -18,9 +18,11 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        wayfinder({
-            formVariants: true,
-        }),
+        // wayfinder temporarily disabled due to timeout issues
+        // wayfinder({
+        //     command: 'php -d memory_limit=1G artisan wayfinder:generate',
+        //     formVariants: true,
+        // }),
     ],
     resolve: {
         alias: {
