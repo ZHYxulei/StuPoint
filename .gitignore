@@ -33,6 +33,7 @@ yarn-error.log
 /.opencode
 /.sisyphus
 .tmp
+/.worktrees
 .claude
 .gemini
 .opencode
