@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,11 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         // Fix existing users who don't require review but have pending status
+        $nowExpression = DB::getDriverName() === 'sqlite'
+            ? "COALESCE(email_verified_at, datetime('now'))"
+            : 'COALESCE(email_verified_at, NOW())';
+
         User::where('requires_review', false)
             ->where('registration_status', 'pending')
             ->update([
                 'registration_status' => 'approved',
-                'email_verified_at' => \DB::raw('COALESCE(email_verified_at, NOW())'),
+                'email_verified_at' => DB::raw($nowExpression),
             ]);
 
         // Also handle NULL registration_status - set to approved if doesn't require review
@@ -23,7 +28,7 @@ return new class extends Migration
             ->where('requires_review', false)
             ->update([
                 'registration_status' => 'approved',
-                'email_verified_at' => \DB::raw('COALESCE(email_verified_at, NOW())'),
+                'email_verified_at' => DB::raw($nowExpression),
             ]);
 
         // For NULL registration_status that requires review, set to pending
