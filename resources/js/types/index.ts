@@ -11,5 +11,20 @@ export type SharedData = {
     locale: string;
     fallback_locale: string;
     enabledPlugins?: string[];
+    siteSettings?: {
+        site_description?: string;
+        site_keywords?: string;
+        site_logo?: string;
+        site_favicon?: string;
+    };
+    footerSettings?: {
+        copyright?: string;
+        icp?: string;
+        police?: string;
+    };
+    contactSettings?: {
+        email?: string;
+        phone?: string;
+    };
     [key: string]: unknown;
 };

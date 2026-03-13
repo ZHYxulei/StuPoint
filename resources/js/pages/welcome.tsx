@@ -48,19 +48,19 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const user = auth.user;
 
-    const siteName = (siteSettings as any)?.site_name || '学生积分管理系统';
+    const siteName = siteSettings?.site_name || '学生积分管理系统';
     const copyright =
-        (footerSettings as any)?.copyright ||
+        footerSettings?.copyright ||
         `© ${new Date().getFullYear()} ${siteName}`;
-    const icp = (footerSettings as any)?.icp;
-    const police = (footerSettings as any)?.police;
+    const icp = footerSettings?.icp;
+    const police = footerSettings?.police;
 
     // Convert userStats to local state for reactivity if available
     const localStats = userStats;
 
     return (
         <>
-            <Head title="学生积分管理系统" />
+            <Head title={siteName} />
             <PublicNavbar
                 showMobileMenu={showMobileMenu}
                 onMobileMenuToggle={() => setShowMobileMenu(!showMobileMenu)}

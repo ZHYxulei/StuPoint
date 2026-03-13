@@ -48,7 +48,7 @@ interface PluginSource {
 
 interface PageProps {
     pluginSources: PluginSource[];
-    siteSettings: Record<string, string>;
+    siteSettingsForm: Record<string, string>;
     contactSettings: Record<string, string>;
     footerSettings: Record<string, string>;
     socialSettings: Record<string, string>;
@@ -61,7 +61,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function SystemSettings({
     pluginSources,
-    siteSettings,
+    siteSettingsForm,
     contactSettings,
     footerSettings,
     socialSettings,
@@ -73,11 +73,12 @@ export default function SystemSettings({
 
     // Site settings form
     const siteForm = useForm({
-        site_name: siteSettings.site_name || '',
-        site_description: siteSettings.site_description || '',
-        site_keywords: siteSettings.site_keywords || '',
-        site_logo: siteSettings.site_logo || '',
-        site_favicon: siteSettings.site_favicon || '',
+        site_name: siteSettingsForm.site_name || '',
+        site_description: siteSettingsForm.site_description || '',
+        site_keywords: siteSettingsForm.site_keywords || '',
+        site_logo: siteSettingsForm.site_logo || '',
+        site_favicon: siteSettingsForm.site_favicon || '',
+        site_favicon_upload: null as File | null,
     });
 
     // Contact settings form
@@ -123,36 +124,29 @@ export default function SystemSettings({
     const handleSiteSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         siteForm.post('/admin/settings/site', {
-            onSuccess: () => {
-                // Optionally show success message
-            },
+            forceFormData: true,
+            onSuccess: () => {},
         });
     };
 
     const handleContactSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         contactForm.post('/admin/settings/contact', {
-            onSuccess: () => {
-                // Optionally show success message
-            },
+            onSuccess: () => {},
         });
     };
 
     const handleFooterSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         footerForm.post('/admin/settings/footer', {
-            onSuccess: () => {
-                // Optionally show success message
-            },
+            onSuccess: () => {},
         });
     };
 
     const handleSocialSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         socialForm.post('/admin/settings/social', {
-            onSuccess: () => {
-                // Optionally show success message
-            },
+            onSuccess: () => {},
         });
     };
 
@@ -371,6 +365,28 @@ export default function SystemSettings({
                                             />
                                             <p className="text-xs text-muted-foreground">
                                                 建议尺寸: 32x32 或 64x64 像素
+                                            </p>
+                                        </div>
+
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="site_favicon_upload">
+                                                上传网站图标
+                                            </Label>
+                                            <Input
+                                                id="site_favicon_upload"
+                                                type="file"
+                                                accept=".png,.ico,.svg,.webp"
+                                                onChange={(e) =>
+                                                    siteForm.setData(
+                                                        'site_favicon_upload',
+                                                        e.target.files?.[0] ||
+                                                            null,
+                                                    )
+                                                }
+                                            />
+                                            <p className="text-xs text-muted-foreground">
+                                                支持 PNG/ICO/SVG/WebP，最大
+                                                2MB，优先使用上传图标
                                             </p>
                                         </div>
                                     </div>
