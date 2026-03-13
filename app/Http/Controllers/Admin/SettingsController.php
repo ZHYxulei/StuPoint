@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateSiteSettingsRequest;
 use App\Models\PluginSource;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -46,7 +47,7 @@ class SettingsController extends Controller
 
         return inertia('admin/settings/index', [
             'pluginSources' => $pluginSources,
-            'siteSettings' => $siteSettings,
+            'siteSettingsForm' => $siteSettings,
             'contactSettings' => $contactSettings,
             'footerSettings' => $footerSettings,
             'socialSettings' => $socialSettings,
@@ -145,7 +146,7 @@ class SettingsController extends Controller
     /**
      * Update site settings.
      */
-    public function updateSiteSettings(Request $request)
+    public function updateSiteSettings(UpdateSiteSettingsRequest $request)
     {
         $user = Auth::user();
 
@@ -153,15 +154,23 @@ class SettingsController extends Controller
             abort(403, '无权访问');
         }
 
-        $validated = $request->validate([
-            'site_name' => 'nullable|string|max:255',
-            'site_description' => 'nullable|string|max:500',
-            'site_keywords' => 'nullable|string|max:255',
-            'site_logo' => 'nullable|string|max:500',
-            'site_favicon' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
+
+        if (array_key_exists('site_favicon_upload', $validated) && $validated['site_favicon_upload'] instanceof \Illuminate\Http\UploadedFile) {
+            $file = $validated['site_favicon_upload'];
+
+            if ($file->isValid()) {
+                $encoded = base64_encode($file->getContent());
+                $dataUri = sprintf('data:%s;base64,%s', $file->getMimeType(), $encoded);
+                Setting::set('site_favicon_data', $dataUri, 'string', 'site');
+            }
+        }
 
         foreach ($validated as $key => $value) {
+            if ($key === 'site_favicon_upload') {
+                continue;
+            }
+
             if ($value !== null) {
                 Setting::set($key, $value, 'string', 'site');
             }
