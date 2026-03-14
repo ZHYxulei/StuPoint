@@ -70,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
 
     protected function getSharedSettings(): array
     {
-        if (! Schema::hasTable('settings')) {
+        if (! $this->canAccessSettings() || ! Schema::hasTable('settings')) {
             return [];
         }
 
@@ -104,7 +104,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Share site settings with all views
         View::composer('*', function ($view) {
-            if (! Schema::hasTable('settings')) {
+            if (! $this->canAccessSettings() || ! Schema::hasTable('settings')) {
                 return;
             }
 
@@ -127,5 +127,22 @@ class AppServiceProvider extends ServiceProvider
                 'phone' => SettingsService::getContactPhone(),
             ]);
         });
+    }
+
+    protected function canAccessSettings(): bool
+    {
+        $defaultConnection = config('database.default');
+
+        if ($defaultConnection !== 'sqlite') {
+            return true;
+        }
+
+        $databasePath = config('database.connections.sqlite.database');
+
+        if (! $databasePath || $databasePath === ':memory:') {
+            return false;
+        }
+
+        return file_exists($databasePath);
     }
 }
