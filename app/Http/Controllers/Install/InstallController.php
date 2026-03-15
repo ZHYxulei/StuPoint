@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Install;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -277,6 +278,7 @@ class InstallController extends Controller
             'app_name' => 'required|string|max:255',
             'app_url' => 'required|url',
             'locale' => 'required|in:zh,en,ja',
+            'class_points_mode' => 'required|in:avg,sum,separate',
         ]);
 
         $this->updateEnvFile([
@@ -285,6 +287,10 @@ class InstallController extends Controller
             'APP_LOCALE' => $validated['locale'],
             'APP_FALLBACK_LOCALE' => $validated['locale'],
         ]);
+
+        if (Schema::hasTable('settings')) {
+            Setting::set('class_points_mode', $validated['class_points_mode'], 'string', 'site');
+        }
 
         // Store locale in session for admin creation
         session(['install_locale' => $validated['locale']]);

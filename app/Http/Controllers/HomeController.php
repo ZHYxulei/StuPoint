@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\PointTransaction;
+use App\Models\Setting;
 use App\Models\User;
 use App\Models\UserPoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Fortify\Features;
 
 class HomeController extends Controller
@@ -52,6 +54,7 @@ class HomeController extends Controller
             $classRank = null;
             $className = null;
             $gradeName = null;
+            $classPoints = null;
 
             if ($user->class_id && $user->grade_id) {
                 $schoolClass = $user->class;
@@ -68,6 +71,30 @@ class HomeController extends Controller
                             $q->where('total_points', '>', $userPoints->total_points);
                         })
                         ->count() + 1;
+
+                    $classPointsMode = Schema::hasTable('settings')
+                        ? Setting::get('class_points_mode', 'avg')
+                        : 'avg';
+
+                    if ($classPointsMode !== 'separate') {
+                        $classPointsQuery = User::query()
+                            ->whereHas('roles', function ($q) {
+                                $q->where('slug', 'student');
+                            })
+                            ->where('class_id', $user->class_id)
+                            ->leftJoin('user_points', 'users.id', '=', 'user_points.user_id');
+
+                        $classPointsSum = (int) $classPointsQuery->sum('user_points.total_points');
+
+                        if ($classPointsMode === 'sum') {
+                            $classPoints = $classPointsSum;
+                        } else {
+                            $studentCount = (int) $classPointsQuery->distinct('users.id')->count('users.id');
+                            $classPoints = $studentCount > 0
+                                ? (int) round($classPointsSum / $studentCount)
+                                : 0;
+                        }
+                    }
                 }
             }
 
@@ -83,6 +110,7 @@ class HomeController extends Controller
                 'class_rank' => $classRank,
                 'class_name' => $className,
                 'grade_name' => $gradeName,
+                'class_points' => $classPoints,
             ];
         }
 
