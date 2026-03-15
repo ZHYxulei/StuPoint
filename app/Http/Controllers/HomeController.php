@@ -22,7 +22,7 @@ class HomeController extends Controller
         if ($user) {
             // Get user's points
             $userPoints = $user->points;
-            if (!$userPoints) {
+            if (! $userPoints) {
                 $userPoints = UserPoint::create([
                     'user_id' => $user->id,
                     'total_points' => 0,
@@ -99,7 +99,7 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'authenticated' => false,
             ]);
@@ -107,7 +107,7 @@ class HomeController extends Controller
 
         // Get user's points
         $userPoints = $user->points;
-        if (!$userPoints) {
+        if (! $userPoints) {
             $userPoints = UserPoint::create([
                 'user_id' => $user->id,
                 'total_points' => 0,
