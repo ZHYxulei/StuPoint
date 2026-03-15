@@ -35,6 +35,7 @@ interface UserStats {
     class_rank: number | null;
     class_name: string | null;
     grade_name: string | null;
+    class_points: number | null;
 }
 
 interface WelcomeProps {
@@ -48,14 +49,13 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const user = auth.user;
 
-    const siteName = siteSettings?.site_name || '学生积分管理系统';
+    const siteName = '学生积分管理系统';
     const copyright =
         footerSettings?.copyright ||
         `© ${new Date().getFullYear()} ${siteName}`;
     const icp = footerSettings?.icp;
     const police = footerSettings?.police;
 
-    // Convert userStats to local state for reactivity if available
     const localStats = userStats;
 
     return (
@@ -167,6 +167,26 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                                 : '-'}
                                         </div>
                                         <p className="mt-1 text-xs text-purple-600/70 dark:text-purple-400/70">
+                                            {localStats.class_name ||
+                                                '未分配班级'}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="border-teal-200 bg-gradient-to-br from-teal-50 to-emerald-50 dark:border-teal-800 dark:from-teal-950/30 dark:to-emerald-950/30">
+                                    <CardHeader className="pb-2">
+                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-teal-700 dark:text-teal-300">
+                                            <Users className="h-4 w-4" />
+                                            当前班级积分
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
+                                            {localStats.class_points !== null
+                                                ? localStats.class_points.toLocaleString()
+                                                : '--'}
+                                        </div>
+                                        <p className="mt-1 text-xs text-teal-600/70 dark:text-teal-400/70">
                                             {localStats.class_name ||
                                                 '未分配班级'}
                                         </p>
