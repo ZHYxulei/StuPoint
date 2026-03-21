@@ -42,6 +42,8 @@ class User extends Authenticatable
         'reviewer_id',
         'reviewed_at',
         'rejection_reason',
+        'head_teacher_approved_at',
+        'grade_director_approved_at',
         'class_id',
         'grade_id',
         'student_union_department',
@@ -73,6 +75,8 @@ class User extends Authenticatable
             'is_head_teacher' => 'boolean',
             'requires_review' => 'boolean',
             'reviewed_at' => 'datetime',
+            'head_teacher_approved_at' => 'datetime',
+            'grade_director_approved_at' => 'datetime',
             'last_login_at' => 'datetime',
         ];
     }
@@ -268,13 +272,17 @@ class User extends Authenticatable
 
         // Head teachers can review students in their class
         if ($this->hasRole('student') && $user->is_head_teacher) {
-            return $this->class_id && $user->id === optional($this->class->headTeacher)?->id;
+            $class = $this->class_id ? SchoolClass::query()->find($this->class_id) : null;
+
+            return $this->class_id && $user->id === $class?->head_teacher_id;
         }
 
         // Student union requires both head teacher and grade director approval
         if ($this->hasRole('student_union_member')) {
             if ($user->is_head_teacher) {
-                return $this->class_id && $user->id === optional($this->class->headTeacher)?->id;
+                $class = $this->class_id ? SchoolClass::query()->find($this->class_id) : null;
+
+                return $this->class_id && $user->id === $class?->head_teacher_id;
             }
 
             if ($user->hasRole('grade_director')) {

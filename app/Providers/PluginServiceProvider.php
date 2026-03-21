@@ -31,7 +31,7 @@ class PluginServiceProvider extends ServiceProvider
             if (file_exists($pluginFile)) {
                 require_once $pluginFile;
 
-                $pluginClass = 'App\\Plugins\\'.basename($pluginDir).'\\'.basename($pluginDir, '.php');
+                $pluginClass = 'App\\Plugins\\'.basename($pluginDir).'\\'.basename($pluginDir).'Plugin';
 
                 if (class_exists($pluginClass)) {
                     $plugin = new $pluginClass;
@@ -42,5 +42,7 @@ class PluginServiceProvider extends ServiceProvider
 
         // Boot all plugins
         $pluginManager->bootPlugins();
+
+        $pluginManager->executeHook('plugins.booted');
     }
 }

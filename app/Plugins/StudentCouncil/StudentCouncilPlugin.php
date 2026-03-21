@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Plugins\Plugin as BasePlugin;
 use App\Services\PluginManager;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 class StudentCouncilPlugin extends BasePlugin
 {
@@ -59,6 +60,10 @@ class StudentCouncilPlugin extends BasePlugin
     {
         // Register student council role
         $manager->addHook('plugins.booted', function () {
+            if (! Schema::hasTable('roles')) {
+                return;
+            }
+
             Role::firstOrCreate(
                 ['slug' => 'student_council'],
                 [
@@ -86,15 +91,22 @@ class StudentCouncilPlugin extends BasePlugin
             ->name('student_council.')
             ->group(function () {
                 // Check if user has student_council role or permission
-                Route::middleware(['can:student_council'])->group(function () {
+                Route::middleware([
+                    'permission:student_council',
+                ])->group(function () {
+                    Route::get('/', function () {
+                        return redirect()->route('student_council.dashboard');
+                    })->name('home');
                     Route::get('/dashboard', [StudentCouncilController::class, 'dashboard'])->name('dashboard');
                     Route::get('/activities', [StudentCouncilController::class, 'index'])->name('activities.index');
                     Route::get('/activities/create', [StudentCouncilController::class, 'create'])->name('activities.create');
                     Route::post('/activities', [StudentCouncilController::class, 'store'])->name('activities.store');
                     Route::get('/activities/{id}', [StudentCouncilController::class, 'show'])->name('activities.show');
+                    Route::get('/activities/{id}/edit', [StudentCouncilController::class, 'show'])->name('activities.edit');
                     Route::put('/activities/{id}', [StudentCouncilController::class, 'update'])->name('activities.update');
                     Route::delete('/activities/{id}', [StudentCouncilController::class, 'destroy'])->name('activities.destroy');
                     Route::post('/activities/{id}/award', [StudentCouncilController::class, 'awardPoints'])->name('activities.award');
+                    Route::post('/activities/{id}/award-points', [StudentCouncilController::class, 'awardPoints'])->name('activities.award-points');
                 });
             });
     }

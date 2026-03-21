@@ -26,10 +26,9 @@ class UserApprovalController extends Controller
             $query->where('class_id', optional($user->headOfClass)?->id)
                 ->whereHas('roles', fn ($q) => $q->whereIn('slug', ['student', 'student_union_member']));
         } elseif ($user->hasRole('grade_director')) {
-            // Grade directors can only see teachers in their grade
             $query->where('grade_id', $user->grade_id)
-                ->whereHas('roles', fn ($q) => $q->where('slug', 'teacher'));
-        } elseif ($user->hasRole(['admin', 'super_admin'])) {
+                ->whereHas('roles', fn ($q) => $q->whereIn('slug', ['teacher', 'student_union_member']));
+        } elseif ($user->hasRole('admin') || $user->hasRole('super_admin')) {
             // Admins can see all pending registrations
             // No additional filtering needed
         } else {
@@ -68,6 +67,10 @@ class UserApprovalController extends Controller
         return inertia('admin/approvals/show', [
             'approval' => $approvalUser,
             'userRole' => $this->getUserApprovalRole($user),
+            'approvalStatus' => [
+                'head_teacher_approved_at' => $approvalUser->head_teacher_approved_at,
+                'grade_director_approved_at' => $approvalUser->grade_director_approved_at,
+            ],
         ]);
     }
 
@@ -90,7 +93,7 @@ class UserApprovalController extends Controller
 
         // Handle student union member - needs double approval
         if ($approvalUser->hasRole('student_union_member')) {
-            $this->handleStudentUnionApproval($approvalUser, $reviewer);
+            $this->handleStudentUnionApproval($approvalUser, $reviewer, $request->input('note'));
         } else {
             // Standard approval
             $approvalUser->approve($reviewer, $request->input('note'));
@@ -133,8 +136,8 @@ class UserApprovalController extends Controller
                 ->whereHas('roles', fn ($q) => $q->whereIn('slug', ['student', 'student_union_member']));
         } elseif ($user->hasRole('grade_director')) {
             $query->where('grade_id', $user->grade_id)
-                ->whereHas('roles', fn ($q) => $q->where('slug', 'teacher'));
-        } elseif ($user->hasRole(['admin', 'super_admin'])) {
+                ->whereHas('roles', fn ($q) => $q->whereIn('slug', ['teacher', 'student_union_member']));
+        } elseif ($user->hasRole('admin') || $user->hasRole('super_admin')) {
             // No filtering for admins
         } else {
             return [
@@ -158,7 +161,7 @@ class UserApprovalController extends Controller
      */
     protected function getUserApprovalRole(User $user): ?string
     {
-        if ($user->hasRole(['super_admin', 'admin'])) {
+        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
             return 'admin';
         }
 
@@ -176,9 +179,9 @@ class UserApprovalController extends Controller
     /**
      * Handle student union member approval (requires double approval).
      */
-    protected function handleStudentUnionApproval(User $studentUnionMember, User $reviewer): void
+    protected function handleStudentUnionApproval(User $studentUnionMember, User $reviewer, ?string $note = null): void
     {
-        DB::transaction(function () use ($studentUnionMember, $reviewer) {
+        DB::transaction(function () use ($studentUnionMember, $reviewer, $note) {
             // First approval (head teacher)
             if ($reviewer->is_head_teacher) {
                 // Check if this is the head teacher of the student's class
@@ -188,13 +191,12 @@ class UserApprovalController extends Controller
 
                 // Mark as approved by head teacher, still needs grade director approval
                 $studentUnionMember->update([
-                    'registration_status' => 'pending', // Still pending
+                    'registration_status' => 'pending',
                     'reviewer_id' => $reviewer->id,
                     'reviewed_at' => now(),
+                    'head_teacher_approved_at' => now(),
                 ]);
 
-                // Note: In a real system, you'd add a field to track which approvals are done
-                // For now, we're using a simpler approach
             }
 
             // Second approval (grade director)
@@ -205,12 +207,16 @@ class UserApprovalController extends Controller
                 }
 
                 // Check if head teacher has already approved
-                if (! $studentUnionMember->reviewer_id) {
+                if (! $studentUnionMember->head_teacher_approved_at) {
                     abort(403, '该学生尚未通过班主任审核');
                 }
 
                 // Both approvals done - approve the user
-                $studentUnionMember->approve($reviewer);
+                $studentUnionMember->update([
+                    'grade_director_approved_at' => now(),
+                ]);
+
+                $studentUnionMember->approve($reviewer, $note);
             }
         });
     }
@@ -220,7 +226,11 @@ class UserApprovalController extends Controller
      */
     public function all(Request $request)
     {
-        $this->authorize('viewAny', User::class);
+        $user = Auth::user();
+
+        if (! $user || (! $user->hasRole('admin') && ! $user->hasRole('super_admin'))) {
+            abort(403);
+        }
 
         $query = User::with(['class.grade', 'grade', 'reviewer', 'roles'])
             ->where('registration_status', '!=', 'approved');
