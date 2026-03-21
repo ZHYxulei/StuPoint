@@ -1,5 +1,24 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Coins, Package, Users, Puzzle, ShoppingCart, PackageSearch, BarChart3, ChevronRight, MoreHorizontal, UserCircle, History, Settings, GraduationCap, Baby } from 'lucide-react';
+import {
+    BookOpen,
+    Folder,
+    LayoutGrid,
+    Coins,
+    Package,
+    Users,
+    Puzzle,
+    ShoppingCart,
+    PackageSearch,
+    BarChart3,
+    ChevronRight,
+    MoreHorizontal,
+    UserCircle,
+    History,
+    Settings,
+    GraduationCap,
+    Baby,
+    ShieldCheck,
+} from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -18,7 +37,11 @@ import {
     SidebarGroupContent,
     SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { dashboard } from '@/routes';
 import type { SharedData } from '@/types';
 import AppLogo from './app-logo';
@@ -31,39 +54,47 @@ export function AppSidebar() {
 
     // Check if user has admin roles
     const isAdmin = auth.user?.roles?.some((role: any) =>
-        ['super_admin', 'principal', 'grade_director'].includes(role.slug)
+        ['super_admin', 'principal', 'grade_director'].includes(role.slug),
     );
 
+    const canApprove =
+        auth.user?.roles?.some((role: any) =>
+            ['super_admin', 'admin', 'grade_director'].includes(role.slug),
+        ) || auth.user?.is_head_teacher;
+
     // Check if student council plugin is enabled
-    const isStudentCouncilEnabled = enabledPlugins?.includes('student_council') || false;
+    const isStudentCouncilEnabled =
+        enabledPlugins?.includes('student_council') || false;
 
     // Check if user has student council role
     const hasStudentCouncilRole = auth.user?.roles?.some((role: any) =>
-        ['student_council'].includes(role.slug)
+        ['student_council'].includes(role.slug),
     );
 
     // Initialize state from localStorage or default - changed to default open
-    const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    return JSON.parse(saved);
-                } catch {
-                    return {
-                        user: true,
-                        system: true,
-                        studentCouncil: false,
-                    };
+    const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
+        () => {
+            if (typeof window !== 'undefined') {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    try {
+                        return JSON.parse(saved);
+                    } catch {
+                        return {
+                            user: true,
+                            system: true,
+                            studentCouncil: false,
+                        };
+                    }
                 }
             }
-        }
-        return {
-            user: true,
-            system: true,
-            studentCouncil: false,
-        };
-    });
+            return {
+                user: true,
+                system: true,
+                studentCouncil: false,
+            };
+        },
+    );
 
     // Save to localStorage whenever state changes
     useEffect(() => {
@@ -73,7 +104,7 @@ export function AppSidebar() {
     }, [openGroups]);
 
     const toggleGroup = (group: string) => {
-        setOpenGroups(prev => ({ ...prev, [group]: !prev[group] }));
+        setOpenGroups((prev) => ({ ...prev, [group]: !prev[group] }));
     };
 
     return (
@@ -139,7 +170,9 @@ export function AppSidebar() {
                         <SidebarGroup>
                             <Collapsible
                                 open={openGroups.studentCouncil || false}
-                                onOpenChange={() => toggleGroup('studentCouncil')}
+                                onOpenChange={() =>
+                                    toggleGroup('studentCouncil')
+                                }
                                 className="group/collapsible"
                             >
                                 <SidebarGroupLabel asChild>
@@ -184,8 +217,16 @@ export function AppSidebar() {
                         <CollapsibleContent>
                             <SidebarGroupContent>
                                 <SidebarMenu>
-                                    {isAdmin && (
+                                    {canApprove && (
                                         <>
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton asChild>
+                                                    <Link href="/admin/approvals">
+                                                        <ShieldCheck className="h-4 w-4" />
+                                                        <span>注册审批</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
                                             <SidebarMenuItem>
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/users/statistics">
@@ -301,7 +342,11 @@ export function AppSidebar() {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <a href="https://github.com/laravel/react-starter-kit" target="_blank" rel="noopener noreferrer">
+                                    <a
+                                        href="https://github.com/laravel/react-starter-kit"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         <Folder className="h-4 w-4" />
                                         <span>代码仓库</span>
                                     </a>
@@ -309,7 +354,11 @@ export function AppSidebar() {
                             </SidebarMenuItem>
                             <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
-                                    <a href="https://laravel.com/docs/starter-kits#react" target="_blank" rel="noopener noreferrer">
+                                    <a
+                                        href="https://laravel.com/docs/starter-kits#react"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         <BookOpen className="h-4 w-4" />
                                         <span>文档</span>
                                     </a>
