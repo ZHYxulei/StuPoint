@@ -66,18 +66,18 @@ export default function ProfileShow({ user }: PageProps) {
 
             <div className="min-h-screen bg-background">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+                <div className="border-b bg-card/30 py-12">
                     <div className="container">
                         <div className="flex items-center gap-6">
-                            <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
+                            <Avatar className="h-24 w-24 border shadow-lg">
                                 <AvatarImage src={user.avatar} alt={getDisplayName(user)} />
-                                <AvatarFallback className="text-2xl bg-white text-blue-600">
+                                <AvatarFallback className="text-2xl bg-primary/10 text-primary">
                                     {getDisplayName(user).charAt(0).toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
                                 <h1 className="text-3xl font-bold">{getDisplayName(user)}</h1>
-                                <p className="text-blue-100 mt-1">查看您的账户信息</p>
+                                <p className="text-muted-foreground mt-1">查看您的账户信息</p>
                             </div>
                         </div>
                     </div>

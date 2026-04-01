@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -61,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
     protected function configureLocale(): void
     {
         if (class_exists('Inertia\Inertia')) {
-            \Inertia\Inertia::share(array_merge([
+            Inertia::share(array_merge([
                 'locale' => App::getLocale(),
                 'fallback_locale' => config('app.fallback_locale'),
             ], $this->getSharedSettings()));

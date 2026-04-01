@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 class RankingController extends Controller
@@ -61,7 +62,7 @@ class RankingController extends Controller
             }
         }
 
-        $rankings = new \Illuminate\Pagination\LengthAwarePaginator(
+        $rankings = new LengthAwarePaginator(
             $paginatedItems,
             $allRankings->count(),
             $perPage,

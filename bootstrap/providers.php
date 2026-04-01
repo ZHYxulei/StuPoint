@@ -1,12 +1,21 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Providers\FolioServiceProvider;
+use App\Providers\FortifyServiceProvider;
+use App\Providers\HorizonServiceProvider;
+use App\Providers\PluginServiceProvider;
+use App\Providers\VoltServiceProvider;
+use SocialiteProviders\Manager\ServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\EventServiceProvider::class,
-    App\Providers\FolioServiceProvider::class,
-    App\Providers\FortifyServiceProvider::class,
-    App\Providers\HorizonServiceProvider::class,
-    App\Providers\PluginServiceProvider::class,
-    App\Providers\VoltServiceProvider::class,
-    SocialiteProviders\Manager\ServiceProvider::class,
+    AppServiceProvider::class,
+    EventServiceProvider::class,
+    FolioServiceProvider::class,
+    FortifyServiceProvider::class,
+    HorizonServiceProvider::class,
+    PluginServiceProvider::class,
+    VoltServiceProvider::class,
+    ServiceProvider::class,
 ];

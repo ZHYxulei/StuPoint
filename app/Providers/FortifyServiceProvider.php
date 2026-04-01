@@ -4,11 +4,18 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Models\Grade;
+use App\Models\SchoolClass;
+use App\Models\Subject;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
@@ -48,28 +55,28 @@ class FortifyServiceProvider extends ServiceProvider
                 'password' => 'required|string',
             ]);
 
-            $user = \App\Models\User::where(Fortify::username(), $request->input(Fortify::username()))->first();
+            $user = User::where(Fortify::username(), $request->input(Fortify::username()))->first();
 
-            if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+            if (! $user || ! Hash::check($request->password, $user->password)) {
                 return false;
             }
 
             // Check registration status
             if ($user->registration_status === 'pending') {
-                \Illuminate\Support\Facades\Session::flash('error', '您的账号正在审核中，暂时无法登录');
+                Session::flash('error', '您的账号正在审核中，暂时无法登录');
 
                 // Throw validation exception to show proper error message
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     Fortify::username() => '您的账号正在审核中，暂时无法登录',
                 ]);
             }
 
             if ($user->registration_status === 'rejected') {
                 $reason = $user->rejection_reason ?: '未提供具体原因';
-                \Illuminate\Support\Facades\Session::flash('error', "您的账号审核未通过，无法登录。原因：{$reason}");
+                Session::flash('error', "您的账号审核未通过，无法登录。原因：{$reason}");
 
                 // Throw validation exception to show proper error message
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     Fortify::username() => "您的账号审核未通过。原因：{$reason}",
                 ]);
             }
@@ -103,7 +110,7 @@ class FortifyServiceProvider extends ServiceProvider
         ]));
 
         Fortify::registerView(fn () => Inertia::render('auth/register', [
-            'classes' => \App\Models\SchoolClass::select('id', 'name', 'grade')
+            'classes' => SchoolClass::select('id', 'name', 'grade')
                 ->orderBy('grade')
                 ->orderBy('name')
                 ->get()
@@ -111,10 +118,10 @@ class FortifyServiceProvider extends ServiceProvider
                     'id' => $class->id,
                     'full_name' => $class->full_name,
                 ]),
-            'subjects' => \App\Models\Subject::active()
+            'subjects' => Subject::active()
                 ->ordered()
                 ->get(['id', 'name', 'code']),
-            'grades' => \App\Models\Grade::active()
+            'grades' => Grade::active()
                 ->orderBy('name')
                 ->get(['id', 'name']),
         ]));

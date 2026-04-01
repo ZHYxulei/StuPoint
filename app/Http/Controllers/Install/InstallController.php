@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Install;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -351,7 +352,7 @@ class InstallController extends Controller
             ]);
 
             // Assign super admin role
-            $superAdminRole = \App\Models\Role::where('slug', 'super_admin')->first();
+            $superAdminRole = Role::where('slug', 'super_admin')->first();
             if ($superAdminRole) {
                 $user->roles()->attach($superAdminRole->id);
             }

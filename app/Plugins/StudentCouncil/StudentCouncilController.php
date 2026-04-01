@@ -3,6 +3,10 @@
 namespace App\Plugins\StudentCouncil;
 
 use App\Http\Controllers\Controller;
+use App\Models\CouncilActivity;
+use App\Models\CouncilActivityParticipant;
+use App\Models\CouncilActivityPoint;
+use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,13 +18,13 @@ class StudentCouncilController extends Controller
     public function dashboard(Request $request)
     {
         $stats = [
-            'total_activities' => \App\Models\CouncilActivity::count(),
-            'active_activities' => \App\Models\CouncilActivity::where('status', 'active')->count(),
-            'total_participants' => \App\Models\CouncilActivityParticipant::count(),
-            'points_awarded' => \App\Models\CouncilActivityPoint::sum('amount'),
+            'total_activities' => CouncilActivity::count(),
+            'active_activities' => CouncilActivity::where('status', 'active')->count(),
+            'total_participants' => CouncilActivityParticipant::count(),
+            'points_awarded' => CouncilActivityPoint::sum('amount'),
         ];
 
-        $recentActivities = \App\Models\CouncilActivity::with('organizer')
+        $recentActivities = CouncilActivity::with('organizer')
             ->latest()
             ->limit(5)
             ->get();
@@ -36,7 +40,7 @@ class StudentCouncilController extends Controller
      */
     public function index(Request $request)
     {
-        $activities = \App\Models\CouncilActivity::with(['organizer', 'participants'])
+        $activities = CouncilActivity::with(['organizer', 'participants'])
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('status', $request->input('status'));
             })
@@ -73,7 +77,7 @@ class StudentCouncilController extends Controller
             'status' => 'required|in:draft,active,closed',
         ]);
 
-        $activity = \App\Models\CouncilActivity::create([
+        $activity = CouncilActivity::create([
             'title' => $validated['title'],
             'description' => $validated['description'],
             'start_date' => $validated['start_date'],
@@ -94,7 +98,7 @@ class StudentCouncilController extends Controller
      */
     public function show(string $id)
     {
-        $activity = \App\Models\CouncilActivity::with(['organizer', 'participants.user'])
+        $activity = CouncilActivity::with(['organizer', 'participants.user'])
             ->findOrFail($id);
 
         return inertia('student-council/activities/show', [
@@ -107,7 +111,7 @@ class StudentCouncilController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $activity = \App\Models\CouncilActivity::findOrFail($id);
+        $activity = CouncilActivity::findOrFail($id);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -130,7 +134,7 @@ class StudentCouncilController extends Controller
      */
     public function destroy(string $id)
     {
-        $activity = \App\Models\CouncilActivity::findOrFail($id);
+        $activity = CouncilActivity::findOrFail($id);
 
         // Check if activity has participants
         if ($activity->participants()->count() > 0) {
@@ -148,13 +152,13 @@ class StudentCouncilController extends Controller
      */
     public function awardPoints(Request $request, string $id)
     {
-        $activity = \App\Models\CouncilActivity::with('participants.user')->findOrFail($id);
+        $activity = CouncilActivity::with('participants.user')->findOrFail($id);
 
         $validated = $request->validate([
             'note' => 'nullable|string|max:500',
         ]);
 
-        $pointService = app(\App\Services\PointService::class);
+        $pointService = app(PointService::class);
 
         $awardedCount = 0;
         foreach ($activity->participants as $participant) {

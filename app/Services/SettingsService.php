@@ -17,7 +17,7 @@ class SettingsService
     /**
      * Set a setting value.
      */
-    public static function set(string $key, mixed $value, string $type = 'string', ?string $group = null, ?string $description = null): \App\Models\Setting
+    public static function set(string $key, mixed $value, string $type = 'string', ?string $group = null, ?string $description = null): Setting
     {
         return Setting::set($key, $value, $type, $group, $description);
     }

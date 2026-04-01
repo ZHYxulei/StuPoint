@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\UserApprovalController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
@@ -71,7 +72,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         // Verification endpoint - exclude Inertia middleware by using 'withoutMiddleware' on specific route
         Route::post('/{id}/verify', [OrderVerificationController::class, 'verify'])
             ->name('verify')
-            ->withoutMiddleware([\App\Http\Middleware\HandleInertiaRequests::class]);
+            ->withoutMiddleware([HandleInertiaRequests::class]);
     });
 
     // Plugin Management

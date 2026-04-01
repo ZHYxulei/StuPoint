@@ -3,8 +3,10 @@
 use App\Http\Controllers\Api\Admin\ClassController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ParentController;
+use App\Http\Controllers\Api\PluginController;
 use App\Http\Controllers\Api\PointController;
 use App\Http\Controllers\Api\ShopController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,10 +53,10 @@ Route::middleware('auth:api')->group(function () {
     // Admin routes
     Route::middleware(['role:super_admin,principal,grade_director'])->prefix('/admin')->group(function () {
         // Users
-        Route::get('/users', [\App\Http\Controllers\Api\UserController::class, 'index']);
-        Route::get('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'show']);
-        Route::put('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'update']);
-        Route::post('/users/{id}/adjust-points', [\App\Http\Controllers\Api\UserController::class, 'adjustPoints']);
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/{id}', [UserController::class, 'show']);
+        Route::put('/users/{id}', [UserController::class, 'update']);
+        Route::post('/users/{id}/adjust-points', [UserController::class, 'adjustPoints']);
 
         // Classes
         Route::apiResource('classes', ClassController::class);
@@ -62,7 +64,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/classes/{id}/teachers/{teacherId}', [ClassController::class, 'removeTeacher']);
 
         // Plugins
-        Route::get('/plugins', [\App\Http\Controllers\Api\PluginController::class, 'index']);
-        Route::post('/plugins/upload', [\App\Http\Controllers\Api\PluginController::class, 'upload']);
+        Route::get('/plugins', [PluginController::class, 'index']);
+        Route::post('/plugins/upload', [PluginController::class, 'upload']);
     });
 });

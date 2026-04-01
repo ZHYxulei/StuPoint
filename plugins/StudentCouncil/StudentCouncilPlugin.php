@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Plugins\Plugin as BasePlugin;
 use App\Services\PluginManager;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 class StudentCouncilPlugin extends BasePlugin
 {
@@ -75,7 +76,7 @@ class StudentCouncilPlugin extends BasePlugin
 
         // Share data with Inertia
         if (class_exists('Inertia\Inertia')) {
-            \Inertia\Inertia::share('student_council_enabled', true);
+            Inertia::share('student_council_enabled', true);
         }
     }
 

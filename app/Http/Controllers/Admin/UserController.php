@@ -11,6 +11,7 @@ use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
 use App\Models\UserPoint;
+use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -277,7 +278,7 @@ class UserController extends Controller
         ]);
 
         // Check if operator has permission to modify this user's points
-        $pointService = app(\App\Services\PointService::class);
+        $pointService = app(PointService::class);
         if (! $pointService->canModifyPoints($operator, $user)) {
             return back()->with('error', '您没有权限修改该用户的积分');
         }

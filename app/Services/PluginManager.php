@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Plugin;
+use Illuminate\Database\Eloquent\Collection;
 
 class PluginManager
 {
@@ -188,7 +189,7 @@ class PluginManager
     /**
      * Get all enabled plugins from database.
      */
-    public function getEnabledPlugins(): \Illuminate\Database\Eloquent\Collection
+    public function getEnabledPlugins(): Collection
     {
         return Plugin::enabled()->get();
     }

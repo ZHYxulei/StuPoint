@@ -9,6 +9,7 @@ use App\Services\VerificationCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class OrderVerificationController extends Controller
 {
@@ -183,7 +184,7 @@ class OrderVerificationController extends Controller
                 'success' => false,
                 'message' => $message,
             ], 422);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => '数据验证失败',

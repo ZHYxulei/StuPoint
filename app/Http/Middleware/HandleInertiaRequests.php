@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Plugin;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -45,7 +46,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'enabledPlugins' => fn () => $user
-                ? \App\Models\Plugin::enabled()->pluck('slug')->toArray()
+                ? Plugin::enabled()->pluck('slug')->toArray()
                 : [],
         ];
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Plugin;
+use App\Models\PluginSource;
 use App\Services\PluginManager;
 use App\Services\PluginUploader;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class PluginController extends Controller
         $plugins = Plugin::withCount('permissions')->latest()->get();
 
         // Get plugin sources for the settings
-        $pluginSources = \App\Models\PluginSource::orderBy('sort_order')->orderBy('name')->get();
+        $pluginSources = PluginSource::orderBy('sort_order')->orderBy('name')->get();
 
         return inertia('admin/plugins/index', [
             'plugins' => $plugins,

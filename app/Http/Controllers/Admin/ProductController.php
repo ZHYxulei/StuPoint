@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class ProductController extends Controller
             'total' => Product::count(),
             'active' => Product::where('status', 'active')->count(),
             'out_of_stock' => Product::where('stock', 0)->count(),
-            'total_exchanges' => \App\Models\Order::count(),
+            'total_exchanges' => Order::count(),
         ];
 
         return inertia('admin/products/index', [

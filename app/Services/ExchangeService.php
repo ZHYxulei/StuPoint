@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ThirdPartyExchangeRequested;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
@@ -93,6 +94,6 @@ class ExchangeService
     protected function handleThirdPartyExchange(Order $order, Product $product): void
     {
         // Trigger event for third-party exchange
-        event(new \App\Events\ThirdPartyExchangeRequested($order, $product));
+        event(new ThirdPartyExchangeRequested($order, $product));
     }
 }

@@ -108,11 +108,13 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
 
             <div className="min-h-screen bg-background">
                 {/* Hero Section */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+                <div className="border-b bg-card/30 py-12">
                     <div className="container text-center">
-                        <Trophy className="h-12 w-12 mx-auto mb-4" />
+                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                            <Trophy className="h-7 w-7" />
+                        </div>
                         <h1 className="text-4xl font-bold mb-2">积分排行榜</h1>
-                        <p className="text-blue-100">
+                        <p className="text-muted-foreground">
                             查看学生积分排名，激励学习进步
                         </p>
                     </div>

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Events\RegistrationStatusChanged;
 use App\Traits\HasRoles;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,7 +17,7 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
 
     /**
@@ -229,7 +231,7 @@ class User extends Authenticatable
         ]);
 
         // Dispatch registration status changed event
-        event(new \App\Events\RegistrationStatusChanged(
+        event(new RegistrationStatusChanged(
             $this,
             $oldStatus,
             'approved',
@@ -251,7 +253,7 @@ class User extends Authenticatable
         ]);
 
         // Dispatch registration status changed event
-        event(new \App\Events\RegistrationStatusChanged(
+        event(new RegistrationStatusChanged(
             $this,
             $oldStatus,
             'rejected',

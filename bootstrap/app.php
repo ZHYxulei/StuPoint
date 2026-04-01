@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\CheckRegistrationStatus;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\InstallationMiddleware;
 use App\Http\Middleware\UseFileSessionDuringInstallation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -26,10 +28,10 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        $middleware->encryptCookies(except: ['appearance', 'theme_color', 'sidebar_state']);
 
         $middleware->alias([
-            'permission' => \App\Http\Middleware\CheckPermission::class,
+            'permission' => CheckPermission::class,
         ]);
 
         $middleware->web(append: [
@@ -37,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\InstallationMiddleware::class,
+            InstallationMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

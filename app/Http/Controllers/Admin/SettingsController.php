@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateSiteSettingsRequest;
 use App\Models\PluginSource;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 
 class SettingsController extends Controller
@@ -156,7 +157,7 @@ class SettingsController extends Controller
 
         $validated = $request->validated();
 
-        if (array_key_exists('site_favicon_upload', $validated) && $validated['site_favicon_upload'] instanceof \Illuminate\Http\UploadedFile) {
+        if (array_key_exists('site_favicon_upload', $validated) && $validated['site_favicon_upload'] instanceof UploadedFile) {
             $file = $validated['site_favicon_upload'];
 
             if ($file->isValid()) {

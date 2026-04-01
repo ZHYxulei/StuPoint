@@ -1,3 +1,4 @@
+/.tmp
 /.phpunit.cache
 /bootstrap/ssr
 /node_modules
@@ -32,7 +33,7 @@ yarn-error.log
 /.gemini
 /.opencode
 /.sisyphus
-.tmp
+# boost.json 需要提交，勿忽略
 /.worktrees
 .claude
 .gemini

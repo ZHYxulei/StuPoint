@@ -16,7 +16,7 @@ return new class extends Migration
         });
 
         // Update existing records to have slug based on name
-        \DB::statement('UPDATE plugins SET slug = lower(name) WHERE slug IS NULL');
+        DB::statement('UPDATE plugins SET slug = lower(name) WHERE slug IS NULL');
 
         // Now make it NOT NULL and unique
         Schema::table('plugins', function (Blueprint $table) {
