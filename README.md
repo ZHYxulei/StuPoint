@@ -461,6 +461,16 @@ php artisan serve
 
 ### 生产环境部署
 
+> 重要：Nginx 必须配置伪静态（URL 重写），否则只能访问 `index.php`，例如 `/install` 会 404。
+
+示例（放在站点 `server {}` 中）：
+
+```nginx
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+```
+
 1. **优化配置**
 
 ```bash

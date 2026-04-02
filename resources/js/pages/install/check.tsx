@@ -28,8 +28,8 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
             checking: '检测中...',
             next: '下一步',
             requirements: '系统要求',
-            all_passed: '所有要求已满足，可以继续安装',
-            some_failed: '您的服务器不满足所有要求，请解决后继续',
+            all_passed: '所有必选要求已满足，可以继续安装',
+            some_failed: '您的服务器不满足必选要求，请解决后继续',
         },
         en: {
             title: 'Environment Check',
@@ -37,8 +37,8 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
             checking: 'Checking...',
             next: 'Next',
             requirements: 'System Requirements',
-            all_passed: 'All requirements met, you can continue',
-            some_failed: 'Your server does not meet all requirements',
+            all_passed: 'All required requirements met, you can continue',
+            some_failed: 'Your server does not meet all required requirements',
         },
         ja: {
             title: '環境チェック',
@@ -46,8 +46,8 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
             checking: 'チェック中...',
             next: '次へ',
             requirements: 'システム要件',
-            all_passed: 'すべての要件を満たしています',
-            some_failed: 'サーバーーがすべての要件を満たしていません',
+            all_passed: '必須要件を満たしています',
+            some_failed: 'サーバーーが必須要件を満たしていません',
         },
     };
 
@@ -75,7 +75,8 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
         checkRequirements();
     }, []);
 
-    const allPassed = requirements.length > 0 && requirements.every(r => r.status === 'pass');
+    const requiredRequirements = requirements.filter(r => r.required);
+    const requiredPassed = requiredRequirements.length > 0 && requiredRequirements.every(r => r.status === 'pass');
 
     const getStatusIcon = (status: string) => {
         switch (status) {
@@ -133,14 +134,14 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                         ))}
                                     </div>
 
-                                    {allPassed ? (
+                                    {requiredPassed ? (
                                         <div className="mt-6 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                                             <p className="text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
                                                 <Check className="h-4 w-4" />
                                                 {t.all_passed}
                                             </p>
                                         </div>
-                                    ) : requirements.some(r => r.status === 'fail') && (
+                                    ) : requiredRequirements.some(r => r.status === 'fail') && (
                                         <div className="mt-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
                                             <p className="text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
                                                 <X className="h-4 w-4" />
@@ -157,7 +158,7 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                         <a href="/install/language" className="flex-1">
                             <Button variant="outline" className="w-full" type="button">返回</Button>
                         </a>
-                        {allPassed && (
+                        {requiredPassed && (
                             <a href="/install/database" className="flex-1">
                                 <Button className="w-full" type="button">
                                     {t.next} <ChevronRight className="ml-2 h-4 w-4" />
