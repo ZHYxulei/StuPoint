@@ -61,6 +61,11 @@ class StudentCouncilPlugin extends BasePlugin
     {
         // Register student council role
         $manager->addHook('plugins.booted', function () {
+            // During installation, the database may not be configured yet.
+            if (! file_exists(storage_path('installed'))) {
+                return;
+            }
+
             if (! Schema::hasTable('roles')) {
                 return;
             }

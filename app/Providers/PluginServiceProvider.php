@@ -20,6 +20,12 @@ class PluginServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // During installation, the database is not configured yet.
+        // Avoid booting plugins that may touch the database.
+        if (! file_exists(storage_path('installed'))) {
+            return;
+        }
+
         $pluginManager = $this->app->make(PluginManager::class);
 
         // Auto-load plugins from app/Plugins directory
