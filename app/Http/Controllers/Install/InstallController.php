@@ -8,6 +8,8 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -182,6 +184,29 @@ class InstallController extends Controller
             'DB_PASSWORD' => $validated['password'] ?? '',
         ]);
 
+        // Ensure config cache is cleared so updated .env takes effect on next request.
+        Artisan::call('config:clear');
+
+        // Validate the database connection now to avoid breaking later install steps.
+        try {
+            $connection = $validated['connection'];
+
+            if ($connection !== 'sqlite') {
+                Config::set("database.connections.{$connection}.host", $validated['host'] ?? '127.0.0.1');
+                Config::set("database.connections.{$connection}.port", $validated['port'] ?? '3306');
+                Config::set("database.connections.{$connection}.database", $validated['database']);
+                Config::set("database.connections.{$connection}.username", $validated['username'] ?? 'root');
+                Config::set("database.connections.{$connection}.password", $validated['password'] ?? '');
+
+                DB::purge($connection);
+                DB::connection($connection)->getPdo();
+            }
+        } catch (\Throwable $e) {
+            return back()
+                ->withErrors(['database' => '数据库连接失败，请检查用户名/密码/数据库名'])
+                ->withInput();
+        }
+
         return redirect()->route('install.redis');
     }
 
@@ -289,12 +314,11 @@ class InstallController extends Controller
             'APP_FALLBACK_LOCALE' => $validated['locale'],
         ]);
 
-        if (Schema::hasTable('settings')) {
-            Setting::set('class_points_mode', $validated['class_points_mode'], 'string', 'site');
-        }
-
-        // Store locale in session for admin creation
-        session(['install_locale' => $validated['locale']]);
+        // Store locale and site options in session for later steps.
+        session([
+            'install_locale' => $validated['locale'],
+            'install_class_points_mode' => $validated['class_points_mode'],
+        ]);
 
         return redirect()->route('install.account');
     }
@@ -340,6 +364,12 @@ class InstallController extends Controller
 
                 // Run seeders to create roles and permissions
                 Artisan::call('db:seed', ['--force' => true]);
+            }
+
+            // Persist site-level install options now that tables exist.
+            $classPointsMode = session('install_class_points_mode');
+            if ($classPointsMode && Schema::hasTable('settings')) {
+                Setting::set('class_points_mode', $classPointsMode, 'string', 'site');
             }
 
             // Create admin user
