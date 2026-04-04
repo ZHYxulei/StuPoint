@@ -132,6 +132,11 @@ class AppServiceProvider extends ServiceProvider
 
     protected function canAccessSettings(): bool
     {
+        // Before installation completes, the database may not be configured yet.
+        if (! file_exists(storage_path('installed'))) {
+            return false;
+        }
+
         $defaultConnection = config('database.default');
 
         if ($defaultConnection !== 'sqlite') {

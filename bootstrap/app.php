@@ -43,5 +43,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        if (config('app.hide_error_details')) {
+            $exceptions->render(function (\Throwable $e) {
+                $status = 500;
+
+                if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                    $status = $e->getStatusCode();
+                }
+
+                return response((string) $status, $status)->header('Content-Type', 'text/plain; charset=UTF-8');
+            });
+        }
     })->create();

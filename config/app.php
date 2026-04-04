@@ -41,6 +41,8 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    'hide_error_details' => (bool) env('HIDE_ERROR_DETAILS', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Plugin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -45,7 +46,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user?->load('roles'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'enabledPlugins' => fn () => $user
+            'enabledPlugins' => fn () => $user && Schema::hasTable('plugins')
                 ? Plugin::enabled()->pluck('slug')->toArray()
                 : [],
         ];
