@@ -184,6 +184,15 @@ class InstallController extends Controller
             'DB_PASSWORD' => $validated['password'] ?? '',
         ]);
 
+        session(['install_db_config' => [
+            'connection' => $validated['connection'],
+            'host' => $validated['host'] ?? '127.0.0.1',
+            'port' => $validated['port'] ?? '3306',
+            'database' => $validated['database'],
+            'username' => $validated['username'] ?? 'root',
+            'password' => $validated['password'] ?? '',
+        ]]);
+
         // Ensure config cache is cleared so updated .env takes effect on next request.
         Artisan::call('config:clear');
 
