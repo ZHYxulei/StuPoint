@@ -5,7 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/input-error';
 import { User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 
-export default function InstallAccount() {
+interface InstallAccountProps {
+    siteConfig: {
+        app_name?: string;
+    };
+}
+
+export default function InstallAccount({ siteConfig }: InstallAccountProps) {
     const { data, setData, post, processing, errors } = useForm({
         nickname: '',
         email: '',
@@ -113,8 +119,13 @@ export default function InstallAccount() {
                                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
                                     <p className="text-sm text-blue-700 dark:text-blue-300">
                                         <CheckCircle className="inline h-4 w-4 mr-1" />
-                                        点击"完成安装"后，系统将自动创建数据库表并初始化数据
+                                        点击"完成安装"后，系统将一次性写入配置并自动创建数据库表、初始化数据
                                     </p>
+                                    {siteConfig.app_name && (
+                                        <p className="mt-2 text-xs text-blue-700 dark:text-blue-300">
+                                            当前站点名称：{siteConfig.app_name}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="flex gap-4 pt-4">

@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -158,7 +159,16 @@ class InstallController extends Controller
      */
     public function database()
     {
-        return inertia('install/database');
+        return inertia('install/database', [
+            'form' => $this->getInstallDraft('database', [
+                'connection' => 'sqlite',
+                'host' => '127.0.0.1',
+                'port' => '3306',
+                'username' => 'root',
+                'password' => '',
+                'database' => 'database.sqlite',
+            ]),
+        ]);
     }
 
     /**
@@ -175,37 +185,25 @@ class InstallController extends Controller
             'password' => 'nullable',
         ]);
 
-        $this->updateEnvFile([
-            'DB_CONNECTION' => $validated['connection'],
-            'DB_HOST' => $validated['host'] ?? '127.0.0.1',
-            'DB_PORT' => $validated['port'] ?? '3306',
-            'DB_DATABASE' => $validated['database'],
-            'DB_USERNAME' => $validated['username'] ?? 'root',
-            'DB_PASSWORD' => $validated['password'] ?? '',
-        ]);
-
-        session(['install_db_config' => [
+        $databaseDraft = [
             'connection' => $validated['connection'],
             'host' => $validated['host'] ?? '127.0.0.1',
             'port' => $validated['port'] ?? '3306',
             'database' => $validated['database'],
             'username' => $validated['username'] ?? 'root',
             'password' => $validated['password'] ?? '',
-        ]]);
-
-        // Ensure config cache is cleared so updated .env takes effect on next request.
-        Artisan::call('config:clear');
+        ];
 
         // Validate the database connection now to avoid breaking later install steps.
         try {
-            $connection = $validated['connection'];
+            $connection = $databaseDraft['connection'];
 
             if ($connection !== 'sqlite') {
-                Config::set("database.connections.{$connection}.host", $validated['host'] ?? '127.0.0.1');
-                Config::set("database.connections.{$connection}.port", $validated['port'] ?? '3306');
-                Config::set("database.connections.{$connection}.database", $validated['database']);
-                Config::set("database.connections.{$connection}.username", $validated['username'] ?? 'root');
-                Config::set("database.connections.{$connection}.password", $validated['password'] ?? '');
+                Config::set("database.connections.{$connection}.host", $databaseDraft['host']);
+                Config::set("database.connections.{$connection}.port", $databaseDraft['port']);
+                Config::set("database.connections.{$connection}.database", $databaseDraft['database']);
+                Config::set("database.connections.{$connection}.username", $databaseDraft['username']);
+                Config::set("database.connections.{$connection}.password", $databaseDraft['password']);
 
                 DB::purge($connection);
                 DB::connection($connection)->getPdo();
@@ -216,6 +214,8 @@ class InstallController extends Controller
                 ->withInput();
         }
 
+        $this->putInstallDraft('database', $databaseDraft);
+
         return redirect()->route('install.redis');
     }
 
@@ -224,7 +224,15 @@ class InstallController extends Controller
      */
     public function redis()
     {
-        return inertia('install/redis');
+        return inertia('install/redis', [
+            'form' => $this->getInstallDraft('redis', [
+                'enabled' => false,
+                'host' => '127.0.0.1',
+                'port' => '6379',
+                'database' => '0',
+                'password' => '',
+            ]),
+        ]);
     }
 
     /**
@@ -241,15 +249,23 @@ class InstallController extends Controller
         ]);
 
         if ($validated['enabled']) {
+            $redisDraft = [
+                'enabled' => true,
+                'host' => $validated['host'] ?? '127.0.0.1',
+                'port' => $validated['port'] ?? '6379',
+                'password' => $validated['password'] ?? null,
+                'database' => $validated['database'] ?? '0',
+            ];
+
             try {
-                Config::set('database.redis.default.host', $validated['host'] ?? '127.0.0.1');
-                Config::set('database.redis.default.port', $validated['port'] ?? '6379');
-                Config::set('database.redis.default.password', $validated['password'] ?? null);
-                Config::set('database.redis.default.database', (string) ($validated['database'] ?? '0'));
-                Config::set('database.redis.cache.host', $validated['host'] ?? '127.0.0.1');
-                Config::set('database.redis.cache.port', $validated['port'] ?? '6379');
-                Config::set('database.redis.cache.password', $validated['password'] ?? null);
-                Config::set('database.redis.cache.database', (string) ($validated['database'] ?? '0'));
+                Config::set('database.redis.default.host', $redisDraft['host']);
+                Config::set('database.redis.default.port', $redisDraft['port']);
+                Config::set('database.redis.default.password', $redisDraft['password']);
+                Config::set('database.redis.default.database', (string) $redisDraft['database']);
+                Config::set('database.redis.cache.host', $redisDraft['host']);
+                Config::set('database.redis.cache.port', $redisDraft['port']);
+                Config::set('database.redis.cache.password', $redisDraft['password']);
+                Config::set('database.redis.cache.database', (string) $redisDraft['database']);
 
                 app('redis')->connection('default')->ping();
             } catch (\Throwable $e) {
@@ -257,29 +273,17 @@ class InstallController extends Controller
                     ->withErrors(['redis' => 'Redis 连接失败，请检查主机/端口/密码/数据库'])
                     ->withInput();
             }
-
-            $this->updateEnvFile([
-                'REDIS_HOST' => $validated['host'] ?? '127.0.0.1',
-                'REDIS_PASSWORD' => $validated['password'] ?? 'null',
-                'REDIS_PORT' => $validated['port'] ?? '6379',
-                'REDIS_DB' => $validated['database'] ?? '0',
-                'REDIS_CACHE_DB' => $validated['database'] ?? '0',
-                'CACHE_STORE' => 'redis',
-            ]);
-
-            session(['install_redis_config' => [
-                'enabled' => true,
+        } else {
+            $redisDraft = [
+                'enabled' => false,
                 'host' => $validated['host'] ?? '127.0.0.1',
                 'port' => $validated['port'] ?? '6379',
                 'password' => $validated['password'] ?? null,
                 'database' => $validated['database'] ?? '0',
-            ]]);
-        } else {
-            session(['install_redis_config' => ['enabled' => false]]);
-            $this->updateEnvFile([
-                'CACHE_STORE' => 'file',
-            ]);
+            ];
         }
+
+        $this->putInstallDraft('redis', $redisDraft);
 
         return redirect()->route('install.cache');
     }
@@ -289,7 +293,11 @@ class InstallController extends Controller
      */
     public function cache()
     {
-        return inertia('install/cache');
+        return inertia('install/cache', [
+            'form' => $this->getInstallDraft('cache', [
+                'driver' => 'file',
+            ]),
+        ]);
     }
 
     /**
@@ -301,8 +309,12 @@ class InstallController extends Controller
             'driver' => 'required|in:file,database,redis',
         ]);
 
+        $cacheDraft = [
+            'driver' => $validated['driver'],
+        ];
+
         if ($validated['driver'] === 'redis') {
-            $redisConfig = session('install_redis_config');
+            $redisConfig = $this->getInstallDraft('redis');
 
             if (! is_array($redisConfig) || ! ($redisConfig['enabled'] ?? false)) {
                 return back()->withErrors([
@@ -324,11 +336,7 @@ class InstallController extends Controller
             }
         }
 
-        $this->updateEnvFile([
-            'CACHE_STORE' => $validated['driver'],
-            'SESSION_DRIVER' => 'file',
-            'QUEUE_CONNECTION' => 'database',
-        ]);
+        $this->putInstallDraft('cache', $cacheDraft);
 
         return redirect()->route('install.site');
     }
@@ -338,7 +346,14 @@ class InstallController extends Controller
      */
     public function site()
     {
-        return inertia('install/site');
+        return inertia('install/site', [
+            'form' => $this->getInstallDraft('site', [
+                'app_name' => '学生积分管理系统',
+                'app_url' => config('app.url', 'http://localhost:8000'),
+                'locale' => session('install_locale', 'zh'),
+                'class_points_mode' => 'avg',
+            ]),
+        ]);
     }
 
     /**
@@ -353,18 +368,15 @@ class InstallController extends Controller
             'class_points_mode' => 'required|in:avg,sum,separate',
         ]);
 
-        $this->updateEnvFile([
-            'APP_NAME' => $validated['app_name'],
-            'APP_URL' => $validated['app_url'],
-            'APP_LOCALE' => $validated['locale'],
-            'APP_FALLBACK_LOCALE' => $validated['locale'],
-        ]);
+        $siteDraft = [
+            'app_name' => $validated['app_name'],
+            'app_url' => $validated['app_url'],
+            'locale' => $validated['locale'],
+            'class_points_mode' => $validated['class_points_mode'],
+        ];
 
-        // Store locale and site options in session for later steps.
-        session([
-            'install_locale' => $validated['locale'],
-            'install_class_points_mode' => $validated['class_points_mode'],
-        ]);
+        $this->putInstallDraft('site', $siteDraft);
+        session(['install_locale' => $validated['locale']]);
 
         return redirect()->route('install.account');
     }
@@ -374,7 +386,9 @@ class InstallController extends Controller
      */
     public function account()
     {
-        return inertia('install/account');
+        return inertia('install/account', [
+            'siteConfig' => $this->getInstallDraft('site', []),
+        ]);
     }
 
     /**
@@ -382,12 +396,18 @@ class InstallController extends Controller
      */
     public function storeAccount(Request $request)
     {
-        $emailRules = ['required', 'string', 'email', 'max:255'];
+        $installConfig = session('install_config', []);
+        $databaseConfig = Arr::get($installConfig, 'database', []);
+        $redisConfig = Arr::get($installConfig, 'redis', []);
+        $cacheConfig = Arr::get($installConfig, 'cache', []);
+        $siteConfig = Arr::get($installConfig, 'site', []);
 
-        // Only check uniqueness if the users table exists
-        if (Schema::hasTable('users')) {
-            $emailRules[] = 'unique:users';
+        if (empty($databaseConfig) || empty($siteConfig) || empty($cacheConfig)) {
+            return redirect()->route('install.database')
+                ->withErrors(['install' => '安装配置不完整，请重新完成前面的步骤']);
         }
+
+        $emailRules = ['required', 'string', 'email', 'max:255'];
 
         $validated = $request->validate([
             'nickname' => 'required|string|max:255',
@@ -403,22 +423,46 @@ class InstallController extends Controller
         ]);
 
         try {
-            // Only run migrations if tables don't exist yet
-            if (! Schema::hasTable('users') || User::count() === 0) {
-                // Run migrations
-                Artisan::call('migrate', ['--force' => true]);
+            $this->validateDatabaseDraft($databaseConfig);
+            $this->validateRedisAndCacheDrafts($redisConfig, $cacheConfig);
 
-                // Run seeders to create roles and permissions
+            $this->updateEnvFile(array_merge(
+                $this->buildDatabaseEnv($databaseConfig),
+                $this->buildRedisEnv($redisConfig),
+                $this->buildCacheEnv($cacheConfig),
+                $this->buildSiteEnv($siteConfig),
+            ));
+
+            Artisan::call('config:clear');
+            $this->applyDatabaseConfig($databaseConfig);
+
+            if (! Schema::hasTable('users') || User::count() === 0) {
+                Artisan::call('migrate', ['--force' => true]);
                 Artisan::call('db:seed', ['--force' => true]);
             }
 
-            // Persist site-level install options now that tables exist.
-            $classPointsMode = session('install_class_points_mode');
-            if ($classPointsMode && Schema::hasTable('settings')) {
-                Setting::set('class_points_mode', $classPointsMode, 'string', 'site');
+            if (Schema::hasTable('settings')) {
+                Setting::set('class_points_mode', $siteConfig['class_points_mode'], 'string', 'site');
             }
 
-            // Create admin user
+            $emailRules = ['required', 'string', 'email', 'max:255'];
+            if (Schema::hasTable('users')) {
+                $emailRules[] = 'unique:users';
+            }
+
+            $validated = $request->validate([
+                'nickname' => 'required|string|max:255',
+                'email' => $emailRules,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ], [
+                'nickname.required' => '请输入昵称',
+                'email.required' => '请输入邮箱地址',
+                'email.email' => '请输入有效的邮箱地址',
+                'email.unique' => '该邮箱已被使用',
+                'password.required' => '请输入密码',
+                'password.confirmed' => '两次输入的密码不一致',
+            ]);
+
             $user = User::create([
                 'name' => $validated['nickname'],
                 'nickname' => $validated['nickname'],
@@ -427,17 +471,16 @@ class InstallController extends Controller
                 'email_verified_at' => now(),
             ]);
 
-            // Assign super admin role
             $superAdminRole = Role::where('slug', 'super_admin')->first();
             if ($superAdminRole) {
                 $user->roles()->attach($superAdminRole->id);
             }
 
-            // Create installed lock file
             File::put(storage_path('installed'), date('Y-m-d H:i:s'));
+            session()->forget('install_config');
 
             return redirect()->route('install.complete');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return back()->withErrors([
                 'install' => '安装失败: '.$e->getMessage(),
             ]);
@@ -474,5 +517,123 @@ class InstallController extends Controller
         }
 
         File::put($envFile, $envContent);
+    }
+
+    protected function getInstallDraft(string $section, array $defaults = []): array
+    {
+        $draft = session('install_config', []);
+
+        return array_merge($defaults, Arr::get($draft, $section, []));
+    }
+
+    protected function putInstallDraft(string $section, array $values): void
+    {
+        $draft = session('install_config', []);
+        Arr::set($draft, $section, $values);
+        session(['install_config' => $draft]);
+    }
+
+    protected function applyDatabaseConfig(array $databaseConfig): void
+    {
+        $connection = $databaseConfig['connection'];
+
+        Config::set('database.default', $connection);
+
+        if ($connection === 'sqlite') {
+            Config::set('database.connections.sqlite.database', $databaseConfig['database']);
+            DB::purge('sqlite');
+
+            return;
+        }
+
+        Config::set("database.connections.{$connection}.host", $databaseConfig['host']);
+        Config::set("database.connections.{$connection}.port", $databaseConfig['port']);
+        Config::set("database.connections.{$connection}.database", $databaseConfig['database']);
+        Config::set("database.connections.{$connection}.username", $databaseConfig['username']);
+        Config::set("database.connections.{$connection}.password", $databaseConfig['password']);
+        DB::purge($connection);
+    }
+
+    protected function validateDatabaseDraft(array $databaseConfig): void
+    {
+        $this->applyDatabaseConfig($databaseConfig);
+
+        if ($databaseConfig['connection'] !== 'sqlite') {
+            DB::connection($databaseConfig['connection'])->getPdo();
+        }
+    }
+
+    protected function validateRedisAndCacheDrafts(array $redisConfig, array $cacheConfig): void
+    {
+        if (($cacheConfig['driver'] ?? 'file') !== 'redis') {
+            return;
+        }
+
+        if (! ($redisConfig['enabled'] ?? false)) {
+            throw new \RuntimeException('缓存选择了 Redis，但 Redis 配置未启用');
+        }
+
+        Config::set('database.redis.default.host', $redisConfig['host'] ?? '127.0.0.1');
+        Config::set('database.redis.default.port', $redisConfig['port'] ?? '6379');
+        Config::set('database.redis.default.password', $redisConfig['password'] ?? null);
+        Config::set('database.redis.default.database', (string) ($redisConfig['database'] ?? '0'));
+        Config::set('database.redis.cache.host', $redisConfig['host'] ?? '127.0.0.1');
+        Config::set('database.redis.cache.port', $redisConfig['port'] ?? '6379');
+        Config::set('database.redis.cache.password', $redisConfig['password'] ?? null);
+        Config::set('database.redis.cache.database', (string) ($redisConfig['database'] ?? '0'));
+
+        app('redis')->connection('cache')->ping();
+    }
+
+    protected function buildDatabaseEnv(array $databaseConfig): array
+    {
+        return [
+            'DB_CONNECTION' => $databaseConfig['connection'],
+            'DB_HOST' => $databaseConfig['host'] ?? '127.0.0.1',
+            'DB_PORT' => $databaseConfig['port'] ?? '3306',
+            'DB_DATABASE' => $databaseConfig['database'],
+            'DB_USERNAME' => $databaseConfig['username'] ?? 'root',
+            'DB_PASSWORD' => $databaseConfig['password'] ?? '',
+        ];
+    }
+
+    protected function buildRedisEnv(array $redisConfig): array
+    {
+        if (! ($redisConfig['enabled'] ?? false)) {
+            return [
+                'REDIS_HOST' => '127.0.0.1',
+                'REDIS_PASSWORD' => 'null',
+                'REDIS_PORT' => '6379',
+                'REDIS_DB' => '0',
+                'REDIS_CACHE_DB' => '0',
+            ];
+        }
+
+        return [
+            'REDIS_HOST' => $redisConfig['host'] ?? '127.0.0.1',
+            'REDIS_PASSWORD' => $redisConfig['password'] ?? 'null',
+            'REDIS_PORT' => $redisConfig['port'] ?? '6379',
+            'REDIS_DB' => $redisConfig['database'] ?? '0',
+            'REDIS_CACHE_DB' => $redisConfig['database'] ?? '0',
+        ];
+    }
+
+    protected function buildCacheEnv(array $cacheConfig): array
+    {
+        return [
+            'CACHE_STORE' => $cacheConfig['driver'] ?? 'file',
+            'SESSION_DRIVER' => 'file',
+            'QUEUE_CONNECTION' => 'database',
+        ];
+    }
+
+    protected function buildSiteEnv(array $siteConfig): array
+    {
+        return [
+            'APP_NAME' => $siteConfig['app_name'],
+            'APP_URL' => $siteConfig['app_url'],
+            'APP_LOCALE' => $siteConfig['locale'],
+            'APP_FALLBACK_LOCALE' => $siteConfig['locale'],
+        ];
     }
 }

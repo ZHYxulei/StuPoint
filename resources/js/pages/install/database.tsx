@@ -4,8 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
-export default function InstallDatabase() {
-    const [connectionType, setConnectionType] = useState('sqlite');
+interface InstallDatabaseProps {
+    form: {
+        connection: 'sqlite' | 'mysql' | 'pgsql';
+        host: string;
+        port: string;
+        username: string;
+        password: string;
+        database: string;
+    };
+}
+
+export default function InstallDatabase({ form }: InstallDatabaseProps) {
+    const [connectionType, setConnectionType] = useState(form.connection);
 
     return (
         <>
@@ -30,7 +41,7 @@ export default function InstallDatabase() {
                                     <select
                                         name="connection"
                                         value={connectionType}
-                                        onChange={(e) => setConnectionType(e.target.value)}
+                                        onChange={(e) => setConnectionType(e.target.value as InstallDatabaseProps['form']['connection'])}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                     >
                                         <option value="sqlite">SQLite (推荐)</option>
@@ -45,25 +56,30 @@ export default function InstallDatabase() {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 主机
                                             </label>
-                                            <input type="text" name="host" defaultValue="127.0.0.1" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <input type="text" name="host" defaultValue={form.host} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 端口
                                             </label>
-                                            <input type="text" name="port" defaultValue={connectionType === 'mysql' ? '3306' : '5432'} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <input type="text" name="port" defaultValue={form.port || (connectionType === 'mysql' ? '3306' : '5432')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 用户名
                                             </label>
-                                            <input type="text" name="username" defaultValue="root" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <input type="text" name="username" defaultValue={form.username} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 密码
                                             </label>
-                                            <input type="password" name="password" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                defaultValue={form.password}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                            />
                                         </div>
                                     </div>
                                 )}
@@ -75,7 +91,7 @@ export default function InstallDatabase() {
                                     <input
                                         type="text"
                                         name="database"
-                                        defaultValue={connectionType === 'sqlite' ? 'database.sqlite' : 'StuPoint'}
+                                        defaultValue={form.database || (connectionType === 'sqlite' ? 'database.sqlite' : 'StuPoint')}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                     />
                                     <p className="mt-1 text-xs text-gray-500">SQLite使用相对路径，MySQL/PostgreSQL使用数据库名</p>

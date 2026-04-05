@@ -3,7 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronRight } from 'lucide-react';
 
-export default function InstallSite() {
+interface InstallSiteProps {
+    form: {
+        app_name: string;
+        app_url: string;
+        locale: 'zh' | 'en' | 'ja';
+        class_points_mode: 'avg' | 'sum' | 'separate';
+    };
+}
+
+export default function InstallSite({ form }: InstallSiteProps) {
     return (
         <>
             <Head title="站点配置 - 安装向导">
@@ -41,7 +50,7 @@ export default function InstallSite() {
                                     <input
                                         type="text"
                                         name="app_name"
-                                        defaultValue="学生积分管理系统"
+                                        defaultValue={form.app_name}
                                         className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
                                 </div>
@@ -53,7 +62,7 @@ export default function InstallSite() {
                                     <input
                                         type="url"
                                         name="app_url"
-                                        defaultValue="http://localhost:8000"
+                                        defaultValue={form.app_url}
                                         className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
                                     <p className="mt-1 text-xs text-gray-500">
@@ -67,6 +76,7 @@ export default function InstallSite() {
                                     </label>
                                     <select
                                         name="locale"
+                                        defaultValue={form.locale}
                                         className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     >
                                         <option value="zh">简体中文</option>
@@ -85,7 +95,7 @@ export default function InstallSite() {
                                                 type="radio"
                                                 name="class_points_mode"
                                                 value="avg"
-                                                defaultChecked
+                                                defaultChecked={form.class_points_mode === 'avg'}
                                                 className="mt-1"
                                             />
                                             <span>
@@ -101,6 +111,7 @@ export default function InstallSite() {
                                                 type="radio"
                                                 name="class_points_mode"
                                                 value="sum"
+                                                defaultChecked={form.class_points_mode === 'sum'}
                                                 className="mt-1"
                                             />
                                             <span>
@@ -116,6 +127,7 @@ export default function InstallSite() {
                                                 type="radio"
                                                 name="class_points_mode"
                                                 value="separate"
+                                                defaultChecked={form.class_points_mode === 'separate'}
                                                 className="mt-1"
                                             />
                                             <span>

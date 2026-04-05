@@ -1,11 +1,20 @@
 import { Head } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChevronRight } from 'lucide-react';
 
-export default function InstallRedis() {
+interface InstallRedisProps {
+    form: {
+        enabled: boolean;
+        host: string;
+        port: string;
+        database: string;
+        password: string;
+    };
+}
+
+export default function InstallRedis({ form }: InstallRedisProps) {
     return (
         <>
             <Head title="Redis配置 - 安装向导">
@@ -24,7 +33,7 @@ export default function InstallRedis() {
                                 <input type="hidden" name="_token" value={window.document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
                                 <div>
                                     <label className="flex items-center gap-3 cursor-pointer">
-                                        <input type="checkbox" name="enabled" value="1" className="w-5 h-5 rounded border-gray-300" />
+                                        <input type="checkbox" name="enabled" value="1" defaultChecked={form.enabled} className="w-5 h-5 rounded border-gray-300" />
                                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">启用Redis缓存（推荐）</span>
                                     </label>
                                     <p className="mt-2 text-xs text-gray-500">Redis可以提供更好的缓存性能，如果您的服务器没有安装Redis，请保持未选中状态</p>
@@ -37,7 +46,7 @@ export default function InstallRedis() {
                                             id="host"
                                             type="text"
                                             name="host"
-                                            defaultValue="127.0.0.1"
+                                            defaultValue={form.host}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                         />
                                     </div>
@@ -47,7 +56,7 @@ export default function InstallRedis() {
                                             id="port"
                                             type="text"
                                             name="port"
-                                            defaultValue="6379"
+                                            defaultValue={form.port}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                         />
                                     </div>
@@ -59,7 +68,7 @@ export default function InstallRedis() {
                                             name="database"
                                             min="0"
                                             max="15"
-                                            defaultValue="0"
+                                            defaultValue={form.database}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                         />
                                         <p className="mt-1 text-xs text-gray-500">Redis支持0-15共16个数据库，默认使用0</p>
@@ -70,6 +79,7 @@ export default function InstallRedis() {
                                             id="password"
                                             type="password"
                                             name="password"
+                                            defaultValue={form.password}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                         />
                                     </div>
