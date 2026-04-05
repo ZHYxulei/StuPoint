@@ -241,6 +241,23 @@ class InstallController extends Controller
         ]);
 
         if ($validated['enabled']) {
+            try {
+                Config::set('database.redis.default.host', $validated['host'] ?? '127.0.0.1');
+                Config::set('database.redis.default.port', $validated['port'] ?? '6379');
+                Config::set('database.redis.default.password', $validated['password'] ?? null);
+                Config::set('database.redis.default.database', (string) ($validated['database'] ?? '0'));
+                Config::set('database.redis.cache.host', $validated['host'] ?? '127.0.0.1');
+                Config::set('database.redis.cache.port', $validated['port'] ?? '6379');
+                Config::set('database.redis.cache.password', $validated['password'] ?? null);
+                Config::set('database.redis.cache.database', (string) ($validated['database'] ?? '0'));
+
+                app('redis')->connection('default')->ping();
+            } catch (\Throwable $e) {
+                return back()
+                    ->withErrors(['redis' => 'Redis 连接失败，请检查主机/端口/密码/数据库'])
+                    ->withInput();
+            }
+
             $this->updateEnvFile([
                 'REDIS_HOST' => $validated['host'] ?? '127.0.0.1',
                 'REDIS_PASSWORD' => $validated['password'] ?? 'null',
@@ -249,7 +266,16 @@ class InstallController extends Controller
                 'REDIS_CACHE_DB' => $validated['database'] ?? '0',
                 'CACHE_STORE' => 'redis',
             ]);
+
+            session(['install_redis_config' => [
+                'enabled' => true,
+                'host' => $validated['host'] ?? '127.0.0.1',
+                'port' => $validated['port'] ?? '6379',
+                'password' => $validated['password'] ?? null,
+                'database' => $validated['database'] ?? '0',
+            ]]);
         } else {
+            session(['install_redis_config' => ['enabled' => false]]);
             $this->updateEnvFile([
                 'CACHE_STORE' => 'file',
             ]);
@@ -275,15 +301,26 @@ class InstallController extends Controller
             'driver' => 'required|in:file,database,redis',
         ]);
 
-        // Check if Redis is selected but not configured
         if ($validated['driver'] === 'redis') {
-            $redisHost = env('REDIS_HOST');
-            $redisPort = env('REDIS_PORT');
+            $redisConfig = session('install_redis_config');
 
-            if (! $redisHost || ! $redisPort) {
+            if (! is_array($redisConfig) || ! ($redisConfig['enabled'] ?? false)) {
                 return back()->withErrors([
-                    'driver' => '选择Redis缓存需要先配置Redis服务器，请返回上一步配置Redis或选择其他缓存方式',
-                ]);
+                    'driver' => '选择 Redis 缓存前，请先在上一步完成 Redis 配置并连接成功',
+                ])->withInput();
+            }
+
+            try {
+                Config::set('database.redis.cache.host', $redisConfig['host'] ?? '127.0.0.1');
+                Config::set('database.redis.cache.port', $redisConfig['port'] ?? '6379');
+                Config::set('database.redis.cache.password', $redisConfig['password'] ?? null);
+                Config::set('database.redis.cache.database', (string) ($redisConfig['database'] ?? '0'));
+
+                app('redis')->connection('cache')->ping();
+            } catch (\Throwable $e) {
+                return back()->withErrors([
+                    'driver' => 'Redis 缓存连接失败，请返回上一步检查 Redis 配置',
+                ])->withInput();
             }
         }
 
