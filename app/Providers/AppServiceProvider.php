@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,8 +36,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-        $this->configureLocale();
         $this->configureEvents();
+
+        if ($this->app->runningInConsole()) {
+            return;
+        }
+
+        $this->configureLocale();
         $this->configureViewShare();
     }
 
@@ -71,7 +77,7 @@ class AppServiceProvider extends ServiceProvider
 
     protected function getSharedSettings(): array
     {
-        if (! $this->canAccessSettings() || ! Schema::hasTable('settings')) {
+        if (! $this->hasSettingsTable()) {
             return [];
         }
 
@@ -105,7 +111,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Share site settings with all views
         View::composer('*', function ($view) {
-            if (! $this->canAccessSettings() || ! Schema::hasTable('settings')) {
+            if (! $this->hasSettingsTable()) {
                 return;
             }
 
@@ -128,6 +134,19 @@ class AppServiceProvider extends ServiceProvider
                 'phone' => SettingsService::getContactPhone(),
             ]);
         });
+    }
+
+    protected function hasSettingsTable(): bool
+    {
+        if (! $this->canAccessSettings()) {
+            return false;
+        }
+
+        try {
+            return Schema::hasTable('settings');
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     protected function canAccessSettings(): bool
