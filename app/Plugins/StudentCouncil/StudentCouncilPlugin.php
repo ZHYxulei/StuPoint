@@ -8,6 +8,7 @@ use App\Services\PluginManager;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
+use Throwable;
 
 class StudentCouncilPlugin extends BasePlugin
 {
@@ -61,12 +62,7 @@ class StudentCouncilPlugin extends BasePlugin
     {
         // Register student council role
         $manager->addHook('plugins.booted', function () {
-            // During installation, the database may not be configured yet.
-            if (! file_exists(storage_path('installed'))) {
-                return;
-            }
-
-            if (! Schema::hasTable('roles')) {
+            if (! $this->canManageRoles()) {
                 return;
             }
 
@@ -115,6 +111,19 @@ class StudentCouncilPlugin extends BasePlugin
                     Route::post('/activities/{id}/award-points', [StudentCouncilController::class, 'awardPoints'])->name('activities.award-points');
                 });
             });
+    }
+
+    protected function canManageRoles(): bool
+    {
+        if (! file_exists(storage_path('installed'))) {
+            return false;
+        }
+
+        try {
+            return Schema::hasTable('roles');
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     public function install(): void

@@ -20,6 +20,10 @@ class PluginServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->runningInConsole()) {
+            return;
+        }
+
         // During installation, the database is not configured yet.
         // Avoid booting plugins that may touch the database.
         if (! file_exists(storage_path('installed'))) {
