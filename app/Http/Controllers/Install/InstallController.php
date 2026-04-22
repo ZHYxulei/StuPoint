@@ -449,6 +449,8 @@ class InstallController extends Controller
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
                 'email_verified_at' => now(),
+                'registration_status' => 'approved',
+                'requires_review' => false,
             ]);
 
             $superAdminRole = Role::where('slug', 'super_admin')->first();
@@ -484,19 +486,18 @@ class InstallController extends Controller
         $envContent = File::get($envFile);
 
         foreach ($data as $key => $value) {
-            if (str_contains($envContent, "{$key}=")) {
-                $envContent = preg_replace(
-                    "/^{$key}=.*/m",
-                    "{$key}=\"{$value}\"",
-                    $envContent
-                );
+            $escapedKey = preg_quote($key, '/');
+            $replacement = sprintf('%s="%s"', $key, addcslashes((string) $value, "\\\""));
+            $pattern = '/^\s*#?\s*'.$escapedKey.'\s*=.*$/m';
+
+            if (preg_match($pattern, $envContent) === 1) {
+                $envContent = preg_replace($pattern, $replacement, $envContent, 1);
             } else {
-                // Add the key if it doesn't exist
-                $envContent .= "\n{$key}=\"{$value}\"";
+                $envContent .= "\n{$replacement}";
             }
         }
 
-        File::put($envFile, $envContent);
+        File::put($envFile, rtrim($envContent)."\n");
     }
 
     protected function getInstallDraft(string $section, array $defaults = []): array
