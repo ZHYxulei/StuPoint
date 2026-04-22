@@ -46,6 +46,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user?->load('roles'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'old' => [
+                'install' => $request->session()->getOldInput(),
+            ],
             'enabledPlugins' => fn () => $user && Schema::hasTable('plugins')
                 ? Plugin::enabled()->pluck('slug')->toArray()
                 : [],

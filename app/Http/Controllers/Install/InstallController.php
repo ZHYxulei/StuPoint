@@ -240,47 +240,32 @@ class InstallController extends Controller
      */
     public function storeRedis(Request $request)
     {
+        $enabled = $request->boolean('enabled');
+
         $validated = $request->validate([
-            'enabled' => 'required|boolean',
-            'host' => 'required_if:enabled,true',
-            'port' => 'required_if:enabled,true',
+            'host' => $enabled ? 'required' : 'nullable',
+            'port' => $enabled ? 'required' : 'nullable',
             'password' => 'nullable',
-            'database' => 'required_if:enabled,true|integer|min:0|max:15',
+            'database' => $enabled ? 'required|integer|min:0|max:15' : 'nullable|integer|min:0|max:15',
         ]);
 
-        if ($validated['enabled']) {
-            $redisDraft = [
-                'enabled' => true,
-                'host' => $validated['host'] ?? '127.0.0.1',
-                'port' => $validated['port'] ?? '6379',
-                'password' => $validated['password'] ?? null,
-                'database' => $validated['database'] ?? '0',
-            ];
+        $redisDraft = [
+            'enabled' => $enabled,
+            'host' => $validated['host'] ?? '127.0.0.1',
+            'port' => $validated['port'] ?? '6379',
+            'password' => $validated['password'] ?? '',
+            'database' => (string) ($validated['database'] ?? '0'),
+        ];
 
+        if ($redisDraft['enabled']) {
             try {
-                Config::set('database.redis.default.host', $redisDraft['host']);
-                Config::set('database.redis.default.port', $redisDraft['port']);
-                Config::set('database.redis.default.password', $redisDraft['password']);
-                Config::set('database.redis.default.database', (string) $redisDraft['database']);
-                Config::set('database.redis.cache.host', $redisDraft['host']);
-                Config::set('database.redis.cache.port', $redisDraft['port']);
-                Config::set('database.redis.cache.password', $redisDraft['password']);
-                Config::set('database.redis.cache.database', (string) $redisDraft['database']);
-
+                $this->applyRedisConfig($redisDraft);
                 app('redis')->connection('default')->ping();
             } catch (\Throwable $e) {
                 return back()
                     ->withErrors(['redis' => 'Redis 连接失败，请检查主机/端口/密码/数据库'])
                     ->withInput();
             }
-        } else {
-            $redisDraft = [
-                'enabled' => false,
-                'host' => $validated['host'] ?? '127.0.0.1',
-                'port' => $validated['port'] ?? '6379',
-                'password' => $validated['password'] ?? null,
-                'database' => $validated['database'] ?? '0',
-            ];
         }
 
         $this->putInstallDraft('redis', $redisDraft);
@@ -323,12 +308,7 @@ class InstallController extends Controller
             }
 
             try {
-                Config::set('database.redis.cache.host', $redisConfig['host'] ?? '127.0.0.1');
-                Config::set('database.redis.cache.port', $redisConfig['port'] ?? '6379');
-                Config::set('database.redis.cache.password', $redisConfig['password'] ?? null);
-                Config::set('database.redis.cache.database', (string) ($redisConfig['database'] ?? '0'));
-
-                app('redis')->connection('cache')->ping();
+                $this->validateRedisConnection($redisConfig, 'cache');
             } catch (\Throwable $e) {
                 return back()->withErrors([
                     'driver' => 'Redis 缓存连接失败，请返回上一步检查 Redis 配置',
@@ -554,6 +534,20 @@ class InstallController extends Controller
         DB::purge($connection);
     }
 
+    protected function applyRedisConfig(array $redisConfig): void
+    {
+        Config::set('database.redis.default.host', $redisConfig['host'] ?? '127.0.0.1');
+        Config::set('database.redis.default.port', $redisConfig['port'] ?? '6379');
+        Config::set('database.redis.default.password', $redisConfig['password'] ?? null);
+        Config::set('database.redis.default.database', (string) ($redisConfig['database'] ?? '0'));
+        Config::set('database.redis.cache.host', $redisConfig['host'] ?? '127.0.0.1');
+        Config::set('database.redis.cache.port', $redisConfig['port'] ?? '6379');
+        Config::set('database.redis.cache.password', $redisConfig['password'] ?? null);
+        Config::set('database.redis.cache.database', (string) ($redisConfig['database'] ?? '0'));
+        app('redis')->purge('default');
+        app('redis')->purge('cache');
+    }
+
     protected function validateDatabaseDraft(array $databaseConfig): void
     {
         $this->applyDatabaseConfig($databaseConfig);
@@ -561,6 +555,17 @@ class InstallController extends Controller
         if ($databaseConfig['connection'] !== 'sqlite') {
             DB::connection($databaseConfig['connection'])->getPdo();
         }
+    }
+
+    protected function validateRedisConnection(array $redisConfig, string $connection = 'default'): void
+    {
+        if (! ($redisConfig['enabled'] ?? false)) {
+            throw new \RuntimeException('Redis 未启用');
+        }
+
+        $this->applyRedisConfig($redisConfig);
+
+        app('redis')->connection($connection)->ping();
     }
 
     protected function validateRedisAndCacheDrafts(array $redisConfig, array $cacheConfig): void
@@ -573,16 +578,7 @@ class InstallController extends Controller
             throw new \RuntimeException('缓存选择了 Redis，但 Redis 配置未启用');
         }
 
-        Config::set('database.redis.default.host', $redisConfig['host'] ?? '127.0.0.1');
-        Config::set('database.redis.default.port', $redisConfig['port'] ?? '6379');
-        Config::set('database.redis.default.password', $redisConfig['password'] ?? null);
-        Config::set('database.redis.default.database', (string) ($redisConfig['database'] ?? '0'));
-        Config::set('database.redis.cache.host', $redisConfig['host'] ?? '127.0.0.1');
-        Config::set('database.redis.cache.port', $redisConfig['port'] ?? '6379');
-        Config::set('database.redis.cache.password', $redisConfig['password'] ?? null);
-        Config::set('database.redis.cache.database', (string) ($redisConfig['database'] ?? '0'));
-
-        app('redis')->connection('cache')->ping();
+        $this->validateRedisConnection($redisConfig, 'cache');
     }
 
     protected function buildDatabaseEnv(array $databaseConfig): array
@@ -611,7 +607,7 @@ class InstallController extends Controller
 
         return [
             'REDIS_HOST' => $redisConfig['host'] ?? '127.0.0.1',
-            'REDIS_PASSWORD' => $redisConfig['password'] ?? 'null',
+            'REDIS_PASSWORD' => $redisConfig['password'] !== '' ? $redisConfig['password'] : 'null',
             'REDIS_PORT' => $redisConfig['port'] ?? '6379',
             'REDIS_DB' => $redisConfig['database'] ?? '0',
             'REDIS_CACHE_DB' => $redisConfig['database'] ?? '0',

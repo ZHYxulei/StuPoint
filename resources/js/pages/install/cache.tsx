@@ -1,6 +1,7 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import InputError from '@/components/input-error';
 import { ChevronRight } from 'lucide-react';
 
 interface InstallCacheProps {
@@ -9,7 +10,17 @@ interface InstallCacheProps {
     };
 }
 
+interface SharedPageProps {
+    errors: Record<string, string>;
+    old: {
+        install?: Record<string, string>;
+    };
+}
+
 export default function InstallCache({ form }: InstallCacheProps) {
+    const { errors, old } = usePage<SharedPageProps>().props;
+    const driver = old.install?.driver ?? form.driver;
+
     return (
         <>
             <Head title="缓存配置 - 安装向导">
@@ -32,21 +43,21 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                     </label>
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-                                            <input type="radio" name="driver" value="file" defaultChecked={form.driver === 'file'} className="w-4 h-4" />
+                                            <input type="radio" name="driver" value="file" defaultChecked={driver === 'file'} className="w-4 h-4" />
                                             <div>
                                                 <div className="font-medium text-gray-900 dark:text-white">文件缓存</div>
                                                 <div className="text-xs text-gray-500">使用文件系统存储缓存数据，简单易用</div>
                                             </div>
                                         </label>
                                         <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-                                            <input type="radio" name="driver" value="database" defaultChecked={form.driver === 'database'} className="w-4 h-4" />
+                                            <input type="radio" name="driver" value="database" defaultChecked={driver === 'database'} className="w-4 h-4" />
                                             <div>
                                                 <div className="font-medium text-gray-900 dark:text-white">数据库缓存</div>
                                                 <div className="text-xs text-gray-500">使用数据库存储缓存数据</div>
                                             </div>
                                         </label>
                                         <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
-                                            <input type="radio" name="driver" value="redis" defaultChecked={form.driver === 'redis'} className="w-4 h-4" />
+                                            <input type="radio" name="driver" value="redis" defaultChecked={driver === 'redis'} className="w-4 h-4" />
                                             <div>
                                                 <div className="font-medium text-gray-900 dark:text-white">Redis缓存</div>
                                                 <div className="text-xs text-gray-500">高性能缓存服务，需要配置Redis</div>
@@ -54,6 +65,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                         </label>
                                     </div>
                                     <p className="mt-2 text-xs text-gray-500">会话存储将使用文件驱动，队列使用数据库</p>
+                                    <InputError message={errors.driver} className="mt-2" />
                                 </div>
 
                                 <div className="flex gap-4 pt-4">

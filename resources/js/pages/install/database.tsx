@@ -1,8 +1,9 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import InputError from '@/components/input-error';
 import { ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface InstallDatabaseProps {
     form: {
@@ -15,8 +16,27 @@ interface InstallDatabaseProps {
     };
 }
 
+interface SharedPageProps {
+    errors: Record<string, string>;
+    old: {
+        install?: Record<string, string>;
+    };
+}
+
 export default function InstallDatabase({ form }: InstallDatabaseProps) {
-    const [connectionType, setConnectionType] = useState(form.connection);
+    const { errors, old } = usePage<SharedPageProps>().props;
+    const installOld = old.install ?? {};
+    const initialConnection = (installOld.connection as InstallDatabaseProps['form']['connection'] | undefined) ?? form.connection;
+    const host = installOld.host ?? form.host;
+    const port = installOld.port ?? form.port;
+    const username = installOld.username ?? form.username;
+    const password = installOld.password ?? form.password;
+    const database = installOld.database ?? form.database;
+    const [connectionType, setConnectionType] = useState(initialConnection);
+
+    useEffect(() => {
+        setConnectionType(initialConnection);
+    }, [initialConnection]);
 
     return (
         <>
@@ -48,6 +68,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                         <option value="mysql">MySQL</option>
                                         <option value="pgsql">PostgreSQL</option>
                                     </select>
+                                    <InputError message={errors.connection || errors.database} className="mt-2" />
                                 </div>
 
                                 {connectionType !== 'sqlite' && (
@@ -56,19 +77,22 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 主机
                                             </label>
-                                            <input type="text" name="host" defaultValue={form.host} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <input type="text" name="host" defaultValue={host} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <InputError message={errors.host} className="mt-2" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 端口
                                             </label>
-                                            <input type="text" name="port" defaultValue={form.port || (connectionType === 'mysql' ? '3306' : '5432')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <input type="text" name="port" defaultValue={port || (connectionType === 'mysql' ? '3306' : '5432')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <InputError message={errors.port} className="mt-2" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 用户名
                                             </label>
-                                            <input type="text" name="username" defaultValue={form.username} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <input type="text" name="username" defaultValue={username} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                            <InputError message={errors.username} className="mt-2" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -77,9 +101,10 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                             <input
                                                 type="password"
                                                 name="password"
-                                                defaultValue={form.password}
+                                                defaultValue={password}
                                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                             />
+                                            <InputError message={errors.password} className="mt-2" />
                                         </div>
                                     </div>
                                 )}
@@ -91,10 +116,11 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                     <input
                                         type="text"
                                         name="database"
-                                        defaultValue={form.database || (connectionType === 'sqlite' ? 'database.sqlite' : 'StuPoint')}
+                                        defaultValue={database}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                     />
                                     <p className="mt-1 text-xs text-gray-500">SQLite使用相对路径，MySQL/PostgreSQL使用数据库名</p>
+                                    <InputError message={errors.database} className="mt-2" />
                                 </div>
 
                                 <div className="flex gap-4 pt-4">
