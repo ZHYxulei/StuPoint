@@ -18,6 +18,7 @@ trait ProfileValidationRules
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
             'avatar' => $this->avatarRules(),
+            'remove_avatar' => ['nullable', 'boolean'],
         ];
     }
 
@@ -58,9 +59,9 @@ trait ProfileValidationRules
     {
         return [
             'nullable',
-            'string',
-            'max:5242880', // 5MB in bytes (5 * 1024 * 1024)
-            'regex:/^data:image\/(jpeg|jpg|png|gif|webp);base64,/', // Base64 image
+            'image',
+            'mimes:jpeg,jpg,png,gif,webp',
+            'max:5120',
         ];
     }
 }

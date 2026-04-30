@@ -32,7 +32,7 @@ class UpdateSiteSettingsRequest extends FormRequest
             'site_favicon_upload' => [
                 'nullable',
                 'file',
-                File::types(['png', 'ico', 'svg', 'webp'])->max(2048),
+                File::types(['png', 'ico', 'webp'])->max(2048),
             ],
         ];
     }

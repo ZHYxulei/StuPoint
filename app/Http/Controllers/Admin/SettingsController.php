@@ -9,6 +9,7 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
@@ -26,10 +27,18 @@ class SettingsController extends Controller
 
         $pluginSources = PluginSource::ordered()->get();
 
-        // Get site settings
+        // Get site settings (fallback to env/app config when DB value is absent)
         $siteSettings = Setting::where('group', 'site')->get()->mapWithKeys(function ($setting) {
             return [$setting->key => $setting->value];
-        });
+        })->toArray();
+
+        $siteSettings = array_merge([
+            'site_name' => config('app.name', 'StuPoint'),
+            'site_description' => '',
+            'site_keywords' => '',
+            'site_logo' => '',
+            'site_favicon' => '',
+        ], $siteSettings);
 
         // Get contact settings
         $contactSettings = Setting::where('group', 'contact')->get()->mapWithKeys(function ($setting) {
@@ -156,15 +165,30 @@ class SettingsController extends Controller
         }
 
         $validated = $request->validated();
+        $hasUploadedFavicon = array_key_exists('site_favicon_upload', $validated) && $validated['site_favicon_upload'] instanceof UploadedFile;
 
-        if (array_key_exists('site_favicon_upload', $validated) && $validated['site_favicon_upload'] instanceof UploadedFile) {
+        if ($hasUploadedFavicon) {
             $file = $validated['site_favicon_upload'];
 
             if ($file->isValid()) {
-                $encoded = base64_encode($file->getContent());
-                $dataUri = sprintf('data:%s;base64,%s', $file->getMimeType(), $encoded);
-                Setting::set('site_favicon_data', $dataUri, 'string', 'site');
+                $previousPath = Setting::get('site_favicon_path');
+                $path = $file->store('site/favicon', 'public');
+                Setting::set('site_favicon_path', $path, 'string', 'site');
+                Setting::set('site_favicon', '', 'string', 'site');
+
+                if (is_string($previousPath) && $previousPath !== '' && $previousPath !== $path) {
+                    Storage::disk('public')->delete($previousPath);
+                }
+
+                $legacyFaviconData = Setting::where('key', 'site_favicon_data')->first();
+                if ($legacyFaviconData) {
+                    $legacyFaviconData->delete();
+                }
             }
+        }
+
+        if ($hasUploadedFavicon) {
+            unset($validated['site_favicon']);
         }
 
         foreach ($validated as $key => $value) {

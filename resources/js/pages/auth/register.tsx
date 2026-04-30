@@ -135,7 +135,7 @@ export default function Register({ classes = [], subjects = [], grades = [] }: P
 
             <div className="space-y-6">
                 {/* Role Selector */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {roles.map((role) => {
                         const Icon = role.icon;
                         return (
@@ -143,7 +143,7 @@ export default function Register({ classes = [], subjects = [], grades = [] }: P
                                 key={role.value}
                                 type="button"
                                 onClick={() => handleRoleChange(role.value)}
-                                className={`relative flex flex-col items-start rounded-lg border-2 p-4 text-left transition-all hover:bg-accent ${
+                                className={`relative flex h-full min-h-[132px] flex-col items-start rounded-lg border-2 p-4 text-left transition-all hover:bg-accent ${
                                     selectedRole === role.value
                                         ? 'border-primary bg-primary/5'
                                         : 'border-muted'

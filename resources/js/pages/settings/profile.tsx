@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react';
-import { Form, Head, Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { ChangeEvent, useRef, useState } from 'react';
 import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { edit, update } from '@/routes/profile';
+import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 import type { BreadcrumbItem, SharedData } from '@/types';
 import { User, Upload, X } from 'lucide-react';
@@ -30,42 +30,58 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage<SharedData>().props;
-    const [avatarPreview, setAvatarPreview] = useState<string | null>(
-        auth.user.avatar || null
-    );
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(auth.user.avatar || null);
     const [avatarError, setAvatarError] = useState<string | null>(null);
+    const { data, setData, patch, processing, errors, recentlySuccessful } = useForm({
+        name: auth.user.name,
+        email: auth.user.email,
+        avatar: null as File | null,
+        remove_avatar: false,
+    });
 
-    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) return;
-
-        // Check file size (5MB)
-        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-        if (file.size > maxSize) {
-            setAvatarError('头像大小不能超过5MB');
+        if (!file) {
             return;
         }
 
-        // Check file type
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            setAvatarError('头像大小不能超过5MB');
+            e.target.value = '';
+            return;
+        }
+
         if (!file.type.startsWith('image/')) {
             setAvatarError('请选择图片文件');
+            e.target.value = '';
             return;
         }
 
         setAvatarError(null);
-
-        // Convert to base64
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const base64 = reader.result as string;
-            setAvatarPreview(base64);
-        };
-        reader.readAsDataURL(file);
+        setData('avatar', file);
+        setData('remove_avatar', false);
+        setAvatarPreview(URL.createObjectURL(file));
     };
 
     const handleRemoveAvatar = () => {
         setAvatarPreview(null);
         setAvatarError(null);
+        setData('avatar', null);
+        setData('remove_avatar', true);
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        patch('/settings/profile', {
+            forceFormData: true,
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -82,15 +98,7 @@ export default function Profile({
                         description="Update your name and email address"
                     />
 
-                    <Form
-                        {...update.form()}
-                        options={{
-                            preserveScroll: true,
-                        }}
-                        className="space-y-6"
-                    >
-                        {({ processing, recentlySuccessful, errors }) => (
-                            <>
+                    <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Avatar Upload */}
                                 <div className="grid gap-4">
                                     <Label>头像</Label>
@@ -113,6 +121,7 @@ export default function Profile({
                                                     </div>
                                                 </Label>
                                                 <input
+                                                    ref={fileInputRef}
                                                     id="avatar-upload"
                                                     type="file"
                                                     className="hidden"
@@ -141,11 +150,6 @@ export default function Profile({
                                             )}
                                         </div>
                                     </div>
-                                    <input
-                                        type="hidden"
-                                        name="avatar"
-                                        value={avatarPreview || ''}
-                                    />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="name">Name</Label>
@@ -153,8 +157,8 @@ export default function Profile({
                                     <Input
                                         id="name"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
-                                        name="name"
+                                        value={data.name}
+                                        onChange={(e) => setData('name', e.target.value)}
                                         required
                                         autoComplete="name"
                                         placeholder="Full name"
@@ -173,8 +177,8 @@ export default function Profile({
                                         id="email"
                                         type="email"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.email}
-                                        name="email"
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
                                         required
                                         autoComplete="username"
                                         placeholder="Email address"
@@ -233,9 +237,7 @@ export default function Profile({
                                         </p>
                                     </Transition>
                                 </div>
-                            </>
-                        )}
-                    </Form>
+                    </form>
                 </div>
 
                 <DeleteUser />

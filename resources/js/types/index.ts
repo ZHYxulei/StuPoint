@@ -12,6 +12,7 @@ export type SharedData = {
     fallback_locale: string;
     enabledPlugins?: string[];
     siteSettings?: {
+        site_name?: string;
         site_description?: string;
         site_keywords?: string;
         site_logo?: string;

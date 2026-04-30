@@ -375,7 +375,7 @@ export default function SystemSettings({
                                             <Input
                                                 id="site_favicon_upload"
                                                 type="file"
-                                                accept=".png,.ico,.svg,.webp"
+                                                accept=".png,.ico,.webp"
                                                 onChange={(e) =>
                                                     siteForm.setData(
                                                         'site_favicon_upload',
@@ -385,7 +385,7 @@ export default function SystemSettings({
                                                 }
                                             />
                                             <p className="text-xs text-muted-foreground">
-                                                支持 PNG/ICO/SVG/WebP，最大
+                                                支持 PNG/ICO/WebP，最大
                                                 2MB，优先使用上传图标
                                             </p>
                                         </div>

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 
@@ -36,7 +37,7 @@ class User extends Authenticatable
         'grade',
         'class',
         'is_head_teacher',
-        'avatar',
+        'avatar_path',
         'last_login_at',
         'last_login_ip',
         'registration_status',
@@ -144,6 +145,22 @@ class User extends Authenticatable
         return $this->belongsToMany(SchoolClass::class, 'class_teachers', 'teacher_id', 'class_id')
             ->withPivot('subject')
             ->withTimestamps();
+    }
+
+    /**
+     * Get resolved avatar URL.
+     */
+    public function getAvatarAttribute($value): ?string
+    {
+        if ($this->avatar_path) {
+            return Storage::disk('public')->url($this->avatar_path);
+        }
+
+        if (is_string($value) && str_starts_with($value, 'data:image/')) {
+            return $value;
+        }
+
+        return null;
     }
 
     /**

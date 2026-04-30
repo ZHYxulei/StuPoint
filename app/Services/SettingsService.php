@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
 class SettingsService
 {
@@ -54,16 +55,21 @@ class SettingsService
         return self::get('site_favicon');
     }
 
-    public static function getSiteFaviconData(): ?string
-    {
-        return self::get('site_favicon_data');
-    }
-
     public static function getSiteFaviconHref(): string
     {
-        return self::getSiteFaviconData()
-            ?? self::getSiteFavicon()
-            ?? '/favicon.ico';
+        $faviconPath = self::get('site_favicon_path');
+
+        if (is_string($faviconPath) && $faviconPath !== '') {
+            return Storage::disk('public')->url($faviconPath);
+        }
+
+        $legacyFaviconData = self::get('site_favicon_data');
+
+        if (is_string($legacyFaviconData) && str_starts_with($legacyFaviconData, 'data:image/')) {
+            return $legacyFaviconData;
+        }
+
+        return self::getSiteFavicon() ?? '/favicon.ico';
     }
 
     /**

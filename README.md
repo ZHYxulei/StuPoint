@@ -471,6 +471,72 @@ location / {
 }
 ```
 
+#### 文件上传与媒体存储
+
+StuPoint 现在将用户头像和站点 favicon 存储到本地文件系统，不再继续把新图片以 Base64 写入数据库。
+
+1. 在 `.env` 中确认：
+
+```env
+APP_URL="https://your-domain.example"
+FILESYSTEM_DISK=public
+```
+
+2. 创建公开软链接：
+
+```bash
+php artisan storage:link
+```
+
+3. 确认以下目录可写：
+
+- `storage/app/public/avatars`
+- `storage/app/public/site/favicon`
+
+4. 首次部署这次变更后，执行旧数据迁移：
+
+```bash
+php artisan media:migrate-base64
+```
+
+该命令会：
+
+- 将 `users.avatar` 中的历史 Base64 头像迁移到 `storage/app/public/avatars/...`
+- 将 `settings.site_favicon_data` 中的历史 Base64 favicon 迁移到 `storage/app/public/site/favicon/...`
+- 回填 `users.avatar_path` 和 `site_favicon_path`
+- 清理已成功迁移的旧 Base64 数据
+
+5. 建议验证：
+
+- 用户头像 URL 可通过 `/storage/...` 正常访问
+- 浏览器标签页 favicon 已更新
+- 数据库中的 `users.avatar` 与 `settings.site_favicon_data` 不再继续增长
+
+#### Nginx 安全建议
+
+建议对上传目录只开放静态文件访问，禁止执行脚本，并限制请求体大小：
+
+```nginx
+client_max_body_size 5m;
+
+location ^~ /storage/ {
+    try_files $uri =404;
+    types {
+        image/png png;
+        image/jpeg jpg jpeg;
+        image/gif gif;
+        image/webp webp;
+        image/x-icon ico;
+    }
+    default_type application/octet-stream;
+    add_header X-Content-Type-Options nosniff;
+}
+
+location ~* ^/storage/.*\.(php|phtml|phar|cgi|pl|py|sh|exe|bat)$ {
+    deny all;
+}
+```
+
 1. **优化配置**
 
 ```bash
@@ -931,7 +997,7 @@ $user->save();
 
 #### 新增功能
 
-- ✨ 系统设置支持上传网站图标（base64）并支持 URL 兜底
+- ✨ 系统设置支持上传网站图标并支持 URL 兜底
 - ✨ 仪表盘左上角站点名称与图标随系统设置同步
 
 #### 改进优化

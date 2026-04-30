@@ -5,7 +5,7 @@ import type { SharedData } from '@/types';
 
 export default function AppLogo() {
     const { siteSettings } = usePage<SharedData>().props;
-    const siteName = 'StuPoint';
+    const siteName = siteSettings?.site_name || 'StuPoint';
     const siteFavicon = siteSettings?.site_favicon;
 
     return (

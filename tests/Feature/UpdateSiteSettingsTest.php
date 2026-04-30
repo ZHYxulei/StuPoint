@@ -5,6 +5,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 use function Pest\Laravel\actingAs;
@@ -42,7 +43,9 @@ it('stores site name and favicon url', function () {
     expect(Setting::get('site_favicon'))->toBe('https://example.com/favicon.ico');
 });
 
-it('stores favicon upload as data uri', function () {
+it('stores favicon upload as file path', function () {
+    Storage::fake('public');
+
     $role = Role::create([
         'name' => 'Super Admin',
         'slug' => 'super_admin',
@@ -52,16 +55,22 @@ it('stores favicon upload as data uri', function () {
     ]);
     $user = createUserWithRole($role);
 
-    $file = UploadedFile::fake()->create('favicon.png', 10, 'image/png');
+    Setting::set('site_favicon', 'https://example.com/old.ico', 'string', 'site');
+
+    $file = UploadedFile::fake()->image('favicon.png', 64, 64);
 
     actingAs($user)
         ->post('/admin/settings/site', [
+            'site_favicon' => 'https://example.com/old.ico',
             'site_favicon_upload' => $file,
         ])
         ->assertRedirect();
 
-    $data = Setting::get('site_favicon_data');
-    expect($data)->toStartWith('data:image/png;base64,');
+    $path = Setting::get('site_favicon_path');
+    expect($path)->toBeString();
+    Storage::disk('public')->assertExists($path);
+    expect(Setting::get('site_favicon_data'))->toBeNull();
+    expect(Setting::get('site_favicon'))->toBe('');
 });
 
 it('rejects invalid favicon upload', function () {
