@@ -80,7 +80,15 @@ export default function UserShow({ user, availableRoles }: PageProps) {
     });
 
     // Adjust points form
-    const { data: pointsData, setData: setPointsData, post: postPoints, processing: pointsProcessing, reset: resetPoints } = useForm({
+    const {
+        data: pointsData,
+        setData: setPointsData,
+        post: postPoints,
+        processing: pointsProcessing,
+        reset: resetPoints,
+        errors: pointsErrors,
+        clearErrors: clearPointsErrors,
+    } = useForm({
         type: 'add',
         amount: '',
         reason: '',
@@ -88,6 +96,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
     const handleUpdateInfo = (e: React.FormEvent) => {
         e.preventDefault();
+        setSuccessMessage('');
         put(`/admin/users/${user.id}`, {
             onSuccess: () => setSuccessMessage('用户信息已更新'),
         });
@@ -95,6 +104,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
     const handleUpdateRoles = (e: React.FormEvent) => {
         e.preventDefault();
+        setSuccessMessage('');
         post(`/admin/users/${user.id}/roles`, {
             onSuccess: () => setSuccessMessage('用户角色已更新'),
         });
@@ -102,6 +112,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
     const handleUpdatePassword = (e: React.FormEvent) => {
         e.preventDefault();
+        setSuccessMessage('');
         postPassword(`/admin/users/${user.id}/password`, {
             onSuccess: () => {
                 setSuccessMessage('密码已更新');
@@ -112,6 +123,8 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
     const handleAdjustPoints = (e: React.FormEvent) => {
         e.preventDefault();
+        setSuccessMessage('');
+        clearPointsErrors();
         postPoints(`/admin/users/${user.id}/adjust-points`, {
             onSuccess: () => {
                 setSuccessMessage('积分调整成功');
@@ -355,6 +368,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                     onChange={(e) => setPointsData('amount', e.target.value)}
                                                     required
                                                 />
+                                                {pointsErrors.amount && <p className="text-sm text-red-600">{pointsErrors.amount}</p>}
                                             </div>
 
                                             <div className="grid gap-2">
@@ -367,6 +381,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                     rows={3}
                                                     required
                                                 />
+                                                {pointsErrors.reason && <p className="text-sm text-red-600">{pointsErrors.reason}</p>}
                                             </div>
 
                                             <div className="flex gap-3 pt-2">

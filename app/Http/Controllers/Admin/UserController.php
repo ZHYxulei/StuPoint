@@ -15,6 +15,7 @@ use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -280,7 +281,9 @@ class UserController extends Controller
         // Check if operator has permission to modify this user's points
         $pointService = app(PointService::class);
         if (! $pointService->canModifyPoints($operator, $user)) {
-            return back()->with('error', '您没有权限修改该用户的积分');
+            throw ValidationException::withMessages([
+                'amount' => '您没有权限修改该用户的积分',
+            ]);
         }
 
         if ($validated['type'] === 'add') {
@@ -307,7 +310,9 @@ class UserController extends Controller
                     ]
                 );
             } catch (\Exception $e) {
-                return back()->with('error', $e->getMessage());
+                throw ValidationException::withMessages([
+                    'amount' => $e->getMessage(),
+                ]);
             }
         }
 

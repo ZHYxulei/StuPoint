@@ -138,7 +138,7 @@ class PointService
         }
 
         // Admins can modify anyone's points
-        if ($operator->hasRole(['admin', 'super_admin'])) {
+        if ($operator->hasRole('admin') || $operator->hasRole('super_admin')) {
             return true;
         }
 
