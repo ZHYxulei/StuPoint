@@ -17,14 +17,14 @@
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/folio": "^1.1",
         "laravel/fortify": "^1.30",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^13.0",
         "laravel/horizon": "^5.43",
         "laravel/passport": "^13.4",
         "laravel/pulse": "^1.5",
         "laravel/scout": "^10.23",
         "laravel/socialite": "^5.24",
         "laravel/telescope": "^5.16",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.9",
         "livewire/livewire": "^4.1",
         "livewire/volt": "^1.10",
@@ -39,8 +39,8 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-laravel": "^3.2"
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0"
     },
     "autoload": {
         "psr-4": {
