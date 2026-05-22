@@ -60,7 +60,7 @@ class PointService
             $points = $user->points;
 
             if (! $points || $points->redeemable_points < $amount) {
-                throw new \Exception('Insufficient redeemable points');
+                throw new \Exception('可兑换积分不足');
             }
 
             // Only deduct redeemable points, total points unchanged

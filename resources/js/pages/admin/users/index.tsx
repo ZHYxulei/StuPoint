@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Search, UserPlus, Edit, Trash2, MoreHorizontal, Shield, Award, Clock, Globe, Upload, Download, FileSpreadsheet, CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { Search, UserPlus, Edit, Trash2, Award, Clock, Globe, Upload, Download, FileSpreadsheet, CheckCircle2, AlertCircle } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { useState, useRef } from 'react';

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClassStudent;
-use App\Models\ClassTeacher;
 use App\Models\PointTransaction;
 use App\Models\Role;
 use App\Models\SchoolClass;
@@ -15,6 +14,7 @@ use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -481,7 +481,7 @@ class UserController extends Controller
                 }
 
                 // Generate default password if empty
-                $hash = Hash::make($password ?: 'Abc12345');
+                $hash = Hash::make($password ?: Str::random(12));
 
                 $userData = [
                     'name' => $name,
