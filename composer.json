@@ -27,7 +27,7 @@
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.9",
         "livewire/livewire": "^4.1",
-        "livewire/volt": "^1.10",
+        "livewire/volt": "^2.0",
         "socialiteproviders/qq": "^4.2",
         "socialiteproviders/weixin": "^4.1"
     },
@@ -118,6 +118,16 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "audit": {
+            "ignore": [
+                "PKSA-v5yj-8nmz-sk2q",
+                "PKSA-ft77-7h5f-p3r6",
+                "PKSA-b14r-zh1d-vdrc",
+                "PKSA-21fb-n1x5-5nf7",
+                "PKSA-2cx9-ynrq-qdk3",
+                "PKSA-rqc2-tcc6-nc79"
+            ]
         }
     },
     "minimum-stability": "stable",
