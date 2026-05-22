@@ -58,7 +58,9 @@ class FortifyServiceProvider extends ServiceProvider
             $user = User::where(Fortify::username(), $request->input(Fortify::username()))->first();
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
-                return false;
+                throw ValidationException::withMessages([
+                    Fortify::username() => '邮箱或密码错误',
+                ]);
             }
 
             // Check registration status

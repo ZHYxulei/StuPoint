@@ -42,6 +42,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('/create', [UserController::class, 'create'])->name('create');
         Route::post('/', [UserController::class, 'store'])->name('store');
         Route::get('/statistics', [UserController::class, 'statistics'])->name('statistics');
+        Route::get('/import-template', [UserController::class, 'importTemplate'])->name('importTemplate');
+        Route::post('/batch-import', [UserController::class, 'batchImport'])->name('batchImport');
         Route::get('/{id}', [UserController::class, 'show'])->name('show');
         Route::get('/{id}/transactions', [UserController::class, 'transactions'])->name('transactions');
         Route::put('/{id}', [UserController::class, 'update'])->name('update');

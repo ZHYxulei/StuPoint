@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Search, UserPlus, Edit, Trash2, MoreHorizontal, Shield, Award, Clock, Globe } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Search, UserPlus, Edit, Trash2, MoreHorizontal, Shield, Award, Clock, Globe, Upload, Download, FileSpreadsheet, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { useState, useRef } from 'react';
 
 interface Role {
     id: number;
@@ -48,6 +49,13 @@ interface Paginator {
     }>;
 }
 
+interface ImportResults {
+    success: number;
+    skipped: number;
+    failed: number;
+    errors: string[];
+}
+
 interface PageProps {
     users: Paginator;
     roles: Role[];
@@ -55,6 +63,7 @@ interface PageProps {
         search?: string;
         role?: string;
     };
+    import_results?: ImportResults;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -62,10 +71,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '用户管理', href: '/admin/users' },
 ];
 
-export default function UserIndex({ users, roles, filters }: PageProps) {
+export default function UserIndex({ users, roles, filters, import_results }: PageProps) {
     const { get, processing } = useForm({
         search: filters.search || '',
         role: filters.role || 'all',
+    });
+
+    const [importDialogOpen, setImportDialogOpen] = useState(!!import_results);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { data, setData, post, processing: importProcessing, reset } = useForm({
+        file: null as File | null,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -73,6 +89,25 @@ export default function UserIndex({ users, roles, filters }: PageProps) {
         get('/admin/users', {
             preserveScroll: true,
             preserveState: true,
+        });
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setSelectedFile(file);
+        setData('file', file);
+    };
+
+    const handleImportSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedFile) return;
+        post('/admin/users/batch-import', {
+            forceFormData: true,
+            onSuccess: () => {
+                setSelectedFile(null);
+                reset();
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            },
         });
     };
 
@@ -94,12 +129,139 @@ export default function UserIndex({ users, roles, filters }: PageProps) {
                         title="用户管理"
                         description="管理系统用户和角色权限"
                     />
-                    <Link href="/admin/users/create">
-                        <Button>
-                            <UserPlus className="mr-2 h-4 w-4" />
-                            添加用户
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline">
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    批量导入
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2">
+                                        <FileSpreadsheet className="h-5 w-5" />
+                                        批量导入用户
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        通过 CSV 文件批量导入用户，文件格式须符合模板要求。
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                <div className="space-y-4">
+                                    {/* Import results */}
+                                    {import_results && (
+                                        <div className={`rounded-lg border p-4 ${
+                                            import_results.failed > 0
+                                                ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950'
+                                                : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950'
+                                        }`}>
+                                            <div className="flex items-center gap-2 font-medium text-sm mb-2">
+                                                {import_results.failed > 0 ? (
+                                                    <AlertCircle className="h-4 w-4 text-yellow-600" />
+                                                ) : (
+                                                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                                                )}
+                                                导入完成
+                                            </div>
+                                            <div className="text-sm space-y-1">
+                                                <p>成功导入：<span className="font-semibold text-green-600">{import_results.success}</span> 条</p>
+                                                <p>跳过空行：<span className="font-semibold text-muted-foreground">{import_results.skipped}</span> 条</p>
+                                                {import_results.failed > 0 && (
+                                                    <p>失败：<span className="font-semibold text-red-600">{import_results.failed}</span> 条</p>
+                                                )}
+                                            </div>
+                                            {import_results.errors.length > 0 && (
+                                                <div className="mt-3 max-h-32 overflow-y-auto text-xs text-red-600 space-y-1">
+                                                    {import_results.errors.map((err, i) => (
+                                                        <p key={i}>{err}</p>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Template download */}
+                                    <div className="flex items-center gap-3 rounded-lg border border-dashed p-3">
+                                        <FileSpreadsheet className="h-8 w-8 text-muted-foreground shrink-0" />
+                                        <div className="flex-1">
+                                            <p className="text-sm font-medium">下载导入模板</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                包含表头和示例数据，请按照格式填写
+                                            </p>
+                                        </div>
+                                        <a href="/admin/users/import-template" download>
+                                            <Button variant="outline" size="sm">
+                                                <Download className="mr-1 h-3 w-3" />
+                                                下载
+                                            </Button>
+                                        </a>
+                                    </div>
+
+                                    {/* File upload */}
+                                    <form onSubmit={handleImportSubmit} className="space-y-3">
+                                        <div
+                                            className="relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors hover:border-primary/50 cursor-pointer"
+                                            onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <input
+                                                ref={fileInputRef}
+                                                type="file"
+                                                accept=".csv,.txt"
+                                                className="hidden"
+                                                onChange={handleFileChange}
+                                            />
+                                            {selectedFile ? (
+                                                <>
+                                                    <FileSpreadsheet className="h-8 w-8 text-primary mb-2" />
+                                                    <p className="text-sm font-medium">{selectedFile.name}</p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {(selectedFile.size / 1024).toFixed(1)} KB
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                                                    <p className="text-sm text-muted-foreground">
+                                                        点击或拖拽 CSV 文件到此处
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        支持 .csv 和 .txt 格式，最大 10MB
+                                                    </p>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        <DialogFooter>
+                                            <Button
+                                                type="submit"
+                                                disabled={!selectedFile || importProcessing}
+                                            >
+                                                {importProcessing ? (
+                                                    <>
+                                                        <span className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                                                        导入中...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Upload className="mr-2 h-4 w-4" />
+                                                        开始导入
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </DialogFooter>
+                                    </form>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+
+                        <Link href="/admin/users/create">
+                            <Button>
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                添加用户
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Filters */}

@@ -316,7 +316,10 @@ class UserController extends Controller
             }
         }
 
-        return back()->with('success', '积分调整成功');
+        return inertia('admin/users/show', [
+            'user' => $user->refresh()->load('roles', 'points'),
+            'availableRoles' => Role::orderBy('level')->get(),
+        ])->with('success', '积分调整成功');
     }
 
     /**
@@ -370,6 +373,159 @@ class UserController extends Controller
             'stats' => $stats,
             'filters' => $request->only(['search', 'role', 'sort_by', 'sort_order', 'per_page']),
         ]);
+    }
+
+    /**
+     * Download CSV import template.
+     */
+    public function importTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="用户导入模板.csv"',
+        ];
+
+        // UTF-8 BOM for Excel compatibility
+        $bom = "\xEF\xBB\xBF";
+        $header = "姓名,角色,邮箱,手机号,身份证号,学号,昵称,班级ID,密码\n";
+        $example = "张三,student,zhangsan@example.com,13800138000,110101200001011234,S001,小明,,Abc12345\n";
+
+        return response($bom.$header.$example, 200, $headers);
+    }
+
+    /**
+     * Batch import users from CSV file.
+     */
+    public function batchImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt|max:10240',
+        ]);
+
+        $file = $request->file('file');
+        $handle = fopen($file->getRealPath(), 'r');
+
+        if ($handle === false) {
+            return back()->withErrors(['file' => '无法读取上传的文件']);
+        }
+
+        // Skip BOM if present
+        $firstLine = fgets($handle);
+        if (bin2hex(substr($firstLine, 0, 3)) === 'efbbbf') {
+            $firstLine = substr($firstLine, 3);
+        }
+
+        $header = str_getcsv($firstLine);
+
+        // Normalize header: trim BOM chars, whitespace, and convert to lowercase
+        $header = array_map(fn($h) => trim($h, " \t\n\r\0\x0B\xEF\xBB\xBF"), $header);
+
+        $expectedHeaders = ['姓名', '角色', '邮箱', '手机号', '身份证号', '学号', '昵称', '班级ID', '密码'];
+        if ($header !== $expectedHeaders) {
+            fclose($handle);
+            return back()->withErrors([
+                'file' => '表头格式不正确，期望：'.implode(',', $expectedHeaders).'，实际：'.implode(',', $header),
+            ]);
+        }
+
+        $roles = Role::whereIn('slug', ['student', 'teacher', 'parent'])->pluck('id', 'slug');
+        $results = ['success' => 0, 'skipped' => 0, 'failed' => 0, 'errors' => []];
+        $rowNum = 1;
+
+        DB::beginTransaction();
+        try {
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowNum++;
+
+                if (count($row) !== 9 || empty(trim($row[0])) && empty(trim($row[1]))) {
+                    $results['skipped']++;
+                    continue;
+                }
+
+                $name = trim($row[0]);
+                $roleSlug = strtolower(trim($row[1]));
+                $email = trim($row[2]);
+                $phone = trim($row[3]);
+                $idNumber = trim($row[4]);
+                $studentId = trim($row[5]);
+                $nickname = trim($row[6]);
+                $classId = trim($row[7]);
+                $password = trim($row[8]);
+
+                // Validate role
+                if (!isset($roles[$roleSlug])) {
+                    $results['failed']++;
+                    $results['errors'][] = "第{$rowNum}行：角色 '{$roleSlug}' 无效，仅支持 student/teacher/parent";
+                    continue;
+                }
+
+                // Validate email uniqueness
+                if ($email && User::where('email', $email)->exists()) {
+                    $results['failed']++;
+                    $results['errors'][] = "第{$rowNum}行：邮箱 '{$email}' 已存在";
+                    continue;
+                }
+
+                // Validate phone uniqueness
+                if ($phone && User::where('phone', $phone)->exists()) {
+                    $results['failed']++;
+                    $results['errors'][] = "第{$rowNum}行：手机号 '{$phone}' 已存在";
+                    continue;
+                }
+
+                // Validate id_number uniqueness (students)
+                if ($idNumber && User::where('id_number', $idNumber)->exists()) {
+                    $results['failed']++;
+                    $results['errors'][] = "第{$rowNum}行：身份证号 '{$idNumber}' 已存在";
+                    continue;
+                }
+
+                // Generate default password if empty
+                $hash = Hash::make($password ?: 'Abc12345');
+
+                $userData = [
+                    'name' => $name,
+                    'password' => $hash,
+                    'email' => $email ?: null,
+                    'phone' => $phone ?: null,
+                ];
+
+                if ($roleSlug === 'student') {
+                    $userData['id_number'] = $idNumber ?: null;
+                    $userData['student_id'] = $studentId ?: null;
+                    $userData['nickname'] = $nickname ?: null;
+                }
+
+                $user = User::create($userData);
+                $user->roles()->attach($roles[$roleSlug]);
+
+                // Assign class for students
+                if ($roleSlug === 'student' && $classId) {
+                    $class = SchoolClass::find((int) $classId);
+                    if ($class) {
+                        ClassStudent::create([
+                            'class_id' => $class->id,
+                            'student_id' => $user->id,
+                        ]);
+                        $user->update([
+                            'grade' => $class->grade,
+                            'class' => $class->name,
+                        ]);
+                    }
+                }
+
+                $results['success']++;
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['file' => '导入失败：'.$e->getMessage()]);
+        } finally {
+            fclose($handle);
+        }
+
+        return back()->with('import_results', $results);
     }
 
     /**

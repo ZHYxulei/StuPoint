@@ -54,6 +54,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function UserShow({ user, availableRoles }: PageProps) {
     const [successMessage, setSuccessMessage] = useState('');
+    const [pointsDialogOpen, setPointsDialogOpen] = useState(false);
+    const [pointsSuccess, setPointsSuccess] = useState('');
 
     // Update user info form
     const { data, setData, put, processing: updateProcessing, errors: updateErrors } = useForm({
@@ -123,12 +125,17 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
     const handleAdjustPoints = (e: React.FormEvent) => {
         e.preventDefault();
-        setSuccessMessage('');
+        setPointsSuccess('');
         clearPointsErrors();
         postPoints(`/admin/users/${user.id}/adjust-points`, {
             onSuccess: () => {
-                setSuccessMessage('积分调整成功');
+                setPointsSuccess('积分调整成功');
                 resetPoints();
+                setTimeout(() => {
+                    setPointsDialogOpen(false);
+                    setPointsSuccess('');
+                    setSuccessMessage('积分调整成功');
+                }, 1500);
             },
         });
     };
@@ -317,7 +324,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                             </div>
 
                             <div className="mt-4">
-                                <Dialog>
+                                <Dialog open={pointsDialogOpen} onOpenChange={setPointsDialogOpen}>
                                     <DialogTrigger asChild>
                                         <Button variant="outline" className="w-full">
                                             <Award className="mr-2 h-4 w-4" />
@@ -331,6 +338,13 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                 为 {user.name} 手动增加或扣除积分
                                             </DialogDescription>
                                         </DialogHeader>
+
+                                        {pointsSuccess && (
+                                            <div className="bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-4 py-2 rounded-md text-sm">
+                                                {pointsSuccess}
+                                            </div>
+                                        )}
+
                                         <form onSubmit={handleAdjustPoints} className="space-y-4">
                                             <div className="grid gap-2">
                                                 <Label>操作类型</Label>
@@ -385,12 +399,16 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                             </div>
 
                                             <div className="flex gap-3 pt-2">
-                                                <DialogTrigger asChild>
-                                                    <Button type="button" variant="outline" className="flex-1">
-                                                        取消
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <Button type="submit" disabled={pointsProcessing} className="flex-1">
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="flex-1"
+                                                    onClick={() => setPointsDialogOpen(false)}
+                                                    disabled={pointsProcessing}
+                                                >
+                                                    取消
+                                                </Button>
+                                                <Button type="submit" disabled={pointsProcessing || !!pointsSuccess} className="flex-1">
                                                     {pointsProcessing ? '处理中...' : '确认调整'}
                                                 </Button>
                                             </div>
