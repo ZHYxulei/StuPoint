@@ -6,6 +6,7 @@ use App\Providers\FolioServiceProvider;
 use App\Providers\FortifyServiceProvider;
 use App\Providers\HorizonServiceProvider;
 use App\Providers\PluginServiceProvider;
+use App\Providers\VoltServiceProvider;
 use SocialiteProviders\Manager\ServiceProvider;
 
 return [
@@ -15,5 +16,6 @@ return [
     FortifyServiceProvider::class,
     HorizonServiceProvider::class,
     PluginServiceProvider::class,
+    VoltServiceProvider::class,
     ServiceProvider::class,
 ];

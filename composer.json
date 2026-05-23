@@ -27,6 +27,7 @@
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.9",
         "livewire/livewire": "^4.1",
+        "livewire/volt": "^1.10",
         "socialiteproviders/qq": "^4.2",
         "socialiteproviders/weixin": "^4.1"
     },
