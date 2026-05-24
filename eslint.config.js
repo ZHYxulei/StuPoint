@@ -1,7 +1,7 @@
 import js from '@eslint/js';
+import eslintReact from '@eslint-react/eslint-plugin';
 import prettier from 'eslint-config-prettier/flat';
-import importPlugin from 'eslint-plugin-import';
-import react from 'eslint-plugin-react';
+import importX from 'eslint-plugin-import-x';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import typescript from 'typescript-eslint';
@@ -12,34 +12,24 @@ export default [
     reactHooks.configs.flat.recommended,
     ...typescript.configs.recommended,
     {
-        ...react.configs.flat.recommended,
-        ...react.configs.flat['jsx-runtime'], // Required for React 17+
+        files: ['**/*.{jsx,tsx}'],
+        ...eslintReact.configs['recommended-ts'],
         languageOptions: {
             globals: {
                 ...globals.browser,
             },
         },
-        rules: {
-            'react/react-in-jsx-scope': 'off',
-            'react/prop-types': 'off',
-            'react/no-unescaped-entities': 'off',
-        },
-        settings: {
-            react: {
-                version: 'detect',
-            },
-        },
     },
     {
-        ...importPlugin.flatConfigs.recommended,
+        ...importX.flatConfigs.recommended,
         settings: {
-            'import/resolver': {
+            'import-x/resolver': {
                 typescript: true,
                 node: true,
             },
         },
         rules: {
-            'import/order': [
+            'import-x/order': [
                 'error',
                 {
                     groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
@@ -52,7 +42,7 @@ export default [
         },
     },
     {
-        ...importPlugin.flatConfigs.typescript,
+        ...importX.flatConfigs.typescript,
         files: ['**/*.{ts,tsx}'],
         rules: {
             '@typescript-eslint/consistent-type-imports': [
