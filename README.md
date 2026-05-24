@@ -105,7 +105,7 @@ StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分
 
 #### 核心框架
 
-- **Laravel 12** - 优雅的 PHP Web 应用框架
+- **Laravel 13** - 优雅的 PHP Web 应用框架
 - **PHP 8.2+** - 现代化 PHP 语言特性
 
 #### Laravel 生态系统
@@ -121,7 +121,7 @@ StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分
 - **Laravel Wayfinder** - TypeScript 路由生成器
 - **Livewire 4** - 全栈框架，用 PHP 构建动态界面
 - **Volt** - 单文件 Livewire 组件
-- **Pest 3** - 优雅的 PHP 测试框架
+- **Pest 4** - 优雅的 PHP 测试框架
 
 #### 数据库
 
@@ -135,11 +135,11 @@ StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分
 
 - **React 19** - 用户界面库
 - **TypeScript** - 类型安全的 JavaScript 超集
-- **Vite 7** - 下一代前端构建工具
+- **Vite 8** - 下一代前端构建工具
 
 #### UI 框架和库
 
-- **Inertia.js 2** - 现代单页应用解决方案
+- **Inertia.js 3** - 现代单页应用解决方案
 - **Tailwind CSS 4** - 功能类优先的 CSS 框架
 - **Radix UI** - 无样式的可访问 UI 组件库
 - **Headless UI** - 完全无样式的 UI 组件
@@ -148,7 +148,8 @@ StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分
 
 #### 开发工具
 
-- **ESLint 9** - JavaScript 和 TypeScript 代码检查
+- **ESLint 10** - JavaScript 和 TypeScript 代码检查
+  - > 临时替代：因 `eslint-plugin-react` 暂不支持 ESLint 10，目前使用 `@eslint-react/eslint-plugin` 替代。待 `eslint-plugin-react` 支持 ESLint 10 后切换回来。
 - **Prettier 3** - 代码格式化工具
 - **Laravel Vite Plugin** - Vite 的 Laravel 集成
 - **@laravel/vite-plugin-wayfinder** - TypeScript 路由生成
