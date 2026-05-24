@@ -16,10 +16,6 @@ class CheckPermission
             abort(403, 'You do not have the required permission.');
         }
 
-        if ($permission === 'student_council' && $user->hasRole('student_council')) {
-            return $next($request);
-        }
-
         if (! $user->hasPermission($permission)) {
             abort(403, 'You do not have the required permission.');
         }

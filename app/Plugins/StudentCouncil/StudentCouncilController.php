@@ -3,9 +3,9 @@
 namespace App\Plugins\StudentCouncil;
 
 use App\Http\Controllers\Controller;
-use App\Models\CouncilActivity;
-use App\Models\CouncilActivityParticipant;
-use App\Models\CouncilActivityPoint;
+use App\Plugins\StudentCouncil\Models\CouncilActivity;
+use App\Plugins\StudentCouncil\Models\CouncilActivityParticipant;
+use App\Plugins\StudentCouncil\Models\CouncilActivityPoint;
 use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
