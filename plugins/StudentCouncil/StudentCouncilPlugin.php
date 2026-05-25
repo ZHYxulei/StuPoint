@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Plugins\StudentCouncil;
+namespace Plugins\StudentCouncil;
 
 use App\Models\Role;
-use App\Plugins\Plugin as BasePlugin;
+use Plugins\Plugin as BasePlugin;
 use App\Services\PluginManager;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;

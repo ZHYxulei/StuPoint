@@ -23,25 +23,44 @@ class PluginController extends Controller
     {
         $plugins = Plugin::withCount('permissions')->latest()->get();
 
-        // Auto-register plugins from app/Plugins/ folder
-        $pluginFiles = glob(app_path('Plugins/*/*Plugin.php'));
+        // Auto-register plugins from plugins/ folder using plugin.yaml
+        $pluginDirs = glob(base_path('plugins/*'), GLOB_ONLYDIR);
 
-        foreach ($pluginFiles as $file) {
-            $className = $this->getClassNameFromFile($file);
+        foreach ($pluginDirs as $pluginDir) {
+            $yamlPath = $pluginDir.'/plugin.yaml';
+            if (! file_exists($yamlPath)) {
+                continue;
+            }
+
+            try {
+                $manifest = \Symfony\Component\Yaml\Yaml::parseFile($yamlPath);
+            } catch (\Throwable) {
+                continue;
+            }
+
+            $slug = $manifest['slug'] ?? basename($pluginDir);
+            $pluginFile = $pluginDir.'/'.($manifest['class'] ?? basename($pluginDir).'Plugin').'.php';
+
+            if (! file_exists($pluginFile)) {
+                continue;
+            }
+
+            $className = $this->getClassNameFromFile($pluginFile);
             if ($className && class_exists($className)) {
                 $pluginInstance = new $className;
-                if ($pluginInstance instanceof \App\Plugins\Plugin) {
-                    $slug = $pluginInstance->getSlug();
-
-                    // Auto-create plugin record if not exists
+                if ($pluginInstance instanceof \Plugins\Plugin) {
                     if (! Plugin::where('slug', $slug)->exists()) {
                         Plugin::create([
-                            'name' => $pluginInstance->getName(),
+                            'name' => $manifest['name'] ?? $pluginInstance->getName(),
                             'slug' => $slug,
-                            'version' => $pluginInstance->getVersion(),
-                            'description' => $pluginInstance->getDescription() ?? '',
-                            'author' => $pluginInstance->getAuthor() ?? '',
-                            'status' => 'disabled', // Default to disabled, user can enable
+                            'version' => $manifest['version'] ?? $pluginInstance->getVersion(),
+                            'description' => $manifest['description'] ?? $pluginInstance->getDescription() ?? '',
+                            'author' => $manifest['author'] ?? $pluginInstance->getAuthor() ?? '',
+                            'dependencies' => [
+                                'composer' => $manifest['composer'] ?? [],
+                                'plugins' => $manifest['plugins'] ?? [],
+                            ],
+                            'status' => 'disabled',
                         ]);
                     }
                 }
@@ -91,15 +110,31 @@ class PluginController extends Controller
             $pluginInstance = new $pluginClass;
             $pluginInstance->install();
 
-            // Create plugin record
-            $plugin = Plugin::create([
-                'name' => $pluginInstance->getName(),
-                'slug' => $pluginInstance->getSlug(),
-                'version' => $pluginInstance->getVersion(),
-                'description' => $pluginInstance->getDescription() ?? '',
-                'author' => $pluginInstance->getAuthor() ?? '',
-                'status' => 'installed',
-            ]);
+            // Install composer dependencies from plugin.yaml
+            $plugin = Plugin::where('slug', $validated['slug'])->first();
+            if ($plugin) {
+                $composerResult = $this->pluginManager->installComposerDependencies($plugin);
+                if (! empty($composerResult['installed'])) {
+                    \Log::info("Plugin [{$validated['slug']}] composer deps: {$composerResult['message']}");
+                }
+            }
+
+            // Create plugin record if not exists
+            if (! $plugin) {
+                $manifest = $this->pluginManager->readManifest($validated['slug']);
+                $plugin = Plugin::create([
+                    'name' => $manifest['name'] ?? $pluginInstance->getName(),
+                    'slug' => $pluginInstance->getSlug(),
+                    'version' => $manifest['version'] ?? $pluginInstance->getVersion(),
+                    'description' => $manifest['description'] ?? $pluginInstance->getDescription() ?? '',
+                    'author' => $manifest['author'] ?? $pluginInstance->getAuthor() ?? '',
+                    'dependencies' => [
+                        'composer' => $manifest['composer'] ?? [],
+                        'plugins' => $manifest['plugins'] ?? [],
+                    ],
+                    'status' => 'installed',
+                ]);
+            }
 
             // Register plugin permissions
             $this->pluginManager->registerPluginPermissions($pluginInstance, $plugin);
@@ -121,6 +156,8 @@ class PluginController extends Controller
             $this->pluginManager->enablePlugin($plugin);
 
             return back()->with('success', '插件已启用');
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             return back()->with('error', '插件启用失败: '.$e->getMessage());
         }

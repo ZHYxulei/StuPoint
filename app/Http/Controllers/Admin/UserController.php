@@ -52,9 +52,10 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        // Exclude super_admin role from being selectable through UI
+        // Exclude super_admin role and non-system (plugin) roles
         $roles = Role::orderBy('level')
             ->where('slug', '!=', 'super_admin')
+            ->where('is_system', true)
             ->get();
         $classes = SchoolClass::select('id', 'name', 'grade')
             ->orderBy('grade')

@@ -32,16 +32,14 @@ class PluginServiceProvider extends ServiceProvider
 
         $pluginManager = $this->app->make(PluginManager::class);
 
-        // Auto-load plugins from app/Plugins directory
-        $pluginDirs = glob(app_path('Plugins/*'), GLOB_ONLYDIR);
+        // Auto-load plugins from plugins/ directory
+        $pluginDirs = glob(base_path('plugins/*'), GLOB_ONLYDIR);
 
         foreach ($pluginDirs as $pluginDir) {
             $pluginFile = $pluginDir.'/'.basename($pluginDir).'Plugin.php';
 
             if (file_exists($pluginFile)) {
-                require_once $pluginFile;
-
-                $pluginClass = 'App\\Plugins\\'.basename($pluginDir).'\\'.basename($pluginDir).'Plugin';
+                $pluginClass = 'Plugins\\'.basename($pluginDir).'\\'.basename($pluginDir).'Plugin';
 
                 if (class_exists($pluginClass)) {
                     $plugin = new $pluginClass;

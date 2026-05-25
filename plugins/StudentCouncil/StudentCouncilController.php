@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Plugins\StudentCouncil;
+namespace Plugins\StudentCouncil;
 
 use App\Http\Controllers\Controller;
-use App\Plugins\StudentCouncil\Models\CouncilActivity;
-use App\Plugins\StudentCouncil\Models\CouncilActivityParticipant;
-use App\Plugins\StudentCouncil\Models\CouncilActivityPoint;
+use Plugins\StudentCouncil\Models\CouncilActivity;
+use Plugins\StudentCouncil\Models\CouncilActivityParticipant;
+use Plugins\StudentCouncil\Models\CouncilActivityPoint;
 use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

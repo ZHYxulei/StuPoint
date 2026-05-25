@@ -164,8 +164,8 @@ export default function CreateUser({ roles, classes, subjects, defaultRole }: Pa
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Student Fields (also used for student_council) */}
-                            {['student', 'student_council'].includes(currentRoleSlug) && (
+                            {/* Student Fields */}
+                            {currentRoleSlug === 'student' && (
                                 <>
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
@@ -390,7 +390,7 @@ export default function CreateUser({ roles, classes, subjects, defaultRole }: Pa
                             )}
 
                             {/* Default Fields for other roles (grade_director, principal, etc.) */}
-                            {!['student', 'teacher', 'parent', 'student_council'].includes(currentRoleSlug) && (
+                            {!['student', 'teacher', 'parent'].includes(currentRoleSlug) && (
                                 <>
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">

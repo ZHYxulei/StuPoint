@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Plugin;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Process;
+use Symfony\Component\Yaml\Yaml;
 
 class PluginManager
 {
@@ -85,7 +87,13 @@ class PluginManager
      */
     public function enablePlugin(Plugin $plugin): void
     {
-        $plugin->update(['status' => 'enabled']);
+        // Check plugin dependencies before enabling
+        $manifest = $this->readManifest($plugin->slug);
+        if ($manifest) {
+            $this->checkPluginDependencies($manifest);
+        }
+
+        $plugin->update(['status' => 'enabled', 'enabled_at' => now()]);
 
         // Boot the plugin
         $pluginInstance = $this->loadPluginInstance($plugin);
@@ -155,9 +163,21 @@ class PluginManager
      */
     public function getPluginClass(string $slug): ?string
     {
-        // Convert slug to class name (student_council -> StudentCouncil)
+        // Try reading class from plugin.yaml first
+        $manifest = $this->readManifest($slug);
+        if ($manifest && isset($manifest['class'])) {
+            $className = $manifest['class'];
+            $dirName = str_replace('_', '', ucwords($slug, '_'));
+            $fullClass = "Plugins\\{$dirName}\\{$className}";
+
+            if (class_exists($fullClass)) {
+                return $fullClass;
+            }
+        }
+
+        // Fallback: convert slug to class name (student_council -> StudentCouncil)
         $className = str_replace('_', '', ucwords($slug, '_'));
-        $fullClass = "App\\Plugins\\{$className}\\{$className}Plugin";
+        $fullClass = "Plugins\\{$className}\\{$className}Plugin";
 
         if (class_exists($fullClass)) {
             return $fullClass;
@@ -167,22 +187,100 @@ class PluginManager
     }
 
     /**
-     * Register plugin permissions.
+     * Read plugin.yaml manifest from a plugin directory.
      */
-    public function registerPluginPermissions(object $plugin, Plugin $pluginModel): void
+    public function readManifest(string $slug): ?array
     {
-        if (method_exists($plugin, 'getPermissions')) {
-            $permissions = $plugin->getPermissions();
+        $dirName = str_replace('_', '', ucwords($slug, '_'));
+        $yamlPath = base_path("plugins/{$dirName}/plugin.yaml");
 
-            foreach ($permissions as $permission) {
-                $pluginModel->permissions()->firstOrCreate([
-                    'name' => $permission['name'],
-                    'slug' => $permission['slug'],
-                ], [
-                    'description' => $permission['description'] ?? '',
-                    'module' => $plugin->getSlug(),
-                ]);
+        if (! file_exists($yamlPath)) {
+            // Try with original slug (lowercase)
+            $yamlPath = base_path("plugins/{$slug}/plugin.yaml");
+        }
+
+        if (! file_exists($yamlPath)) {
+            return null;
+        }
+
+        try {
+            return Yaml::parseFile($yamlPath);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Check and install composer dependencies for a plugin.
+     */
+    public function installComposerDependencies(Plugin $plugin): array
+    {
+        $manifest = $this->readManifest($plugin->slug);
+
+        if (! $manifest || empty($manifest['composer'])) {
+            return ['installed' => [], 'message' => '无 Composer 依赖'];
+        }
+
+        $composerDeps = $manifest['composer'];
+        $packages = [];
+
+        foreach ($composerDeps as $package => $constraint) {
+            $packages[] = "{$package}:{$constraint}";
+        }
+
+        if (empty($packages)) {
+            return ['installed' => [], 'message' => '无 Composer 依赖'];
+        }
+
+        try {
+            $result = Process::run("composer require " . implode(' ', $packages) . " --no-interaction 2>&1");
+
+            if ($result->successful()) {
+                return [
+                    'installed' => array_keys($composerDeps),
+                    'message' => 'Composer 依赖安装成功: ' . implode(', ', array_keys($composerDeps)),
+                ];
             }
+
+            return [
+                'installed' => [],
+                'message' => 'Composer 依赖安装失败: ' . $result->errorOutput(),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'installed' => [],
+                'message' => 'Composer 依赖安装异常: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Check if all plugin dependencies are satisfied.
+     *
+     * @throws \RuntimeException
+     */
+    protected function checkPluginDependencies(array $manifest): void
+    {
+        if (empty($manifest['plugins'])) {
+            return;
+        }
+
+        $missing = [];
+
+        foreach ($manifest['plugins'] as $dependencySlug) {
+            $dependency = Plugin::where('slug', $dependencySlug)
+                ->where('status', 'enabled')
+                ->first();
+
+            if (! $dependency) {
+                $missing[] = $dependencySlug;
+            }
+        }
+
+        if (! empty($missing)) {
+            throw new \RuntimeException(
+                '插件依赖未满足，请先启用以下插件: ' . implode(', ', $missing)
+            );
         }
     }
 
@@ -192,5 +290,13 @@ class PluginManager
     public function getEnabledPlugins(): Collection
     {
         return Plugin::enabled()->get();
+    }
+
+    /**
+     * Get all plugin slugs that are enabled.
+     */
+    public function getEnabledPluginSlugs(): array
+    {
+        return Plugin::enabled()->pluck('slug')->toArray();
     }
 }

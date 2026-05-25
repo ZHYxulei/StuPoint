@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Plugins\StudentCouncil\Models;
+namespace Plugins\StudentCouncil\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;

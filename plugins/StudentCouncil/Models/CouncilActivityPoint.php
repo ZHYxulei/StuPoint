@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Plugins\StudentCouncil\Models;
+namespace Plugins\StudentCouncil\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CouncilActivityParticipant extends Model
+class CouncilActivityPoint extends Model
 {
     protected $fillable = [
         'activity_id',
         'user_id',
-        'points_awarded',
-        'awarded_at',
+        'amount',
+        'note',
     ];
 
     protected function casts(): array
     {
         return [
-            'points_awarded' => 'boolean',
-            'awarded_at' => 'datetime',
+            'amount' => 'integer',
         ];
     }
 
