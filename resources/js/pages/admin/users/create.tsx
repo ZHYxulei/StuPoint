@@ -389,6 +389,63 @@ export default function CreateUser({ roles, classes, subjects, defaultRole }: Pa
                                 </>
                             )}
 
+                            {/* Default Fields for other roles (grade_director, principal, student_council, etc.) */}
+                            {!['student', 'teacher', 'parent'].includes(currentRoleSlug) && (
+                                <>
+                                    <div className="grid gap-6 md:grid-cols-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="name">
+                                                姓名 <span className="text-destructive">*</span>
+                                            </Label>
+                                            <Input
+                                                id="name"
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                placeholder="真实姓名"
+                                                required
+                                            />
+                                            <InputError message={errors.name} />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="nickname">昵称</Label>
+                                            <Input
+                                                id="nickname"
+                                                value={data.nickname}
+                                                onChange={(e) => setData('nickname', e.target.value)}
+                                                placeholder="昵称（可选）"
+                                            />
+                                            <InputError message={errors.nickname} />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid gap-6 md:grid-cols-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email">电子邮箱</Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                placeholder="电子邮箱（可选）"
+                                            />
+                                            <InputError message={errors.email} />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="phone">手机号</Label>
+                                            <Input
+                                                id="phone"
+                                                value={data.phone}
+                                                onChange={(e) => setData('phone', e.target.value)}
+                                                placeholder="手机号（可选）"
+                                            />
+                                            <InputError message={errors.phone} />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
                             {/* Password Fields (for all roles) */}
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
