@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, Settings } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -150,83 +150,45 @@ export default function PluginShow({ plugin }: PageProps) {
                 )}
 
                 {/* Configuration Form */}
-                <Card className="border-sidebar-border/70 dark:border-sidebar-border">
-                    <CardHeader>
-                        <CardTitle className="text-base">插件配置</CardTitle>
-                        <CardDescription>配置插件参数和设置</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {plugin.slug === 'student_council' && (
-                                <>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="max_activities">活动数量限制</Label>
-                                        <Input
-                                            id="max_activities"
-                                            type="number"
-                                            value={data.config.max_activities || ''}
-                                            onChange={(e) => setData('config', { ...data.config, max_activities: parseInt(e.target.value) || 0 })}
-                                            placeholder="0表示无限制"
-                                        />
-                                        <p className="text-xs text-muted-foreground">
-                                            设置同时可进行的最大活动数量，0表示无限制
-                                        </p>
+                {plugin.config && Object.keys(plugin.config).length > 0 && (
+                    <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+                        <CardHeader>
+                            <CardTitle className="text-base">插件配置</CardTitle>
+                            <CardDescription>配置插件参数和设置</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                {Object.entries(plugin.config || {}).map(([key, value]) => (
+                                    <div key={key} className="space-y-2">
+                                        <Label htmlFor={key}>{key.replace(/_/g, ' ')}</Label>
+                                        {typeof value === 'boolean' ? (
+                                            <select
+                                                id={key}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                                value={value ? 'true' : 'false'}
+                                                onChange={(e) => setData('config', { ...data.config, [key]: e.target.value === 'true' })}
+                                            >
+                                                <option value="false">否</option>
+                                                <option value="true">是</option>
+                                            </select>
+                                        ) : typeof value === 'number' ? (
+                                            <Input
+                                                id={key}
+                                                type="number"
+                                                value={data.config[key] ?? ''}
+                                                onChange={(e) => setData('config', { ...data.config, [key]: parseInt(e.target.value) || 0 })}
+                                            />
+                                        ) : (
+                                            <Input
+                                                id={key}
+                                                type="text"
+                                                value={data.config[key] ?? ''}
+                                                onChange={(e) => setData('config', { ...data.config, [key]: e.target.value })}
+                                            />
+                                        )}
                                     </div>
+                                ))}
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="max_participants_per_activity">单次活动参与人数上限</Label>
-                                        <Input
-                                            id="max_participants_per_activity"
-                                            type="number"
-                                            value={data.config.max_participants_per_activity || ''}
-                                            onChange={(e) => setData('config', { ...data.config, max_participants_per_activity: parseInt(e.target.value) || 0 })}
-                                            placeholder="0表示无限制"
-                                        />
-                                        <p className="text-xs text-muted-foreground">
-                                            单个活动可参与的最大人数，0表示无限制
-                                        </p>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="auto_approve_activities">自动批准活动</Label>
-                                        <select
-                                            id="auto_approve_activities"
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            value={data.config.auto_approve_activities ? 'true' : 'false'}
-                                            onChange={(e) => setData('config', { ...data.config, auto_approve_activities: e.target.value === 'true' })}
-                                        >
-                                            <option value="false">否 - 需要管理员审核</option>
-                                            <option value="true">是 - 自动批准</option>
-                                        </select>
-                                        <p className="text-xs text-muted-foreground">
-                                            创建的活动是否需要管理员审核后才能发布
-                                        </p>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="default_points_reward">默认积分奖励</Label>
-                                        <Input
-                                            id="default_points_reward"
-                                            type="number"
-                                            min="0"
-                                            value={data.config.default_points_reward || ''}
-                                            onChange={(e) => setData('config', { ...data.config, default_points_reward: parseInt(e.target.value) || 0 })}
-                                        />
-                                        <p className="text-xs text-muted-foreground">
-                                            创建活动时的默认积分奖励
-                                        </p>
-                                    </div>
-                                </>
-                            )}
-
-                            {plugin.slug !== 'student_council' && (
-                                <div className="text-center py-8 text-muted-foreground">
-                                    <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                                    <p>此插件暂无可配置项</p>
-                                </div>
-                            )}
-
-                            {plugin.slug === 'student_council' && (
                                 <div className="flex gap-4 pt-4">
                                     <Button type="submit" disabled={processing}>
                                         <Save className="h-4 w-4 mr-2" />
@@ -238,10 +200,10 @@ export default function PluginShow({ plugin }: PageProps) {
                                         </Button>
                                     </Link>
                                 </div>
-                            )}
-                        </form>
-                    </CardContent>
-                </Card>
+                            </form>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
         </AppLayout>
     );

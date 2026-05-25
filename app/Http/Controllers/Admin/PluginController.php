@@ -23,8 +23,8 @@ class PluginController extends Controller
     {
         $plugins = Plugin::withCount('permissions')->latest()->get();
 
-        // Auto-register plugins from plugins/ folder
-        $pluginFiles = glob(base_path('plugins/*/*Plugin.php'));
+        // Auto-register plugins from app/Plugins/ folder
+        $pluginFiles = glob(app_path('Plugins/*/*Plugin.php'));
 
         foreach ($pluginFiles as $file) {
             $className = $this->getClassNameFromFile($file);
