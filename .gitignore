@@ -53,4 +53,6 @@ agents
 /database/*.sqlite3
 *.sqlite
 *.sqlite3
-/storage/installed
+# 插件目录（插件独立管理，不上传到主仓库）
+plugins/*/
+# 保留 plugins/Plugin.php（插件基类）
