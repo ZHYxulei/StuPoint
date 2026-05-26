@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Plugin;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Process;
-use Symfony\Component\Yaml\Yaml;
 
 class PluginManager
 {
@@ -163,7 +162,7 @@ class PluginManager
      */
     public function getPluginClass(string $slug): ?string
     {
-        // Try reading class from plugin.yaml first
+        // Try reading class from manifest.json first
         $manifest = $this->readManifest($slug);
         if ($manifest && isset($manifest['class'])) {
             $className = $manifest['class'];
@@ -187,24 +186,26 @@ class PluginManager
     }
 
     /**
-     * Read plugin.yaml manifest from a plugin directory.
+     * Read manifest.json from a plugin directory.
      */
     public function readManifest(string $slug): ?array
     {
         $dirName = str_replace('_', '', ucwords($slug, '_'));
-        $yamlPath = base_path("plugins/{$dirName}/plugin.yaml");
+        $jsonPath = base_path("plugins/{$dirName}/manifest.json");
 
-        if (! file_exists($yamlPath)) {
+        if (! file_exists($jsonPath)) {
             // Try with original slug (lowercase)
-            $yamlPath = base_path("plugins/{$slug}/plugin.yaml");
+            $jsonPath = base_path("plugins/{$slug}/manifest.json");
         }
 
-        if (! file_exists($yamlPath)) {
+        if (! file_exists($jsonPath)) {
             return null;
         }
 
         try {
-            return Yaml::parseFile($yamlPath);
+            $content = file_get_contents($jsonPath);
+
+            return json_decode($content, true);
         } catch (\Throwable) {
             return null;
         }
@@ -217,11 +218,11 @@ class PluginManager
     {
         $manifest = $this->readManifest($plugin->slug);
 
-        if (! $manifest || empty($manifest['composer'])) {
+        if (! $manifest || empty($manifest['dependencies']['composer'])) {
             return ['installed' => [], 'message' => '无 Composer 依赖'];
         }
 
-        $composerDeps = $manifest['composer'];
+        $composerDeps = $manifest['dependencies']['composer'];
         $packages = [];
 
         foreach ($composerDeps as $package => $constraint) {
@@ -261,13 +262,13 @@ class PluginManager
      */
     protected function checkPluginDependencies(array $manifest): void
     {
-        if (empty($manifest['plugins'])) {
+        if (empty($manifest['dependencies']['plugins'])) {
             return;
         }
 
         $missing = [];
 
-        foreach ($manifest['plugins'] as $dependencySlug) {
+        foreach ($manifest['dependencies']['plugins'] as $dependencySlug) {
             $dependency = Plugin::where('slug', $dependencySlug)
                 ->where('status', 'enabled')
                 ->first();

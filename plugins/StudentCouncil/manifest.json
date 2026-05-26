@@ -1,0 +1,13 @@
+{
+    "name": "学生会管理",
+    "slug": "student_council",
+    "version": "1.0.0",
+    "description": "允许学生会成员组织活动和管理学生积分奖励",
+    "author": "System",
+    "class": "StudentCouncilPlugin",
+    "min_stupoint_version": "1.3.0",
+    "dependencies": {
+        "composer": {},
+        "plugins": []
+    }
+}

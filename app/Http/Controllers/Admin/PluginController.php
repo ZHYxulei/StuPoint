@@ -23,18 +23,22 @@ class PluginController extends Controller
     {
         $plugins = Plugin::withCount('permissions')->latest()->get();
 
-        // Auto-register plugins from plugins/ folder using plugin.yaml
+        // Auto-register plugins from plugins/ folder using manifest.json
         $pluginDirs = glob(base_path('plugins/*'), GLOB_ONLYDIR);
 
         foreach ($pluginDirs as $pluginDir) {
-            $yamlPath = $pluginDir.'/plugin.yaml';
-            if (! file_exists($yamlPath)) {
+            $jsonPath = $pluginDir.'/manifest.json';
+            if (! file_exists($jsonPath)) {
                 continue;
             }
 
             try {
-                $manifest = \Symfony\Component\Yaml\Yaml::parseFile($yamlPath);
+                $manifest = json_decode(file_get_contents($jsonPath), true);
             } catch (\Throwable) {
+                continue;
+            }
+
+            if (! $manifest) {
                 continue;
             }
 
@@ -56,10 +60,7 @@ class PluginController extends Controller
                             'version' => $manifest['version'] ?? $pluginInstance->getVersion(),
                             'description' => $manifest['description'] ?? $pluginInstance->getDescription() ?? '',
                             'author' => $manifest['author'] ?? $pluginInstance->getAuthor() ?? '',
-                            'dependencies' => [
-                                'composer' => $manifest['composer'] ?? [],
-                                'plugins' => $manifest['plugins'] ?? [],
-                            ],
+                            'dependencies' => $manifest['dependencies'] ?? ['composer' => [], 'plugins' => []],
                             'status' => 'disabled',
                         ]);
                     }
@@ -128,10 +129,7 @@ class PluginController extends Controller
                     'version' => $manifest['version'] ?? $pluginInstance->getVersion(),
                     'description' => $manifest['description'] ?? $pluginInstance->getDescription() ?? '',
                     'author' => $manifest['author'] ?? $pluginInstance->getAuthor() ?? '',
-                    'dependencies' => [
-                        'composer' => $manifest['composer'] ?? [],
-                        'plugins' => $manifest['plugins'] ?? [],
-                    ],
+                    'dependencies' => $manifest['dependencies'] ?? ['composer' => [], 'plugins' => []],
                     'status' => 'installed',
                 ]);
             }

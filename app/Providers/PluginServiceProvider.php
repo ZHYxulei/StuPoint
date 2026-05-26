@@ -36,15 +36,29 @@ class PluginServiceProvider extends ServiceProvider
         $pluginDirs = glob(base_path('plugins/*'), GLOB_ONLYDIR);
 
         foreach ($pluginDirs as $pluginDir) {
-            $pluginFile = $pluginDir.'/'.basename($pluginDir).'Plugin.php';
+            $manifestPath = $pluginDir.'/manifest.json';
 
-            if (file_exists($pluginFile)) {
-                $pluginClass = 'Plugins\\'.basename($pluginDir).'\\'.basename($pluginDir).'Plugin';
-
-                if (class_exists($pluginClass)) {
-                    $plugin = new $pluginClass;
-                    $pluginManager->registerPlugin($plugin);
+            // Try manifest.json for class name, fallback to convention
+            $pluginClass = null;
+            if (file_exists($manifestPath)) {
+                try {
+                    $manifest = json_decode(file_get_contents($manifestPath), true);
+                    if ($manifest && isset($manifest['class'])) {
+                        $dirName = basename($pluginDir);
+                        $pluginClass = "Plugins\\{$dirName}\\{$manifest['class']}";
+                    }
+                } catch (\Throwable) {
+                    // fallback below
                 }
+            }
+
+            if (! $pluginClass) {
+                $pluginClass = 'Plugins\\'.basename($pluginDir).'\\'.basename($pluginDir).'Plugin';
+            }
+
+            if (class_exists($pluginClass)) {
+                $plugin = new $pluginClass;
+                $pluginManager->registerPlugin($plugin);
             }
         }
 
