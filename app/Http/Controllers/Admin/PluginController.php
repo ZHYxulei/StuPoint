@@ -59,7 +59,7 @@ class PluginController extends Controller
                             'slug' => $slug,
                             'version' => $manifest['version'] ?? $pluginInstance->getVersion(),
                             'description' => $manifest['description'] ?? $pluginInstance->getDescription() ?? '',
-                            'author' => $manifest['author'] ?? $pluginInstance->getAuthor() ?? '',
+                            'author' => $this->resolveAuthor($manifest, $pluginInstance),
                             'dependencies' => $manifest['dependencies'] ?? ['composer' => [], 'plugins' => []],
                             'status' => 'disabled',
                         ]);
@@ -128,7 +128,7 @@ class PluginController extends Controller
                     'slug' => $pluginInstance->getSlug(),
                     'version' => $manifest['version'] ?? $pluginInstance->getVersion(),
                     'description' => $manifest['description'] ?? $pluginInstance->getDescription() ?? '',
-                    'author' => $manifest['author'] ?? $pluginInstance->getAuthor() ?? '',
+                    'author' => $this->resolveAuthor($manifest, $pluginInstance),
                     'dependencies' => $manifest['dependencies'] ?? ['composer' => [], 'plugins' => []],
                     'status' => 'installed',
                 ]);
@@ -262,5 +262,21 @@ class PluginController extends Controller
         }
 
         return $namespaceMatch[1].'\\'.$classMatch[1];
+    }
+
+    /**
+     * Resolve author string from manifest (supports legacy 'author' and new 'authors' array).
+     */
+    protected function resolveAuthor(?array $manifest, object $pluginInstance): string
+    {
+        if ($manifest && isset($manifest['authors']) && is_array($manifest['authors'])) {
+            return implode(', ', array_column($manifest['authors'], 'name'));
+        }
+
+        if ($manifest && isset($manifest['author'])) {
+            return $manifest['author'];
+        }
+
+        return method_exists($pluginInstance, 'getAuthor') ? ($pluginInstance->getAuthor() ?? '') : '';
     }
 }
