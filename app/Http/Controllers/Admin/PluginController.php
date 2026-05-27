@@ -87,8 +87,28 @@ class PluginController extends Controller
     {
         $plugin = Plugin::with('permissions')->findOrFail($id);
 
+        // Merge plugin config schema with stored config
+        $pluginInstance = $this->pluginManager->loadPluginInstance($plugin);
+        $configSchema = [];
+        if ($pluginInstance && method_exists($pluginInstance, 'getConfigSchema')) {
+            $configSchema = $pluginInstance->getConfigSchema();
+        }
+
+        // Build merged config: stored values override defaults
+        $mergedConfig = [];
+        $storedConfig = $plugin->config ?? [];
+        foreach ($configSchema as $key => $field) {
+            $mergedConfig[$key] = [
+                'value' => $storedConfig[$key] ?? $field['default'],
+                'label' => $field['label'] ?? $key,
+                'description' => $field['description'] ?? '',
+                'type' => $field['type'] ?? 'text',
+            ];
+        }
+
         return inertia('admin/plugins/show', [
             'plugin' => $plugin,
+            'configSchema' => $mergedConfig,
         ]);
     }
 

@@ -29,6 +29,21 @@ abstract class Plugin
         return [];
     }
 
+    /**
+     * Define the configuration schema for this plugin.
+     * Return an array of config fields with type, default, label, and description.
+     *
+     * Example:
+     * return [
+     *     'max_items' => ['type' => 'number', 'default' => 10, 'label' => '最大数量', 'description' => '0表示无限制'],
+     *     'auto_approve' => ['type' => 'boolean', 'default' => false, 'label' => '自动批准', 'description' => '是否自动批准'],
+     * ];
+     */
+    public function getConfigSchema(): array
+    {
+        return [];
+    }
+
     public function register(): void
     {
         //

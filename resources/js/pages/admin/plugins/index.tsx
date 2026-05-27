@@ -435,12 +435,29 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                         </Button>
                                                     )}
                                                     {plugin.status === 'enabled' && (
-                                                        <Link href={`/admin/plugins/${plugin.id}`}>
-                                                            <Button size="sm" variant="outline">
-                                                                <Settings className="h-4 w-4 mr-1" />
-                                                                配置
+                                                        <>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="destructive"
+                                                                onClick={() => {
+                                                                    if (confirm(`确定要停用插件 "${plugin.name}" 吗？`)) {
+                                                                        post(`/admin/plugins/${plugin.id}/disable`, {
+                                                                            onSuccess: () => window.location.reload(),
+                                                                        });
+                                                                    }
+                                                                }}
+                                                                disabled={processing}
+                                                            >
+                                                                <PowerOff className="h-4 w-4 mr-1" />
+                                                                停用
                                                             </Button>
-                                                        </Link>
+                                                            <Link href={`/admin/plugins/${plugin.id}`}>
+                                                                <Button size="sm" variant="outline">
+                                                                    <Settings className="h-4 w-4 mr-1" />
+                                                                    设置
+                                                                </Button>
+                                                            </Link>
+                                                        </>
                                                     )}
                                                     {plugin.status === 'disabled' && (
                                                         <Button
@@ -458,11 +475,6 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                             启用
                                                         </Button>
                                                     )}
-                                                    <Link href={`/admin/plugins/${plugin.id}`}>
-                                                        <Button size="sm" variant="outline">
-                                                            <Settings className="h-4 w-4" />
-                                                        </Button>
-                                                    </Link>
                                                 </div>
                                             </div>
                                         );

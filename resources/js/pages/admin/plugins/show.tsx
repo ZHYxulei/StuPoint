@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Save } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -15,6 +14,13 @@ interface PluginPermission {
     name: string;
     slug: string;
     description: string;
+}
+
+interface ConfigField {
+    value: string | number | boolean;
+    label: string;
+    description: string;
+    type: 'text' | 'number' | 'boolean';
 }
 
 interface Plugin {
@@ -33,6 +39,7 @@ interface Plugin {
 
 interface PageProps {
     plugin: Plugin;
+    configSchema: Record<string, ConfigField>;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -47,9 +54,18 @@ const statusConfig: Record<string, { label: string; variant: 'default' | 'second
     disabled: { label: '已禁用', variant: 'destructive' },
 };
 
-export default function PluginShow({ plugin }: PageProps) {
-    const { data, setData, post, processing, errors } = useForm({
-        config: plugin.config || {},
+export default function PluginShow({ plugin, configSchema }: PageProps) {
+    const hasConfig = configSchema && Object.keys(configSchema).length > 0;
+
+    const initialConfig: Record<string, any> = {};
+    if (hasConfig) {
+        for (const [key, field] of Object.entries(configSchema)) {
+            initialConfig[key] = field.value;
+        }
+    }
+
+    const { data, setData, post, processing } = useForm({
+        config: initialConfig,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -150,7 +166,7 @@ export default function PluginShow({ plugin }: PageProps) {
                 )}
 
                 {/* Configuration Form */}
-                {plugin.config && Object.keys(plugin.config).length > 0 && (
+                {hasConfig && (
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
                             <CardTitle className="text-base">插件配置</CardTitle>
@@ -158,20 +174,20 @@ export default function PluginShow({ plugin }: PageProps) {
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                {Object.entries(plugin.config || {}).map(([key, value]) => (
+                                {Object.entries(configSchema).map(([key, field]) => (
                                     <div key={key} className="space-y-2">
-                                        <Label htmlFor={key}>{key.replace(/_/g, ' ')}</Label>
-                                        {typeof value === 'boolean' ? (
+                                        <Label htmlFor={key}>{field.label}</Label>
+                                        {field.type === 'boolean' ? (
                                             <select
                                                 id={key}
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                                value={value ? 'true' : 'false'}
+                                                value={data.config[key] ? 'true' : 'false'}
                                                 onChange={(e) => setData('config', { ...data.config, [key]: e.target.value === 'true' })}
                                             >
                                                 <option value="false">否</option>
                                                 <option value="true">是</option>
                                             </select>
-                                        ) : typeof value === 'number' ? (
+                                        ) : field.type === 'number' ? (
                                             <Input
                                                 id={key}
                                                 type="number"
@@ -185,6 +201,9 @@ export default function PluginShow({ plugin }: PageProps) {
                                                 value={data.config[key] ?? ''}
                                                 onChange={(e) => setData('config', { ...data.config, [key]: e.target.value })}
                                             />
+                                        )}
+                                        {field.description && (
+                                            <p className="text-xs text-muted-foreground">{field.description}</p>
                                         )}
                                     </div>
                                 ))}
