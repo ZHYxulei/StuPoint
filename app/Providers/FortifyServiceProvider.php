@@ -50,16 +50,22 @@ class FortifyServiceProvider extends ServiceProvider
 
         // Customize authentication to check registration status
         Fortify::authenticateUsing(function (Request $request) {
+            $login = $request->input('login');
+
             $request->validate([
-                Fortify::username() => 'required|string',
+                'login' => 'required|string',
                 'password' => 'required|string',
             ]);
 
-            $user = User::where(Fortify::username(), $request->input(Fortify::username()))->first();
+            // Support login by email, phone, or username
+            $user = User::where('email', $login)
+                ->orWhere('phone', $login)
+                ->orWhere('name', $login)
+                ->first();
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
                 throw ValidationException::withMessages([
-                    Fortify::username() => '邮箱或密码错误',
+                    'login' => '用户名、手机号或密码错误',
                 ]);
             }
 
@@ -69,7 +75,7 @@ class FortifyServiceProvider extends ServiceProvider
 
                 // Throw validation exception to show proper error message
                 throw ValidationException::withMessages([
-                    Fortify::username() => '您的账号正在审核中，暂时无法登录',
+                    'login' => '您的账号正在审核中，暂时无法登录',
                 ]);
             }
 
@@ -79,7 +85,7 @@ class FortifyServiceProvider extends ServiceProvider
 
                 // Throw validation exception to show proper error message
                 throw ValidationException::withMessages([
-                    Fortify::username() => "您的账号审核未通过。原因：{$reason}",
+                    'login' => "您的账号审核未通过。原因：{$reason}",
                 ]);
             }
 
