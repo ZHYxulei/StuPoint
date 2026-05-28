@@ -28,6 +28,10 @@ import {
     Mail,
     Copyright,
     Share2,
+    Shield,
+    Send,
+    Key,
+    Server,
 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -52,6 +56,9 @@ interface PageProps {
     contactSettings: Record<string, string>;
     footerSettings: Record<string, string>;
     socialSettings: Record<string, string>;
+    mailSettings: Record<string, string>;
+    smsSettings: Record<string, string>;
+    captchaSettings: Record<string, string>;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -65,6 +72,9 @@ export default function SystemSettings({
     contactSettings,
     footerSettings,
     socialSettings,
+    mailSettings,
+    smsSettings,
+    captchaSettings,
 }: PageProps) {
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingSource, setEditingSource] = useState<PluginSource | null>(
@@ -213,7 +223,7 @@ export default function SystemSettings({
                 </div>
 
                 <Tabs defaultValue="site" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-5">
+                    <TabsList className="grid w-full grid-cols-8">
                         <TabsTrigger
                             value="site"
                             className="flex items-center gap-2"
@@ -248,6 +258,27 @@ export default function SystemSettings({
                         >
                             <Globe className="h-4 w-4" />
                             插件源
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="mail"
+                            className="flex items-center gap-2"
+                        >
+                            <Mail className="h-4 w-4" />
+                            邮件配置
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="sms"
+                            className="flex items-center gap-2"
+                        >
+                            <Zap className="h-4 w-4" />
+                            短信配置
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="captcha"
+                            className="flex items-center gap-2"
+                        >
+                            <Shield className="h-4 w-4" />
+                            人机验证
                         </TabsTrigger>
                     </TabsList>
 
@@ -983,8 +1014,221 @@ export default function SystemSettings({
                             </CardContent>
                         </Card>
                     </TabsContent>
+
+                    {/* Mail Settings Tab */}
+                    <TabsContent value="mail">
+                        <MailSettingsTab mailSettings={mailSettings} />
+                    </TabsContent>
+
+                    {/* SMS Settings Tab */}
+                    <TabsContent value="sms">
+                        <SmsSettingsTab smsSettings={smsSettings} />
+                    </TabsContent>
+
+                    {/* Captcha Settings Tab */}
+                    <TabsContent value="captcha">
+                        <CaptchaSettingsTab captchaSettings={captchaSettings} />
+                    </TabsContent>
                 </Tabs>
             </div>
         </AppLayout>
+    );
+}
+
+/* ─────────── Mail Settings Tab ─────────── */
+
+function MailSettingsTab({ mailSettings }: { mailSettings: Record<string, string> }) {
+    const { data, setData, post, processing } = useForm({
+        mail_host: mailSettings.mail_host || '',
+        mail_port: mailSettings.mail_port || '587',
+        mail_username: mailSettings.mail_username || '',
+        mail_password: mailSettings.mail_password || '',
+        mail_encryption: mailSettings.mail_encryption || 'tls',
+        mail_from_address: mailSettings.mail_from_address || '',
+        mail_from_name: mailSettings.mail_from_name || '',
+    });
+
+    return (
+        <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Server className="h-5 w-5" />
+                    SMTP 邮件服务器
+                </CardTitle>
+                <CardDescription>配置 SMTP 服务器用于发送验证码和通知邮件</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={(e) => { e.preventDefault(); post('/admin/settings/mail'); }} className="space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="grid gap-2">
+                            <Label>SMTP 主机</Label>
+                            <Input value={data.mail_host} onChange={(e) => setData('mail_host', e.target.value)} placeholder="smtp.example.com" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>端口</Label>
+                            <Input value={data.mail_port} onChange={(e) => setData('mail_port', e.target.value)} placeholder="587" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>加密方式</Label>
+                            <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={data.mail_encryption} onChange={(e) => setData('mail_encryption', e.target.value)}>
+                                <option value="tls">TLS</option>
+                                <option value="ssl">SSL</option>
+                                <option value="none">无</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label>用户名</Label>
+                            <Input value={data.mail_username} onChange={(e) => setData('mail_username', e.target.value)} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>密码</Label>
+                            <Input type="password" value={data.mail_password} onChange={(e) => setData('mail_password', e.target.value)} />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label>发件人邮箱</Label>
+                            <Input type="email" value={data.mail_from_address} onChange={(e) => setData('mail_from_address', e.target.value)} />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>发件人名称</Label>
+                            <Input value={data.mail_from_name} onChange={(e) => setData('mail_from_name', e.target.value)} />
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <Button type="submit" disabled={processing}>{processing ? '保存中...' : '保存配置'}</Button>
+                        <Button type="button" variant="outline" onClick={() => post('/admin/settings/mail/test')}>发送测试邮件</Button>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
+    );
+}
+
+/* ─────────── SMS Settings Tab ─────────── */
+
+function SmsSettingsTab({ smsSettings }: { smsSettings: Record<string, string> }) {
+    const { data, setData, post, processing } = useForm({
+        sms_provider: smsSettings.sms_provider || 'log',
+        sms_aliyun_access_key_id: smsSettings.sms_aliyun_access_key_id || '',
+        sms_aliyun_access_key_secret: smsSettings.sms_aliyun_access_key_secret || '',
+        sms_aliyun_sign_name: smsSettings.sms_aliyun_sign_name || '',
+        sms_aliyun_template_code: smsSettings.sms_aliyun_template_code || '',
+        sms_tencent_secret_id: smsSettings.sms_tencent_secret_id || '',
+        sms_tencent_secret_key: smsSettings.sms_tencent_secret_key || '',
+        sms_tencent_sdk_app_id: smsSettings.sms_tencent_sdk_app_id || '',
+        sms_tencent_template_id: smsSettings.sms_tencent_template_id || '',
+        sms_tencent_sign_name: smsSettings.sms_tencent_sign_name || '',
+    });
+
+    return (
+        <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Send className="h-5 w-5" />
+                    短信服务配置
+                </CardTitle>
+                <CardDescription>配置短信服务商用于发送验证码</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={(e) => { e.preventDefault(); post('/admin/settings/sms'); }} className="space-y-6">
+                    <div className="grid gap-2">
+                        <Label>短信服务商</Label>
+                        <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={data.sms_provider} onChange={(e) => setData('sms_provider', e.target.value)}>
+                            <option value="log">测试模式 (日志)</option>
+                            <option value="aliyun">阿里云</option>
+                            <option value="tencent">腾讯云</option>
+                        </select>
+                    </div>
+
+                    {data.sms_provider === 'aliyun' && (
+                        <div className="space-y-4 p-4 border rounded-lg">
+                            <h4 className="font-medium text-sm">阿里云短信配置</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="grid gap-2"><Label>Access Key ID</Label><Input value={data.sms_aliyun_access_key_id} onChange={(e) => setData('sms_aliyun_access_key_id', e.target.value)} /></div>
+                                <div className="grid gap-2"><Label>Access Key Secret</Label><Input type="password" value={data.sms_aliyun_access_key_secret} onChange={(e) => setData('sms_aliyun_access_key_secret', e.target.value)} /></div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="grid gap-2"><Label>短信签名</Label><Input value={data.sms_aliyun_sign_name} onChange={(e) => setData('sms_aliyun_sign_name', e.target.value)} placeholder="StuPoint" /></div>
+                                <div className="grid gap-2"><Label>模板代码</Label><Input value={data.sms_aliyun_template_code} onChange={(e) => setData('sms_aliyun_template_code', e.target.value)} placeholder="SMS_xxxxx" /></div>
+                            </div>
+                        </div>
+                    )}
+
+                    {data.sms_provider === 'tencent' && (
+                        <div className="space-y-4 p-4 border rounded-lg">
+                            <h4 className="font-medium text-sm">腾讯云短信配置</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="grid gap-2"><Label>Secret ID</Label><Input value={data.sms_tencent_secret_id} onChange={(e) => setData('sms_tencent_secret_id', e.target.value)} /></div>
+                                <div className="grid gap-2"><Label>Secret Key</Label><Input type="password" value={data.sms_tencent_secret_key} onChange={(e) => setData('sms_tencent_secret_key', e.target.value)} /></div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="grid gap-2"><Label>SDK App ID</Label><Input value={data.sms_tencent_sdk_app_id} onChange={(e) => setData('sms_tencent_sdk_app_id', e.target.value)} /></div>
+                                <div className="grid gap-2"><Label>模板 ID</Label><Input value={data.sms_tencent_template_id} onChange={(e) => setData('sms_tencent_template_id', e.target.value)} /></div>
+                                <div className="grid gap-2"><Label>短信签名</Label><Input value={data.sms_tencent_sign_name} onChange={(e) => setData('sms_tencent_sign_name', e.target.value)} /></div>
+                            </div>
+                        </div>
+                    )}
+
+                    <Button type="submit" disabled={processing}>{processing ? '保存中...' : '保存配置'}</Button>
+                </form>
+            </CardContent>
+        </Card>
+    );
+}
+
+/* ─────────── Captcha Settings Tab ─────────── */
+
+function CaptchaSettingsTab({ captchaSettings }: { captchaSettings: Record<string, string> }) {
+    const { data, setData, post, processing } = useForm({
+        captcha_provider: captchaSettings.captcha_provider || 'log',
+        captcha_cloudflare_site_key: captchaSettings.captcha_cloudflare_site_key || '',
+        captcha_cloudflare_secret_key: captchaSettings.captcha_cloudflare_secret_key || '',
+        captcha_google_site_key: captchaSettings.captcha_google_site_key || '',
+        captcha_google_secret_key: captchaSettings.captcha_google_secret_key || '',
+    });
+
+    return (
+        <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    人机验证配置
+                </CardTitle>
+                <CardDescription>配置人机验证以防止恶意登录和注册</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={(e) => { e.preventDefault(); post('/admin/settings/captcha'); }} className="space-y-6">
+                    <div className="grid gap-2">
+                        <Label>验证服务商</Label>
+                        <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={data.captcha_provider} onChange={(e) => setData('captcha_provider', e.target.value)}>
+                            <option value="log">关闭 (测试模式)</option>
+                            <option value="cloudflare">Cloudflare Turnstile</option>
+                            <option value="google">Google reCAPTCHA</option>
+                        </select>
+                    </div>
+
+                    {data.captcha_provider === 'cloudflare' && (
+                        <div className="space-y-4 p-4 border rounded-lg">
+                            <h4 className="font-medium text-sm">Cloudflare Turnstile 配置</h4>
+                            <div className="grid gap-2"><Label>Site Key</Label><Input value={data.captcha_cloudflare_site_key} onChange={(e) => setData('captcha_cloudflare_site_key', e.target.value)} /></div>
+                            <div className="grid gap-2"><Label>Secret Key</Label><Input type="password" value={data.captcha_cloudflare_secret_key} onChange={(e) => setData('captcha_cloudflare_secret_key', e.target.value)} /></div>
+                        </div>
+                    )}
+
+                    {data.captcha_provider === 'google' && (
+                        <div className="space-y-4 p-4 border rounded-lg">
+                            <h4 className="font-medium text-sm">Google reCAPTCHA 配置</h4>
+                            <div className="grid gap-2"><Label>Site Key</Label><Input value={data.captcha_google_site_key} onChange={(e) => setData('captcha_google_site_key', e.target.value)} /></div>
+                            <div className="grid gap-2"><Label>Secret Key</Label><Input type="password" value={data.captcha_google_secret_key} onChange={(e) => setData('captcha_google_secret_key', e.target.value)} /></div>
+                        </div>
+                    )}
+
+                    <Button type="submit" disabled={processing}>{processing ? '保存中...' : '保存配置'}</Button>
+                </form>
+            </CardContent>
+        </Card>
     );
 }
