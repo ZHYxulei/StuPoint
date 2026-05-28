@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Puzzle, Download, Power, PowerOff, Trash2, Settings, Upload, Package, X, FileArchive, Search, Plus, Globe, ExternalLink } from 'lucide-react';
+import { Puzzle, Download, Power, PowerOff, Trash2, Settings, Upload, Package, X, FileArchive, Search, Plus, Globe, ExternalLink, Star, Github } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { useState } from 'react';
@@ -22,6 +22,8 @@ interface Plugin {
     permissions_count: number;
     created_at: string;
     enabled_at: string | null;
+    github_url: string | null;
+    github_stars: number | null;
 }
 
 interface PluginSource {
@@ -398,7 +400,8 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                         return (
                                             <div
                                                 key={plugin.id}
-                                                className="flex items-center justify-between p-4 rounded-lg border border-sidebar-border/70 dark:border-sidebar-border hover:bg-muted/50 transition-colors"
+                                                className={`flex items-center justify-between p-4 rounded-lg border border-sidebar-border/70 dark:border-sidebar-border hover:bg-muted/50 transition-colors ${plugin.github_url ? 'cursor-pointer' : ''}`}
+                                                onClick={plugin.github_url ? () => window.open(plugin.github_url!, '_blank') : undefined}
                                             >
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 mb-1">
@@ -415,11 +418,26 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                         <span>v{plugin.version}</span>
                                                         <span>•</span>
                                                         <span>{plugin.author}</span>
+                                                        {plugin.github_stars !== null && plugin.github_stars !== undefined && (
+                                                            <>
+                                                                <span>•</span>
+                                                                <span className="flex items-center gap-1">
+                                                                    <Star className="h-3 w-3" />
+                                                                    {plugin.github_stars}
+                                                                </span>
+                                                            </>
+                                                        )}
                                                     </div>
                                                     {plugin.permissions_count > 0 && (
                                                         <p className="text-xs text-muted-foreground">
                                                             {plugin.permissions_count} 个权限
                                                         </p>
+                                                    )}
+                                                    {plugin.github_url && (
+                                                        <a href={plugin.github_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                                                            <Github className="h-3 w-3" />
+                                                            {plugin.github_url.replace('https://github.com/', '')}
+                                                        </a>
                                                     )}
                                                 </div>
 

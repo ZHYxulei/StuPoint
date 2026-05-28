@@ -71,6 +71,31 @@ class PluginController extends Controller
         // Reload plugins after auto-registration
         $plugins = Plugin::withCount('permissions')->latest()->get();
 
+        // Enrich plugins with GitHub info from manifest.json
+        $plugins = $plugins->map(function ($plugin) {
+            $manifest = $this->pluginManager->readManifest($plugin->slug);
+            $repo = $manifest['repository']['repo'] ?? null;
+
+            $plugin->github_url = $repo ? "https://github.com/{$repo}" : null;
+            $plugin->github_stars = null;
+
+            if ($repo) {
+                $plugin->github_stars = \Cache::remember("github.stars.{$repo}", 3600, function () use ($repo) {
+                    try {
+                        $response = \Http::timeout(5)->get("https://api.github.com/repos/{$repo}");
+                        if ($response->successful()) {
+                            return $response->json('stargazers_count');
+                        }
+                    } catch (\Throwable) {
+                        // silently fail
+                    }
+                    return null;
+                });
+            }
+
+            return $plugin;
+        });
+
         // Get plugin sources for the settings
         $pluginSources = PluginSource::orderBy('sort_order')->orderBy('name')->get();
 
