@@ -25,6 +25,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::put('/plugin-sources/{id}', [SettingsController::class, 'updatePluginSource'])->name('plugin-sources.update');
         Route::delete('/plugin-sources/{id}', [SettingsController::class, 'deletePluginSource'])->name('plugin-sources.delete');
         Route::post('/plugin-sources/{id}/test', [SettingsController::class, 'testPluginSource'])->name('plugin-sources.test');
+        Route::post('/mail', [SettingsController::class, 'updateMailSettings'])->name('mail.update');
+        Route::post('/mail/test', [SettingsController::class, 'testMailConnection'])->name('mail.test');
+        Route::post('/sms', [SettingsController::class, 'updateSmsSettings'])->name('sms.update');
+        Route::post('/captcha', [SettingsController::class, 'updateCaptchaSettings'])->name('captcha.update');
     });
 
     // User Approvals

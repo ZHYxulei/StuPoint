@@ -23,6 +23,10 @@ use Illuminate\Support\Facades\Route;
 // Public routes - Authentication
 Route::post('/auth/login', [AuthController::class, 'login']);
 
+// Verification code routes (public, rate limited)
+Route::post('/verification/send', [\App\Http\Controllers\VerificationController::class, 'send']);
+Route::post('/verification/verify', [\App\Http\Controllers\VerificationController::class, 'verify']);
+
 // Protected routes - require authentication
 Route::middleware('auth:api')->group(function () {
     // Auth

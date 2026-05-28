@@ -44,6 +44,11 @@ class AppServiceProvider extends ServiceProvider
 
         $this->configureLocale();
         $this->configureViewShare();
+
+        // Apply mail settings from database (if configured)
+        if (file_exists(storage_path('installed'))) {
+            \App\Services\MailConfigService::apply();
+        }
     }
 
     protected function configureDefaults(): void

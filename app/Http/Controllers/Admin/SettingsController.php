@@ -55,12 +55,30 @@ class SettingsController extends Controller
             return [$setting->key => $setting->value];
         });
 
+        // Get mail settings
+        $mailSettings = Setting::where('group', 'mail')->get()->mapWithKeys(function ($setting) {
+            return [$setting->key => $setting->value];
+        });
+
+        // Get SMS settings
+        $smsSettings = Setting::where('group', 'sms')->get()->mapWithKeys(function ($setting) {
+            return [$setting->key => $setting->value];
+        });
+
+        // Get captcha settings
+        $captchaSettings = Setting::where('group', 'captcha')->get()->mapWithKeys(function ($setting) {
+            return [$setting->key => $setting->value];
+        });
+
         return inertia('admin/settings/index', [
             'pluginSources' => $pluginSources,
             'siteSettingsForm' => $siteSettings,
             'contactSettings' => $contactSettings,
             'footerSettings' => $footerSettings,
             'socialSettings' => $socialSettings,
+            'mailSettings' => $mailSettings,
+            'smsSettings' => $smsSettings,
+            'captchaSettings' => $captchaSettings,
         ]);
     }
 
@@ -279,5 +297,109 @@ class SettingsController extends Controller
         }
 
         return back()->with('success', '社交媒体设置已更新');
+    }
+
+    /**
+     * Update mail settings.
+     */
+    public function updateMailSettings(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        $validated = $request->validate([
+            'mail_host' => 'nullable|string|max:255',
+            'mail_port' => 'nullable|integer|min:1|max:65535',
+            'mail_username' => 'nullable|string|max:255',
+            'mail_password' => 'nullable|string|max:255',
+            'mail_encryption' => 'nullable|in:tls,ssl,none',
+            'mail_from_address' => 'nullable|email|max:255',
+            'mail_from_name' => 'nullable|string|max:255',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            Setting::set($key, $value, 'string', 'mail');
+        }
+
+        // Re-apply mail config
+        \App\Services\MailConfigService::apply();
+
+        return back()->with('success', '邮件设置已更新');
+    }
+
+    /**
+     * Send test email to verify SMTP configuration.
+     */
+    public function testMailConnection(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        try {
+            $service = new \App\Services\MailConfigService();
+            $service->testConnection();
+            return back()->with('success', '测试邮件已发送，请检查邮箱');
+        } catch (\Exception $e) {
+            return back()->with('error', '邮件发送失败: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update SMS settings.
+     */
+    public function updateSmsSettings(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        $validated = $request->validate([
+            'sms_provider' => 'required|in:aliyun,tencent,log',
+            'sms_aliyun_access_key_id' => 'nullable|string|max:255',
+            'sms_aliyun_access_key_secret' => 'nullable|string|max:255',
+            'sms_aliyun_sign_name' => 'nullable|string|max:255',
+            'sms_aliyun_template_code' => 'nullable|string|max:255',
+            'sms_tencent_secret_id' => 'nullable|string|max:255',
+            'sms_tencent_secret_key' => 'nullable|string|max:255',
+            'sms_tencent_sdk_app_id' => 'nullable|string|max:255',
+            'sms_tencent_template_id' => 'nullable|string|max:255',
+            'sms_tencent_sign_name' => 'nullable|string|max:255',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            Setting::set($key, $value, 'string', 'sms');
+        }
+
+        return back()->with('success', '短信设置已更新');
+    }
+
+    /**
+     * Update captcha settings.
+     */
+    public function updateCaptchaSettings(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
+
+        $validated = $request->validate([
+            'captcha_provider' => 'required|in:cloudflare,google,log',
+            'captcha_cloudflare_site_key' => 'nullable|string|max:255',
+            'captcha_cloudflare_secret_key' => 'nullable|string|max:255',
+            'captcha_google_site_key' => 'nullable|string|max:255',
+            'captcha_google_secret_key' => 'nullable|string|max:255',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            Setting::set($key, $value, 'string', 'captcha');
+        }
+
+        return back()->with('success', '人机验证设置已更新');
     }
 }
