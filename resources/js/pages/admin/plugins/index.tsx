@@ -445,7 +445,7 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                     {plugin.status === 'installed' && (
                                                         <Button
                                                             size="sm"
-                                                            onClick={() => installPlugin(plugin.slug)}
+                                                            onClick={(e) => { e.stopPropagation(); installPlugin(plugin.slug); }}
                                                             disabled={processing}
                                                         >
                                                             <Download className="h-4 w-4 mr-1" />
@@ -457,7 +457,8 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                             <Button
                                                                 size="sm"
                                                                 variant="destructive"
-                                                                onClick={() => {
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
                                                                     if (confirm(`确定要停用插件 "${plugin.name}" 吗？`)) {
                                                                         post(`/admin/plugins/${plugin.id}/disable`, {
                                                                             onSuccess: () => window.location.reload(),
@@ -469,12 +470,12 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                                 <PowerOff className="h-4 w-4 mr-1" />
                                                                 停用
                                                             </Button>
-                                                            <Link href={`/admin/plugins/${plugin.id}`}>
+                                                            <a href={`/admin/plugins/${plugin.id}`} onClick={(e) => e.stopPropagation()}>
                                                                 <Button size="sm" variant="outline">
                                                                     <Settings className="h-4 w-4 mr-1" />
                                                                     设置
                                                                 </Button>
-                                                            </Link>
+                                                            </a>
                                                         </>
                                                     )}
                                                     {plugin.status === 'disabled' && (

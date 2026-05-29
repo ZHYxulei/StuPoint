@@ -13,7 +13,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     Settings,
     Plus,
@@ -80,6 +79,7 @@ export default function SystemSettings({
     const [editingSource, setEditingSource] = useState<PluginSource | null>(
         null,
     );
+    const [activeTab, setActiveTab] = useState('site');
 
     // Site settings form
     const siteForm = useForm({
@@ -222,68 +222,39 @@ export default function SystemSettings({
                     />
                 </div>
 
-                <Tabs defaultValue="site" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-8">
-                        <TabsTrigger
-                            value="site"
-                            className="flex items-center gap-2"
-                        >
-                            <Palette className="h-4 w-4" />
-                            站点设置
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="contact"
-                            className="flex items-center gap-2"
-                        >
-                            <Mail className="h-4 w-4" />
-                            联系信息
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="footer"
-                            className="flex items-center gap-2"
-                        >
-                            <Copyright className="h-4 w-4" />
-                            页脚设置
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="social"
-                            className="flex items-center gap-2"
-                        >
-                            <Share2 className="h-4 w-4" />
-                            社交媒体
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="plugins"
-                            className="flex items-center gap-2"
-                        >
-                            <Globe className="h-4 w-4" />
-                            插件源
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="mail"
-                            className="flex items-center gap-2"
-                        >
-                            <Mail className="h-4 w-4" />
-                            邮件配置
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="sms"
-                            className="flex items-center gap-2"
-                        >
-                            <Zap className="h-4 w-4" />
-                            短信配置
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="captcha"
-                            className="flex items-center gap-2"
-                        >
-                            <Shield className="h-4 w-4" />
-                            人机验证
-                        </TabsTrigger>
-                    </TabsList>
+                <div className="flex gap-6">
+                    {/* Sidebar Navigation */}
+                    <nav className="w-48 shrink-0 space-y-1">
+                        {[
+                            { key: 'site', icon: Palette, label: '站点设置' },
+                            { key: 'contact', icon: Mail, label: '联系信息' },
+                            { key: 'footer', icon: Copyright, label: '页脚设置' },
+                            { key: 'social', icon: Share2, label: '社交媒体' },
+                            { key: 'plugins', icon: Globe, label: '插件源' },
+                            { key: 'mail', icon: Send, label: '邮件配置' },
+                            { key: 'sms', icon: Zap, label: '短信配置' },
+                            { key: 'captcha', icon: Shield, label: '人机验证' },
+                        ].map(({ key, icon: Icon, label }) => (
+                            <button
+                                key={key}
+                                onClick={() => setActiveTab(key)}
+                                className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+                                    activeTab === key
+                                        ? 'bg-primary text-primary-foreground shadow-sm'
+                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                }`}
+                            >
+                                <Icon className="h-4 w-4" />
+                                {label}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {/* Tab Content */}
+                    <div className="flex-1 min-w-0 space-y-6">
 
                     {/* Site Settings Tab */}
-                    <TabsContent value="site">
+                    {activeTab === 'site' && (
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -435,10 +406,10 @@ export default function SystemSettings({
                                 </form>
                             </CardContent>
                         </Card>
-                    </TabsContent>
+                    )}
 
                     {/* Contact Settings Tab */}
-                    <TabsContent value="contact">
+                    {activeTab === 'contact' && (
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -510,10 +481,10 @@ export default function SystemSettings({
                                 </form>
                             </CardContent>
                         </Card>
-                    </TabsContent>
+                    )}
 
                     {/* Footer Settings Tab */}
-                    <TabsContent value="footer">
+                    {activeTab === 'footer' && (
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -603,10 +574,10 @@ export default function SystemSettings({
                                 </form>
                             </CardContent>
                         </Card>
-                    </TabsContent>
+                    )}
 
                     {/* Social Settings Tab */}
-                    <TabsContent value="social">
+                    {activeTab === 'social' && (
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -695,10 +666,10 @@ export default function SystemSettings({
                                 </form>
                             </CardContent>
                         </Card>
-                    </TabsContent>
+                    )}
 
                     {/* Plugin Sources Tab */}
-                    <TabsContent value="plugins">
+                    {activeTab === 'plugins' && (
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
@@ -1013,23 +984,23 @@ export default function SystemSettings({
                                 </div>
                             </CardContent>
                         </Card>
-                    </TabsContent>
+                    )}
 
                     {/* Mail Settings Tab */}
-                    <TabsContent value="mail">
+                    {activeTab === 'mail' && (
                         <MailSettingsTab mailSettings={mailSettings} />
-                    </TabsContent>
+                    )}
 
                     {/* SMS Settings Tab */}
-                    <TabsContent value="sms">
+                    {activeTab === 'sms' && (
                         <SmsSettingsTab smsSettings={smsSettings} />
-                    </TabsContent>
+                    )}
 
                     {/* Captcha Settings Tab */}
-                    <TabsContent value="captcha">
+                    {activeTab === 'captcha' && (
                         <CaptchaSettingsTab captchaSettings={captchaSettings} />
-                    </TabsContent>
-                </Tabs>
+                    )}
+                </div></div>
             </div>
         </AppLayout>
     );
