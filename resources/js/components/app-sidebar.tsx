@@ -18,6 +18,7 @@ import {
     GraduationCap,
     Baby,
     ShieldCheck,
+    Info,
 } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavUser } from '@/components/nav-user';
@@ -361,6 +362,14 @@ export function AppSidebar() {
                                     >
                                         <BookOpen className="h-4 w-4" />
                                         <span>文档</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <a href="/about">
+                                        <Info className="h-4 w-4" />
+                                        <span>关于</span>
                                     </a>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>

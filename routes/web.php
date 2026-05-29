@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Points\PointController;
@@ -7,6 +8,9 @@ use App\Http\Controllers\RankingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('about', [AboutController::class, 'index'])->name('about')
+    ->middleware(['auth', 'verified']);
 
 // API route for user stats (called by frontend)
 Route::get('/api/user-stats', [HomeController::class, 'userStats'])

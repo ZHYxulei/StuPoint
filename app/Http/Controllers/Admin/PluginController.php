@@ -76,11 +76,9 @@ class PluginController extends Controller
             $manifest = $this->pluginManager->readManifest($plugin->slug);
             $repo = $manifest['repository']['repo'] ?? null;
 
-            $plugin->github_url = $repo ? "https://github.com/{$repo}" : null;
-            $plugin->github_stars = null;
-
+            $stars = null;
             if ($repo) {
-                $plugin->github_stars = \Cache::remember("github.stars.{$repo}", 3600, function () use ($repo) {
+                $stars = \Cache::remember("github.stars.{$repo}", 3600, function () use ($repo) {
                     try {
                         $response = \Http::timeout(5)->get("https://api.github.com/repos/{$repo}");
                         if ($response->successful()) {
@@ -93,7 +91,21 @@ class PluginController extends Controller
                 });
             }
 
-            return $plugin->toArray();
+            return [
+                'id' => $plugin->id,
+                'name' => $plugin->name,
+                'slug' => $plugin->slug,
+                'version' => $plugin->version,
+                'description' => $plugin->description,
+                'author' => $plugin->author,
+                'status' => $plugin->status,
+                'config' => $plugin->config,
+                'permissions_count' => $plugin->permissions_count,
+                'created_at' => $plugin->created_at,
+                'enabled_at' => $plugin->enabled_at,
+                'github_url' => $repo ? "https://github.com/{$repo}" : null,
+                'github_stars' => $stars,
+            ];
         });
 
         // Get plugin sources for the settings
