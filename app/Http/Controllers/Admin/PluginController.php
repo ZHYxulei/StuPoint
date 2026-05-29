@@ -93,7 +93,7 @@ class PluginController extends Controller
                 });
             }
 
-            return $plugin;
+            return $plugin->toArray();
         });
 
         // Get plugin sources for the settings
