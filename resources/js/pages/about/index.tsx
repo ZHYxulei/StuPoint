@@ -52,20 +52,20 @@ export default function AboutIndex({ version, commitHash, commitDate, phpVersion
                 {/* Logo Section */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
                     <CardContent className="pt-6">
-                        <div className="flex items-center justify-center gap-6 py-4">
-                            {/* System Logo */}
-                            <div className="flex flex-col items-center gap-2">
+                        <div className="relative flex items-center justify-center py-4">
+                            {/* System Logo - fixed left position */}
+                            <div className="absolute left-1/4 -translate-x-1/2 flex flex-col items-center gap-2">
                                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
                                     <span className="text-white text-2xl font-bold">SP</span>
                                 </div>
-                                <span className="text-sm font-medium text-muted-foreground">StuPoint</span>
+                                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">StuPoint</span>
                             </div>
 
-                            {/* Divider */}
-                            <div className="h-16 w-px bg-border" />
+                            {/* Divider - absolute center */}
+                            <div className="absolute left-1/2 -translate-x-1/2 h-16 w-px bg-border" />
 
-                            {/* School Logo */}
-                            <div className="flex flex-col items-center gap-2">
+                            {/* School Logo - fixed right position */}
+                            <div className="absolute right-1/4 -translate-x-1/2 flex flex-col items-center gap-2">
                                 {schoolLogo ? (
                                     <img src={schoolLogo} alt={schoolName} className="w-16 h-16 rounded-xl object-cover shadow-sm" />
                                 ) : (
@@ -73,8 +73,11 @@ export default function AboutIndex({ version, commitHash, commitDate, phpVersion
                                         <span className="text-2xl">🏫</span>
                                     </div>
                                 )}
-                                <span className="text-sm font-medium text-muted-foreground">{schoolName}</span>
+                                <span className="text-sm font-medium text-muted-foreground text-center max-w-[100px] truncate" title={schoolName}>{schoolName}</span>
                             </div>
+
+                            {/* Spacer to maintain height */}
+                            <div className="h-24" />
                         </div>
                     </CardContent>
                 </Card>
