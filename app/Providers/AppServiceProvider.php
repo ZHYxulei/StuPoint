@@ -36,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configurePassport();
         $this->configureEvents();
 
         if ($this->app->runningInConsole()) {
@@ -174,5 +175,14 @@ class AppServiceProvider extends ServiceProvider
         }
 
         return file_exists($databasePath);
+    }
+
+    protected function configurePassport(): void
+    {
+        if (class_exists(\Laravel\Passport\Passport::class)) {
+            \Laravel\Passport\Passport::tokensExpireIn(now()->addDays(15));
+            \Laravel\Passport\Passport::refreshTokensExpireIn(now()->addDays(30));
+            \Laravel\Passport\Passport::personalAccessTokensExpireIn(now()->addDays(30));
+        }
     }
 }

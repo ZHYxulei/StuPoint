@@ -13,7 +13,7 @@ class ClassManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $query = SchoolClass::with('headTeacher');
+        $query = SchoolClass::with('headTeacher')->withCount(['students', 'teachers']);
 
         if ($request->filled('grade')) {
             $query->where('grade', $request->grade);
@@ -37,8 +37,8 @@ class ClassManagementController extends Controller
                     'id' => $c->headTeacher->id,
                     'name' => $c->headTeacher->name,
                 ] : null,
-                'student_count' => $c->students()->count(),
-                'teacher_count' => $c->teachers()->count(),
+                'student_count' => $c->students_count,
+                'teacher_count' => $c->teachers_count,
                 'created_at' => $c->created_at->toIso8601String(),
             ]),
             'grades' => $grades,

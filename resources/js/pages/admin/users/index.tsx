@@ -1,4 +1,5 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -413,25 +414,7 @@ export default function UserIndex({ users, roles, filters, import_results }: Pag
 
                         {/* Pagination */}
                         {users.last_page > 1 && (
-                            <div className="flex justify-center gap-2 mt-6">
-                                {users.links.map((link, index) => (
-                                    <button
-                                        key={index}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                        onClick={() => {
-                                            if (link.url) {
-                                                window.location.href = link.url;
-                                            }
-                                        }}
-                                        disabled={!link.url || processing}
-                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                                            link.active
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'bg-muted hover:bg-muted/80'
-                                        } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    />
-                                ))}
-                            </div>
+                            <PaginationBar links={users.links} />
                         )}
                     </CardContent>
                 </Card>

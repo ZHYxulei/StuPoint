@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RankingController extends Controller
 {
@@ -15,59 +15,26 @@ class RankingController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $perPage = $request->input('per_page', 50);
-        $type = $request->input('type', 'all'); // all, class, grade
+        $perPage = min((int) $request->input('per_page', 50), 100);
+        $type = $request->input('type', 'all');
 
         $query = User::query()
-            ->with(['points', 'roles'])
             ->whereHas('roles', function ($q) {
                 $q->where('slug', 'student');
-            });
-
-        // Filter by class if user is a student
-        if ($type === 'class' && $user && $user->grade && $user->class) {
-            $query->where('grade', $user->grade)->where('class', $user->class);
-        } elseif ($type === 'grade' && $user && $user->grade) {
-            $query->where('grade', $user->grade);
-        }
-
-        // Get paginated rankings with calculated rank
-        $page = $request->input('page', 1);
-        $allRankings = $query
+            })
             ->leftJoin('user_points', 'users.id', '=', 'user_points.user_id')
             ->select('users.*', 'user_points.total_points', 'user_points.redeemable_points')
-            ->orderByDesc('user_points.total_points')
-            ->get()
-            ->map(function ($user, $index) {
-                $user->rank = $index + 1;
+            ->orderByDesc('user_points.total_points');
 
-                return $user;
-            });
-
-        // Get paginated data
-        $paginatedItems = $allRankings->forPage($page, $perPage);
-
-        // Inject current user if not in current page
-        $currentUserInPage = null;
-        if ($user) {
-            $currentUserInPage = $paginatedItems->firstWhere('id', $user->id);
-
-            if (! $currentUserInPage) {
-                // Find current user in all rankings
-                $currentUserRanking = $allRankings->firstWhere('id', $user->id);
-                if ($currentUserRanking) {
-                    // Add current user to the page
-                    $paginatedItems = $paginatedItems->concat([$currentUserRanking]);
-                }
-            }
+        // Filter by class/grade
+        if ($type === 'class' && $user && $user->grade && $user->class) {
+            $query->where('users.grade', $user->grade)->where('users.class', $user->class);
+        } elseif ($type === 'grade' && $user && $user->grade) {
+            $query->where('users.grade', $user->grade);
         }
 
-        $rankings = new LengthAwarePaginator(
-            $paginatedItems,
-            $allRankings->count(),
-            $perPage,
-            $page
-        );
+        // SQL-level pagination (avoids loading all users into memory)
+        $rankings = $query->paginate($perPage, ['users.*', 'user_points.total_points', 'user_points.redeemable_points']);
 
         // Get user's own ranking
         $userRanking = null;
@@ -79,7 +46,6 @@ class RankingController extends Controller
                 ->first();
 
             if ($userWithPoints && $userWithPoints->total_points) {
-                // Calculate rank
                 $rank = User::query()
                     ->whereHas('roles', function ($q) {
                         $q->where('slug', 'student');

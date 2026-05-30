@@ -55,9 +55,12 @@ class VerificationCodeService
     {
         $key = $this->getKey($orderNo);
 
-        // Note: Not all cache drivers support TTL
-        // Return default expiry if unable to determine
-        return self::EXPIRY_SECONDS;
+        try {
+            $ttl = \Illuminate\Support\Facades\Cache::store(config('cache.default'))->ttl($key);
+            return $ttl > 0 ? (int) $ttl : 0;
+        } catch (\Throwable) {
+            return self::EXPIRY_SECONDS;
+        }
     }
 
     /**

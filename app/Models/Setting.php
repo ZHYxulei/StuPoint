@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
@@ -15,24 +16,28 @@ class Setting extends Model
     ];
 
     /**
-     * Get a setting value by key.
+     * Get a setting value by key (cached for 1 hour).
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        $setting = static::where('key', $key)->first();
+        return Cache::remember("setting.{$key}", 3600, function () use ($key, $default) {
+            $setting = static::where('key', $key)->first();
 
-        if (! $setting) {
-            return $default;
-        }
+            if (! $setting) {
+                return $default;
+            }
 
-        return static::castValue($setting->value, $setting->type);
+            return static::castValue($setting->value, $setting->type);
+        });
     }
 
     /**
-     * Set a setting value by key.
+     * Set a setting value by key (invalidates cache).
      */
     public static function set(string $key, mixed $value, string $type = 'string', ?string $group = null, ?string $description = null): self
     {
+        Cache::forget("setting.{$key}");
+
         $setting = static::where('key', $key)->first();
 
         if ($setting) {
@@ -53,18 +58,20 @@ class Setting extends Model
     }
 
     /**
-     * Get all settings by group.
+     * Get all settings by group (cached for 1 hour).
      */
     public static function getByGroup(string $group): array
     {
-        $settings = static::where('group', $group)->get();
-        $result = [];
+        return Cache::remember("setting.group.{$group}", 3600, function () use ($group) {
+            $settings = static::where('group', $group)->get();
+            $result = [];
 
-        foreach ($settings as $setting) {
-            $result[$setting->key] = static::castValue($setting->value, $setting->type);
-        }
+            foreach ($settings as $setting) {
+                $result[$setting->key] = static::castValue($setting->value, $setting->type);
+            }
 
-        return $result;
+            return $result;
+        });
     }
 
     /**
@@ -88,8 +95,7 @@ class Setting extends Model
             'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
             'integer' => (int) $value,
             'float' => (float) $value,
-            'json' => json_decode($value, true),
-            'array' => json_decode($value, true),
+            'json', 'array' => json_decode($value, true) ?? $value,
             default => $value,
         };
     }
@@ -102,7 +108,7 @@ class Setting extends Model
         return match ($type) {
             'json', 'array' => json_encode($value),
             'boolean' => $value ? 'true' : 'false',
-            default => (string) $value,
+            default => (string) ($value ?? ''),
         };
     }
 }

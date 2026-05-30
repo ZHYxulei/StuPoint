@@ -80,12 +80,10 @@ class FortifyServiceProvider extends ServiceProvider
             }
 
             if ($user->registration_status === 'rejected') {
-                $reason = $user->rejection_reason ?: '未提供具体原因';
-                Session::flash('error', "您的账号审核未通过，无法登录。原因：{$reason}");
+                Session::flash('error', '您的账号暂无法登录，请联系管理员');
 
-                // Throw validation exception to show proper error message
                 throw ValidationException::withMessages([
-                    'login' => "您的账号审核未通过。原因：{$reason}",
+                    'login' => '您的账号暂无法登录，请联系管理员',
                 ]);
             }
 
