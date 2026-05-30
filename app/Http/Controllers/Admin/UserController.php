@@ -225,7 +225,13 @@ class UserController extends Controller
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $user->roles()->sync([$validated['role_id']]);
+        // Prevent assigning super_admin role
+        $role = Role::findOrFail($validated['role_id']);
+        if ($role->slug === 'super_admin') {
+            abort(403, '无法分配超级管理员角色');
+        }
+
+        $user->roles()->sync([$role->id]);
 
         return back()->with('success', '用户角色已更新');
     }
@@ -254,10 +260,20 @@ class UserController extends Controller
     public function destroy(Request $request, string $id)
     {
         $user = User::findOrFail($id);
+        $deleter = $request->user();
 
         // Prevent deleting yourself
-        if ($user->id === $request->user()->id) {
+        if ($user->id === $deleter->id) {
             return back()->with('error', '不能删除自己的账户');
+        }
+
+        // Only super_admin can delete other super_admins or admins
+        if ($user->hasRole('super_admin') && ! $deleter->hasRole('super_admin')) {
+            abort(403, '无法删除超级管理员');
+        }
+
+        if ($user->hasRole('principal') && ! $deleter->hasRole('super_admin')) {
+            abort(403, '无法删除校长账户');
         }
 
         $user->delete();
@@ -329,8 +345,10 @@ class UserController extends Controller
     public function statistics(Request $request)
     {
         $perPage = $request->input('per_page', 20);
-        $sortBy = $request->input('sort_by', 'total_points');
-        $sortOrder = $request->input('sort_order', 'desc');
+        $sortBy = in_array($request->input('sort_by'), ['total_points', 'redeemable_points', 'name', 'email', 'created_at'])
+            ? $request->input('sort_by')
+            : 'total_points';
+        $sortOrder = $request->input('sort_order') === 'asc' ? 'asc' : 'desc';
 
         $query = User::query()
             ->with(['points', 'roles'])

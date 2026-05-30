@@ -21,13 +21,16 @@ class ExchangeService
     public function exchange(User $user, Product $product, array $shippingInfo): Order
     {
         return DB::transaction(function () use ($user, $product, $shippingInfo) {
+            // Reload product with pessimistic lock to prevent race condition
+            $product = Product::lockForUpdate()->findOrFail($product->id);
+
             // Check stock
             if (! $product->hasStock()) {
-                throw new \Exception('Product out of stock');
+                throw new \Exception('商品库存不足');
             }
 
             // Check points
-            $points = $user->points;
+            $points = $user->points()->lockForUpdate()->first();
             if (! $points || $points->redeemable_points < $product->points_required) {
                 throw new \Exception('Insufficient redeemable points');
             }

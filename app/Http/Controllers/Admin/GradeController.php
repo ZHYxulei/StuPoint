@@ -111,7 +111,7 @@ class GradeController extends Controller
         }
 
         // Check if grade has associated users
-        if ($grade->teachers()->count() > 0) {
+        if ($grade->hasTeachers()) {
             return back()->with('error', '该年级下还有教师，无法删除');
         }
 

@@ -22,11 +22,6 @@ class OrderVerificationController extends Controller
      */
     public function verify(Request $request, string $id)
     {
-        // Clear opcache to ensure latest code is loaded
-        if (function_exists('opcache_reset')) {
-            opcache_reset();
-        }
-
         // Manually find the order to avoid model binding issues
         $order = Order::findOrFail($id);
 
@@ -200,7 +195,7 @@ class OrderVerificationController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => '核销失败: '.$e->getMessage(),
+                'message' => '核销失败，请稍后重试',
             ], 500);
         }
     }

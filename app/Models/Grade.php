@@ -25,9 +25,9 @@ class Grade extends Model
         return $this->hasMany(ClassModel::class);
     }
 
-    public function teachers(): HasMany
+    public function hasTeachers(): bool
     {
-        return $this->hasMany(User::class);
+        return ClassTeacher::whereHas('class', fn ($q) => $q->where('grade_id', $this->id))->exists();
     }
 
     public function scopeActive($query)

@@ -8,10 +8,30 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (! $request->user()?->hasRole($role)) {
-            abort(403, 'You do not have the required role.');
+        $user = $request->user();
+
+        if (! $user) {
+            abort(403, '请先登录');
+        }
+
+        // Support multiple roles: middleware(['role:admin,principal'])
+        $allRoles = [];
+        foreach ($roles as $role) {
+            $allRoles = array_merge($allRoles, explode(',', $role));
+        }
+
+        $hasRole = false;
+        foreach ($allRoles as $role) {
+            if ($user->hasRole(trim($role))) {
+                $hasRole = true;
+                break;
+            }
+        }
+
+        if (! $hasRole) {
+            abort(403, '权限不足');
         }
 
         return $next($request);

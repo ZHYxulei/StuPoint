@@ -20,12 +20,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Public routes - Authentication
-Route::post('/auth/login', [AuthController::class, 'login']);
+// Public routes - Authentication (rate limited + captcha protected)
+Route::post('/auth/login', [AuthController::class, 'login'])->middleware(['throttle:5,1', 'captcha']);
 
-// Verification code routes (public, rate limited)
-Route::post('/verification/send', [\App\Http\Controllers\VerificationController::class, 'send']);
-Route::post('/verification/verify', [\App\Http\Controllers\VerificationController::class, 'verify']);
+// Verification code routes (public, rate limited + captcha)
+Route::post('/verification/send', [\App\Http\Controllers\VerificationController::class, 'send'])->middleware(['throttle:3,1', 'captcha']);
+Route::post('/verification/verify', [\App\Http\Controllers\VerificationController::class, 'verify'])->middleware('throttle:10,1');
 
 // Protected routes - require authentication
 Route::middleware('auth:api')->group(function () {

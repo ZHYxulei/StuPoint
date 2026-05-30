@@ -76,6 +76,11 @@ class PluginController extends Controller
             $manifest = $this->pluginManager->readManifest($plugin->slug);
             $repo = $manifest['repository']['repo'] ?? null;
 
+            // Validate repo format (owner/repo) to prevent SSRF
+            if ($repo && ! preg_match('/^[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+$/', $repo)) {
+                $repo = null;
+            }
+
             $stars = null;
             if ($repo) {
                 $stars = \Cache::remember("github.stars.{$repo}", 3600, function () use ($repo) {

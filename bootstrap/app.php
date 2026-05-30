@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\CheckRegistrationStatus;
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\VerifyCaptcha;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\InstallationMiddleware;
@@ -35,6 +37,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'permission' => CheckPermission::class,
+            'role' => CheckRole::class,
+            'captcha' => VerifyCaptcha::class,
         ]);
 
         $middleware->web(append: [

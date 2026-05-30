@@ -226,6 +226,14 @@ class PluginManager
         $packages = [];
 
         foreach ($composerDeps as $package => $constraint) {
+            // Validate package name format (vendor/package)
+            if (! preg_match('/^[a-z0-9]([_.-]?[a-z0-9]+)*\/[a-z0-9]([_.-]?[a-z0-9]+)*$/', $package)) {
+                return ['installed' => [], 'message' => "无效的包名: {$package}"];
+            }
+            // Validate version constraint format
+            if (! preg_match('/^[~^>=<]*[\d\.\*]+(-[a-z0-9.]+)?$/', $constraint)) {
+                return ['installed' => [], 'message' => "无效的版本约束: {$constraint}"];
+            }
             $packages[] = "{$package}:{$constraint}";
         }
 
@@ -234,7 +242,7 @@ class PluginManager
         }
 
         try {
-            $result = Process::run("composer require " . implode(' ', $packages) . " --no-interaction 2>&1");
+            $result = Process::run(array_merge(['composer', 'require'], $packages, ['--no-interaction']));
 
             if ($result->successful()) {
                 return [

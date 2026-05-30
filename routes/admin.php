@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:super_admin,principal,grade_director,head_teacher'])->prefix('admin')->name('admin.')->group(function () {
     // System Settings
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');
