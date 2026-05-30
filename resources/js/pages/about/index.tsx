@@ -54,7 +54,7 @@ export default function AboutIndex({ version, commitHash, commitDate, phpVersion
                     <CardContent className="pt-6">
                         <div className="flex items-center justify-center py-4 gap-6">
                             {/* System Logo */}
-                            <div className="w-28 flex justify-end">
+                            <div className="w-36 flex justify-end">
                                 <div className="flex flex-col items-center gap-2">
                                     <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
                                         <span className="text-white text-2xl font-bold">SP</span>
@@ -76,7 +76,7 @@ export default function AboutIndex({ version, commitHash, commitDate, phpVersion
                                             <span className="text-2xl">🏫</span>
                                         </div>
                                     )}
-                                    <span className="text-sm font-medium text-muted-foreground text-center max-w-[100px] truncate" title={schoolName}>{schoolName}</span>
+                                    <span className="text-sm font-medium text-muted-foreground text-center leading-snug">{schoolName}</span>
                                 </div>
                             </div>
                         </div>
