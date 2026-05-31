@@ -2,6 +2,7 @@
 
 namespace App\Services\Captcha\Providers;
 
+use App\Models\Setting;
 use App\Services\Captcha\Contracts\CaptchaProvider;
 
 class TurnstileProvider implements CaptchaProvider
@@ -10,7 +11,7 @@ class TurnstileProvider implements CaptchaProvider
 
     public function __construct()
     {
-        $this->secretKey = \App\Models\Setting::get('captcha_cloudflare_secret_key', '');
+        $this->secretKey = Setting::get('captcha_cloudflare_secret_key', '');
     }
 
     public function verify(string $token, ?string $ip = null): bool
@@ -30,7 +31,7 @@ class TurnstileProvider implements CaptchaProvider
 
     public function getSiteKey(): string
     {
-        return \App\Models\Setting::get('captcha_cloudflare_site_key', '');
+        return Setting::get('captcha_cloudflare_site_key', '');
     }
 
     public function getName(): string

@@ -92,6 +92,7 @@ class PluginController extends Controller
                     } catch (\Throwable) {
                         // silently fail
                     }
+
                     return null;
                 });
             }

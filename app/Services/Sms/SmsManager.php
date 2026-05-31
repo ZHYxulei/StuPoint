@@ -4,6 +4,9 @@ namespace App\Services\Sms;
 
 use App\Models\Setting;
 use App\Services\Sms\Contracts\SmsProvider;
+use App\Services\Sms\Providers\AliyunSmsProvider;
+use App\Services\Sms\Providers\LogSmsProvider;
+use App\Services\Sms\Providers\TencentSmsProvider;
 
 class SmsManager
 {
@@ -12,9 +15,9 @@ class SmsManager
         $provider = Setting::get('sms_provider', 'log');
 
         return match ($provider) {
-            'aliyun' => new \App\Services\Sms\Providers\AliyunSmsProvider(),
-            'tencent' => new \App\Services\Sms\Providers\TencentSmsProvider(),
-            default => new \App\Services\Sms\Providers\LogSmsProvider(),
+            'aliyun' => new AliyunSmsProvider,
+            'tencent' => new TencentSmsProvider,
+            default => new LogSmsProvider,
         };
     }
 

@@ -126,7 +126,7 @@ class PluginUploader
         $realDest = realpath($destination);
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $name = $zip->getNameIndex($i);
-            $extractPath = realpath($destination . '/' . $name);
+            $extractPath = realpath($destination.'/'.$name);
             if ($extractPath && strpos($extractPath, $realDest) !== 0) {
                 $zip->close();
                 throw new \Exception('ZIP 文件包含非法路径');

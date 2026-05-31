@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateSiteSettingsRequest;
 use App\Models\PluginSource;
 use App\Models\Setting;
+use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -324,7 +325,7 @@ class SettingsController extends Controller
         }
 
         // Re-apply mail config
-        \App\Services\MailConfigService::apply();
+        MailConfigService::apply();
 
         return back()->with('success', '邮件设置已更新');
     }
@@ -340,11 +341,12 @@ class SettingsController extends Controller
         }
 
         try {
-            $service = new \App\Services\MailConfigService();
+            $service = new MailConfigService;
             $service->testConnection();
+
             return back()->with('success', '测试邮件已发送，请检查邮箱');
         } catch (\Exception $e) {
-            return back()->with('error', '邮件发送失败: ' . $e->getMessage());
+            return back()->with('error', '邮件发送失败: '.$e->getMessage());
         }
     }
 

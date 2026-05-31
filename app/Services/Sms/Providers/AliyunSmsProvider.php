@@ -40,11 +40,11 @@ class AliyunSmsProvider implements SmsProvider
             $sorted[rawurlencode($k)] = rawurlencode($v);
         }
         ksort($sorted);
-        $stringToSign = 'GET&' . rawurlencode('/') . '&' . rawurlencode(implode('&', array_map(fn($k, $v) => "{$k}={$v}", array_keys($sorted), array_values($sorted))));
-        $signature = base64(hash_hmac('sha1', $stringToSign, $accessKeySecret . '&', true));
+        $stringToSign = 'GET&'.rawurlencode('/').'&'.rawurlencode(implode('&', array_map(fn ($k, $v) => "{$k}={$v}", array_keys($sorted), array_values($sorted))));
+        $signature = base64(hash_hmac('sha1', $stringToSign, $accessKeySecret.'&', true));
         $params['Signature'] = $signature;
 
-        $url = 'https://dysmsapi.aliyuncs.com/?' . http_build_query($params);
+        $url = 'https://dysmsapi.aliyuncs.com/?'.http_build_query($params);
         $response = @file_get_contents($url);
 
         return $response !== false;

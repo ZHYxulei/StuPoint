@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\LogUserLogin;
+use App\Services\MailConfigService;
 use App\Services\SettingsService;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Laravel\Passport\Passport;
 use Throwable;
 
 class AppServiceProvider extends ServiceProvider
@@ -48,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Apply mail settings from database (if configured)
         if (file_exists(storage_path('installed'))) {
-            \App\Services\MailConfigService::apply();
+            MailConfigService::apply();
         }
     }
 
@@ -59,14 +61,6 @@ class AppServiceProvider extends ServiceProvider
         DB::prohibitDestructiveCommands(
             app()->isProduction(),
         );
-
-        // Configure SSL CA certificate bundle for cURL/PHP
-        // Uses project-bundled cacert.pem to fix "unable to get local issuer certificate"
-        $caCertPath = base_path('storage/certs/cacert.pem');
-        if (file_exists($caCertPath) && empty(env('CURL_CA_BUNDLE')) && empty(env('SSL_CERT_FILE'))) {
-            putenv("CURL_CA_BUNDLE={$caCertPath}");
-            putenv("SSL_CERT_FILE={$caCertPath}");
-        }
 
         Password::defaults(fn (): ?Password => app()->isProduction()
             ? Password::min(12)
@@ -187,10 +181,10 @@ class AppServiceProvider extends ServiceProvider
 
     protected function configurePassport(): void
     {
-        if (class_exists(\Laravel\Passport\Passport::class)) {
-            \Laravel\Passport\Passport::tokensExpireIn(now()->addDays(15));
-            \Laravel\Passport\Passport::refreshTokensExpireIn(now()->addDays(30));
-            \Laravel\Passport\Passport::personalAccessTokensExpireIn(now()->addDays(30));
+        if (class_exists(Passport::class)) {
+            Passport::tokensExpireIn(now()->addDays(15));
+            Passport::refreshTokensExpireIn(now()->addDays(30));
+            Passport::personalAccessTokensExpireIn(now()->addDays(30));
         }
     }
 }

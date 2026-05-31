@@ -25,7 +25,7 @@ class TencentSmsProvider implements SmsProvider
         $action = 'SendSms';
         $version = '2021-01-11';
         $payload = json_encode([
-            'PhoneNumberSet' => ['+86' . $phone],
+            'PhoneNumberSet' => ['+86'.$phone],
             'SmsSdkAppId' => $sdkAppId,
             'TemplateId' => $templateId,
             'SignName' => $signName,
@@ -37,21 +37,21 @@ class TencentSmsProvider implements SmsProvider
         $nonce = (string) mt_rand();
 
         // TC3 HMAC-SHA256 signature
-        $canonicalRequest = "POST\n/\n\nhost={$host}\n\n" . hash('sha256', $payload) . "\n{$payload}";
-        $stringToSign = "TC3-HMAC-SHA256\n{$timestamp}\n{$date}\n" . hash('sha256', $canonicalRequest);
+        $canonicalRequest = "POST\n/\n\nhost={$host}\n\n".hash('sha256', $payload)."\n{$payload}";
+        $stringToSign = "TC3-HMAC-SHA256\n{$timestamp}\n{$date}\n".hash('sha256', $canonicalRequest);
 
-        $secretDate = hash_hmac('sha256', $date, 'TC3' . $secretKey, true);
+        $secretDate = hash_hmac('sha256', $date, 'TC3'.$secretKey, true);
         $secretService = hash_hmac('sha256', $service, $secretDate, true);
         $secretSigning = hash_hmac('sha256', 'tc3_request', $secretService, true);
         $signature = hash_hmac('sha256', $stringToSign, $secretSigning);
 
         $headers = [
-            'Authorization: TC3-HMAC-SHA256 Credential=' . $secretId . '/' . $date . '/' . $service . '/tc3_request, SignedHeaders=host, Signature=' . $signature,
+            'Authorization: TC3-HMAC-SHA256 Credential='.$secretId.'/'.$date.'/'.$service.'/tc3_request, SignedHeaders=host, Signature='.$signature,
             'Content-Type: application/json',
-            'Host: ' . $host,
-            'X-TC-Action: ' . $action,
-            'X-TC-Timestamp: ' . $timestamp,
-            'X-TC-Version: ' . $version,
+            'Host: '.$host,
+            'X-TC-Action: '.$action,
+            'X-TC-Timestamp: '.$timestamp,
+            'X-TC-Version: '.$version,
             'X-TC-Region: ap-guangzhou',
         ];
 
@@ -68,6 +68,7 @@ class TencentSmsProvider implements SmsProvider
 
         if ($response) {
             $result = json_decode($response, true);
+
             return isset($result['Response']['SendStatusSet'][0]['Code']) && $result['Response']['SendStatusSet'][0]['Code'] === 'Ok';
         }
 

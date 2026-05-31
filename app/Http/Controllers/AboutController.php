@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Process;
 
 class AboutController extends Controller
@@ -35,6 +34,7 @@ class AboutController extends Controller
         if (file_exists($versionFile)) {
             return trim(file_get_contents($versionFile));
         }
+
         return '1.0.0';
     }
 
@@ -42,6 +42,7 @@ class AboutController extends Controller
     {
         try {
             $result = trim((string) Process::run('git log --format="%h" -1')->output());
+
             return $result ?: 'unknown';
         } catch (\Throwable) {
             return 'unknown';
@@ -52,6 +53,7 @@ class AboutController extends Controller
     {
         try {
             $result = trim((string) Process::run('git log --format="%ai" -1')->output());
+
             return $result ? substr($result, 0, 10) : 'unknown';
         } catch (\Throwable) {
             return 'unknown';

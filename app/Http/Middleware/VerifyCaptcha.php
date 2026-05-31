@@ -2,16 +2,17 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
+use App\Services\Captcha\CaptchaManager;
 use Closure;
 use Illuminate\Http\Request;
-use App\Services\Captcha\CaptchaManager;
 
 class VerifyCaptcha
 {
     public function handle(Request $request, Closure $next)
     {
         // Skip captcha in testing / log mode
-        $provider = \App\Models\Setting::get('captcha_provider', 'log');
+        $provider = Setting::get('captcha_provider', 'log');
         if ($provider === 'log') {
             return $next($request);
         }

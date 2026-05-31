@@ -247,18 +247,18 @@ class PluginManager
             if ($result->successful()) {
                 return [
                     'installed' => array_keys($composerDeps),
-                    'message' => 'Composer 依赖安装成功: ' . implode(', ', array_keys($composerDeps)),
+                    'message' => 'Composer 依赖安装成功: '.implode(', ', array_keys($composerDeps)),
                 ];
             }
 
             return [
                 'installed' => [],
-                'message' => 'Composer 依赖安装失败: ' . $result->errorOutput(),
+                'message' => 'Composer 依赖安装失败: '.$result->errorOutput(),
             ];
         } catch (\Throwable $e) {
             return [
                 'installed' => [],
-                'message' => 'Composer 依赖安装异常: ' . $e->getMessage(),
+                'message' => 'Composer 依赖安装异常: '.$e->getMessage(),
             ];
         }
     }
@@ -288,7 +288,7 @@ class PluginManager
 
         if (! empty($missing)) {
             throw new \RuntimeException(
-                '插件依赖未满足，请先启用以下插件: ' . implode(', ', $missing)
+                '插件依赖未满足，请先启用以下插件: '.implode(', ', $missing)
             );
         }
     }

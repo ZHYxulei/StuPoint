@@ -5,8 +5,8 @@ namespace App\Logging;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
-use Monolog\LogRecord;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use Monolog\Processor\PsrLogMessageProcessor;
 use ZipArchive;
 
@@ -33,7 +33,7 @@ class SizeAndDateRotatingLogger
 
         $handler->setFormatter(new LineFormatter(null, null, true, true));
 
-        $logger->pushProcessor(new PsrLogMessageProcessor());
+        $logger->pushProcessor(new PsrLogMessageProcessor);
         $logger->pushHandler($handler);
 
         return $logger;
@@ -116,7 +116,7 @@ class SizeAndDateRotatingHandler extends StreamHandler
     {
         if (class_exists(ZipArchive::class)) {
             $zipPath = $sourcePath.'.zip';
-            $zip = new ZipArchive();
+            $zip = new ZipArchive;
 
             if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
                 $zip->addFile($sourcePath, basename($sourcePath));

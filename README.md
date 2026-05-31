@@ -3,10 +3,11 @@
 [![Codecov](https://codecov.io/github/ZHYxulei/StuPoint/graph/badge.svg?token=VCJJ8OXEIE)](https://codecov.io/github/ZHYxulei/StuPoint)
 [![License](https://img.shields.io/github/license/ZHYxulei/StuPoint)](LICENSE)
 [![GitHub Release](https://img.shields.io/github/v/release/ZHYxulei/StuPoint)](https://github.com/ZHYxulei/StuPoint/releases)
+[![GitHub repo](https://img.shields.io/badge/GitHub-ZHYxulei%2FStuPoint-181717?logo=github)](https://github.com/ZHYxulei/StuPoint)
 [![GitHub stars](https://img.shields.io/github/stars/ZHYxulei/StuPoint?style=social)](https://github.com/ZHYxulei/StuPoint/stargazers)
 [![GitHub commits](https://img.shields.io/github/commit-activity/t/ZHYxulei/StuPoint)](https://github.com/ZHYxulei/StuPoint/commits)
-[![GitHub repo](https://img.shields.io/badge/GitHub-ZHYxulei%2FStuPoint-181717?logo=github)](https://github.com/ZHYxulei/StuPoint)
 
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/ZHYxulei)
 [![X](https://img.shields.io/badge/X-%23000000.svg?logo=X&logoColor=white)](https://x.com/intent/follow?screen_name=ZHYxulei001)
 [![Bilibili](https://img.shields.io/badge/Bilibili-00A1D6?logo=bilibili&logoColor=fff)](https://space.bilibili.com/1102244282)
 [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?logo=telegram&logoColor=white)](https://t.me/ZHYxulei_messagebot)
@@ -16,6 +17,9 @@
 [![pnpm](https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=fff)](https://pnpm.io)
 [![Composer](https://img.shields.io/badge/Composer-885630?logo=composer&logoColor=fff)](https://getcomposer.org)
 [![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=fff)](https://git-scm.com)
+[![Visual Studio Code](https://custom-icon-badges.demolab.com/badge/Visual%20Studio%20Code-0078d7.svg?logo=visualstudiocode&logoColor=white)](#)
+[![WebStorm](https://img.shields.io/badge/WebStorm-000?logo=webstorm&logoColor=fff)](https://www.jetbrains.com/webstorm)
+[![PhpStorm](https://img.shields.io/badge/PhpStorm-000?logo=phpstorm&logoColor=fff)](https://www.jetbrains.com/phpstorm)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
 [![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](https://www.php.net/)

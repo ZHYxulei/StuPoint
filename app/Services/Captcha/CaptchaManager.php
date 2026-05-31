@@ -4,6 +4,9 @@ namespace App\Services\Captcha;
 
 use App\Models\Setting;
 use App\Services\Captcha\Contracts\CaptchaProvider;
+use App\Services\Captcha\Providers\LogCaptchaProvider;
+use App\Services\Captcha\Providers\RecaptchaProvider;
+use App\Services\Captcha\Providers\TurnstileProvider;
 
 class CaptchaManager
 {
@@ -12,9 +15,9 @@ class CaptchaManager
         $provider = Setting::get('captcha_provider', 'log');
 
         return match ($provider) {
-            'cloudflare' => new \App\Services\Captcha\Providers\TurnstileProvider(),
-            'google' => new \App\Services\Captcha\Providers\RecaptchaProvider(),
-            default => new \App\Services\Captcha\Providers\LogCaptchaProvider(),
+            'cloudflare' => new TurnstileProvider,
+            'google' => new RecaptchaProvider,
+            default => new LogCaptchaProvider,
         };
     }
 

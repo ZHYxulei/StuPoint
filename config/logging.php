@@ -1,5 +1,6 @@
 <?php
 
+use App\Logging\SizeAndDateRotatingLogger;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -67,7 +68,7 @@ return [
 
         'daily' => [
             'driver' => 'custom',
-            'via' => App\Logging\SizeAndDateRotatingLogger::class,
+            'via' => SizeAndDateRotatingLogger::class,
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'max_size' => (int) env('LOG_MAX_SIZE', 5 * 1024 * 1024),

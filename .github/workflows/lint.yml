@@ -25,7 +25,7 @@ jobs:
       - name: Install Dependencies
         run: |
           composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install --legacy-peer-deps
+          npm install
 
       - name: Run Pint
         run: vendor/bin/pint --test

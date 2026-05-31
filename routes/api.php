@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PluginController;
 use App\Http\Controllers\Api\PointController;
 use App\Http\Controllers\Api\ShopController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,8 +25,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware(['throttle:5,1', 'captcha']);
 
 // Verification code routes (public, rate limited + captcha)
-Route::post('/verification/send', [\App\Http\Controllers\VerificationController::class, 'send'])->middleware(['throttle:3,1', 'captcha']);
-Route::post('/verification/verify', [\App\Http\Controllers\VerificationController::class, 'verify'])->middleware('throttle:10,1');
+Route::post('/verification/send', [VerificationController::class, 'send'])->middleware(['throttle:3,1', 'captcha']);
+Route::post('/verification/verify', [VerificationController::class, 'verify'])->middleware('throttle:10,1');
 
 // Protected routes - require authentication
 Route::middleware('auth:api')->group(function () {

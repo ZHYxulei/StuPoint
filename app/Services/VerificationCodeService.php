@@ -56,7 +56,8 @@ class VerificationCodeService
         $key = $this->getKey($orderNo);
 
         try {
-            $ttl = \Illuminate\Support\Facades\Cache::store(config('cache.default'))->ttl($key);
+            $ttl = Cache::store(config('cache.default'))->ttl($key);
+
             return $ttl > 0 ? (int) $ttl : 0;
         } catch (\Throwable) {
             return self::EXPIRY_SECONDS;

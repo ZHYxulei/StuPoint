@@ -487,7 +487,7 @@ class InstallController extends Controller
 
         foreach ($data as $key => $value) {
             $escapedKey = preg_quote($key, '/');
-            $replacement = sprintf('%s="%s"', $key, addcslashes((string) $value, "\\\""));
+            $replacement = sprintf('%s="%s"', $key, addcslashes((string) $value, '\\"'));
             $pattern = '/^\s*#?\s*'.$escapedKey.'\s*=.*$/m';
 
             if (preg_match($pattern, $envContent) === 1) {

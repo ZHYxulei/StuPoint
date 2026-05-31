@@ -437,11 +437,12 @@ class UserController extends Controller
         $header = str_getcsv($firstLine);
 
         // Normalize header: trim BOM chars, whitespace, and convert to lowercase
-        $header = array_map(fn($h) => trim($h, " \t\n\r\0\x0B\xEF\xBB\xBF"), $header);
+        $header = array_map(fn ($h) => trim($h, " \t\n\r\0\x0B\xEF\xBB\xBF"), $header);
 
         $expectedHeaders = ['姓名', '角色', '邮箱', '手机号', '身份证号', '学号', '昵称', '班级ID', '密码'];
         if ($header !== $expectedHeaders) {
             fclose($handle);
+
             return back()->withErrors([
                 'file' => '表头格式不正确，期望：'.implode(',', $expectedHeaders).'，实际：'.implode(',', $header),
             ]);
@@ -458,6 +459,7 @@ class UserController extends Controller
 
                 if (count($row) !== 9 || empty(trim($row[0])) && empty(trim($row[1]))) {
                     $results['skipped']++;
+
                     continue;
                 }
 
@@ -472,9 +474,10 @@ class UserController extends Controller
                 $password = trim($row[8]);
 
                 // Validate role
-                if (!isset($roles[$roleSlug])) {
+                if (! isset($roles[$roleSlug])) {
                     $results['failed']++;
                     $results['errors'][] = "第{$rowNum}行：角色 '{$roleSlug}' 无效，仅支持 student/teacher/parent";
+
                     continue;
                 }
 
@@ -482,6 +485,7 @@ class UserController extends Controller
                 if ($email && User::where('email', $email)->exists()) {
                     $results['failed']++;
                     $results['errors'][] = "第{$rowNum}行：邮箱 '{$email}' 已存在";
+
                     continue;
                 }
 
@@ -489,6 +493,7 @@ class UserController extends Controller
                 if ($phone && User::where('phone', $phone)->exists()) {
                     $results['failed']++;
                     $results['errors'][] = "第{$rowNum}行：手机号 '{$phone}' 已存在";
+
                     continue;
                 }
 
@@ -496,6 +501,7 @@ class UserController extends Controller
                 if ($idNumber && User::where('id_number', $idNumber)->exists()) {
                     $results['failed']++;
                     $results['errors'][] = "第{$rowNum}行：身份证号 '{$idNumber}' 已存在";
+
                     continue;
                 }
 
@@ -539,6 +545,7 @@ class UserController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withErrors(['file' => '导入失败：'.$e->getMessage()]);
         } finally {
             fclose($handle);

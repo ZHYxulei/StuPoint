@@ -27,11 +27,13 @@ class MigrateBase64Media extends Command
                 foreach ($users as $user) {
                     if (! is_string($user->avatar) || ! str_starts_with($user->avatar, 'data:image/')) {
                         $avatarStats['skipped']++;
+
                         continue;
                     }
 
                     if (is_string($user->avatar_path) && $user->avatar_path !== '') {
                         $avatarStats['skipped']++;
+
                         continue;
                     }
 
@@ -41,6 +43,7 @@ class MigrateBase64Media extends Command
                         if ($stored === null) {
                             $avatarStats['failed']++;
                             $this->warn("Avatar decode failed for user #{$user->id}");
+
                             continue;
                         }
 

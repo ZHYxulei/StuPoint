@@ -3,17 +3,18 @@
 use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\CheckRegistrationStatus;
 use App\Http\Middleware\CheckRole;
-use App\Http\Middleware\VerifyCaptcha;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\InstallationMiddleware;
 use App\Http\Middleware\UseFileSessionDuringInstallation;
+use App\Http\Middleware\VerifyCaptcha;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Support\Facades\Route;
 use Sentry\Laravel\Integration;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
@@ -54,10 +55,10 @@ return Application::configure(basePath: dirname(__DIR__))
         Integration::handles($exceptions);
 
         if (config('app.hide_error_details')) {
-            $exceptions->render(function (\Throwable $e) {
+            $exceptions->render(function (Throwable $e) {
                 $status = 500;
 
-                if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                if ($e instanceof HttpExceptionInterface) {
                     $status = $e->getStatusCode();
                 }
 
