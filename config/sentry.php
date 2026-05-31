@@ -16,10 +16,12 @@ return [
 
     'send_default_pii' => env('SENTRY_SEND_DEFAULT_PII', false),
 
-    'ignore_exceptions' => [
-        // Add exception classes here to ignore them from Sentry reporting
-    ],
+    'ignore_exceptions' => [],
 
     'http_proxy' => env('SENTRY_HTTP_PROXY', null),
+
+    // SSL CA certificate bundle for HTTPS verification
+    // Uses project-bundled cacert.pem to avoid "unable to get local issuer certificate" errors
+    'ssl_cafile' => env('SENTRY_SSL_CAFILE', base_path('storage/certs/cacert.pem')),
 
 ];
