@@ -20,4 +20,6 @@ return [
         // Add exception classes here to ignore them from Sentry reporting
     ],
 
+    'http_proxy' => env('SENTRY_HTTP_PROXY', null),
+
 ];

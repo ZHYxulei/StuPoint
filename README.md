@@ -571,6 +571,66 @@ php artisan queue:work --tries=1 --backoff=3
 php artisan horizon
 ```
 
+### 升级步骤
+
+当项目有新版本发布时，按以下步骤升级：
+
+```bash
+# 1. 拉取最新代码
+git pull origin main
+
+# 2. 安装/更新 Composer 依赖
+composer install --no-dev --optimize-autoloader
+
+# 3. 同步新增的环境变量（对比 .env.example 与 .env）
+npm run update_env
+# 或: node scripts/update_env.cjs
+
+# 4. 执行数据库迁移（重要：必须在启动前执行，防止数据表缺失）
+php artisan migrate --force
+
+# 5. 重新构建前端资源
+npm run build
+
+# 6. 清除并重建缓存
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 7. 重启队列处理器（如果使用）
+php artisan queue:restart
+```
+
+> **重要提示：** 升级前务必备份数据库。`php artisan migrate --force` 会自动创建新表和字段，不会删除已有数据。跳过迁移步骤可能导致系统启动后报错"数据表不存在"。
+
+#### Sentry 接入故障排除
+
+如果 `php artisan sentry:test` 报错 `Could not resolve host`，说明服务器无法访问 Sentry（通常是国内网络环境导致）。解决方案：
+
+**方案一：配置 HTTP 代理（推荐）**
+
+在 `.env` 中添加代理：
+
+```env
+SENTRY_HTTP_PROXY=http://your-proxy-host:port
+```
+
+**方案二：使用国内 Sentry 服务**
+
+使用国内 Sentry 服务商（如自建 Sentry）替换 DSN：
+
+```env
+SENTRY_LARAVEL_DSN=https://your-dsn@your-sentry-host/project-id
+```
+
+**方案三：暂时禁用**
+
+在 `.env` 中清空 DSN 即可关闭 Sentry：
+
+```env
+SENTRY_LARAVEL_DSN=
+```
+
 ---
 
 ## 使用说明
