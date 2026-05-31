@@ -9,7 +9,8 @@
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
-        "types": "tsc --noEmit"
+        "types": "tsc --noEmit",
+        "update_env": "node scripts/update_env.js"
     },
     "devDependencies": {
         "@eslint-react/eslint-plugin": "^5.8.4",
