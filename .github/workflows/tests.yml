@@ -50,7 +50,7 @@ jobs:
         run: ./vendor/bin/pest --coverage --coverage-clover=coverage.xml --log-junit=junit.xml
 
       - name: Upload coverage to Codecov
-        if: matrix.php-version == '8.4' && hashFiles('coverage.xml') != ''
+        if: matrix.php-version == '8.4'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -58,7 +58,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Upload test results to Codecov
-        if: ${{ !cancelled() && matrix.php-version == '8.4' && hashFiles('junit.xml') != '' }}
+        if: ${{ !cancelled() && matrix.php-version == '8.4' }}
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
