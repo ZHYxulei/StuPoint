@@ -51,7 +51,7 @@ jobs:
       - name: Run Tests
         run: |
           if [ -f ./vendor/bin/pest ]; then
-            ./vendor/bin/pest --coverage --coverage-clover=coverage.xml || echo "No tests found - skipping"
+            ./vendor/bin/pest --coverage --coverage-clover=coverage.xml --log-junit=junit.xml || echo "No tests found - skipping"
           else
             echo "Pest not installed - skipping tests"
           fi
@@ -64,3 +64,9 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
           fail_ci_if_error: false
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() && matrix.php-version == '8.4' }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
