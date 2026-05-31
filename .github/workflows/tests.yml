@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() && matrix.php-version == '8.4' && hashFiles('junit.xml') != '' }}
-        uses: codecov/test-results-action@v5
+        uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report-type: test_results
