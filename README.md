@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/github/license/ZHYxulei/StuPoint)](LICENSE)
 [![GitHub Release](https://img.shields.io/github/v/release/ZHYxulei/StuPoint)](https://github.com/ZHYxulei/StuPoint/releases)
 [![GitHub stars](https://img.shields.io/github/stars/ZHYxulei/StuPoint?style=social)](https://github.com/ZHYxulei/StuPoint/stargazers)
+[![GitHub commits](https://img.shields.io/github/commit-activity/t/ZHYxulei/StuPoint)](https://github.com/ZHYxulei/StuPoint/commits)
+[![GitHub repo](https://img.shields.io/badge/GitHub-ZHYxulei%2FStuPoint-181717?logo=github)](https://github.com/ZHYxulei/StuPoint)
 
 [![X](https://img.shields.io/badge/X-%23000000.svg?logo=X&logoColor=white)](https://x.com/intent/follow?screen_name=ZHYxulei001)
 [![Bilibili](https://img.shields.io/badge/Bilibili-00A1D6?logo=bilibili&logoColor=fff)](https://space.bilibili.com/1102244282)
