@@ -2,7 +2,6 @@ import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
-import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { defineConfig } from 'vite';
 import path from 'path';
 
@@ -24,12 +23,6 @@ export default defineConfig({
         //     command: 'php -d memory_limit=1G artisan wayfinder:generate',
         //     formVariants: true,
         // }),
-        // Codecov bundle analysis (uploads on build when CODECOV_TOKEN is set)
-        codecovVitePlugin({
-            enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-            bundleName: 'StuPoint',
-            uploadToken: process.env.CODECOV_TOKEN,
-        }),
     ],
     resolve: {
         alias: {
