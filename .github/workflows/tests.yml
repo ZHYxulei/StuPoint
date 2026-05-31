@@ -47,16 +47,10 @@ jobs:
         run: npm run build
 
       - name: Run Tests
-        run: |
-          if [ -f ./vendor/bin/pest ]; then
-            ./vendor/bin/pest --coverage --coverage-clover=coverage.xml --log-junit=junit.xml || echo "No tests found - skipping"
-          else
-            echo "Pest not installed - skipping tests"
-          fi
-        shell: bash
+        run: ./vendor/bin/pest --coverage --coverage-clover=coverage.xml --log-junit=junit.xml
 
       - name: Upload coverage to Codecov
-        if: matrix.php-version == '8.4'
+        if: matrix.php-version == '8.4' && hashFiles('coverage.xml') != ''
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -64,7 +58,10 @@ jobs:
           fail_ci_if_error: false
 
       - name: Upload test results to Codecov
-        if: ${{ !cancelled() && matrix.php-version == '8.4' }}
-        uses: codecov/test-results-action@v1
+        if: ${{ !cancelled() && matrix.php-version == '8.4' && hashFiles('junit.xml') != '' }}
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: junit.xml
+          report_type: test_results
+          fail_ci_if_error: false
