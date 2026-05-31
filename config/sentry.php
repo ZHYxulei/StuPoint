@@ -20,8 +20,11 @@ return [
 
     'http_proxy' => env('SENTRY_HTTP_PROXY', null),
 
-    // SSL CA certificate bundle for HTTPS verification
-    // Uses project-bundled cacert.pem to avoid "unable to get local issuer certificate" errors
-    'ssl_cafile' => env('SENTRY_SSL_CAFILE', base_path('storage/certs/cacert.pem')),
+    // Use system native CA store for SSL verification
+    // Fixes "unable to get local issuer certificate" on Windows
+    'http_ssl_native_ca' => env('SENTRY_SSL_NATIVE_CA', true),
+
+    // Disable SSL peer verification as fallback (set to false only if native CA still fails)
+    'http_ssl_verify_peer' => env('SENTRY_SSL_VERIFY_PEER', true),
 
 ];

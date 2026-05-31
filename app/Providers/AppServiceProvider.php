@@ -60,6 +60,14 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
+        // Configure SSL CA certificate bundle for cURL/PHP
+        // Uses project-bundled cacert.pem to fix "unable to get local issuer certificate"
+        $caCertPath = base_path('storage/certs/cacert.pem');
+        if (file_exists($caCertPath) && empty(env('CURL_CA_BUNDLE')) && empty(env('SSL_CERT_FILE'))) {
+            putenv("CURL_CA_BUNDLE={$caCertPath}");
+            putenv("SSL_CERT_FILE={$caCertPath}");
+        }
+
         Password::defaults(fn (): ?Password => app()->isProduction()
             ? Password::min(12)
                 ->mixedCase()
