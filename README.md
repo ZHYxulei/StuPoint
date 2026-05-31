@@ -2,15 +2,25 @@
 
 [![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel](https://img.shields.io/badge/Laravel-%23FF2D20.svg?logo=laravel&logoColor=white)](https://laravel.com)
+[![Symfony](https://img.shields.io/badge/Symfony-black?logo=symfony)](https://symfony.com)
 [![React](https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Inertia.js](https://img.shields.io/badge/Inertia.js-155dfc?logo=inertia&logoColor=fff)](https://inertiajs.com)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=fff)](https://vitejs.dev)
 [![Sentry](https://img.shields.io/badge/Sentry-362D59?logo=sentry&logoColor=fff)](https://sentry.io)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000)](https://www.javascript.com)
+[![JSON](https://img.shields.io/badge/JSON-000?logo=json&logoColor=fff)](https://www.json.org)
 [![Codecov](https://codecov.io/github/ZHYxulei/StuPoint/graph/badge.svg?token=VCJJ8OXEIE)](https://codecov.io/github/ZHYxulei/StuPoint)
 [![License](https://img.shields.io/github/license/ZHYxulei/StuPoint)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/ZHYxulei/StuPoint?style=social)](https://github.com/ZHYxulei/StuPoint/stargazers)
 
+[![X](https://img.shields.io/badge/X-%23000000.svg?logo=X&logoColor=white)](https://x.com/intent/follow?screen_name=ZHYxulei001)
+[![Bilibili](https://img.shields.io/badge/Bilibili-00A1D6?logo=bilibili&logoColor=fff)](https://space.bilibili.com/1102244282)
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?logo=telegram&logoColor=white)](https://t.me/ZHYxulei_messagebot)
+[![Bluesky](https://img.shields.io/badge/Bluesky-0285FF?logo=bluesky&logoColor=fff)](https://bsky.zhyxulei.top)
+[![npm](https://img.shields.io/badge/npm-CB3837?logo=npm&logoColor=fff)](https://www.npmjs.com)
+[![pnpm](https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=fff)](https://pnpm.io)
 > 一款轻量级、可扩展的学生积分管理与成长激励系统
 
 StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分管理与成长激励系统。适用于高中小学、培训机构或班级场景，帮助教师高效记录、统计与可视化学生的日常表现积分。
@@ -21,6 +31,7 @@ StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分
 
 - **主项目**: https://github.com/ZHYxulei/StuPoint
 - **参考项目**: https://github.com/ZHYxulei/Laravel-Demo
+- **插件示例**: https://github.com/ZHYxulei/StuPoint_plugin_example
 
 ---
 
