@@ -28,6 +28,10 @@
 [![Sentry](https://img.shields.io/badge/Sentry-362D59?logo=sentry&logoColor=fff)](https://sentry.io)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000)](https://www.javascript.com)
 [![JSON](https://img.shields.io/badge/JSON-000?logo=json&logoColor=fff)](https://www.json.org)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=fff)](https://www.mysql.com)
+[![PostgreSQL](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![SQLite](https://img.shields.io/badge/SQLite-%2307405e.svg?logo=sqlite&logoColor=white)](https://www.sqlite.org)
+[![Redis](https://img.shields.io/badge/Redis-%23DD0031.svg?logo=redis&logoColor=white)](https://redis.io)
 > 一款轻量级、可扩展的学生积分管理与成长激励系统
 
 StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分管理与成长激励系统。适用于高中小学、培训机构或班级场景，帮助教师高效记录、统计与可视化学生的日常表现积分。
@@ -135,7 +139,7 @@ StuPoint 是由 **ZHYxulei** 开发的一款轻量级、可扩展的学生积分
 #### 核心框架
 
 - **Laravel 13** - 优雅的 PHP Web 应用框架
-- **PHP 8.2+** - 现代化 PHP 语言特性
+- **PHP 8.4+** - 现代化 PHP 语言特性
 
 #### Laravel 生态系统
 
