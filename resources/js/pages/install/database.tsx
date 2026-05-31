@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/input-error';
 import { ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface InstallDatabaseProps {
     form: {
@@ -33,10 +33,6 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
     const password = installOld.password ?? form.password;
     const database = installOld.database ?? form.database;
     const [connectionType, setConnectionType] = useState(initialConnection);
-
-    useEffect(() => {
-        setConnectionType(initialConnection);
-    }, [initialConnection]);
 
     return (
         <>
