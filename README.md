@@ -1,15 +1,13 @@
 # StuPoint
 
-[![PHP](https://img.shields.io/badge/PHP-8.4-777BB4?logo=php&logoColor=white)](https://www.php.net/)
-[![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Inertia.js](https://img.shields.io/badge/Inertia.js-3-1B1B2F?logo=inertia&logoColor=white)](https://inertiajs.com)
-[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
-[![Livewire](https://img.shields.io/badge/Livewire-4-FB70A9?logo=laravel&logoColor=white)](https://livewire.laravel.com)
-[![Pest](https://img.shields.io/badge/Pest-4-8B5CF6?logo=php&logoColor=white)](https://pestphp.com)
-[![ESLint](https://img.shields.io/badge/ESLint-10-4B32C3?logo=eslint&logoColor=white)](https://eslint.org)
+[![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel](https://img.shields.io/badge/Laravel-%23FF2D20.svg?logo=laravel&logoColor=white)](https://laravel.com)
+[![React](https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![Inertia.js](https://img.shields.io/badge/Inertia.js-155dfc?logo=inertia&logoColor=fff)](https://inertiajs.com)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=fff)](https://vitejs.dev)
+[![Sentry](https://img.shields.io/badge/Sentry-362D59?logo=sentry&logoColor=fff)](https://sentry.io)
 [![Codecov](https://codecov.io/github/ZHYxulei/StuPoint/graph/badge.svg?token=VCJJ8OXEIE)](https://codecov.io/github/ZHYxulei/StuPoint)
 [![License](https://img.shields.io/github/license/ZHYxulei/StuPoint)](LICENSE)
 
