@@ -46,7 +46,7 @@ it('allows admin to add points and records transactions', function () {
             'amount' => 15,
             'reason' => 'Manual bonus',
         ])
-        ->assertRedirect();
+        ->assertOk();
 
     $target->refresh();
 
@@ -98,7 +98,7 @@ it('allows super admin to add points and records transactions', function () {
             'amount' => 12,
             'reason' => 'Manual bonus by super admin',
         ])
-        ->assertRedirect();
+        ->assertOk();
 
     $target->refresh();
 
@@ -143,8 +143,7 @@ it('rejects unauthorized point adjustment without changing balances', function (
             'amount' => 10,
             'reason' => 'Unauthorized bonus',
         ])
-        ->assertRedirect(route('admin.users.show', $target->id))
-        ->assertSessionHasErrors('amount');
+        ->assertForbidden();
 
     $target->refresh();
 
