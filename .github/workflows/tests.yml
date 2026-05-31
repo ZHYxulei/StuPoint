@@ -45,6 +45,8 @@ jobs:
 
       - name: Build Assets
         run: npm run build
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Run Tests
         run: |

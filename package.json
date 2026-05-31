@@ -13,6 +13,7 @@
         "update_env": "node scripts/update_env.cjs"
     },
     "devDependencies": {
+        "@codecov/vite-plugin": "^1.9.0",
         "@eslint-react/eslint-plugin": "^5.8.4",
         "@eslint/js": "^10.0.1",
         "@laravel/vite-plugin-wayfinder": "^0.1.7",
