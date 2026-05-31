@@ -28,6 +28,7 @@
         "laravel/wayfinder": "^0.1.9",
         "livewire/livewire": "^4.1",
         "livewire/volt": "^1.10",
+        "sentry/sentry-laravel": "^4.0",
         "socialiteproviders/qq": "^4.2",
         "socialiteproviders/weixin": "^4.1"
     },
