@@ -1,0 +1,76 @@
+codecov:
+  branch: main
+  notify:
+    require_ci_to_pass: true
+
+coverage:
+  precision: 2
+  round: down
+  range: "60...100"
+
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 2%
+        branches:
+          - main
+    patch:
+      default:
+        target: 80%
+        branches:
+          - main
+
+comment:
+  layout: "header, flags, components, reach, diff, files"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+flags:
+  backend:
+    paths:
+      - "app/"
+      - "routes/"
+      - "database/"
+    carryforward: true
+  frontend:
+    paths:
+      - "resources/js/"
+    carryforward: true
+
+component_management:
+  default_rules:
+    statuses:
+      - type: project
+        target: auto
+        branches:
+          - "!main"
+  individual_components:
+    - component_id: backend
+      name: Backend (PHP)
+      paths:
+        - app/**
+        - routes/**
+        - database/**
+        - bootstrap/**
+        - config/**
+    - component_id: frontend
+      name: Frontend (React)
+      paths:
+        - resources/js/**
+    - component_id: tests
+      name: Tests
+      paths:
+        - tests/**
+
+ignore:
+  - "vendor/"
+  - "node_modules/"
+  - "storage/"
+  - "public/build/"
+  - "resources/views/"
+  - "*.md"
+  - "*.json"
+  - "*.lock"
