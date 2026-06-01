@@ -9,4 +9,15 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Ensure installation middleware doesn't block tests
+        $installedPath = storage_path('installed');
+        if (! file_exists($installedPath)) {
+            touch($installedPath);
+        }
+    }
 }
