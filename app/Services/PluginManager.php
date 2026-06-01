@@ -86,9 +86,10 @@ class PluginManager
      */
     public function enablePlugin(Plugin $plugin): void
     {
-        // Check plugin dependencies before enabling
+        // Check plugin dependencies and requirements before enabling
         $manifest = $this->readManifest($plugin->slug);
         if ($manifest) {
+            $this->checkRequirements($manifest);
             $this->checkPluginDependencies($manifest);
         }
 
@@ -291,6 +292,87 @@ class PluginManager
                 '插件依赖未满足，请先启用以下插件: '.implode(', ', $missing)
             );
         }
+    }
+
+    /**
+     * Check if the current environment meets the plugin's requirements.
+     *
+     * @throws \RuntimeException
+     */
+    protected function checkRequirements(array $manifest): void
+    {
+        $requires = $manifest['requires'] ?? [];
+        if (empty($requires)) {
+            return;
+        }
+
+        $errors = [];
+
+        // Check PHP version
+        if (isset($requires['php']) && ! version_compare(PHP_VERSION, preg_replace('/^[>=<~!]+/', '', $requires['php']), preg_match('/^>=/', $requires['php']) ? '>=' : '>=')) {
+            if (! $this->versionSatisfies(PHP_VERSION, $requires['php'])) {
+                $errors[] = "PHP {$requires['php']}（当前: ".PHP_VERSION.'）';
+            }
+        }
+
+        // Check Laravel version
+        if (isset($requires['laravel'])) {
+            $laravelVersion = app()->version();
+            if (! $this->versionSatisfies($laravelVersion, $requires['laravel'])) {
+                $errors[] = "Laravel {$requires['laravel']}（当前: {$laravelVersion}）";
+            }
+        }
+
+        // Check StuPoint version
+        if (isset($requires['stupoint'])) {
+            $stupointVersion = trim(file_get_contents(base_path('VERSION')) ?? '0.0.0');
+            if (! $this->versionSatisfies($stupointVersion, $requires['stupoint'])) {
+                $errors[] = "StuPoint {$requires['stupoint']}（当前: {$stupointVersion}）";
+            }
+        }
+
+        if (! empty($errors)) {
+            throw new \RuntimeException(
+                '插件环境要求不满足: '.implode(', ', $errors)
+            );
+        }
+    }
+
+    /**
+     * Check if a version satisfies a constraint (supports >=, ^, ~, exact).
+     */
+    protected function versionSatisfies(string $version, string $constraint): bool
+    {
+        // Handle >= constraint
+        if (str_starts_with($constraint, '>=')) {
+            return version_compare($version, substr($constraint, 2), '>=');
+        }
+
+        // Handle > constraint
+        if (str_starts_with($constraint, '>')) {
+            return version_compare($version, substr($constraint, 1), '>');
+        }
+
+        // Handle ^ constraint (caret: >=X.Y.Z and <next major)
+        if (str_starts_with($constraint, '^')) {
+            $min = substr($constraint, 1);
+            $parts = explode('.', $min);
+            $nextMajor = ((int) $parts[0] + 1).'.0.0';
+
+            return version_compare($version, $min, '>=') && version_compare($version, $nextMajor, '<');
+        }
+
+        // Handle ~ constraint (tilde: >=X.Y.Z and <next minor)
+        if (str_starts_with($constraint, '~')) {
+            $min = substr($constraint, 1);
+            $parts = explode('.', $min);
+            $nextMinor = $parts[0].'.'.((int) ($parts[1] ?? 0) + 1).'.0';
+
+            return version_compare($version, $min, '>=') && version_compare($version, $nextMinor, '<');
+        }
+
+        // Exact version
+        return version_compare($version, $constraint, '>=');
     }
 
     /**
