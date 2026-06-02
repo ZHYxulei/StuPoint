@@ -140,6 +140,16 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function pointTransactions(): HasMany
+    {
+        return $this->hasMany(PointTransaction::class);
+    }
+
     public function teachingClasses(): BelongsToMany
     {
         return $this->belongsToMany(SchoolClass::class, 'class_teachers', 'teacher_id', 'class_id')

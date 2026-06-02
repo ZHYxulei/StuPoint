@@ -22,7 +22,7 @@ class Grade extends Model
 
     public function classes(): HasMany
     {
-        return $this->hasMany(ClassModel::class);
+        return $this->hasMany(SchoolClass::class);
     }
 
     public function hasTeachers(): bool

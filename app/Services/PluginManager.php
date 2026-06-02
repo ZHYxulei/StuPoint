@@ -390,4 +390,26 @@ class PluginManager
     {
         return Plugin::enabled()->pluck('slug')->toArray();
     }
+
+    /**
+     * Register permissions provided by a plugin.
+     */
+    public function registerPluginPermissions(object $pluginInstance, Plugin $plugin): void
+    {
+        if (! method_exists($pluginInstance, 'getPermissions')) {
+            return;
+        }
+
+        $permissions = $pluginInstance->getPermissions();
+
+        foreach ($permissions as $permission) {
+            $plugin->permissions()->updateOrCreate(
+                ['slug' => $permission['slug']],
+                [
+                    'name' => $permission['name'],
+                    'description' => $permission['description'] ?? '',
+                ]
+            );
+        }
+    }
 }
