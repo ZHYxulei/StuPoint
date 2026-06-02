@@ -3,9 +3,9 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ParentController;
 use App\Http\Controllers\Points\PointController;
 use App\Http\Controllers\RankingController;
-use App\Http\Controllers\ParentController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
