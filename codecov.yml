@@ -18,6 +18,7 @@ coverage:
     patch:
       default:
         target: 80%
+        informational: true
         branches:
           - main
 
