@@ -13,6 +13,7 @@ class Role extends Model
         'description',
         'is_system',
         'level',
+        'plugin_slug',
     ];
 
     protected function casts(): array
