@@ -49,6 +49,12 @@ jobs:
           command: npm run build
 
       - run:
+          name: Install Coverage Driver
+          command: |
+            sudo pecl install pcov
+            sudo docker-php-ext-enable pcov
+
+      - run:
           name: Run Tests
           command: php vendor/bin/pest --coverage --coverage-clover=coverage.xml
 
