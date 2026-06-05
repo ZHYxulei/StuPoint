@@ -19,6 +19,7 @@ import {
     Baby,
     ShieldCheck,
     Info,
+    Zap,
 } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavUser } from '@/components/nav-user';
@@ -233,6 +234,14 @@ export function AppSidebar() {
                                                     <Link href="/admin/users/statistics">
                                                         <BarChart3 className="h-4 w-4" />
                                                         <span>用户统计</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                            <SidebarMenuItem>
+                                                <SidebarMenuButton asChild>
+                                                    <Link href="/admin/quick-grading">
+                                                        <Zap className="h-4 w-4" />
+                                                        <span>快速加分</span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\UserApprovalController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\QuickGradingController;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,14 @@ Route::middleware(['auth', 'verified', 'role:super_admin,admin,principal,grade_d
         Route::put('/{id}/password', [UserController::class, 'updatePassword'])->name('updatePassword');
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/adjust-points', [UserController::class, 'adjustPoints'])->name('adjustPoints');
+    });
+
+    // Quick Grading
+    Route::prefix('quick-grading')->name('quick-grading.')->group(function () {
+        Route::get('/', [QuickGradingController::class, 'index'])->name('index');
+        Route::post('/{id}/adjust-points', [QuickGradingController::class, 'adjustPoints'])->name('adjustPoints');
+        Route::get('/presets', [QuickGradingController::class, 'getPresets'])->name('presets.get');
+        Route::post('/presets', [QuickGradingController::class, 'savePresets'])->name('presets.save');
     });
 
     // Product Management
