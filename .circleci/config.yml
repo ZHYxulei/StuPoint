@@ -56,14 +56,18 @@ jobs:
 
       - run:
           name: Run Tests
-          command: php vendor/bin/pest --coverage --coverage-clover=coverage.xml
+          command: php vendor/bin/pest --coverage --coverage-clover=coverage.xml --log-junit=junit.xml
 
       - store_test_results:
-          path: coverage.xml
+          path: junit.xml
 
       - store_artifacts:
           path: coverage.xml
           destination: coverage
+
+      - store_artifacts:
+          path: junit.xml
+          destination: test-results
 
 workflows:
   test:
