@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 
 class PointPreset extends Model
 {
@@ -33,7 +34,7 @@ class PointPreset extends Model
     /**
      * Get presets for a user (global + school + grade + class).
      */
-    public static function forUser(User $user): \Illuminate\Support\Collection
+    public static function forUser(User $user): Collection
     {
         $query = static::query();
 

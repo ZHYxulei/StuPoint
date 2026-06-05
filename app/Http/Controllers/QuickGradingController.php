@@ -7,7 +7,7 @@ use App\Models\SchoolClass;
 use App\Models\User;
 use App\Services\PointService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 class QuickGradingController extends Controller
@@ -188,7 +188,7 @@ class QuickGradingController extends Controller
     /**
      * Get classes accessible by the current user.
      */
-    private function getAccessibleClasses(User $user): \Illuminate\Support\Collection
+    private function getAccessibleClasses(User $user): Collection
     {
         if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
             return SchoolClass::orderBy('grade')->orderBy('name')->get();
@@ -218,7 +218,7 @@ class QuickGradingController extends Controller
     /**
      * Get students with ranking for a class.
      */
-    private function getStudentsWithRank(?int $classId): \Illuminate\Support\Collection
+    private function getStudentsWithRank(?int $classId): Collection
     {
         if (! $classId) {
             return collect();
