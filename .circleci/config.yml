@@ -1,44 +1,65 @@
-# This config was automatically generated from your source code
-# Stacks detected: cicd:github-actions:.github/workflows,deps:node:.,deps:php:.
 version: 2.1
+
 orbs:
   node: circleci/node@5
+
 jobs:
-  build-node:
-    # Build node project
-    executor: node/default
+  test:
+    docker:
+      - image: cimg/php:8.4-node
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
+
+      - restore_cache:
+          keys:
+            - composer-v1-{{ checksum "composer.lock" }}
+            - composer-v1-
+
       - run:
+          name: Install PHP Dependencies
+          command: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+
+      - restore_cache:
+          keys:
+            - npm-v1-{{ checksum "package-lock.json" }}
+            - npm-v1-
+
+      - run:
+          name: Install Node Dependencies
+          command: npm ci
+
+      - save_cache:
+          key: npm-v1-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: Prepare Environment
+          command: |
+            cp .env.example .env
+            php artisan key:generate
+
+      - run:
+          name: Build Assets
           command: npm run build
+
       - run:
-          name: Create the ~/artifacts directory if it doesn't exist
-          command: mkdir -p ~/artifacts
-      # Copy output to artifacts dir
-      - run:
-          name: Copy artifacts
-          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+          name: Run Tests
+          command: php vendor/bin/pest --coverage --coverage-clover=coverage.xml
+
+      - store_test_results:
+          path: coverage.xml
+
       - store_artifacts:
-          path: ~/artifacts
-          destination: node-build
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
-      - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
-      - run:
-          name: found github actions config
-          command: ':'
+          path: coverage.xml
+          destination: coverage
+
 workflows:
-  build:
+  test:
     jobs:
-      - build-node
-    # - deploy:
-    #     requires:
-    #       - build-node
+      - test
