@@ -9,19 +9,20 @@ use App\Models\Setting;
 use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
-    public function __construct()
+    /**
+     * Verify the user is a super admin.
+     */
+    private function verifySuperAdmin(): void
     {
-        $this->middleware(function ($request, $next) {
-            if (! $request->user()?->hasRole('super_admin')) {
-                abort(403, '无权访问');
-            }
-
-            return $next($request);
-        });
+        $user = Auth::user();
+        if (! $user || ! $user->hasRole('super_admin')) {
+            abort(403, '无权访问');
+        }
     }
 
     /**
@@ -29,6 +30,8 @@ class SettingsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $pluginSources = PluginSource::ordered()->get();
 
         // Single query for all settings
@@ -66,6 +69,8 @@ class SettingsController extends Controller
      */
     public function storePluginSource(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:100|unique:plugin_sources,slug',
@@ -86,6 +91,8 @@ class SettingsController extends Controller
      */
     public function updatePluginSource(Request $request, string $id)
     {
+        $this->verifySuperAdmin();
+
         $source = PluginSource::findOrFail($id);
 
         $validated = $request->validate([
@@ -108,6 +115,8 @@ class SettingsController extends Controller
      */
     public function deletePluginSource(Request $request, string $id)
     {
+        $this->verifySuperAdmin();
+
         $source = PluginSource::findOrFail($id);
         $source->delete();
 
@@ -119,6 +128,8 @@ class SettingsController extends Controller
      */
     public function testPluginSource(Request $request, string $id)
     {
+        $this->verifySuperAdmin();
+
         $source = PluginSource::findOrFail($id);
 
         // TODO: Implement actual API test
@@ -131,6 +142,8 @@ class SettingsController extends Controller
      */
     public function updateSiteSettings(UpdateSiteSettingsRequest $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validated();
         $hasUploadedFavicon = array_key_exists('site_favicon_upload', $validated) && $validated['site_favicon_upload'] instanceof UploadedFile;
 
@@ -176,6 +189,8 @@ class SettingsController extends Controller
      */
     public function updateContactSettings(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validate([
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:50',
@@ -195,6 +210,8 @@ class SettingsController extends Controller
      */
     public function updateFooterSettings(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validate([
             'footer_copyright' => 'nullable|string|max:500',
             'footer_icp' => 'nullable|string|max:100',
@@ -215,6 +232,8 @@ class SettingsController extends Controller
      */
     public function updateSocialSettings(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validate([
             'social_wechat' => 'nullable|string|max:255',
             'social_weibo' => 'nullable|string|max:255',
@@ -235,6 +254,8 @@ class SettingsController extends Controller
      */
     public function updateMailSettings(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validate([
             'mail_host' => 'nullable|string|max:255',
             'mail_port' => 'nullable|integer|min:1|max:65535',
@@ -260,6 +281,8 @@ class SettingsController extends Controller
      */
     public function testMailConnection(Request $request)
     {
+        $this->verifySuperAdmin();
+
         try {
             $service = new MailConfigService;
             $service->testConnection();
@@ -275,6 +298,8 @@ class SettingsController extends Controller
      */
     public function updateSmsSettings(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validate([
             'sms_provider' => 'required|in:aliyun,tencent,log',
             'sms_aliyun_access_key_id' => 'nullable|string|max:255',
@@ -300,6 +325,8 @@ class SettingsController extends Controller
      */
     public function updateCaptchaSettings(Request $request)
     {
+        $this->verifySuperAdmin();
+
         $validated = $request->validate([
             'captcha_provider' => 'required|in:cloudflare,google,log',
             'captcha_cloudflare_site_key' => 'nullable|string|max:255',
