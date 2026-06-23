@@ -35,20 +35,16 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
-                manualChunks: {
-                    'vendor-react': ['react', 'react-dom'],
-                    'vendor-inertia': ['@inertiajs/react'],
-                    'vendor-radix': [
-                        '@radix-ui/react-dialog',
-                        '@radix-ui/react-dropdown-menu',
-                        '@radix-ui/react-tabs',
-                        '@radix-ui/react-select',
-                        '@radix-ui/react-avatar',
-                        '@radix-ui/react-checkbox',
-                        '@radix-ui/react-label',
-                        '@radix-ui/react-slot',
-                        '@radix-ui/react-tooltip',
-                    ],
+                manualChunks(id: string) {
+                    if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+                        return 'vendor-react';
+                    }
+                    if (id.includes('node_modules/@inertiajs')) {
+                        return 'vendor-inertia';
+                    }
+                    if (id.includes('node_modules/@radix-ui')) {
+                        return 'vendor-radix';
+                    }
                 },
             },
         },
