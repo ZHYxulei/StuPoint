@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRoles
 {
-    protected static array $roleSlugCache = [];
+    public static array $roleSlugCache = [];
 
     public function roles(): BelongsToMany
     {

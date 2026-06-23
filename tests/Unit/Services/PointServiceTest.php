@@ -76,9 +76,9 @@ it('returns false for self modification', function () {
 });
 
 it('returns true when admin targets student', function () {
-    $admin = User::factory()->create();
+    $admin = User::factory()->create(['registration_status' => 'approved']);
     $admin->assignRole($this->adminRole);
-    $student = User::factory()->create();
+    $student = User::factory()->create(['registration_status' => 'approved']);
     $student->assignRole($this->studentRole);
 
     expect($this->service->canModifyPoints($admin, $student))->toBeTrue();

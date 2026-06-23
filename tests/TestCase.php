@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use App\Traits\HasRoles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Artisan;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -19,5 +21,12 @@ abstract class TestCase extends BaseTestCase
         if (! file_exists($installedPath)) {
             touch($installedPath);
         }
+
+        // Clear static role cache between tests
+        HasRoles::$roleSlugCache = [];
+
+        // Ensure Passport tables exist (oauth_access_tokens, etc.)
+        Artisan::call('passport:keys', ['--no-interaction' => true]);
+        Artisan::call('migrate', ['--no-interaction' => true]);
     }
 }
