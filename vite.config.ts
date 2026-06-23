@@ -32,4 +32,25 @@ export default defineConfig({
     esbuild: {
         jsx: 'automatic',
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor-react': ['react', 'react-dom'],
+                    'vendor-inertia': ['@inertiajs/react'],
+                    'vendor-radix': [
+                        '@radix-ui/react-dialog',
+                        '@radix-ui/react-dropdown-menu',
+                        '@radix-ui/react-tabs',
+                        '@radix-ui/react-select',
+                        '@radix-ui/react-avatar',
+                        '@radix-ui/react-checkbox',
+                        '@radix-ui/react-label',
+                        '@radix-ui/react-slot',
+                        '@radix-ui/react-tooltip',
+                    ],
+                },
+            },
+        },
+    },
 });
