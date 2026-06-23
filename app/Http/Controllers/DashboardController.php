@@ -20,15 +20,23 @@ class DashboardController extends Controller
         // Total users count
         $totalUsers = User::count();
 
-        // Today's point changes
+        // Today's point changes (database-level aggregation)
         $today = now()->startOfDay();
-        $todayPointChanges = PointTransaction::query()
+        $todayAdded = PointTransaction::query()
             ->where('created_at', '>=', $today)
-            ->get();
+            ->where('type', 'total')
+            ->where('amount', '>', 0)
+            ->sum('amount');
 
-        $todayAdded = $todayPointChanges->where('type', 'total')->where('amount', '>', 0)->sum('amount');
-        $todayDeducted = abs($todayPointChanges->where('type', 'total')->where('amount', '<', 0)->sum('amount'));
-        $todayTransactions = $todayPointChanges->count();
+        $todayDeducted = abs(PointTransaction::query()
+            ->where('created_at', '>=', $today)
+            ->where('type', 'total')
+            ->where('amount', '<', 0)
+            ->sum('amount'));
+
+        $todayTransactions = PointTransaction::query()
+            ->where('created_at', '>=', $today)
+            ->count();
 
         // Top 10 users by total points
         $topUsers = UserPoint::query()

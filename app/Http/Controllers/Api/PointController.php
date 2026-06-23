@@ -112,15 +112,16 @@ class PointController extends Controller
         }
 
         $rankings = $query
-            ->get()
+            ->join('user_points', 'users.id', '=', 'user_points.user_id')
+            ->orderByDesc("user_points.{$sortBy}")
+            ->limit($limit)
+            ->get(['users.*'])
             ->map(fn ($user) => [
                 'user_id' => $user->id,
                 'name' => $user->name,
                 'total_points' => $user->points?->total_points ?? 0,
                 'redeemable_points' => $user->points?->redeemable_points ?? 0,
             ])
-            ->sortByDesc($sortBy)
-            ->take($limit)
             ->values()
             ->map(function ($item, $index) {
                 $item['rank'] = $index + 1;

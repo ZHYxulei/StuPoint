@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRoles
 {
+    protected static array $roleSlugCache = [];
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_has_roles')
@@ -27,7 +29,11 @@ trait HasRoles
 
     public function hasRole(string $role): bool
     {
-        return $this->roles()->where('slug', $role)->exists();
+        if (! isset(static::$roleSlugCache[$this->id])) {
+            static::$roleSlugCache[$this->id] = $this->roles()->pluck('slug')->toArray();
+        }
+
+        return in_array($role, static::$roleSlugCache[$this->id]);
     }
 
     public function hasPermission(string $permission): bool
@@ -47,6 +53,7 @@ trait HasRoles
         }
 
         $this->roles()->attach($role, ['metadata' => $metadata]);
+        unset(static::$roleSlugCache[$this->id]);
 
         return $this;
     }
@@ -58,6 +65,7 @@ trait HasRoles
         }
 
         $this->roles()->detach($role);
+        unset(static::$roleSlugCache[$this->id]);
 
         return $this;
     }
@@ -81,6 +89,7 @@ trait HasRoles
         }
 
         $this->roles()->sync($roleIds);
+        unset(static::$roleSlugCache[$this->id]);
 
         return $this;
     }

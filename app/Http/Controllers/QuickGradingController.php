@@ -227,8 +227,9 @@ class QuickGradingController extends Controller
         return User::whereHas('schoolClassesAsStudent', fn ($q) => $q->where('class_id', $classId))
             ->orwhere('class_id', $classId)
             ->with('points')
-            ->get()
-            ->sortByDesc(fn ($s) => $s->points?->total_points ?? 0)
+            ->leftJoin('user_points', 'users.id', '=', 'user_points.user_id')
+            ->orderByDesc('user_points.total_points')
+            ->get(['users.*'])
             ->values()
             ->map(fn ($student, $index) => tap($student, fn ($s) => $s->rank = $index + 1));
     }
