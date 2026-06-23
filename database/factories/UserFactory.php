@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -56,5 +57,36 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1'])),
             'two_factor_confirmed_at' => now(),
         ]);
+    }
+
+    public function approved(): static
+    {
+        return $this->state([
+            'registration_status' => 'approved',
+            'requires_review' => false,
+        ]);
+    }
+
+    public function pending(): static
+    {
+        return $this->state([
+            'registration_status' => 'pending',
+            'requires_review' => true,
+        ]);
+    }
+
+    public function rejected(): static
+    {
+        return $this->state([
+            'registration_status' => 'rejected',
+            'requires_review' => false,
+        ]);
+    }
+
+    public function withRole(Role|string $role): static
+    {
+        return $this->afterCreating(function (User $user) use ($role) {
+            $user->assignRole($role);
+        });
     }
 }
