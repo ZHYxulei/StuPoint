@@ -9,29 +9,30 @@ use App\Models\Setting;
 use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (! $request->user()?->hasRole('super_admin')) {
+                abort(403, '无权访问');
+            }
+
+            return $next($request);
+        });
+    }
+
     /**
      * Display system settings page.
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
-
-        // Check if user is admin
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $pluginSources = PluginSource::ordered()->get();
 
-        // Get site settings (fallback to env/app config when DB value is absent)
-        $siteSettings = Setting::where('group', 'site')->get()->mapWithKeys(function ($setting) {
-            return [$setting->key => $setting->value];
-        })->toArray();
+        // Single query for all settings
+        $allSettings = Setting::all()->keyBy('key');
 
         $siteSettings = array_merge([
             'site_name' => config('app.name', 'StuPoint'),
@@ -39,37 +40,14 @@ class SettingsController extends Controller
             'site_keywords' => '',
             'site_logo' => '',
             'site_favicon' => '',
-        ], $siteSettings);
+        ], $allSettings->where('group', 'site')->mapWithKeys(fn ($s) => [$s->key => $s->value])->toArray());
 
-        // Get contact settings
-        $contactSettings = Setting::where('group', 'contact')->get()->mapWithKeys(function ($setting) {
-            return [$setting->key => $setting->value];
-        });
-
-        // Get footer settings
-        $footerSettings = Setting::where('group', 'footer')->get()->mapWithKeys(function ($setting) {
-            return [$setting->key => $setting->value];
-        });
-
-        // Get social settings
-        $socialSettings = Setting::where('group', 'social')->get()->mapWithKeys(function ($setting) {
-            return [$setting->key => $setting->value];
-        });
-
-        // Get mail settings
-        $mailSettings = Setting::where('group', 'mail')->get()->mapWithKeys(function ($setting) {
-            return [$setting->key => $setting->value];
-        });
-
-        // Get SMS settings
-        $smsSettings = Setting::where('group', 'sms')->get()->mapWithKeys(function ($setting) {
-            return [$setting->key => $setting->value];
-        });
-
-        // Get captcha settings
-        $captchaSettings = Setting::where('group', 'captcha')->get()->mapWithKeys(function ($setting) {
-            return [$setting->key => $setting->value];
-        });
+        $contactSettings = $allSettings->where('group', 'contact')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
+        $footerSettings = $allSettings->where('group', 'footer')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
+        $socialSettings = $allSettings->where('group', 'social')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
+        $mailSettings = $allSettings->where('group', 'mail')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
+        $smsSettings = $allSettings->where('group', 'sms')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
+        $captchaSettings = $allSettings->where('group', 'captcha')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
 
         return inertia('admin/settings/index', [
             'pluginSources' => $pluginSources,
@@ -88,12 +66,6 @@ class SettingsController extends Controller
      */
     public function storePluginSource(Request $request)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:100|unique:plugin_sources,slug',
@@ -114,12 +86,6 @@ class SettingsController extends Controller
      */
     public function updatePluginSource(Request $request, string $id)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $source = PluginSource::findOrFail($id);
 
         $validated = $request->validate([
@@ -142,12 +108,6 @@ class SettingsController extends Controller
      */
     public function deletePluginSource(Request $request, string $id)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $source = PluginSource::findOrFail($id);
         $source->delete();
 
@@ -159,12 +119,6 @@ class SettingsController extends Controller
      */
     public function testPluginSource(Request $request, string $id)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $source = PluginSource::findOrFail($id);
 
         // TODO: Implement actual API test
@@ -177,12 +131,6 @@ class SettingsController extends Controller
      */
     public function updateSiteSettings(UpdateSiteSettingsRequest $request)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validated();
         $hasUploadedFavicon = array_key_exists('site_favicon_upload', $validated) && $validated['site_favicon_upload'] instanceof UploadedFile;
 
@@ -228,12 +176,6 @@ class SettingsController extends Controller
      */
     public function updateContactSettings(Request $request)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validate([
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:50',
@@ -253,12 +195,6 @@ class SettingsController extends Controller
      */
     public function updateFooterSettings(Request $request)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validate([
             'footer_copyright' => 'nullable|string|max:500',
             'footer_icp' => 'nullable|string|max:100',
@@ -279,12 +215,6 @@ class SettingsController extends Controller
      */
     public function updateSocialSettings(Request $request)
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validate([
             'social_wechat' => 'nullable|string|max:255',
             'social_weibo' => 'nullable|string|max:255',
@@ -305,11 +235,6 @@ class SettingsController extends Controller
      */
     public function updateMailSettings(Request $request)
     {
-        $user = Auth::user();
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validate([
             'mail_host' => 'nullable|string|max:255',
             'mail_port' => 'nullable|integer|min:1|max:65535',
@@ -335,11 +260,6 @@ class SettingsController extends Controller
      */
     public function testMailConnection(Request $request)
     {
-        $user = Auth::user();
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         try {
             $service = new MailConfigService;
             $service->testConnection();
@@ -355,11 +275,6 @@ class SettingsController extends Controller
      */
     public function updateSmsSettings(Request $request)
     {
-        $user = Auth::user();
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validate([
             'sms_provider' => 'required|in:aliyun,tencent,log',
             'sms_aliyun_access_key_id' => 'nullable|string|max:255',
@@ -385,11 +300,6 @@ class SettingsController extends Controller
      */
     public function updateCaptchaSettings(Request $request)
     {
-        $user = Auth::user();
-        if (! $user || ! $user->hasRole('super_admin')) {
-            abort(403, '无权访问');
-        }
-
         $validated = $request->validate([
             'captcha_provider' => 'required|in:cloudflare,google,log',
             'captcha_cloudflare_site_key' => 'nullable|string|max:255',
