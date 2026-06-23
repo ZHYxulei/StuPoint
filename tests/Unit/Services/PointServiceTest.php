@@ -5,6 +5,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserPoint;
 use App\Services\PointService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
