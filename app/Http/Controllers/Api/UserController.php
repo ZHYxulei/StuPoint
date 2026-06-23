@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\PointService;
 use Illuminate\Http\JsonResponse;
@@ -43,20 +44,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $users->map(fn ($u) => [
-                'id' => $u->id,
-                'name' => $u->name,
-                'email' => $u->email,
-                'phone' => $u->phone,
-                'student_id' => $u->student_id,
-                'grade' => $u->grade,
-                'class' => $u->class,
-                'roles' => $u->roles->pluck('slug'),
-                'points' => [
-                    'total_points' => $u->points?->total_points ?? 0,
-                    'redeemable_points' => $u->points?->redeemable_points ?? 0,
-                ],
-            ]),
+            'data' => UserResource::collection($users),
             'meta' => [
                 'current_page' => $users->currentPage(),
                 'last_page' => $users->lastPage(),
@@ -72,26 +60,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'student_id' => $user->student_id,
-                'grade' => $user->grade,
-                'class' => $user->class,
-                'is_head_teacher' => $user->is_head_teacher,
-                'roles' => $user->roles->map(fn ($r) => [
-                    'id' => $r->id,
-                    'name' => $r->name,
-                    'slug' => $r->slug,
-                ]),
-                'points' => [
-                    'total_points' => $user->points?->total_points ?? 0,
-                    'redeemable_points' => $user->points?->redeemable_points ?? 0,
-                ],
-                'created_at' => $user->created_at->toIso8601String(),
-            ],
+            'data' => new UserResource($user),
         ]);
     }
 

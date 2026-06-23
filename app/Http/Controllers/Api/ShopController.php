@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Services\ExchangeService;
 use Illuminate\Http\JsonResponse;
@@ -38,18 +40,7 @@ class ShopController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $products->map(fn ($p) => [
-                'id' => $p->id,
-                'name' => $p->name,
-                'description' => $p->description,
-                'image' => $p->image,
-                'points_required' => $p->points_required,
-                'stock' => $p->stock,
-                'category' => $p->category ? [
-                    'id' => $p->category->id,
-                    'name' => $p->category->name,
-                ] : null,
-            ]),
+            'data' => ProductResource::collection($products),
             'meta' => [
                 'current_page' => $products->currentPage(),
                 'last_page' => $products->lastPage(),
@@ -108,18 +99,7 @@ class ShopController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $orders->map(fn ($o) => [
-                'id' => $o->id,
-                'order_no' => $o->order_no,
-                'product' => [
-                    'id' => $o->product->id,
-                    'name' => $o->product->name,
-                    'image' => $o->product->image,
-                ],
-                'points_spent' => $o->points_spent,
-                'status' => $o->status,
-                'created_at' => $o->created_at->toIso8601String(),
-            ]),
+            'data' => OrderResource::collection($orders),
             'meta' => [
                 'current_page' => $orders->currentPage(),
                 'last_page' => $orders->lastPage(),

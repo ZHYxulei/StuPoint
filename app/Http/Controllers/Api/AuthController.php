@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,12 +39,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'token_type' => 'Bearer',
                 'expires_in' => 31536000, // 1 year ( Passport personal access tokens don't expire by default)
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'roles' => $user->roles->pluck('slug'),
-                ],
+                'user' => new UserResource($user->load('roles')),
             ],
         ]);
     }
@@ -64,20 +60,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'student_id' => $user->student_id,
-                'grade' => $user->grade,
-                'class' => $user->class,
-                'roles' => $user->roles->pluck('slug'),
-                'points' => [
-                    'total_points' => $user->points?->total_points ?? 0,
-                    'redeemable_points' => $user->points?->redeemable_points ?? 0,
-                ],
-            ],
+            'data' => new UserResource($user),
         ]);
     }
 }
