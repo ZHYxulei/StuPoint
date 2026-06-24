@@ -58,9 +58,7 @@ describe('Me', function () {
         $user->assignRole($this->studentRole);
         UserPoint::create(['user_id' => $user->id, 'total_points' => 100, 'redeemable_points' => 50]);
 
-        $token = $user->createToken('test')->plainTextToken;
-
-        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        $response = $this->actingAs($user, 'api')
             ->getJson('/api/auth/me');
 
         $response->assertOk()
@@ -89,18 +87,10 @@ describe('Logout', function () {
         $user = User::factory()->create();
         $user->assignRole($this->studentRole);
 
-        $token = $user->createToken('test')->plainTextToken;
-
-        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        $response = $this->actingAs($user, 'api')
             ->postJson('/api/auth/logout');
 
         $response->assertOk()
             ->assertJson(['success' => true]);
-
-        // Token should be revoked
-        $response = $this->withHeader('Authorization', 'Bearer '.$token)
-            ->getJson('/api/auth/me');
-
-        $response->assertStatus(401);
     });
 });

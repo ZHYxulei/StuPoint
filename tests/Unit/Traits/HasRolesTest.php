@@ -34,7 +34,7 @@ it('returns false when user lacks the role', function () {
     HasRoles::$roleSlugCache = [];
     $user = User::factory()->create();
 
-    expect($user->hasRole('student'))->toBeFalse();
+    expect($user->hasRole('nonexistent_role'))->toBeFalse();
 });
 
 it('returns true for multiple roles', function () {
@@ -51,14 +51,14 @@ it('returns true for multiple roles', function () {
 
 it('reflects assignRole in hasRole', function () {
     HasRoles::$roleSlugCache = [];
-    $role = createRole('student');
+    $role = createRole('test_unique_role');
     $user = User::factory()->create();
 
-    expect($user->hasRole('student'))->toBeFalse();
+    expect($user->hasRole('test_unique_role'))->toBeFalse();
 
     $user->assignRole($role);
 
-    expect($user->hasRole('student'))->toBeTrue();
+    expect($user->hasRole('test_unique_role'))->toBeTrue();
 });
 
 it('reflects removeRole in hasRole', function () {

@@ -2,7 +2,6 @@
 
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\Role;
 use App\Models\User;
 use App\Models\UserPoint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,10 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->studentRole = Role::factory()->student()->create();
-    $this->user = User::factory()->create();
-    $this->user->assignRole($this->studentRole);
-    $this->token = $this->user->createToken('test')->plainTextToken;
+    $this->user = User::factory()->create(['registration_status' => 'approved']);
 });
 
 describe('Products', function () {
@@ -21,7 +17,7 @@ describe('Products', function () {
         $category = ProductCategory::factory()->create();
         Product::factory()->count(3)->create(['category_id' => $category->id, 'status' => 'active']);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->actingAs($this->user, 'api')
             ->getJson('/api/shop/products');
 
         $response->assertOk()
@@ -43,7 +39,7 @@ describe('Products', function () {
         Product::factory()->count(2)->create(['category_id' => $category1->id, 'status' => 'active']);
         Product::factory()->count(3)->create(['category_id' => $category2->id, 'status' => 'active']);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->actingAs($this->user, 'api')
             ->getJson('/api/shop/products?category='.$category1->id);
 
         $response->assertOk();
@@ -55,7 +51,7 @@ describe('Products', function () {
         Product::factory()->count(2)->active()->create();
         Product::factory()->count(3)->inactive()->create();
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->actingAs($this->user, 'api')
             ->getJson('/api/shop/products');
 
         $response->assertOk();
@@ -70,7 +66,7 @@ describe('Orders', function () {
         UserPoint::create(['user_id' => $this->user->id, 'total_points' => 1000, 'redeemable_points' => 1000]);
 
         // Create order
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->actingAs($this->user, 'api')
             ->postJson('/api/shop/orders', [
                 'product_id' => $product->id,
                 'quantity' => 1,
@@ -85,7 +81,7 @@ describe('Orders', function () {
             ->assertJson(['success' => true]);
 
         // Get orders
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->actingAs($this->user, 'api')
             ->getJson('/api/shop/orders');
 
         $response->assertOk()
@@ -103,7 +99,7 @@ describe('Orders', function () {
         $product = Product::factory()->create(['status' => 'active', 'stock' => 10, 'points_required' => 1000]);
         UserPoint::create(['user_id' => $this->user->id, 'total_points' => 100, 'redeemable_points' => 100]);
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->actingAs($this->user, 'api')
             ->postJson('/api/shop/orders', [
                 'product_id' => $product->id,
                 'quantity' => 1,
@@ -118,7 +114,7 @@ describe('Orders', function () {
     });
 
     it('validates required fields', function () {
-        $response = $this->withHeader('Authorization', 'Bearer '.$this->token)
+        $response = $this->actingAs($this->user, 'api')
             ->postJson('/api/shop/orders', []);
 
         $response->assertStatus(422);
