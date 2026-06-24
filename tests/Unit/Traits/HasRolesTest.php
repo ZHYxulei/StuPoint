@@ -8,12 +8,22 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Ensure clean cache for each test
     HasRoles::$roleSlugCache = [];
 });
 
+function createRole(string $slug): Role
+{
+    return Role::create([
+        'name' => ucfirst(str_replace('_', ' ', $slug)),
+        'slug' => $slug,
+        'description' => $slug.' role',
+        'is_system' => true,
+        'level' => 50,
+    ]);
+}
+
 it('returns true when user has the role', function () {
-    $role = Role::factory()->student()->create();
+    $role = createRole('student');
     $user = User::factory()->create();
     $user->assignRole($role);
 
@@ -28,8 +38,8 @@ it('returns false when user lacks the role', function () {
 });
 
 it('returns true for multiple roles', function () {
-    $studentRole = Role::factory()->student()->create();
-    $teacherRole = Role::factory()->teacher()->create();
+    $studentRole = createRole('student');
+    $teacherRole = createRole('teacher');
     $user = User::factory()->create();
     $user->assignRole($studentRole);
     $user->assignRole($teacherRole);
@@ -41,7 +51,7 @@ it('returns true for multiple roles', function () {
 
 it('reflects assignRole in hasRole', function () {
     HasRoles::$roleSlugCache = [];
-    $role = Role::factory()->student()->create();
+    $role = createRole('student');
     $user = User::factory()->create();
 
     expect($user->hasRole('student'))->toBeFalse();
@@ -52,7 +62,7 @@ it('reflects assignRole in hasRole', function () {
 });
 
 it('reflects removeRole in hasRole', function () {
-    $role = Role::factory()->student()->create();
+    $role = createRole('student');
     $user = User::factory()->create();
     $user->assignRole($role);
 
@@ -64,8 +74,8 @@ it('reflects removeRole in hasRole', function () {
 });
 
 it('reflects syncRoles in hasRole', function () {
-    $studentRole = Role::factory()->student()->create();
-    $teacherRole = Role::factory()->teacher()->create();
+    $studentRole = createRole('student');
+    $teacherRole = createRole('teacher');
     $user = User::factory()->create();
     $user->assignRole($studentRole);
 
@@ -79,19 +89,16 @@ it('reflects syncRoles in hasRole', function () {
 });
 
 it('caches roles to reduce database queries', function () {
-    $role = Role::factory()->student()->create();
+    $role = createRole('student');
     $user = User::factory()->create();
     $user->assignRole($role);
 
-    // Enable query log
     DB::enableQueryLog();
 
-    // Call hasRole multiple times
     $user->hasRole('student');
     $user->hasRole('student');
     $user->hasRole('student');
 
-    // Should only have 1 query for roles (the first call)
     $roleQueries = collect(DB::getQueryLog())->filter(fn ($q) => str_contains($q['query'], 'roles'));
 
     expect($roleQueries->count())->toBe(1);
