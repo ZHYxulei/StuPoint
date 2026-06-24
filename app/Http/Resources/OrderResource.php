@@ -32,7 +32,7 @@ class OrderResource extends JsonResource
                 'id' => $this->product->id,
                 'name' => $this->product->name,
                 'image' => $this->product->image,
-                'points_cost' => $this->product->points_cost,
+                'points_required' => $this->product->points_required,
             ]),
             'statusHistory' => $this->whenLoaded('statusHistory', fn () => $this->statusHistory->map(fn ($history) => [
                 'id' => $history->id,
