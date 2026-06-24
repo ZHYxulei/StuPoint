@@ -25,8 +25,10 @@ abstract class TestCase extends BaseTestCase
         // Clear static role cache between tests
         HasRoles::$roleSlugCache = [];
 
-        // Ensure Passport tables exist (oauth_access_tokens, etc.)
+        // Ensure Passport keys exist
         Artisan::call('passport:keys', ['--no-interaction' => true]);
-        Artisan::call('migrate', ['--no-interaction' => true]);
+
+        // Run Passport migrations (not included in default migrations)
+        $this->loadMigrationsFrom(__DIR__.'/../vendor/laravel/passport/database/migrations');
     }
 }

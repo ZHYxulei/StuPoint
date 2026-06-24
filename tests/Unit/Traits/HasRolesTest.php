@@ -2,9 +2,15 @@
 
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\HasRoles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    // Ensure clean cache for each test
+    HasRoles::$roleSlugCache = [];
+});
 
 it('returns true when user has the role', function () {
     $role = Role::factory()->student()->create();
@@ -15,6 +21,7 @@ it('returns true when user has the role', function () {
 });
 
 it('returns false when user lacks the role', function () {
+    HasRoles::$roleSlugCache = [];
     $user = User::factory()->create();
 
     expect($user->hasRole('student'))->toBeFalse();
@@ -33,6 +40,7 @@ it('returns true for multiple roles', function () {
 });
 
 it('reflects assignRole in hasRole', function () {
+    HasRoles::$roleSlugCache = [];
     $role = Role::factory()->student()->create();
     $user = User::factory()->create();
 
