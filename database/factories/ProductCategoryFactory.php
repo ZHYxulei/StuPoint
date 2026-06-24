@@ -13,6 +13,7 @@ class ProductCategoryFactory extends Factory
     {
         return [
             'name' => fake()->unique()->word(),
+            'slug' => fake()->unique()->slug(),
             'description' => fake()->sentence(),
             'sort_order' => fake()->numberBetween(0, 100),
         ];
