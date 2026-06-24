@@ -17,9 +17,8 @@ class ProductResource extends JsonResource
             'points_required' => $this->points_required,
             'stock' => $this->stock,
             'category_id' => $this->category_id,
+            'is_third_party' => $this->is_third_party,
             'status' => $this->status,
-            'requires_verification' => $this->requires_verification,
-            'max_per_user' => $this->max_per_user,
             'created_at' => $this->created_at?->toIso8601String(),
 
             // Relations
