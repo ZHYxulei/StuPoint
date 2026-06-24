@@ -28,7 +28,10 @@ abstract class TestCase extends BaseTestCase
         // Ensure Passport keys exist
         Artisan::call('passport:keys', ['--no-interaction' => true]);
 
-        // Run Passport migrations (not included in default migrations)
-        $this->loadMigrationsFrom(__DIR__.'/../vendor/laravel/passport/database/migrations');
+        // Run Passport migrations (vendor migrations not in default path)
+        Artisan::call('migrate', [
+            '--path' => 'vendor/laravel/passport/database/migrations',
+            '--no-interaction' => true,
+        ]);
     }
 }
