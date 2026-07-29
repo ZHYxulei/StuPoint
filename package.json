@@ -3,13 +3,18 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "php artisan wayfinder:generate --with-form --no-interaction && vite build",
-        "build:ssr": "php artisan wayfinder:generate --with-form --no-interaction && vite build && vite build --ssr",
+        "wayfinder:generate": "php artisan wayfinder:generate --with-form --no-interaction",
+        "build": "npm run wayfinder:generate && vite build",
+        "build:ssr": "npm run wayfinder:generate && vite build && vite build --ssr",
         "dev": "vite",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
-        "types": "tsc --noEmit",
+        "lint:check": "eslint .",
+        "types": "npm run wayfinder:generate && tsc --noEmit",
+        "audit:js": "npm audit --audit-level=high --omit=optional",
+        "gate:frontend:static": "npm run format:check && npm run lint:check && npm run types",
+        "gate:frontend:build": "npm run build && npm run build:ssr",
         "update_env": "node scripts/update_env.cjs"
     },
     "devDependencies": {
