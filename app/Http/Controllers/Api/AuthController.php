@@ -27,6 +27,18 @@ class AuthController extends Controller
             ]);
         }
 
+        if ($user->registration_status === 'pending') {
+            throw ValidationException::withMessages([
+                'email' => ['您的账号正在审核中，暂时无法登录'],
+            ]);
+        }
+
+        if ($user->registration_status === 'rejected') {
+            throw ValidationException::withMessages([
+                'email' => ['您的账号暂无法登录，请联系管理员'],
+            ]);
+        }
+
         // Revoke previous tokens
         $user->tokens()->delete();
 

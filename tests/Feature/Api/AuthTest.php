@@ -14,7 +14,7 @@ beforeEach(function () {
 
 describe('Login', function () {
     it('returns token and user on valid credentials', function () {
-        $user = User::factory()->create([
+        $user = User::factory()->approved()->create([
             'password' => bcrypt('password123'),
         ]);
         $user->assignRole($this->studentRole);
@@ -43,6 +43,40 @@ describe('Login', function () {
         ]);
 
         $response->assertStatus(422);
+    });
+
+    it('rejects pending users before issuing a token', function () {
+        $user = User::factory()->pending()->create([
+            'password' => bcrypt('password123'),
+        ]);
+        $user->assignRole($this->studentRole);
+
+        $response = $this->postJson('/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('email');
+
+        expect($user->tokens()->count())->toBe(0);
+    });
+
+    it('rejects rejected users before issuing a token', function () {
+        $user = User::factory()->rejected()->create([
+            'password' => bcrypt('password123'),
+        ]);
+        $user->assignRole($this->studentRole);
+
+        $response = $this->postJson('/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('email');
+
+        expect($user->tokens()->count())->toBe(0);
     });
 
     it('validates required fields', function () {

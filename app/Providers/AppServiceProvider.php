@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Listeners\LogUserLogin;
+use App\Models\User;
+use App\Policies\UserPolicy;
 use App\Services\MailConfigService;
 use App\Services\SettingsService;
 use Carbon\CarbonImmutable;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -39,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configurePassport();
+        $this->configurePolicies();
         $this->configureEvents();
 
         if ($this->app->runningInConsole()) {
@@ -113,6 +117,11 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register login event listener
         Event::listen(Login::class, LogUserLogin::class);
+    }
+
+    protected function configurePolicies(): void
+    {
+        Gate::policy(User::class, UserPolicy::class);
     }
 
     protected function configureViewShare(): void

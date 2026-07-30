@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\PointService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -68,6 +70,10 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
+        if ($request->filled('roles')) {
+            Gate::authorize('syncRoles', $user);
+        }
+
         $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'phone' => 'nullable|string|max:20',
@@ -81,7 +87,13 @@ class UserController extends Controller
         $user->update($request->only(['name', 'phone', 'grade', 'class', 'is_head_teacher']));
 
         if ($request->filled('roles')) {
-            $user->roles()->sync($request->roles);
+            $roles = Role::query()->whereIn('id', $request->input('roles', []))->get();
+
+            foreach ($roles as $role) {
+                Gate::authorize('assignRole', [$user, $role]);
+            }
+
+            $user->roles()->sync($roles->pluck('id')->all());
         }
 
         return response()->json([
@@ -93,12 +105,15 @@ class UserController extends Controller
     public function adjustPoints(Request $request, string $id): JsonResponse
     {
         $user = User::findOrFail($id);
+        $operator = $request->user();
 
         $request->validate([
             'type' => 'required|in:add,deduct',
             'amount' => 'required|integer|min:1',
             'reason' => 'required|string|max:500',
         ]);
+
+        abort_unless($this->pointService->canModifyPoints($operator, $user), 403, '权限不足');
 
         if ($request->type === 'add') {
             $this->pointService->addPoints(
@@ -107,7 +122,7 @@ class UserController extends Controller
                 'manual_adjust',
                 [
                     'description' => $request->reason,
-                    'operator_id' => $request->user()->id,
+                    'operator_id' => $operator->id,
                 ]
             );
         } else {
@@ -118,7 +133,7 @@ class UserController extends Controller
                     'manual_adjust',
                     [
                         'description' => $request->reason,
-                        'operator_id' => $request->user()->id,
+                        'operator_id' => $operator->id,
                     ]
                 );
             } catch (\Exception $e) {
