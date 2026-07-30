@@ -52,7 +52,7 @@ class ParentController extends Controller
     public function children(Request $request): JsonResponse
     {
         $children = $request->user()
-            ->childRelations()
+            ->parentRelations()
             ->with('child.points')
             ->get()
             ->map(fn ($relation) => [

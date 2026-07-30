@@ -14,7 +14,7 @@ class ParentController extends Controller
     public function index()
     {
         $children = auth()->user()
-            ->childRelations()
+            ->parentRelations()
             ->with('child.points')
             ->get()
             ->map(fn ($relation) => [
