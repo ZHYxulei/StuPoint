@@ -7,351 +7,512 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use RuntimeException;
 use ZipArchive;
 
 class PluginUploader
 {
-    protected string $pluginsPath;
+    protected string $packagesPath;
 
     protected string $tempPath;
 
+    protected int $maxArchiveSize = 50 * 1024 * 1024;
+
+    protected int $maxArchiveEntries = 500;
+
+    protected int $maxUncompressedSize = 100 * 1024 * 1024;
+
     public function __construct()
     {
-        $this->pluginsPath = base_path('plugins');
+        $this->packagesPath = storage_path('app/plugins/packages');
         $this->tempPath = storage_path('app/temp/plugins');
     }
 
     /**
-     * Upload and install a plugin from ZIP file.
+     * Upload and register a plugin from a ZIP file without executing plugin code.
+     *
+     * @return array{success: bool, plugin: Plugin, message: string}
      */
     public function upload(UploadedFile $file): array
     {
-        // Validate file
         $this->validateFile($file);
+        $this->ensureDirectory($this->tempPath);
+        $this->ensureDirectory($this->packagesPath);
 
-        // Create temp directory if not exists
-        if (! File::exists($this->tempPath)) {
-            File::makeDirectory($this->tempPath, 0755, true);
-        }
-
-        // Generate unique temp directory
         $tempDir = $this->tempPath.'/'.Str::uuid();
+        $tempPackagePath = $tempDir.'/package';
+        $finalPackagePath = null;
 
         try {
-            // Extract ZIP file
-            $extractPath = $this->extractZip($file, $tempDir);
+            $inspection = $this->inspectArchive($file);
+            $manifest = $this->validateManifest($inspection['manifest']);
+            $finalPackagePath = $this->packagePath($manifest['slug']);
 
-            // Parse plugin.json
-            $config = $this->parsePluginConfig($extractPath);
-
-            // Validate plugin config
-            $this->validatePluginConfig($config);
-
-            // Check dependencies
-            $dependencyErrors = $this->checkDependencies($config['dependencies'] ?? []);
-            if (! empty($dependencyErrors)) {
-                throw new \Exception('依赖检查失败: '.implode(', ', $dependencyErrors));
-            }
-
-            // Check if plugin already exists
-            $existingPlugin = Plugin::where('slug', $config['slug'])->first();
+            $existingPlugin = Plugin::where('slug', $manifest['slug'])->first();
             if ($existingPlugin && $existingPlugin->isInstalled()) {
-                throw new \Exception('插件已安装，请先卸载现有版本');
+                throw new RuntimeException('插件已安装，请先卸载现有版本');
             }
 
-            // Move plugin to destination
-            $pluginPath = $this->pluginsPath.'/'.$config['name'];
-            if (File::exists($pluginPath)) {
-                File::deleteDirectory($pluginPath);
+            if (File::exists($finalPackagePath)) {
+                File::deleteDirectory($finalPackagePath);
             }
-            File::move($extractPath, $pluginPath);
 
-            // Register plugin in database
-            $plugin = $this->registerPlugin($config);
+            $this->extractValidatedArchive($file, $inspection['root_directory'], $tempPackagePath);
+            $this->ensureDirectory(dirname($finalPackagePath));
 
-            // Run migrations if exists
-            $this->runMigrations($plugin);
+            if (! File::moveDirectory($tempPackagePath, $finalPackagePath)) {
+                throw new RuntimeException('无法保存插件文件');
+            }
 
-            // Clear temp directory
-            File::deleteDirectory($tempDir);
+            DB::beginTransaction();
+
+            try {
+                $plugin = $this->registerPlugin($manifest);
+                DB::commit();
+            } catch (\Throwable $throwable) {
+                DB::rollBack();
+
+                if ($finalPackagePath && File::exists($finalPackagePath)) {
+                    File::deleteDirectory($finalPackagePath);
+                }
+
+                throw $throwable;
+            }
 
             return [
                 'success' => true,
                 'plugin' => $plugin,
                 'message' => '插件上传成功',
             ];
-        } catch (\Exception $e) {
-            // Clean up on error
+        } catch (\Throwable $throwable) {
+            if ($finalPackagePath && File::exists($finalPackagePath)) {
+                File::deleteDirectory($finalPackagePath);
+            }
+
+            throw $throwable;
+        } finally {
             if (File::exists($tempDir)) {
                 File::deleteDirectory($tempDir);
             }
-
-            throw $e;
         }
     }
 
+    public function hasStoredPackage(string $slug): bool
+    {
+        $manifestPath = $this->packagePath($slug).'/manifest.json';
+
+        return File::exists($manifestPath);
+    }
+
+    public function packagePath(string $slug): string
+    {
+        return $this->packagesPath.'/'.$slug;
+    }
+
     /**
-     * Validate uploaded file.
+     * @return array<string, mixed>
      */
+    public function readStoredManifest(string $slug): ?array
+    {
+        $manifestPath = $this->packagePath($slug).'/manifest.json';
+
+        if (! File::exists($manifestPath)) {
+            return null;
+        }
+
+        $manifest = json_decode(File::get($manifestPath), true);
+
+        if (! is_array($manifest)) {
+            return null;
+        }
+
+        return $this->validateManifest($manifest);
+    }
+
     protected function validateFile(UploadedFile $file): void
     {
         if (! $file->isValid()) {
-            throw new \Exception('文件上传失败');
+            throw new RuntimeException('文件上传失败');
         }
 
-        $extension = $file->getClientOriginalExtension();
+        $extension = strtolower($file->getClientOriginalExtension());
         if ($extension !== 'zip') {
-            throw new \Exception('只支持 ZIP 格式文件');
+            throw new RuntimeException('只支持 ZIP 格式文件');
         }
 
-        $maxSize = 50 * 1024 * 1024; // 50MB
-        if ($file->getSize() > $maxSize) {
-            throw new \Exception('文件大小不能超过 50MB');
+        if (($file->getSize() ?? 0) > $this->maxArchiveSize) {
+            throw new RuntimeException('文件大小不能超过 50MB');
         }
     }
 
     /**
-     * Extract ZIP file.
+     * @return array{root_directory: string, manifest: array<string, mixed>}
      */
-    protected function extractZip(UploadedFile $file, string $destination): string
+    protected function inspectArchive(UploadedFile $file): array
     {
         $zip = new ZipArchive;
         $openResult = $zip->open($file->getRealPath());
 
         if ($openResult !== true) {
-            throw new \Exception('无法打开 ZIP 文件');
+            throw new RuntimeException('无法打开 ZIP 文件');
         }
 
-        // Validate ZIP entries to prevent path traversal (Zip Slip)
-        $realDest = realpath($destination);
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $name = $zip->getNameIndex($i);
-            $extractPath = realpath($destination.'/'.$name);
-            if ($extractPath && strpos($extractPath, $realDest) !== 0) {
-                $zip->close();
-                throw new \Exception('ZIP 文件包含非法路径');
+        try {
+            if ($zip->numFiles < 1) {
+                throw new RuntimeException('ZIP 文件不能为空');
             }
+
+            if ($zip->numFiles > $this->maxArchiveEntries) {
+                throw new RuntimeException('ZIP 文件内容过多');
+            }
+
+            $rootDirectory = null;
+            $totalUncompressedSize = 0;
+
+            for ($index = 0; $index < $zip->numFiles; $index++) {
+                $stat = $zip->statIndex($index);
+                if (! is_array($stat) || ! isset($stat['name'])) {
+                    throw new RuntimeException('ZIP 文件结构无效');
+                }
+
+                $entryName = $this->normalizeEntryName($stat['name']);
+                $this->assertSafeEntryName($entryName);
+                $this->assertNotSymlink($zip, $index, $entryName);
+
+                $trimmedEntry = trim($entryName, '/');
+                if ($trimmedEntry === '') {
+                    continue;
+                }
+
+                $segments = explode('/', $trimmedEntry);
+                if (count($segments) < 2) {
+                    throw new RuntimeException('ZIP 文件必须包含单一插件根目录');
+                }
+
+                $topLevelDirectory = $segments[0];
+                if ($rootDirectory === null) {
+                    $rootDirectory = $topLevelDirectory;
+                } elseif ($rootDirectory !== $topLevelDirectory) {
+                    throw new RuntimeException('ZIP 文件必须包含单一插件根目录');
+                }
+
+                if (! str_ends_with($entryName, '/')) {
+                    $totalUncompressedSize += (int) ($stat['size'] ?? 0);
+                    if ($totalUncompressedSize > $this->maxUncompressedSize) {
+                        throw new RuntimeException('ZIP 文件解压后体积过大');
+                    }
+                }
+            }
+
+            if ($rootDirectory === null) {
+                throw new RuntimeException('ZIP 文件必须包含单一插件根目录');
+            }
+
+            $manifestPath = $rootDirectory.'/manifest.json';
+            $legacyManifestPath = $rootDirectory.'/plugin.json';
+
+            if ($zip->locateName($manifestPath) === false) {
+                throw new RuntimeException('缺少 manifest.json 配置文件');
+            }
+
+            if ($zip->locateName($legacyManifestPath) !== false) {
+                throw new RuntimeException('只支持 manifest.json 配置文件');
+            }
+
+            $manifestContent = $zip->getFromName($manifestPath);
+            if (! is_string($manifestContent)) {
+                throw new RuntimeException('无法读取 manifest.json 配置文件');
+            }
+
+            $manifest = json_decode($manifestContent, true);
+            if (! is_array($manifest)) {
+                throw new RuntimeException('manifest.json 格式错误');
+            }
+
+            return [
+                'root_directory' => $rootDirectory,
+                'manifest' => $manifest,
+            ];
+        } finally {
+            $zip->close();
         }
-
-        // Extract to temp directory
-        $zip->extractTo($destination);
-        $zip->close();
-
-        // Find the plugin root directory (first directory or current directory)
-        $extractedContents = scandir($destination);
-        $pluginRoot = $destination;
-
-        // Skip . and ..
-        $directories = array_filter($extractedContents, function ($item) {
-            return $item !== '.' && $item !== '..' && is_dir($destination.'/'.$item);
-        });
-
-        // If there's only one directory, use it as plugin root
-        if (count($directories) === 1) {
-            $pluginRoot = $destination.'/'.reset($directories);
-        }
-
-        return $pluginRoot;
     }
 
-    /**
-     * Parse plugin.json configuration file.
-     */
-    protected function parsePluginConfig(string $pluginPath): array
+    protected function extractValidatedArchive(UploadedFile $file, string $rootDirectory, string $destination): void
     {
-        $configFile = $pluginPath.'/plugin.json';
+        $zip = new ZipArchive;
+        $openResult = $zip->open($file->getRealPath());
 
-        if (! File::exists($configFile)) {
-            throw new \Exception('缺少 plugin.json 配置文件');
+        if ($openResult !== true) {
+            throw new RuntimeException('无法打开 ZIP 文件');
         }
 
-        $config = json_decode(File::get($configFile), true);
+        try {
+            $this->ensureDirectory($destination);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('plugin.json 格式错误: '.json_last_error_msg());
-        }
+            for ($index = 0; $index < $zip->numFiles; $index++) {
+                $stat = $zip->statIndex($index);
+                if (! is_array($stat) || ! isset($stat['name'])) {
+                    throw new RuntimeException('ZIP 文件结构无效');
+                }
 
-        return $config;
-    }
+                $entryName = $this->normalizeEntryName($stat['name']);
+                $this->assertSafeEntryName($entryName);
+                $this->assertNotSymlink($zip, $index, $entryName);
 
-    /**
-     * Validate plugin configuration.
-     */
-    protected function validatePluginConfig(array $config): void
-    {
-        $required = ['name', 'version', 'slug', 'description', 'author'];
-        foreach ($required as $field) {
-            if (empty($config[$field])) {
-                throw new \Exception("缺少必需字段: {$field}");
+                $trimmedEntry = trim($entryName, '/');
+                if ($trimmedEntry === '') {
+                    continue;
+                }
+
+                if (! str_starts_with($trimmedEntry, $rootDirectory.'/')) {
+                    throw new RuntimeException('ZIP 文件必须包含单一插件根目录');
+                }
+
+                $relativePath = substr($trimmedEntry, strlen($rootDirectory) + 1);
+                if ($relativePath === false || $relativePath === '') {
+                    continue;
+                }
+
+                $targetPath = $destination.'/'.$relativePath;
+                $this->assertSafeTargetPath($destination, $targetPath);
+
+                if (str_ends_with($entryName, '/')) {
+                    $this->ensureDirectory($targetPath);
+
+                    continue;
+                }
+
+                $contents = $zip->getFromIndex($index);
+                if ($contents === false) {
+                    throw new RuntimeException('无法提取 ZIP 文件内容');
+                }
+
+                $this->ensureDirectory(dirname($targetPath));
+                file_put_contents($targetPath, $contents);
             }
-        }
-
-        // Validate slug format
-        if (! preg_match('/^[a-z0-9_-]+$/', $config['slug'])) {
-            throw new \Exception('插件标识符只能包含小写字母、数字、下划线和连字符');
-        }
-
-        // Validate version
-        if (! preg_match('/^\d+\.\d+\.\d+$/', $config['version'])) {
-            throw new \Exception('版本号格式错误，应为 x.y.z 格式');
-        }
-
-        // Check if plugin main class exists
-        $pluginClass = $config['class'] ?? null;
-        if ($pluginClass && ! class_exists($pluginClass)) {
-            throw new \Exception("插件主类 {$pluginClass} 不存在");
-        }
-    }
-
-    /**
-     * Check plugin dependencies.
-     */
-    protected function checkDependencies(array $dependencies): array
-    {
-        $errors = [];
-
-        foreach ($dependencies as $dependency) {
-            $slug = $dependency['slug'] ?? null;
-            $version = $dependency['version'] ?? null;
-
-            if (! $slug) {
-                $errors[] = '依赖项缺少 slug';
-
-                continue;
-            }
-
-            // Check if dependency is installed
-            $installedPlugin = Plugin::where('slug', $slug)
-                ->whereIn('status', ['installed', 'enabled', 'disabled'])
-                ->first();
-
-            if (! $installedPlugin) {
-                $errors[] = "缺少依赖插件: {$slug}".($version ? " (版本 {$version})" : '');
-
-                continue;
-            }
-
-            // Check version constraint if specified
-            if ($version && ! $this->checkVersion($installedPlugin->version, $version)) {
-                $errors[] = "依赖插件 {$slug} 版本不满足要求，需要 {$version}，当前 {$installedPlugin->version}";
-            }
-
-            // Check if dependency is enabled
-            if (! $installedPlugin->isEnabled()) {
-                $errors[] = "依赖插件 {$slug} 未启用";
-            }
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Check if installed version satisfies version constraint.
-     */
-    protected function checkVersion(string $installed, string $constraint): bool
-    {
-        // Simple version comparison (can be enhanced with composer/semver)
-        // Supports: >=1.0.0, ^1.0.0, ~1.0.0, 1.0.0
-
-        if (str_starts_with($constraint, '>=')) {
-            $required = substr($constraint, 2);
-
-            return version_compare($installed, $required, '>=');
-        }
-
-        if (str_starts_with($constraint, '^')) {
-            $required = substr($constraint, 1);
-            $requiredParts = explode('.', $required);
-            $installedParts = explode('.', $installed);
-
-            // Caret version: ^1.2.3 means >=1.2.3 and <2.0.0
-            return version_compare($installed, $required, '>=')
-                && $installedParts[0] === $requiredParts[0];
-        }
-
-        if (str_starts_with($constraint, '~')) {
-            $required = substr($constraint, 1);
-            $requiredParts = explode('.', $required);
-            $installedParts = explode('.', $installed);
-
-            // Tilde version: ~1.2.3 means >=1.2.3 and <1.3.0
-            return version_compare($installed, $required, '>=')
-                && $installedParts[0] === $requiredParts[0]
-                && $installedParts[1] === $requiredParts[1];
-        }
-
-        // Exact version match
-        return version_compare($installed, $constraint, '=');
-    }
-
-    /**
-     * Register plugin in database.
-     */
-    protected function registerPlugin(array $config): Plugin
-    {
-        return DB::transaction(function () use ($config) {
-            return Plugin::updateOrCreate(
-                ['slug' => $config['slug']],
-                [
-                    'name' => $config['name'],
-                    'version' => $config['version'],
-                    'description' => $config['description'],
-                    'author' => $config['author'],
-                    'status' => 'installed',
-                    'dependencies' => $config['dependencies'] ?? [],
-                    'config' => $config['config'] ?? [],
-                    'installed_at' => now(),
-                ]
-            );
-        });
-    }
-
-    /**
-     * Run plugin migrations if exists.
-     */
-    protected function runMigrations(Plugin $plugin): void
-    {
-        $migrationPath = $this->pluginsPath.'/'.$plugin->name.'/database/migrations';
-
-        if (File::exists($migrationPath) && count(File::files($migrationPath)) > 0) {
-            // Run migrations for this plugin
-            // This is a simplified version - in production you might want more sophisticated handling
-            try {
-                \Artisan::call('migrate', [
-                    '--path' => 'app/Plugins/'.$plugin->name.'/database/migrations',
-                    '--force' => true,
-                ]);
-            } catch (\Exception $e) {
-                // Log error but don't fail the installation
-                \Log::error("Plugin migration failed: {$e->getMessage()}");
-            }
+        } finally {
+            $zip->close();
         }
     }
 
     /**
-     * Uninstall a plugin.
+     * @param  array<string, mixed>  $manifest
+     * @return array<string, mixed>
      */
-    public function uninstall(Plugin $plugin): void
+    protected function validateManifest(array $manifest): array
     {
-        DB::transaction(function () use ($plugin) {
-            // Check for dependents
-            $dependents = Plugin::whereJsonContains('dependencies', [
-                ['slug' => $plugin->slug],
-            ])->whereIn('status', ['installed', 'enabled', 'disabled'])->get();
+        $name = trim((string) ($manifest['name'] ?? ''));
+        $slug = trim((string) ($manifest['slug'] ?? ''));
+        $version = trim((string) ($manifest['version'] ?? ''));
+        $description = trim((string) ($manifest['description'] ?? ''));
+        $class = trim((string) ($manifest['class'] ?? ''));
+        $directory = trim((string) ($manifest['directory'] ?? $slug));
 
-            if ($dependents->count() > 0) {
-                $names = $dependents->pluck('name')->implode(', ');
-                throw new \Exception("无法卸载：以下插件依赖此插件: {$names}");
+        if ($name === '' || $slug === '' || $version === '' || $description === '' || $class === '') {
+            throw new RuntimeException('manifest.json 缺少必需字段');
+        }
+
+        if (! preg_match('/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/', $slug)) {
+            throw new RuntimeException('插件标识符格式无效');
+        }
+
+        if (! preg_match('/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/', $version)) {
+            throw new RuntimeException('版本号格式错误，应为 x.y.z 格式');
+        }
+
+        if (! preg_match('/^[A-Za-z_][A-Za-z0-9_\\\\]*$/', $class) || str_contains($class, '..') || str_starts_with($class, '\\')) {
+            throw new RuntimeException('插件主类格式无效');
+        }
+
+        if ($directory === '' || ! preg_match('/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/', $directory)) {
+            throw new RuntimeException('插件目录格式无效');
+        }
+
+        if ($directory !== $slug) {
+            throw new RuntimeException('插件目录必须与 slug 一致');
+        }
+
+        $authors = $this->normalizeAuthors($manifest);
+        $dependencies = $this->normalizeDependencies($manifest['dependencies'] ?? []);
+
+        return [
+            'name' => $name,
+            'slug' => $slug,
+            'version' => $version,
+            'description' => $description,
+            'class' => $class,
+            'directory' => $directory,
+            'authors' => $authors,
+            'author' => implode(', ', array_column($authors, 'name')),
+            'dependencies' => $dependencies,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $manifest
+     * @return array<int, array{name: string, email?: string}>
+     */
+    protected function normalizeAuthors(array $manifest): array
+    {
+        $authors = $manifest['authors'] ?? null;
+
+        if (is_array($authors) && $authors !== []) {
+            $normalizedAuthors = [];
+
+            foreach ($authors as $author) {
+                if (! is_array($author)) {
+                    throw new RuntimeException('manifest.json 作者信息格式无效');
+                }
+
+                $authorName = trim((string) ($author['name'] ?? ''));
+                if ($authorName === '') {
+                    throw new RuntimeException('manifest.json 作者名称不能为空');
+                }
+
+                $normalizedAuthor = ['name' => $authorName];
+                $authorEmail = trim((string) ($author['email'] ?? ''));
+                if ($authorEmail !== '') {
+                    $normalizedAuthor['email'] = $authorEmail;
+                }
+
+                $normalizedAuthors[] = $normalizedAuthor;
             }
 
-            // Delete plugin directory
-            $pluginPath = $this->pluginsPath.'/'.$plugin->name;
-            if (File::exists($pluginPath)) {
-                File::deleteDirectory($pluginPath);
+            return $normalizedAuthors;
+        }
+
+        $legacyAuthor = trim((string) ($manifest['author'] ?? ''));
+        if ($legacyAuthor !== '') {
+            return [['name' => $legacyAuthor]];
+        }
+
+        throw new RuntimeException('manifest.json 缺少作者信息');
+    }
+
+    /**
+     * @return array{composer: array<string, string>, plugins: array<int, string>}
+     */
+    protected function normalizeDependencies(mixed $dependencies): array
+    {
+        if ($dependencies === null) {
+            return ['composer' => [], 'plugins' => []];
+        }
+
+        if (! is_array($dependencies)) {
+            throw new RuntimeException('manifest.json 依赖格式无效');
+        }
+
+        $composerDependencies = $dependencies['composer'] ?? [];
+        if (! is_array($composerDependencies)) {
+            throw new RuntimeException('manifest.json composer 依赖格式无效');
+        }
+
+        foreach ($composerDependencies as $package => $constraint) {
+            if (! is_string($package) || trim($package) === '' || ! is_string($constraint) || trim($constraint) === '') {
+                throw new RuntimeException('manifest.json composer 依赖格式无效');
+            }
+        }
+
+        $pluginDependencies = $dependencies['plugins'] ?? [];
+        if (! is_array($pluginDependencies)) {
+            throw new RuntimeException('manifest.json 插件依赖格式无效');
+        }
+
+        $normalizedPluginDependencies = [];
+        foreach ($pluginDependencies as $pluginDependency) {
+            if (! is_string($pluginDependency) || trim($pluginDependency) === '') {
+                throw new RuntimeException('manifest.json 插件依赖格式无效');
             }
 
-            // Delete from database
-            $plugin->delete();
-        });
+            $normalizedPluginDependencies[] = trim($pluginDependency);
+        }
+
+        return [
+            'composer' => $composerDependencies,
+            'plugins' => $normalizedPluginDependencies,
+        ];
+    }
+
+    protected function registerPlugin(array $manifest): Plugin
+    {
+        return Plugin::updateOrCreate(
+            ['slug' => $manifest['slug']],
+            [
+                'name' => $manifest['name'],
+                'version' => $manifest['version'],
+                'description' => $manifest['description'],
+                'author' => $manifest['author'],
+                'status' => 'installed',
+                'dependencies' => $manifest['dependencies'],
+                'config' => [],
+                'installed_at' => now(),
+            ]
+        );
+    }
+
+    protected function normalizeEntryName(string $entryName): string
+    {
+        return str_replace('\\', '/', $entryName);
+    }
+
+    protected function assertSafeEntryName(string $entryName): void
+    {
+        if (str_contains($entryName, "\0")) {
+            throw new RuntimeException('ZIP 文件包含非法路径');
+        }
+
+        if (str_starts_with($entryName, '/') || preg_match('/^[A-Za-z]:\//', $entryName) === 1) {
+            throw new RuntimeException('ZIP 文件包含非法路径');
+        }
+
+        $segments = explode('/', trim($entryName, '/'));
+        foreach ($segments as $segment) {
+            if ($segment === '.' || $segment === '..') {
+                throw new RuntimeException('ZIP 文件包含非法路径');
+            }
+        }
+    }
+
+    protected function assertNotSymlink(ZipArchive $zip, int $index, string $entryName): void
+    {
+        if (! method_exists($zip, 'getExternalAttributesIndex')) {
+            return;
+        }
+
+        $operationsSystem = null;
+        $attributes = null;
+
+        if (! $zip->getExternalAttributesIndex($index, $operationsSystem, $attributes)) {
+            return;
+        }
+
+        if ($operationsSystem !== ZipArchive::OPSYS_UNIX) {
+            return;
+        }
+
+        $fileType = (($attributes ?? 0) >> 16) & 0170000;
+        if ($fileType === 0120000) {
+            throw new RuntimeException('ZIP 文件包含符号链接: '.$entryName);
+        }
+    }
+
+    protected function assertSafeTargetPath(string $basePath, string $targetPath): void
+    {
+        $normalizedBasePath = str_replace('\\', '/', rtrim($basePath, '/\\'));
+        $normalizedTargetPath = str_replace('\\', '/', $targetPath);
+
+        if (! str_starts_with($normalizedTargetPath, $normalizedBasePath.'/')) {
+            throw new RuntimeException('ZIP 文件包含非法路径');
+        }
+    }
+
+    protected function ensureDirectory(string $path): void
+    {
+        if (File::exists($path)) {
+            return;
+        }
+
+        File::makeDirectory($path, 0755, true);
     }
 }
