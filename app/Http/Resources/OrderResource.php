@@ -18,7 +18,10 @@ class OrderResource extends JsonResource
             'unit_points_spent' => $this->unit_points_spent,
             'points_spent' => $this->points_spent,
             'status' => $this->status,
-            'verification_code' => $this->verification_code,
+            'verification_code' => $this->when(
+                $this->canExposeVerificationCode($request),
+                $this->verification_code
+            ),
             'verified_at' => $this->verified_at?->toIso8601String(),
             'notes' => $this->notes,
             'created_at' => $this->created_at?->toIso8601String(),
@@ -43,5 +46,13 @@ class OrderResource extends JsonResource
                 'created_at' => $history->created_at?->toIso8601String(),
             ])),
         ];
+    }
+
+    private function canExposeVerificationCode(Request $request): bool
+    {
+        return $request->user()?->id === $this->user_id
+            && $this->verification_code !== null
+            && ! in_array($this->status, ['completed', 'cancelled'], true)
+            && $this->verification_code_expires_at?->isFuture() === true;
     }
 }

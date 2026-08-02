@@ -51,20 +51,93 @@ class OrderController extends Controller
     /**
      * Show order details.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         $order = Order::with(['product.category', 'user', 'statusHistory.operator', 'verifiedBy'])->findOrFail($id);
-
-        $verificationCode = $this->verificationCodeService->get($order->order_no);
-        $ttl = $this->verificationCodeService->getTTL($order->order_no);
         $isExpired = ! $this->verificationCodeService->exists($order->order_no);
+        $canViewFullShippingDetails = $request->user()->hasRole('super_admin')
+            || $request->user()->hasRole('admin');
 
         return inertia('admin/orders/show', [
-            'order' => $order,
-            'verification_code' => $verificationCode,
-            'verification_code_expires_at' => $ttl > 0 ? now()->addSeconds($ttl) : null,
+            'order' => $this->orderPayload($order, $canViewFullShippingDetails),
             'verification_code_expired' => $isExpired,
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function orderPayload(Order $order, bool $canViewFullShippingDetails): array
+    {
+        $shippingInfo = $order->shipping_info ?? [];
+
+        return [
+            'id' => $order->id,
+            'order_no' => $order->order_no,
+            'points_spent' => $order->points_spent,
+            'status' => $order->status,
+            'shipping_info' => [
+                'name' => $shippingInfo['name'] ?? null,
+                'phone' => $canViewFullShippingDetails
+                    ? ($shippingInfo['phone'] ?? null)
+                    : $this->maskPhone($shippingInfo['phone'] ?? null),
+                'address' => $canViewFullShippingDetails
+                    ? ($shippingInfo['address'] ?? null)
+                    : $this->maskAddress($shippingInfo['address'] ?? null),
+            ],
+            'third_party_order_id' => $order->third_party_order_id,
+            'verified_at' => $order->verified_at?->toIso8601String(),
+            'verified_by' => $order->verified_by,
+            'created_at' => $order->created_at?->toIso8601String(),
+            'updated_at' => $order->updated_at?->toIso8601String(),
+            'product' => [
+                'id' => $order->product->id,
+                'name' => $order->product->name,
+                'category' => $order->product->category ? [
+                    'id' => $order->product->category->id,
+                    'name' => $order->product->category->name,
+                ] : null,
+            ],
+            'user' => [
+                'id' => $order->user->id,
+                'name' => $order->user->name,
+                'email' => $order->user->email,
+            ],
+            'verifiedBy' => $order->verifiedBy ? [
+                'id' => $order->verifiedBy->id,
+                'name' => $order->verifiedBy->name,
+                'email' => $order->verifiedBy->email,
+            ] : null,
+            'statusHistory' => $order->statusHistory->map(fn ($history) => [
+                'id' => $history->id,
+                'from_status' => $history->from_status,
+                'to_status' => $history->to_status,
+                'note' => $history->note,
+                'created_at' => $history->created_at?->toIso8601String(),
+                'operator' => $history->operator ? [
+                    'id' => $history->operator->id,
+                    'name' => $history->operator->name,
+                ] : null,
+            ])->values(),
+        ];
+    }
+
+    private function maskPhone(?string $phone): ?string
+    {
+        if ($phone === null || mb_strlen($phone) < 7) {
+            return $phone;
+        }
+
+        return mb_substr($phone, 0, 3).'****'.mb_substr($phone, -4);
+    }
+
+    private function maskAddress(?string $address): ?string
+    {
+        if ($address === null || mb_strlen($address) <= 4) {
+            return $address;
+        }
+
+        return mb_substr($address, 0, -4).'****';
     }
 
     /**

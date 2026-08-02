@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Resources\OrderResource;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
@@ -93,6 +95,56 @@ describe('Orders', function () {
             ]);
 
         expect($response->json('data'))->toHaveCount(1);
+    });
+
+    it('returns an active unexpired verification code only to the order owner', function () {
+        $product = Product::factory()->create();
+        $activeOrder = Order::factory()->for($this->user)->for($product)->create([
+            'status' => 'pending',
+            'verification_code' => '123456',
+            'verification_code_expires_at' => now()->addHour(),
+        ]);
+        Order::factory()->for($this->user)->for($product)->completed()->create([
+            'verification_code' => '222222',
+            'verification_code_expires_at' => now()->addHour(),
+        ]);
+        Order::factory()->for($this->user)->for($product)->cancelled()->create([
+            'verification_code' => '333333',
+            'verification_code_expires_at' => now()->addHour(),
+        ]);
+        Order::factory()->for($this->user)->for($product)->create([
+            'status' => 'pending',
+            'verification_code' => '444444',
+            'verification_code_expires_at' => now()->subMinute(),
+        ]);
+
+        $response = $this->actingAs($this->user, 'api')
+            ->getJson('/api/shop/orders');
+
+        $response->assertOk();
+
+        $orders = collect($response->json('data'));
+
+        expect($orders->firstWhere('id', $activeOrder->id))
+            ->toHaveKey('verification_code', '123456');
+        expect($orders->where('id', '!=', $activeOrder->id)->values()->all())
+            ->each->not->toHaveKey('verification_code');
+    });
+
+    it('does not expose an order verification code through the resource to another user', function () {
+        $owner = User::factory()->approved()->create();
+        $order = Order::factory()->for($owner)->create([
+            'status' => 'pending',
+            'verification_code' => '987654',
+            'verification_code_expires_at' => now()->addHour(),
+        ]);
+
+        $request = request()->duplicate();
+        $request->setUserResolver(fn () => $this->user);
+
+        $payload = (new OrderResource($order))->toResponse($request)->getData(true);
+
+        expect($payload['data'])->not->toHaveKey('verification_code');
     });
 
     it('returns 400 with insufficient points', function () {
