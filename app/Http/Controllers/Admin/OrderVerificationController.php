@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\User;
 use App\Services\VerificationCodeService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -22,6 +23,15 @@ class OrderVerificationController extends Controller
      */
     public function verify(Request $request, string $id)
     {
+        $method = $request->input('method');
+
+        if ($method === 'password') {
+            return response()->json([
+                'success' => false,
+                'message' => '无效的核销方式',
+            ], 400);
+        }
+
         // Manually find the order to avoid model binding issues
         $order = Order::findOrFail($id);
 
@@ -64,7 +74,6 @@ class OrderVerificationController extends Controller
             ], 400);
         }
 
-        $method = $request->input('method');
         $success = false;
         $message = '';
 
@@ -82,34 +91,7 @@ class OrderVerificationController extends Controller
                         'code' => 'required|string|size:6',
                     ]);
 
-                    // Check if verification code exists
-                    if (! $this->verificationCodeService->exists($order->order_no)) {
-                        $message = '验证码不存在或已过期';
-                        Log::warning('Verification code not found', [
-                            'order_no' => $order->order_no,
-                        ]);
-                        break;
-                    }
-
-                    $success = $this->verificationCodeService->verify($order->order_no, $request->input('code'));
-                    $message = $success ? '核销成功（验证码）' : '验证码错误';
-
-                    if (! $success) {
-                        Log::warning('Verification code mismatch', [
-                            'order_no' => $order->order_no,
-                            'provided_code' => $request->input('code'),
-                        ]);
-                    }
-                    break;
-
-                case 'password':
-                    $request->validate([
-                        'password' => 'required|string',
-                    ]);
-
-                    $success = $this->verifyByPassword($order, $request);
-                    $message = $success ? '核销成功（密码）' : '密码错误';
-                    break;
+                    return $this->verifyByPersistedCode($order->id, $request->input('code'));
 
                 case 'id_card':
                     $request->validate([
@@ -149,18 +131,7 @@ class OrderVerificationController extends Controller
             }
 
             if ($success) {
-                // Update order as verified
-                $order->update([
-                    'verified_at' => now(),
-                    'verified_by' => auth()->id(),
-                    'status' => 'completed',
-                ]);
-
-                // Delete verification code from Redis after successful verification
-                $this->verificationCodeService->delete($order->order_no);
-
-                // Record status history
-                $order->updateStatus('completed', "订单已核销（方式：{$message}）", auth()->id());
+                $this->markOrderVerified($order, $message);
 
                 Log::info('Order verified successfully', [
                     'order_id' => $order->id,
@@ -201,13 +172,98 @@ class OrderVerificationController extends Controller
     }
 
     /**
-     * Verify by user password.
+     * Verify by persisted verification code using atomic locking.
      */
-    protected function verifyByPassword(Order $order, Request $request): bool
+    protected function verifyByPersistedCode(int $orderId, string $code): JsonResponse
     {
-        $user = $order->user;
+        return DB::transaction(function () use ($orderId, $code) {
+            $order = Order::query()->lockForUpdate()->findOrFail($orderId);
 
-        return Hash::check($request->input('password'), $user->password);
+            if ($order->verified_at) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '该订单已核销',
+                ], 400);
+            }
+
+            if ($order->status === 'cancelled') {
+                return response()->json([
+                    'success' => false,
+                    'message' => '已取消的订单无法核销',
+                ], 400);
+            }
+
+            if ($order->status === 'completed') {
+                return response()->json([
+                    'success' => false,
+                    'message' => '已完成的订单无法核销',
+                ], 400);
+            }
+
+            if (! $order->verification_code || $order->isVerificationCodeExpired()) {
+                Log::warning('Persisted verification code not found or expired', [
+                    'order_id' => $order->id,
+                    'order_no' => $order->order_no,
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => '验证码不存在或已过期',
+                ], 422);
+            }
+
+            if (! hash_equals($order->verification_code, $code)) {
+                Log::warning('Persisted verification code mismatch', [
+                    'order_id' => $order->id,
+                    'order_no' => $order->order_no,
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => '验证码错误',
+                ], 422);
+            }
+
+            $message = '核销成功（验证码）';
+
+            $this->markOrderVerified($order, $message);
+            $this->verificationCodeService->delete($order->order_no);
+
+            Log::info('Order verified successfully', [
+                'order_id' => $order->id,
+                'order_no' => $order->order_no,
+                'method' => 'code',
+                'verified_by' => auth()->id(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        }, 5);
+    }
+
+    /**
+     * Mark the order verified and record a single status transition when needed.
+     */
+    protected function markOrderVerified(Order $order, string $message): void
+    {
+        $currentStatus = $order->status;
+
+        $order->forceFill([
+            'verified_at' => now(),
+            'verified_by' => auth()->id(),
+            'status' => 'completed',
+        ])->save();
+
+        if ($currentStatus !== 'completed') {
+            $order->statusHistory()->create([
+                'from_status' => $currentStatus,
+                'to_status' => 'completed',
+                'note' => "订单已核销（方式：{$message}）",
+                'operator_id' => auth()->id(),
+            ]);
+        }
     }
 
     /**

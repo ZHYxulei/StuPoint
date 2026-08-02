@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\Plugin;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Schema;
 
 class PluginManager
 {
@@ -37,6 +39,32 @@ class PluginManager
                 $this->bootedPlugins[$name] = true;
             }
         }
+    }
+
+    /**
+     * Load and boot all enabled plugins from persisted records.
+     */
+    public function bootEnabledPlugins(): void
+    {
+        $this->plugins = [];
+        $this->bootedPlugins = [];
+
+        foreach ($this->getEnabledPlugins() as $plugin) {
+            $pluginInstance = $this->loadPluginInstance($plugin);
+
+            if (! $pluginInstance) {
+                Log::warning('Skipping enabled plugin with unavailable runtime class.', [
+                    'plugin_id' => $plugin->id,
+                    'plugin_slug' => $plugin->slug,
+                ]);
+
+                continue;
+            }
+
+            $this->registerPlugin($pluginInstance);
+        }
+
+        $this->bootPlugins();
     }
 
     /**
@@ -380,7 +408,15 @@ class PluginManager
      */
     public function getEnabledPlugins(): Collection
     {
-        return Plugin::enabled()->get();
+        try {
+            if (! Schema::hasTable('plugins')) {
+                return new Collection;
+            }
+
+            return Plugin::enabled()->get();
+        } catch (\Throwable) {
+            return new Collection;
+        }
     }
 
     /**
@@ -388,7 +424,7 @@ class PluginManager
      */
     public function getEnabledPluginSlugs(): array
     {
-        return Plugin::enabled()->pluck('slug')->toArray();
+        return $this->getEnabledPlugins()->pluck('slug')->toArray();
     }
 
     /**
