@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserPoint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PointController extends Controller
 {
@@ -84,36 +85,34 @@ class PointController extends Controller
 
     public function ranking(Request $request): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'type' => 'nullable|in:all,class,grade',
             'class' => 'nullable|string',
             'grade' => 'nullable|string',
             'limit' => 'nullable|integer|min:1|max:100',
+            'sort_by' => ['nullable', Rule::in(['total_points', 'redeemable_points'])],
         ]);
 
-        $limit = $request->input('limit', 50);
-        $sortBy = $request->input('sort_by', 'total_points');
+        $limit = $validated['limit'] ?? 50;
+        $sortBy = $validated['sort_by'] ?? 'total_points';
 
         $query = User::query()
             ->with('points')
             ->whereHas('points');
 
-        // Filter by class if requested
-        if ($request->input('type') === 'class' && $request->filled('class')) {
-            // Get users in this class
-            $query->whereRelation('schoolClassesAsStudent', function ($q) use ($request) {
-                $q->whereHas('schoolClass', fn ($sq) => $sq->where('name', $request->input('class')));
+        if (($validated['type'] ?? null) === 'class' && filled($validated['class'] ?? null)) {
+            $query->whereRelation('schoolClassesAsStudent', function ($classStudentsQuery) use ($validated) {
+                $classStudentsQuery->whereHas('schoolClass', fn ($schoolClassQuery) => $schoolClassQuery->where('name', $validated['class']));
             });
         }
 
-        // Filter by grade if requested
-        if ($request->input('type') === 'grade' && $request->filled('grade')) {
-            $query->where('grade', $request->input('grade'));
+        if (($validated['type'] ?? null) === 'grade' && filled($validated['grade'] ?? null)) {
+            $query->where('grade', $validated['grade']);
         }
 
         $rankings = $query
             ->join('user_points', 'users.id', '=', 'user_points.user_id')
-            ->orderByDesc("user_points.{$sortBy}")
+            ->orderByDesc("user_points.$sortBy")
             ->limit($limit)
             ->get(['users.*'])
             ->map(fn ($user) => [

@@ -22,40 +22,24 @@ class QuickGradingController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $classId = $request->input('class_id');
+        $classId = $request->integer('class_id');
 
-        // Get classes the user can access
         $classes = $this->getAccessibleClasses($user);
 
-        // Default to first class if none selected
+        if ($classId !== 0 && $classId !== null && ! $classes->contains('id', $classId)) {
+            abort(403);
+        }
+
         if (! $classId && $classes->isNotEmpty()) {
             $classId = $classes->first()->id;
         }
 
-        // Get students in the selected class
         $students = collect();
-        $selectedClass = null;
 
         if ($classId) {
-            $selectedClass = SchoolClass::find($classId);
-            if ($selectedClass) {
-                $students = User::whereHas('schoolClassesAsStudent', function ($q) use ($classId) {
-                    $q->where('class_id', $classId);
-                })
-                    ->orwhere('class_id', $classId)
-                    ->with('points')
-                    ->get()
-                    ->sortByDesc(fn ($s) => $s->points?->total_points ?? 0)
-                    ->values()
-                    ->map(function ($student, $index) {
-                        $student->rank = $index + 1;
-
-                        return $student;
-                    });
-            }
+            $students = $this->getStudentsWithRank($classId);
         }
 
-        // Get presets (user's presets + defaults)
         $userPresets = PointPreset::forUser($user);
         $presets = $userPresets->isNotEmpty()
             ? $userPresets
@@ -63,7 +47,7 @@ class QuickGradingController extends Controller
 
         return inertia('admin/quick-grading/index', [
             'classes' => $classes->values(),
-            'selectedClassId' => $classId ? (int) $classId : null,
+            'selectedClassId' => $classId ?: null,
             'students' => $students,
             'presets' => $presets,
         ]);
@@ -162,14 +146,13 @@ class QuickGradingController extends Controller
         ]);
 
         $user = $request->user();
+        $this->authorizePresetScope($user, $validated['scope'], $validated['scope_id'] ?? null);
 
-        // Delete existing presets for this scope
         PointPreset::where('scope', $validated['scope'])
             ->when($validated['scope_id'], fn ($q) => $q->where('scope_id', $validated['scope_id']))
             ->where('created_by', $user->id)
             ->delete();
 
-        // Create new presets
         foreach ($validated['presets'] as $preset) {
             PointPreset::create([
                 'name' => $preset['name'],
@@ -224,13 +207,48 @@ class QuickGradingController extends Controller
             return collect();
         }
 
-        return User::whereHas('schoolClassesAsStudent', fn ($q) => $q->where('class_id', $classId))
-            ->orwhere('class_id', $classId)
+        return User::query()
+            ->where(function ($query) use ($classId) {
+                $query->whereHas('schoolClassesAsStudent', fn ($classStudents) => $classStudents->where('class_id', $classId))
+                    ->orWhere('class_id', $classId);
+            })
             ->with('points')
             ->leftJoin('user_points', 'users.id', '=', 'user_points.user_id')
             ->orderByDesc('user_points.total_points')
             ->get(['users.*'])
             ->values()
-            ->map(fn ($student, $index) => tap($student, fn ($s) => $s->rank = $index + 1));
+            ->map(fn ($student, $index) => tap($student, fn ($currentStudent) => $currentStudent->rank = $index + 1));
+    }
+
+    private function authorizePresetScope(User $user, string $scope, ?int $scopeId): void
+    {
+        if ($scope === 'global' || $scope === 'school') {
+            return;
+        }
+
+        if ($scope === 'grade') {
+            if (! $scopeId) {
+                abort(403);
+            }
+
+            $accessibleGradeIds = $this->getAccessibleClasses($user)
+                ->pluck('grade_id')
+                ->filter()
+                ->unique();
+
+            if (! $accessibleGradeIds->contains($scopeId)) {
+                abort(403);
+            }
+
+            return;
+        }
+
+        if ($scope === 'class') {
+            if (! $scopeId || ! $this->getAccessibleClasses($user)->contains('id', $scopeId)) {
+                abort(403);
+            }
+
+            return;
+        }
     }
 }
