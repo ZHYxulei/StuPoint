@@ -27,9 +27,13 @@ class UserController extends Controller
             'class' => 'nullable|string',
         ]);
 
+        $operator = $request->user();
         $perPage = $request->input('per_page', 20);
 
         $query = User::with('roles', 'points')
+            ->when($operator->hasRole('grade_director'), function ($query) use ($operator) {
+                $query->where('grade_id', $operator->grade_id);
+            })
             ->when($request->filled('search'), function ($q) use ($request) {
                 $q->where('name', 'like', '%'.$request->search.'%')
                     ->orWhere('email', 'like', '%'.$request->search.'%')

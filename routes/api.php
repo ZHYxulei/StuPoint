@@ -28,8 +28,8 @@ Route::post('/auth/login', [AuthController::class, 'login'])->middleware(['throt
 Route::post('/verification/send', [VerificationController::class, 'send'])->middleware(['throttle:3,1', 'captcha']);
 Route::post('/verification/verify', [VerificationController::class, 'verify'])->middleware('throttle:10,1');
 
-// Protected routes - require authentication
-Route::middleware('auth:api')->group(function () {
+// Protected routes - require authentication and approved registration
+Route::middleware(['auth:api', 'registration.approved.api'])->group(function () {
     // Auth
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);

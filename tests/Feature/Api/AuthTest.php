@@ -88,7 +88,7 @@ describe('Login', function () {
 
 describe('Me', function () {
     it('returns authenticated user data', function () {
-        $user = User::factory()->create();
+        $user = User::factory()->approved()->create();
         $user->assignRole($this->studentRole);
         UserPoint::create(['user_id' => $user->id, 'total_points' => 100, 'redeemable_points' => 50]);
 
@@ -109,6 +109,32 @@ describe('Me', function () {
             ]);
     });
 
+    it('forbids a pending user with an already issued token', function () {
+        $user = User::factory()->approved()->create();
+        $user->assignRole($this->studentRole);
+
+        $user->update(['registration_status' => 'pending']);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/auth/me')
+            ->assertForbidden();
+
+        expect($user->fresh()->registration_status)->toBe('pending');
+    });
+
+    it('forbids a rejected user with an already issued token', function () {
+        $user = User::factory()->approved()->create();
+        $user->assignRole($this->studentRole);
+
+        $user->update(['registration_status' => 'rejected']);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/auth/me')
+            ->assertForbidden();
+
+        expect($user->fresh()->registration_status)->toBe('rejected');
+    });
+
     it('returns 401 when unauthenticated', function () {
         $response = $this->getJson('/api/auth/me');
 
@@ -118,7 +144,7 @@ describe('Me', function () {
 
 describe('Logout', function () {
     it('revokes the token', function () {
-        $user = User::factory()->create();
+        $user = User::factory()->approved()->create();
         $user->assignRole($this->studentRole);
 
         $response = $this->actingAs($user, 'api')
