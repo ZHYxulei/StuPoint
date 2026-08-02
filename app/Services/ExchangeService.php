@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class ExchangeService
 {
@@ -18,61 +19,57 @@ class ExchangeService
     /**
      * Exchange product with redeemable points.
      */
-    public function exchange(User $user, Product $product, array $shippingInfo): Order
+    public function exchange(User $user, Product $product, int $quantity, array $shippingInfo): Order
     {
-        return DB::transaction(function () use ($user, $product, $shippingInfo) {
-            // Reload product with pessimistic lock to prevent race condition
-            $product = Product::lockForUpdate()->findOrFail($product->id);
-
-            // Check stock
-            if (! $product->hasStock()) {
-                throw new \Exception('商品库存不足');
-            }
-
-            // Check points
+        return DB::transaction(function () use ($user, $product, $quantity, $shippingInfo) {
+            $product = Product::query()->lockForUpdate()->findOrFail($product->id);
             $points = $user->points()->lockForUpdate()->first();
-            if (! $points || $points->redeemable_points < $product->points_required) {
-                throw new \Exception('Insufficient redeemable points');
+            $unitPointsSpent = $product->points_required;
+            $totalPointsSpent = $unitPointsSpent * $quantity;
+
+            if (! $product->hasStock($quantity)) {
+                throw new RuntimeException('商品库存不足');
             }
 
-            // Deduct redeemable points
+            if (! $points || $points->redeemable_points < $totalPointsSpent) {
+                throw new RuntimeException('Insufficient redeemable points');
+            }
+
             $this->pointService->deductRedeemablePoints(
                 $user,
-                $product->points_required,
+                $totalPointsSpent,
                 'product_exchange',
                 [
                     'description' => "Exchanged for product: {$product->name}",
                     'product_id' => $product->id,
+                    'quantity' => $quantity,
+                    'unit_points_spent' => $unitPointsSpent,
                 ]
             );
 
-            // Generate order number
             $orderNo = $this->generateOrderNo();
-
-            // Generate and store verification code in Redis (24 hours expiry)
             $verificationCode = $this->generateVerificationCode();
             $this->verificationCodeService->store($orderNo, $verificationCode);
 
-            // Create order
             $order = Order::create([
                 'order_no' => $orderNo,
                 'user_id' => $user->id,
                 'product_id' => $product->id,
-                'points_spent' => $product->points_required,
+                'quantity' => $quantity,
+                'unit_points_spent' => $unitPointsSpent,
+                'points_spent' => $totalPointsSpent,
                 'status' => 'pending',
                 'shipping_info' => $shippingInfo,
             ]);
 
-            // Update stock
-            $product->decreaseStock();
+            $product->decreaseStock($quantity);
 
-            // Handle third-party exchange
             if ($product->is_third_party) {
                 $this->handleThirdPartyExchange($order, $product);
             }
 
             return $order;
-        });
+        }, attempts: 5);
     }
 
     /**
@@ -96,7 +93,6 @@ class ExchangeService
      */
     protected function handleThirdPartyExchange(Order $order, Product $product): void
     {
-        // Trigger event for third-party exchange
         event(new ThirdPartyExchangeRequested($order, $product));
     }
 }

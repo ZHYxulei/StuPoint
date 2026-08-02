@@ -55,9 +55,9 @@ class Product extends Model
         });
     }
 
-    public function hasStock(): bool
+    public function hasStock(int $quantity = 1): bool
     {
-        return $this->stock === -1 || $this->stock > 0;
+        return $this->stock === -1 || $this->stock >= $quantity;
     }
 
     public function decreaseStock(int $quantity = 1): void

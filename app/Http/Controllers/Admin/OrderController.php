@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\VerificationCodeService;
 use Illuminate\Http\Request;
+use RuntimeException;
 
 class OrderController extends Controller
 {
@@ -32,7 +33,6 @@ class OrderController extends Controller
             ->latest()
             ->paginate(20);
 
-        // Get statistics
         $stats = [
             'total' => Order::count(),
             'pending' => Order::where('status', 'pending')->count(),
@@ -55,7 +55,6 @@ class OrderController extends Controller
     {
         $order = Order::with(['product.category', 'user', 'statusHistory.operator', 'verifiedBy'])->findOrFail($id);
 
-        // Get verification code from Redis
         $verificationCode = $this->verificationCodeService->get($order->order_no);
         $ttl = $this->verificationCodeService->getTTL($order->order_no);
         $isExpired = ! $this->verificationCodeService->exists($order->order_no);
@@ -80,11 +79,15 @@ class OrderController extends Controller
             'note' => 'nullable|string|max:500',
         ]);
 
-        $order->updateStatus(
-            $validated['status'],
-            $validated['note'] ?? null,
-            $request->user()->id
-        );
+        try {
+            $order->updateStatus(
+                $validated['status'],
+                $validated['note'] ?? null,
+                $request->user()->id
+            );
+        } catch (RuntimeException $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
 
         return back()->with('success', '订单状态已更新');
     }

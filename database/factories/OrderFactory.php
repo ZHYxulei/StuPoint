@@ -17,6 +17,8 @@ class OrderFactory extends Factory
             'order_no' => 'ORD-'.fake()->unique()->numerify('##########'),
             'user_id' => User::factory(),
             'product_id' => Product::factory(),
+            'quantity' => 1,
+            'unit_points_spent' => fake()->numberBetween(10, 1000),
             'points_spent' => fake()->numberBetween(10, 1000),
             'status' => 'pending',
             'shipping_info' => [

@@ -15,6 +15,7 @@ class OrderResource extends JsonResource
             'user_id' => $this->user_id,
             'product_id' => $this->product_id,
             'quantity' => $this->quantity,
+            'unit_points_spent' => $this->unit_points_spent,
             'points_spent' => $this->points_spent,
             'status' => $this->status,
             'verification_code' => $this->verification_code,
@@ -36,8 +37,9 @@ class OrderResource extends JsonResource
             ]),
             'statusHistory' => $this->whenLoaded('statusHistory', fn () => $this->statusHistory->map(fn ($history) => [
                 'id' => $history->id,
-                'status' => $history->status,
-                'notes' => $history->notes,
+                'from_status' => $history->from_status,
+                'to_status' => $history->to_status,
+                'note' => $history->note,
                 'created_at' => $history->created_at?->toIso8601String(),
             ])),
         ];

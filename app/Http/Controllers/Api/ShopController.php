@@ -67,6 +67,7 @@ class ShopController extends Controller
             $order = $this->exchangeService->exchange(
                 $request->user(),
                 $product,
+                $request->integer('quantity'),
                 $request->shipping_info
             );
 
@@ -75,6 +76,8 @@ class ShopController extends Controller
                 'data' => [
                     'order_id' => $order->id,
                     'order_no' => $order->order_no,
+                    'quantity' => $order->quantity,
+                    'unit_points_spent' => $order->unit_points_spent,
                     'points_spent' => $order->points_spent,
                     'status' => $order->status,
                 ],
