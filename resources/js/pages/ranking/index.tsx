@@ -6,38 +6,24 @@ import { Button } from '@/components/ui/button';
 import { Trophy, TrendingUp, User } from 'lucide-react';
 import { useState } from 'react';
 
-interface UserPoint {
-    total_points: number;
-    redeemable_points: number;
-}
-
-interface UserRole {
-    slug: string;
-}
-
-interface UserWithPoints {
+interface RankingEntry {
     id: number;
-    name: string;
-    nickname: string | null;
-    email: string;
+    display_name: string;
     grade: string | null;
     class: string | null;
-    student_id: string | null;
     total_points: number;
     redeemable_points: number;
-    points?: UserPoint;
     rank: number;
-    roles: UserRole[];
 }
 
 interface PageProps {
     rankings: {
-        data: UserWithPoints[];
+        data: RankingEntry[];
         current_page: number;
         last_page: number;
         total: number;
     };
-    userRanking: UserWithPoints | null;
+    userRanking: RankingEntry | null;
     filters: {
         type?: string;
         per_page?: string;
@@ -50,8 +36,8 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
     const currentUserId = auth.user?.id;
 
     // Helper function to get display name
-    const getDisplayName = (user: UserWithPoints) => {
-        return user.nickname || user.name;
+    const getDisplayName = (user: RankingEntry) => {
+        return user.display_name;
     };
 
     const getRankDisplay = (rank: number, isCurrentUser?: boolean) => {
@@ -186,7 +172,6 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
                                                     </div>
                                                     <p className="text-sm text-muted-foreground">
                                                         {user.grade} {user.class}
-                                                        {user.student_id && ` · ${user.student_id}`}
                                                     </p>
                                                 </div>
                                             </div>

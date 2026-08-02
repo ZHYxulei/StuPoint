@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,43 +19,57 @@ class RankingController extends Controller
         $type = $request->input('type', 'all');
 
         $query = User::query()
-            ->whereHas('roles', function ($q) {
-                $q->where('slug', 'student');
+            ->whereHas('roles', function ($query) {
+                $query->where('slug', 'student');
             })
             ->leftJoin('user_points', 'users.id', '=', 'user_points.user_id')
-            ->select('users.*', 'user_points.total_points', 'user_points.redeemable_points')
-            ->orderByDesc('user_points.total_points');
+            ->select([
+                'users.id',
+                'users.name',
+                'users.nickname',
+                'users.grade',
+                'users.class',
+            ])
+            ->selectRaw('COALESCE(user_points.total_points, 0) as total_points')
+            ->selectRaw('COALESCE(user_points.redeemable_points, 0) as redeemable_points')
+            ->orderByRaw('COALESCE(user_points.total_points, 0) DESC')
+            ->orderBy('users.id');
 
-        // Filter by class/grade
         if ($type === 'class' && $user && $user->grade && $user->class) {
             $query->where('users.grade', $user->grade)->where('users.class', $user->class);
         } elseif ($type === 'grade' && $user && $user->grade) {
             $query->where('users.grade', $user->grade);
         }
 
-        // SQL-level pagination (avoids loading all users into memory)
-        $rankings = $query->paginate($perPage, ['users.*', 'user_points.total_points', 'user_points.redeemable_points']);
+        $rankings = $query->paginate($perPage);
+        $this->transformRankings($rankings);
 
-        // Get user's own ranking
         $userRanking = null;
         if ($user) {
             $userWithPoints = User::query()
                 ->where('users.id', $user->id)
                 ->leftJoin('user_points', 'users.id', '=', 'user_points.user_id')
-                ->select('users.*', 'user_points.total_points', 'user_points.redeemable_points')
+                ->select([
+                    'users.id',
+                    'users.name',
+                    'users.nickname',
+                    'users.grade',
+                    'users.class',
+                ])
+                ->selectRaw('COALESCE(user_points.total_points, 0) as total_points')
+                ->selectRaw('COALESCE(user_points.redeemable_points, 0) as redeemable_points')
                 ->first();
 
-            if ($userWithPoints && $userWithPoints->total_points) {
-                $rank = User::query()
-                    ->whereHas('roles', function ($q) {
-                        $q->where('slug', 'student');
+            if ($userWithPoints && $userWithPoints->total_points > 0) {
+                $higherRankedStudents = User::query()
+                    ->whereHas('roles', function ($query) {
+                        $query->where('slug', 'student');
                     })
                     ->leftJoin('user_points', 'users.id', '=', 'user_points.user_id')
-                    ->where('user_points.total_points', '>', $userWithPoints->total_points)
+                    ->whereRaw('COALESCE(user_points.total_points, 0) > ?', [$userWithPoints->total_points])
                     ->count();
 
-                $userWithPoints->rank = $rank + 1;
-                $userRanking = $userWithPoints;
+                $userRanking = $this->transformRankingEntry($userWithPoints, $higherRankedStudents + 1);
             }
         }
 
@@ -63,5 +78,40 @@ class RankingController extends Controller
             'userRanking' => $userRanking,
             'filters' => $request->only(['type', 'per_page']),
         ]);
+    }
+
+    private function transformRankings(LengthAwarePaginator $rankings): void
+    {
+        $startingRank = (($rankings->currentPage() - 1) * $rankings->perPage()) + 1;
+
+        $rankings->setCollection(
+            $rankings->getCollection()
+                ->values()
+                ->map(fn (User $user, int $index): array => $this->transformRankingEntry($user, $startingRank + $index))
+        );
+    }
+
+    /**
+     * @return array{
+     *     id: int,
+     *     display_name: string,
+     *     grade: mixed,
+     *     class: mixed,
+     *     total_points: int,
+     *     redeemable_points: int,
+     *     rank: int
+     * }
+     */
+    private function transformRankingEntry(User $user, int $rank): array
+    {
+        return [
+            'id' => $user->id,
+            'display_name' => $user->display_name,
+            'grade' => $user->grade,
+            'class' => $user->class,
+            'total_points' => (int) $user->total_points,
+            'redeemable_points' => (int) $user->redeemable_points,
+            'rank' => $rank,
+        ];
     }
 }
