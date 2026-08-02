@@ -155,12 +155,8 @@ it('does not auto register or execute filesystem plugins on the index page', fun
         "<?php file_put_contents('".addslashes($marker)."', 'loaded'); class EvilPlugin {}",
     );
 
-    actingAs($user);
-
-    $this->withHeaders([
-        'X-Inertia' => 'true',
-        'X-Requested-With' => 'XMLHttpRequest',
-    ])->get(route('admin.plugins.index'))
+    actingAs($user)
+        ->get(route('admin.plugins.index'))
         ->assertSuccessful();
 
     expect(Plugin::where('slug', 'evil-plugin')->exists())->toBeFalse()
