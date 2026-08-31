@@ -15,7 +15,7 @@ class PointController extends Controller
     {
         $user = $request->user()->load('points');
 
-        $points = $user->points ?? UserPoint::create(['user_id' => $user->id]);
+        $points = UserPoint::ensureForUser($user);
 
         // Calculate ranks
         $totalRank = UserPoint::orderByDesc('total_points')

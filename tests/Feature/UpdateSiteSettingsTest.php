@@ -57,7 +57,10 @@ it('stores favicon upload as file path', function () {
 
     Setting::set('site_favicon', 'https://example.com/old.ico', 'string', 'site');
 
-    $file = UploadedFile::fake()->image('favicon.png', 64, 64);
+    $file = UploadedFile::fake()->createWithContent(
+        'favicon.png',
+        base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', true),
+    );
 
     actingAs($user)
         ->post('/admin/settings/site', [

@@ -1,11 +1,14 @@
 <?php
 
+use App\Events\PointsChanged;
 use App\Models\PointTransaction;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserPoint;
 use App\Services\PointService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 
 uses(RefreshDatabase::class);
 
@@ -48,6 +51,57 @@ it('records two transactions when adding points', function () {
     expect($transactions->where('type', 'total')->first()->amount)->toBe(100);
     expect($transactions->where('type', 'redeemable')->first()->amount)->toBe(100);
 });
+
+it('records operator id and ledger balances when adding points', function () {
+    $user = User::factory()->create();
+    $operator = User::factory()->create();
+
+    $this->service->addPoints($user, 100, 'manual_adjust', [
+        'operator_id' => $operator->id,
+        'operator_type' => 'admin',
+    ]);
+
+    $transactions = PointTransaction::query()
+        ->where('user_id', $user->id)
+        ->get()
+        ->keyBy('type');
+
+    expect($transactions['total']->operator_id)->toBe($operator->id)
+        ->and($transactions['redeemable']->operator_id)->toBe($operator->id)
+        ->and($transactions['total']->balance_after)->toBe(100)
+        ->and($transactions['redeemable']->balance_after)->toBe(100)
+        ->and($transactions['total']->metadata['operator_type'])->toBe('admin');
+});
+
+it('does not dispatch point events when an outer transaction rolls back', function () {
+    Event::fake();
+    $user = User::factory()->create();
+
+    try {
+        DB::transaction(function () use ($user) {
+            $this->service->addPoints($user, 25, 'test');
+
+            throw new RuntimeException('force rollback');
+        });
+    } catch (RuntimeException) {
+    }
+
+    expect(UserPoint::query()->where('user_id', $user->id)->exists())->toBeFalse()
+        ->and(PointTransaction::query()->where('user_id', $user->id)->exists())->toBeFalse();
+    Event::assertNotDispatched(PointsChanged::class);
+});
+
+it('rejects non-positive amounts', function (string $method, int $amount) {
+    $user = User::factory()->create();
+    UserPoint::ensureForUser($user);
+
+    $this->service->{$method}($user, $amount, 'test');
+})->with([
+    ['addPoints', 0],
+    ['addPoints', -1],
+    ['deductRedeemablePoints', 0],
+    ['deductRedeemablePoints', -1],
+])->throws(InvalidArgumentException::class, '积分数量必须为正整数');
 
 it('deducts redeemable points', function () {
     $user = User::factory()->create();

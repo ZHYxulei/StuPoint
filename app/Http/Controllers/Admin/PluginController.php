@@ -8,6 +8,7 @@ use App\Models\PluginSource;
 use App\Services\PluginManager;
 use App\Services\PluginUploader;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\File as FileRule;
 
 class PluginController extends Controller
@@ -187,6 +188,8 @@ class PluginController extends Controller
      */
     public function upload(Request $request)
     {
+        Gate::authorize('uploadPlugin');
+
         $validated = $request->validate([
             'plugin' => ['required', FileRule::types(['zip'])->max(50 * 1024)],
         ]);

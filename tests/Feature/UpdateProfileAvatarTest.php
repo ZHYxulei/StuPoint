@@ -13,7 +13,10 @@ it('stores uploaded avatar as file path', function () {
     Storage::fake('public');
 
     $user = User::factory()->create();
-    $file = UploadedFile::fake()->image('avatar.png', 256, 256);
+    $file = UploadedFile::fake()->createWithContent(
+        'avatar.png',
+        base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', true),
+    );
 
     actingAs($user)
         ->patch('/settings/profile', [

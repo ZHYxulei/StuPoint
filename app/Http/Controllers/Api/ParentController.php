@@ -8,40 +8,33 @@ use App\Models\ParentChild;
 use App\Models\PointTransaction;
 use App\Models\User;
 use App\Models\UserPoint;
+use App\Services\ParentBindingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ParentController extends Controller
 {
+    public function __construct(
+        private ParentBindingService $bindingService
+    ) {}
+
     public function bindChild(Request $request): JsonResponse
     {
-        $request->validate([
+        Gate::authorize('bind-parent-child');
+
+        $validated = $request->validate([
             'child_student_id' => 'required|string|exists:users,student_id',
+            'invitation_code' => 'required|string',
             'relationship' => 'required|in:父亲,母亲,其他',
         ]);
 
-        $child = User::where('student_id', $request->child_student_id)->firstOrFail();
-
-        // Check if already bound
-        $existing = ParentChild::where('parent_id', $request->user()->id)
-            ->where('child_id', $child->id)
-            ->first();
-
-        if ($existing) {
-            return response()->json([
-                'success' => false,
-                'message' => '已经绑定了该学生',
-            ], 400);
-        }
-
-        // Create binding
-        ParentChild::create([
-            'parent_id' => $request->user()->id,
-            'child_id' => $child->id,
-            'relationship' => $request->relationship,
-            'is_approved' => true, // Auto approve for now
-            'approved_at' => now(),
-        ]);
+        $this->bindingService->bindParent(
+            $request->user(),
+            $validated['child_student_id'],
+            $validated['invitation_code'],
+            $validated['relationship'],
+        );
 
         return response()->json([
             'success' => true,
@@ -53,6 +46,7 @@ class ParentController extends Controller
     {
         $children = $request->user()
             ->parentRelations()
+            ->approved()
             ->with('child.points')
             ->get()
             ->map(fn ($relation) => [
@@ -79,9 +73,7 @@ class ParentController extends Controller
     {
         $relation = $this->getApprovedRelation($request->user()->id, $childId);
 
-        $points = $relation->child->points ?? UserPoint::firstOrCreate([
-            'user_id' => $relation->child->id,
-        ]);
+        $points = UserPoint::ensureForUser($relation->child);
 
         // Calculate rank
         $totalRank = UserPoint::orderByDesc('total_points')

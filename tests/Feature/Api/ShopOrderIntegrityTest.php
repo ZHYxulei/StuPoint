@@ -28,6 +28,43 @@ function shippingInfo(): array
     ];
 }
 
+it('persists an active verification code when creating an order', function () {
+    $user = createApprovedShopUser();
+
+    UserPoint::create([
+        'user_id' => $user->id,
+        'total_points' => 100,
+        'redeemable_points' => 100,
+    ]);
+
+    $product = Product::factory()->create([
+        'status' => 'active',
+        'stock' => 5,
+        'points_required' => 25,
+    ]);
+
+    actingAs($user, 'api')
+        ->postJson('/api/shop/orders', [
+            'product_id' => $product->id,
+            'quantity' => 1,
+            'shipping_info' => shippingInfo(),
+        ])
+        ->assertCreated();
+
+    $order = Order::query()->latest('id')->firstOrFail();
+
+    expect($order->verification_code)
+        ->toBeString()
+        ->toHaveLength(6)
+        ->and($order->verification_code_expires_at)->not->toBeNull()
+        ->and($order->verification_code_expires_at?->isFuture())->toBeTrue();
+
+    actingAs($user, 'api')
+        ->getJson('/api/shop/orders')
+        ->assertOk()
+        ->assertJsonPath('data.0.verification_code', $order->verification_code);
+});
+
 it('honors quantity end to end when creating an order', function () {
     $user = createApprovedShopUser();
 

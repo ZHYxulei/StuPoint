@@ -7,23 +7,23 @@ use App\Models\PointTransaction;
 use App\Models\User;
 use App\Models\UserPoint;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use RuntimeException;
 
 class PointService
 {
-    /**
-     * Add points to user (both total and redeemable).
-     */
     public function addPoints(User $user, int $amount, string $source, array $metadata = []): void
     {
-        DB::transaction(function () use ($user, $amount, $source, $metadata) {
-            $points = $user->points ?? UserPoint::create(['user_id' => $user->id]);
+        $this->ensurePositiveAmount($amount);
 
-            // Update total points and redeemable points
+        DB::transaction(function () use ($user, $amount, $source, $metadata) {
+            $points = $this->lockUserPoints($user);
+            $operatorId = $metadata['operator_id'] ?? null;
+
             $points->total_points += $amount;
             $points->redeemable_points += $amount;
             $points->save();
 
-            // Record total points transaction
             PointTransaction::create([
                 'user_id' => $user->id,
                 'type' => 'total',
@@ -32,9 +32,9 @@ class PointService
                 'source' => $source,
                 'description' => $metadata['description'] ?? "Added {$amount} total points",
                 'metadata' => $metadata,
+                'operator_id' => $operatorId,
             ]);
 
-            // Record redeemable points transaction
             PointTransaction::create([
                 'user_id' => $user->id,
                 'type' => 'redeemable',
@@ -43,31 +43,29 @@ class PointService
                 'source' => $source,
                 'description' => $metadata['description'] ?? "Added {$amount} redeemable points",
                 'metadata' => $metadata,
+                'operator_id' => $operatorId,
             ]);
 
-            // Trigger events
             event(new PointsChanged($user, $amount, 'total', $source));
             event(new PointsChanged($user, $amount, 'redeemable', $source));
-        });
+        }, attempts: 5);
     }
 
-    /**
-     * Deduct only redeemable points (total points unchanged).
-     */
     public function deductRedeemablePoints(User $user, int $amount, string $source, array $metadata = []): void
     {
-        DB::transaction(function () use ($user, $amount, $source, $metadata) {
-            $points = $user->points;
+        $this->ensurePositiveAmount($amount);
 
-            if (! $points || $points->redeemable_points < $amount) {
+        DB::transaction(function () use ($user, $amount, $source, $metadata) {
+            $points = $this->lockUserPoints($user);
+            $operatorId = $metadata['operator_id'] ?? null;
+
+            if ($points->redeemable_points < $amount) {
                 throw new \Exception('可兑换积分不足');
             }
 
-            // Only deduct redeemable points, total points unchanged
             $points->redeemable_points -= $amount;
             $points->save();
 
-            // Record redeemable points transaction
             PointTransaction::create([
                 'user_id' => $user->id,
                 'type' => 'redeemable',
@@ -76,15 +74,13 @@ class PointService
                 'source' => $source,
                 'description' => $metadata['description'] ?? "Deducted {$amount} redeemable points",
                 'metadata' => $metadata,
+                'operator_id' => $operatorId,
             ]);
 
             event(new PointsChanged($user, -$amount, 'redeemable', $source));
-        });
+        }, attempts: 5);
     }
 
-    /**
-     * Get user's current point balance.
-     */
     public function getBalance(User $user): array
     {
         $points = $user->points;
@@ -95,9 +91,6 @@ class PointService
         ];
     }
 
-    /**
-     * Get user's point transaction history.
-     */
     public function getTransactionHistory(User $user, ?string $type = null, int $limit = 50)
     {
         $query = PointTransaction::query()->forUser($user->id)->recent();
@@ -109,39 +102,60 @@ class PointService
         return $query->limit($limit)->get();
     }
 
-    /**
-     * Check if operator can modify target user's points.
-     * Student union members can modify points of students from other classes.
-     */
     public function canModifyPoints(User $operator, User $target): bool
     {
-        // Users cannot modify their own points through this method
         if ($operator->id === $target->id) {
             return false;
         }
 
-        // Only approved users can modify points
         if ($operator->registration_status !== 'approved') {
             return false;
         }
 
-        // Student union members can modify any student's points
         if ($operator->hasRole('student_union_member') && $target->hasRole('student')) {
             return true;
         }
 
-        // Teachers can modify points of students in their teaching classes
         if ($operator->hasRole('teacher') && $target->hasRole('student')) {
             $teachingClassIds = $operator->teachingClasses()->pluck('classes.id')->toArray();
 
             return in_array($target->class_id, $teachingClassIds);
         }
 
-        // Admins can modify anyone's points
         if ($operator->hasRole('admin') || $operator->hasRole('super_admin')) {
             return true;
         }
 
         return false;
+    }
+
+    protected function ensurePositiveAmount(int $amount): void
+    {
+        if ($amount <= 0) {
+            throw new InvalidArgumentException('积分数量必须为正整数');
+        }
+    }
+
+    protected function lockUserPoints(User $user): UserPoint
+    {
+        $points = $user->points()->lockForUpdate()->first();
+
+        if ($points) {
+            $user->setRelation('points', $points);
+
+            return $points;
+        }
+
+        UserPoint::ensureForUser($user);
+
+        $lockedPoints = $user->points()->lockForUpdate()->first();
+
+        if (! $lockedPoints) {
+            throw new RuntimeException('用户积分记录不存在');
+        }
+
+        $user->setRelation('points', $lockedPoints);
+
+        return $lockedPoints;
     }
 }

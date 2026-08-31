@@ -60,6 +60,8 @@ class ExchangeService
                 'points_spent' => $totalPointsSpent,
                 'status' => 'pending',
                 'shipping_info' => $shippingInfo,
+                'verification_code' => $verificationCode,
+                'verification_code_expires_at' => now()->addDay(),
             ]);
 
             $product->decreaseStock($quantity);

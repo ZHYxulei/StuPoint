@@ -59,16 +59,20 @@ it('allows admin to add points and records transactions', function () {
         'user_id' => $target->id,
         'type' => 'total',
         'amount' => 15,
+        'balance_after' => 15,
         'source' => 'manual_adjust',
         'description' => 'Manual bonus',
+        'operator_id' => $operator->id,
     ]);
 
     $this->assertDatabaseHas('point_transactions', [
         'user_id' => $target->id,
         'type' => 'redeemable',
         'amount' => 15,
+        'balance_after' => 15,
         'source' => 'manual_adjust',
         'description' => 'Manual bonus',
+        'operator_id' => $operator->id,
     ]);
 });
 

@@ -13,6 +13,7 @@ use App\Models\UserPoint;
 use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -225,11 +226,9 @@ class UserController extends Controller
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        // Prevent assigning super_admin role
         $role = Role::findOrFail($validated['role_id']);
-        if ($role->slug === 'super_admin') {
-            abort(403, '无法分配超级管理员角色');
-        }
+
+        Gate::authorize('assignRole', [$user, $role]);
 
         $user->roles()->sync([$role->id]);
 
@@ -242,6 +241,8 @@ class UserController extends Controller
     public function updatePassword(Request $request, string $id)
     {
         $user = User::findOrFail($id);
+
+        Gate::authorize('updatePassword', $user);
 
         $validated = $request->validate([
             'password' => 'required|confirmed|min:8',

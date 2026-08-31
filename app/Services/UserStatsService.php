@@ -55,16 +55,7 @@ class UserStatsService
      */
     protected function ensureUserPoints(User $user): UserPoint
     {
-        $userPoints = $user->points;
-        if (! $userPoints) {
-            $userPoints = UserPoint::create([
-                'user_id' => $user->id,
-                'total_points' => 0,
-                'redeemable_points' => 0,
-            ]);
-        }
-
-        return $userPoints;
+        return UserPoint::ensureForUser($user);
     }
 
     /**

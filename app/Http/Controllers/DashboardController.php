@@ -17,17 +17,7 @@ class DashboardController extends Controller
         $user = $request->user();
         $canViewGlobalDashboard = $user !== null && $this->canViewGlobalDashboard($user);
 
-        $userPoints = null;
-        if ($user) {
-            $userPoints = $user->points;
-            if (! $userPoints) {
-                $userPoints = UserPoint::create([
-                    'user_id' => $user->id,
-                    'total_points' => 0,
-                    'redeemable_points' => 0,
-                ]);
-            }
-        }
+        $userPoints = $user ? UserPoint::ensureForUser($user) : null;
 
         return inertia('dashboard', [
             'canViewGlobalDashboard' => $canViewGlobalDashboard,
@@ -47,13 +37,13 @@ class DashboardController extends Controller
 
     private function canViewGlobalDashboard(User $user): bool
     {
-        foreach (['super_admin', 'admin', 'principal', 'grade_director', 'head_teacher'] as $role) {
+        foreach (['super_admin', 'admin', 'principal'] as $role) {
             if ($user->hasRole($role)) {
                 return true;
             }
         }
 
-        return $user->isHeadTeacher();
+        return false;
     }
 
     private function todayAdded(): int

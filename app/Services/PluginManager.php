@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Plugin;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
@@ -114,6 +115,9 @@ class PluginManager
      */
     public function enablePlugin(Plugin $plugin): void
     {
+        // Deploy the inert uploaded package into the runtime plugins directory.
+        $this->deployPackage($plugin);
+
         // Check plugin dependencies and requirements before enabling
         $manifest = $this->readManifest($plugin->slug);
         if ($manifest) {
@@ -129,8 +133,10 @@ class PluginManager
             $pluginInstance->enable();
         }
 
-        $this->registerPlugin($pluginInstance);
-        $pluginInstance->boot($this);
+        if ($pluginInstance) {
+            $this->registerPlugin($pluginInstance);
+            $pluginInstance->boot($this);
+        }
     }
 
     /**
@@ -195,7 +201,7 @@ class PluginManager
         $manifest = $this->readManifest($slug);
         if ($manifest && isset($manifest['class'])) {
             $className = $manifest['class'];
-            $dirName = str_replace('_', '', ucwords($slug, '_'));
+            $dirName = $this->pluginDirectoryName($slug);
             $fullClass = "Plugins\\{$dirName}\\{$className}";
 
             if (class_exists($fullClass)) {
@@ -204,7 +210,7 @@ class PluginManager
         }
 
         // Fallback: convert slug to class name (student_council -> StudentCouncil)
-        $className = str_replace('_', '', ucwords($slug, '_'));
+        $className = $this->pluginDirectoryName($slug);
         $fullClass = "Plugins\\{$className}\\{$className}Plugin";
 
         if (class_exists($fullClass)) {
@@ -219,7 +225,7 @@ class PluginManager
      */
     public function readManifest(string $slug): ?array
     {
-        $dirName = str_replace('_', '', ucwords($slug, '_'));
+        $dirName = $this->pluginDirectoryName($slug);
         $jsonPath = base_path("plugins/{$dirName}/manifest.json");
 
         if (! file_exists($jsonPath)) {
@@ -238,6 +244,34 @@ class PluginManager
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * Resolve the runtime directory name for a plugin slug
+     * (e.g. "evil-plugin" -> "EvilPlugin").
+     */
+    protected function pluginDirectoryName(string $slug): string
+    {
+        return str_replace(['-', '_'], '', ucwords($slug, '-_'));
+    }
+
+    /**
+     * Deploy an inert uploaded package from storage into the runtime plugins directory.
+     */
+    protected function deployPackage(Plugin $plugin): void
+    {
+        $packagePath = storage_path('app/plugins/packages/'.$plugin->slug);
+        $targetPath = base_path('plugins/'.$this->pluginDirectoryName($plugin->slug));
+
+        if (! File::isDirectory($packagePath)) {
+            return;
+        }
+
+        if (File::isDirectory($targetPath)) {
+            File::deleteDirectory($targetPath);
+        }
+
+        File::copyDirectory($packagePath, $targetPath);
     }
 
     /**

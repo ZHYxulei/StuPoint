@@ -54,6 +54,59 @@ describe('Admin user listing authorization', function () {
             ->not->toContain($otherStudent->id);
     });
 
+    it('does not let grade director searches escape their grade scope', function () {
+        $managedGrade = Grade::query()->create([
+            'name' => 'Managed Search Grade',
+            'is_active' => true,
+        ]);
+        $otherGrade = Grade::query()->create([
+            'name' => 'Other Search Grade',
+            'is_active' => true,
+        ]);
+        $gradeDirector = createApprovedApiAdminUser($this->gradeDirectorRole, [
+            'grade_id' => $managedGrade->id,
+        ]);
+        createApprovedApiAdminUser($this->studentRole, [
+            'grade_id' => $managedGrade->id,
+            'email' => 'managed@example.com',
+            'student_id' => 'MANAGED-STUDENT',
+        ]);
+        $otherStudent = createApprovedApiAdminUser($this->studentRole, [
+            'grade_id' => $otherGrade->id,
+            'email' => 'escaped@example.com',
+            'student_id' => 'ESCAPED-STUDENT',
+        ]);
+
+        $response = $this->actingAs($gradeDirector, 'api')
+            ->getJson('/api/admin/users?search=escaped@example.com');
+
+        $response->assertOk();
+
+        expect(collect($response->json('data'))->pluck('id')->all())
+            ->not->toContain($otherStudent->id);
+    });
+
+    it('forbids a grade director from viewing a user outside their grade', function () {
+        $managedGrade = Grade::query()->create([
+            'name' => 'Managed Detail Grade',
+            'is_active' => true,
+        ]);
+        $otherGrade = Grade::query()->create([
+            'name' => 'Other Detail Grade',
+            'is_active' => true,
+        ]);
+        $gradeDirector = createApprovedApiAdminUser($this->gradeDirectorRole, [
+            'grade_id' => $managedGrade->id,
+        ]);
+        $otherStudent = createApprovedApiAdminUser($this->studentRole, [
+            'grade_id' => $otherGrade->id,
+        ]);
+
+        $this->actingAs($gradeDirector, 'api')
+            ->getJson("/api/admin/users/{$otherStudent->id}")
+            ->assertForbidden();
+    });
+
     it('returns a minimal user field set from the admin api', function () {
         $superAdmin = createApprovedApiAdminUser($this->superAdminRole);
         createApprovedApiAdminUser($this->studentRole, [

@@ -5,16 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\ParentChild;
 use App\Models\PointTransaction;
-use App\Models\User;
 use App\Models\UserPoint;
+use App\Services\ParentBindingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ParentController extends Controller
 {
+    public function __construct(
+        private ParentBindingService $bindingService
+    ) {}
+
     public function index()
     {
         $children = auth()->user()
             ->parentRelations()
+            ->approved()
             ->with('child.points')
             ->get()
             ->map(fn ($relation) => [
@@ -43,28 +49,20 @@ class ParentController extends Controller
 
     public function store(Request $request)
     {
+        Gate::authorize('bind-parent-child');
+
         $validated = $request->validate([
             'child_student_id' => 'required|string|exists:users,student_id',
+            'invitation_code' => 'required|string',
             'relationship' => 'required|in:父亲,母亲,其他',
         ]);
 
-        $child = User::where('student_id', $validated['child_student_id'])->firstOrFail();
-
-        $existing = ParentChild::where('parent_id', auth()->id())
-            ->where('child_id', $child->id)
-            ->first();
-
-        if ($existing) {
-            return back()->with('error', '已经绑定了该学生');
-        }
-
-        ParentChild::create([
-            'parent_id' => auth()->id(),
-            'child_id' => $child->id,
-            'relationship' => $validated['relationship'],
-            'is_approved' => true,
-            'approved_at' => now(),
-        ]);
+        $this->bindingService->bindParent(
+            $request->user(),
+            $validated['child_student_id'],
+            $validated['invitation_code'],
+            $validated['relationship'],
+        );
 
         return redirect()->route('parent.children.index')->with('success', '子女绑定成功');
     }
@@ -79,8 +77,7 @@ class ParentController extends Controller
 
         $child = $relation->child;
 
-        // Get points
-        $points = $child->points ?? UserPoint::firstOrCreate(['user_id' => $child->id]);
+        $points = UserPoint::ensureForUser($child);
 
         // Calculate ranks
         $totalRank = UserPoint::orderByDesc('total_points')

@@ -14,6 +14,7 @@ beforeEach(function () {
     File::deleteDirectory(storage_path('app/plugins/packages'));
     File::deleteDirectory(storage_path('app/temp/plugins'));
     File::deleteDirectory(base_path('plugins/evil-plugin'));
+    File::deleteDirectory(base_path('plugins/EvilPlugin'));
     @unlink(storage_path('framework/testing/plugin-index-marker.txt'));
     @unlink(storage_path('framework/testing/plugin-install-marker.txt'));
 });
@@ -22,6 +23,7 @@ afterEach(function () {
     File::deleteDirectory(storage_path('app/plugins/packages'));
     File::deleteDirectory(storage_path('app/temp/plugins'));
     File::deleteDirectory(base_path('plugins/evil-plugin'));
+    File::deleteDirectory(base_path('plugins/EvilPlugin'));
     @unlink(storage_path('framework/testing/plugin-index-marker.txt'));
     @unlink(storage_path('framework/testing/plugin-install-marker.txt'));
 });
@@ -87,6 +89,63 @@ function makeAdminPluginZip(array $entries, string $originalName = 'plugin.zip')
 
     return new UploadedFile($finalPath, $originalName, 'application/zip', null, true);
 }
+
+it('deploys an inert uploaded package before marking the plugin enabled', function () {
+    $user = adminUser();
+
+    $file = makeAdminPluginZip([
+        'evil-plugin/manifest.json' => json_encode(validAdminPluginManifest(), JSON_THROW_ON_ERROR),
+        'evil-plugin/EvilPlugin.php' => <<<'PHP'
+<?php
+
+namespace Plugins\EvilPlugin;
+
+use App\Services\PluginManager;
+use Plugins\Plugin;
+
+class EvilPlugin extends Plugin
+{
+    public function getName(): string
+    {
+        return 'Evil Plugin';
+    }
+
+    public function getVersion(): string
+    {
+        return '1.0.0';
+    }
+
+    public function getSlug(): string
+    {
+        return 'evil-plugin';
+    }
+
+    public function boot(PluginManager $manager): void
+    {
+    }
+}
+PHP,
+    ]);
+
+    actingAs($user)
+        ->from(route('admin.plugins.index'))
+        ->post(route('admin.plugins.upload'), ['plugin' => $file])
+        ->assertRedirect(route('admin.plugins.index'));
+
+    $plugin = Plugin::query()->where('slug', 'evil-plugin')->firstOrFail();
+
+    expect(File::exists(base_path('plugins/EvilPlugin')))->toBeFalse();
+
+    actingAs($user)
+        ->from(route('admin.plugins.index'))
+        ->post(route('admin.plugins.enable', $plugin->id))
+        ->assertRedirect(route('admin.plugins.index'))
+        ->assertSessionHas('success', '插件已启用');
+
+    expect($plugin->fresh()->status)->toBe('enabled')
+        ->and(File::exists(base_path('plugins/EvilPlugin/manifest.json')))->toBeTrue()
+        ->and(File::exists(base_path('plugins/EvilPlugin/EvilPlugin.php')))->toBeTrue();
+});
 
 it('uploads plugin zips inertly and registers an installed plugin', function () {
     $user = adminUser();

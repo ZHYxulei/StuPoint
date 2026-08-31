@@ -8,6 +8,36 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 uses(RefreshDatabase::class);
 
+it('does not expose child points for an unapproved parent relation on the api route', function () {
+    $parent = User::factory()->approved()->create();
+    $child = User::factory()->approved()->create([
+        'student_id' => 'PENDING-API-1001',
+    ]);
+
+    UserPoint::query()->create([
+        'user_id' => $child->id,
+        'total_points' => 900,
+        'redeemable_points' => 800,
+    ]);
+
+    ParentChild::query()->create([
+        'parent_id' => $parent->id,
+        'child_id' => $child->id,
+        'relationship' => '其他',
+        'is_approved' => false,
+        'approved_at' => null,
+    ]);
+
+    $response = $this->actingAs($parent, 'api')
+        ->getJson('/api/parent/children');
+
+    $response->assertOk();
+
+    expect(json_encode($response->json()))
+        ->not->toContain('900')
+        ->not->toContain('800');
+});
+
 it('lists only children for the authenticated parent on the api route', function () {
     $parent = User::factory()->approved()->create();
     $child = User::factory()->approved()->create([

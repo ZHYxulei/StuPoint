@@ -35,9 +35,11 @@ class UserController extends Controller
                 $query->where('grade_id', $operator->grade_id);
             })
             ->when($request->filled('search'), function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->search.'%')
-                    ->orWhere('email', 'like', '%'.$request->search.'%')
-                    ->orWhere('student_id', 'like', '%'.$request->search.'%');
+                $q->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%'.$request->search.'%')
+                        ->orWhere('email', 'like', '%'.$request->search.'%')
+                        ->orWhere('student_id', 'like', '%'.$request->search.'%');
+                });
             })
             ->when($request->filled('role'), function ($q) use ($request) {
                 $q->whereHas('roles', fn ($rq) => $rq->where('slug', $request->role));
@@ -60,9 +62,15 @@ class UserController extends Controller
         ]);
     }
 
-    public function show(string $id): JsonResponse
+    public function show(Request $request, string $id): JsonResponse
     {
-        $user = User::with('roles.points', 'points')->findOrFail($id);
+        $user = User::with('roles', 'points')->findOrFail($id);
+
+        $operator = $request->user();
+
+        if ($operator->hasRole('grade_director') && $user->grade_id !== $operator->grade_id) {
+            abort(403, '无权查看其他年级用户');
+        }
 
         return response()->json([
             'success' => true,
@@ -73,6 +81,8 @@ class UserController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         $user = User::findOrFail($id);
+
+        Gate::authorize('update', $user);
 
         if ($request->filled('roles')) {
             Gate::authorize('syncRoles', $user);

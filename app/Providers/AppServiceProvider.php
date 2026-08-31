@@ -122,6 +122,10 @@ class AppServiceProvider extends ServiceProvider
     protected function configurePolicies(): void
     {
         Gate::policy(User::class, UserPolicy::class);
+
+        Gate::define('bind-parent-child', fn (User $user): bool => $user->hasRole('parent') && $user->isApproved());
+
+        Gate::define('uploadPlugin', fn (User $user): bool => $user->hasRole('super_admin') || $user->hasRole('admin'));
     }
 
     protected function configureViewShare(): void

@@ -16,15 +16,7 @@ class PointController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $points = $user->points;
-
-        if (! $points) {
-            $points = UserPoint::create([
-                'user_id' => $user->id,
-                'total_points' => 0,
-                'redeemable_points' => 0,
-            ]);
-        }
+        $points = UserPoint::ensureForUser($user);
 
         // Get recent transactions
         $recentTransactions = PointTransaction::query()

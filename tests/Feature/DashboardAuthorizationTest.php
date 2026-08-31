@@ -90,6 +90,63 @@ it('limits ordinary users to their own dashboard data', function () {
         ->not->toContain('Other reward');
 });
 
+it('does not expose school-wide dashboard data to scoped staff roles', function (string $roleState) {
+    $staffRole = Role::factory()->{$roleState}()->create();
+    $studentRole = Role::factory()->student()->create();
+
+    $staff = User::factory()->approved()->withRole($staffRole)->create([
+        'name' => 'Scoped Staff',
+        'email' => 'scoped-staff@example.com',
+        'is_head_teacher' => $roleState === 'headTeacher',
+    ]);
+
+    $otherStudent = User::factory()->approved()->withRole($studentRole)->create([
+        'name' => 'Unrelated Student',
+        'email' => 'unrelated@example.com',
+    ]);
+
+    UserPoint::create([
+        'user_id' => $staff->id,
+        'total_points' => 10,
+        'redeemable_points' => 10,
+    ]);
+
+    UserPoint::create([
+        'user_id' => $otherStudent->id,
+        'total_points' => 999,
+        'redeemable_points' => 999,
+    ]);
+
+    PointTransaction::create([
+        'user_id' => $otherStudent->id,
+        'type' => 'total',
+        'amount' => 999,
+        'balance_after' => 999,
+        'source' => 'manual_adjust',
+        'description' => 'Unrelated school-wide transaction',
+    ]);
+
+    $response = actingAs($staff)->get(route('dashboard'));
+
+    $response
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('dashboard')
+            ->where('canViewGlobalDashboard', false)
+            ->where('totalUsers', null)
+            ->has('topUsers', 0)
+            ->has('recentTransactions', 0)
+        );
+
+    expect(json_encode($response->inertiaProps()))
+        ->not->toContain('unrelated@example.com')
+        ->not->toContain('Unrelated Student')
+        ->not->toContain('Unrelated school-wide transaction');
+})->with([
+    'head teacher' => 'headTeacher',
+    'grade director' => 'gradeDirector',
+]);
+
 it('keeps aggregate dashboard data for admin users', function () {
     $adminRole = Role::factory()->admin()->create();
     $studentRole = Role::factory()->student()->create();

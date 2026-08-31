@@ -19,14 +19,22 @@ class UserPolicy
 
     public function assignRole(User $actor, User $target, Role $role): bool
     {
-        return $this->canManageRoles($actor, $target)
-            && $role->slug !== 'super_admin';
+        if ($role->slug === 'super_admin') {
+            return false;
+        }
+
+        return $this->canManageRoles($actor, $target);
+    }
+
+    public function updatePassword(User $actor, User $target): bool
+    {
+        return $this->canManageUser($actor, $target);
     }
 
     protected function canManageUser(User $actor, User $target): bool
     {
         return $actor->id !== $target->id
-            && $actor->hasRole('super_admin');
+            && ($actor->hasRole('super_admin') || $actor->hasRole('admin'));
     }
 
     protected function canManageRoles(User $actor, User $target): bool
