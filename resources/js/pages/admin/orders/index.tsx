@@ -57,6 +57,7 @@ interface Paginator {
     last_page: number;
     from: number | null;
     to: number | null;
+    total: number;
     links: Array<{
         url: string | null;
         label: string;
@@ -93,7 +94,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
     const { auth } = usePage<SharedData>().props;
     const [successMessage, setSuccessMessage] = useState('');
 
-    const { get, processing } = useForm({
+    const { get, setData, processing } = useForm({
         status: filters.status || 'all',
         search: filters.search || '',
         product: filters.product || 'all',

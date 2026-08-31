@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -83,15 +83,16 @@ const statusConfig: Record<string, { label: string; variant: 'default' | 'second
 };
 
 export default function ShowActivity({ activity }: PageProps) {
-    const { post: awardPost, processing: awardProcessing } = useForm({});
+    const { processing: awardProcessing } = useForm({});
     const { delete: destroyDelete, processing: deleteProcessing } = useForm({});
     const { data, setData, post, put, processing: updateProcessing } = useForm({
         note: '',
     });
 
     const handleAwardPoints = () => {
-        awardPost(`/student-council/activities/${activity.id}/award-points`, {
-            data: { note: data.note },
+        router.post(`/student-council/activities/${activity.id}/award-points`, {
+            note: data.note,
+        }, {
             onSuccess: () => setData('note', ''),
         });
     };

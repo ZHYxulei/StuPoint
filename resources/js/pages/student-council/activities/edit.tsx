@@ -197,7 +197,7 @@ export default function EditActivity({ activity }: PageProps) {
                                 <Label htmlFor="status">活动状态 *</Label>
                                 <Select
                                     value={data.status}
-                                    onValueChange={(value) => setData('status', value)}
+                                    onValueChange={(value) => setData('status', value as 'draft' | 'active' | 'closed')}
                                 >
                                     <SelectTrigger id="status">
                                         <SelectValue placeholder="选择状态" />

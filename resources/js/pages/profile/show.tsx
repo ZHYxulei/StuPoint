@@ -3,18 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import PublicNavbar from '@/components/public-navbar';
-import { User, Mail, Phone, IdCard, Award, Shield, Calendar, User as UserIcon, Clock, Globe } from 'lucide-react';
+import PublicLayout from '@/layouts/public-layout';
+import { User, Mail, Phone, IdCard, Award, Shield, Calendar, User as UserIcon, Clock } from 'lucide-react';
 import { Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Profile',
-        href: '/profile',
-    },
-];
 
 interface UserRole {
     id: number;
@@ -60,9 +51,8 @@ export default function ProfileShow({ user }: PageProps) {
     };
 
     return (
-        <>
+        <PublicLayout>
             <Head title="账户信息" />
-            <PublicNavbar showMobileMenu={false} onMobileMenuToggle={() => {}} />
 
             <div className="min-h-screen bg-background">
                 {/* Header */}
@@ -141,9 +131,9 @@ export default function ProfileShow({ user }: PageProps) {
                                         <Mail className="h-4 w-4" />
                                         <span>{user.email}</span>
                                         {user.email_verified_at ? (
-                                            <Badge variant="outline" className="ml-auto text-green-600 border-green-600">已验证</Badge>
+                                            <Badge variant="success" className="ml-auto">已验证</Badge>
                                         ) : (
-                                            <Badge variant="outline" className="ml-auto text-yellow-600 border-yellow-600">未验证</Badge>
+                                            <Badge variant="warning" className="ml-auto">未验证</Badge>
                                         )}
                                     </div>
                                 </div>
@@ -174,8 +164,8 @@ export default function ProfileShow({ user }: PageProps) {
                                 {user.is_head_teacher && (
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-muted-foreground">职务</label>
-                                        <div className="p-2 bg-blue-50 dark:bg-blue-950 rounded-md border border-blue-200 dark:border-blue-800">
-                                            <span className="text-blue-700 dark:text-blue-300">班主任</span>
+                                        <div className="rounded-md border border-info/20 bg-info-soft p-2">
+                                            <span className="text-info-foreground">班主任</span>
                                         </div>
                                     </div>
                                 )}
@@ -219,14 +209,12 @@ export default function ProfileShow({ user }: PageProps) {
 
                     {/* Actions */}
                     <div className="mt-6 flex justify-end">
-                        <Link href="/settings/profile">
-                            <Button>
-                                编辑账户信息
-                            </Button>
-                        </Link>
+                        <Button asChild>
+                            <Link href="/settings/profile">编辑账户信息</Link>
+                        </Button>
                     </div>
                 </div>
             </div>
-        </>
+        </PublicLayout>
     );
 }

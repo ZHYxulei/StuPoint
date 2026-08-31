@@ -1,8 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Heading from '@/components/heading';
-import { Badge } from '@/components/ui/badge';
-import { Pagination } from '@/components/ui/pagination';
+import PageHeader from '@/components/page-header';
+import StatusBadge from '@/components/status-badge';
+import { Button } from '@/components/ui/button';
+import { Empty } from '@/components/ui/empty';
+import PaginationBar from '@/components/pagination-bar';
 import { ArrowLeft, History } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -49,17 +51,18 @@ export default function ParentChildTransactions({ child, transactions }: PagePro
             <Head title={`${child.name} - 积分记录`} />
 
             <div className="space-y-6 p-4">
-                <div className="flex items-center gap-4">
-                    <Link href={`/parent/children/${child.id}`}>
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="h-4 w-4" />
+                <PageHeader
+                    title={`${child.name} 的积分记录`}
+                    description={`学号: ${child.student_id}`}
+                    actions={(
+                        <Button asChild variant="outline">
+                            <Link href={`/parent/children/${child.id}`}>
+                                <ArrowLeft className="size-4" />
+                                返回详情
+                            </Link>
                         </Button>
-                    </Link>
-                    <Heading
-                        title={`${child.name} 的积分记录`}
-                        description={`学号: ${child.student_id}`}
-                    />
-                </div>
+                    )}
+                />
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
@@ -70,15 +73,17 @@ export default function ParentChildTransactions({ child, transactions }: PagePro
                     </CardHeader>
                     <CardContent>
                         {transactions.data.length === 0 ? (
-                            <p className="text-center text-muted-foreground py-12">
-                                暂无积分变动记录
-                            </p>
+                            <Empty
+                                icon={History}
+                                title="暂无积分变动记录"
+                                description="孩子获得或使用积分后，交易记录会显示在这里。"
+                            />
                         ) : (
                             <div className="space-y-3">
                                 {transactions.data.map((t) => (
                                     <div
                                         key={t.id}
-                                        className="flex items-center justify-between p-4 bg-muted/30 rounded-lg"
+                                        className="flex flex-col gap-4 rounded-lg border border-border/70 bg-surface-2 p-4 sm:flex-row sm:items-center sm:justify-between"
                                     >
                                         <div className="flex-1">
                                             <p className="font-medium">{t.description}</p>
@@ -86,16 +91,16 @@ export default function ParentChildTransactions({ child, transactions }: PagePro
                                                 {new Date(t.created_at).toLocaleString('zh-CN')}
                                             </p>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <Badge variant="outline">
-                                                {t.type === 'total' ? '总积分' : '可兑换'}
-                                            </Badge>
-                                            <Badge
-                                                variant={t.amount > 0 ? 'default' : 'destructive'}
-                                                className="min-w-[80px] justify-center"
-                                            >
-                                                {t.amount > 0 ? '+' : ''}{t.amount}
-                                            </Badge>
+                                        <div className="flex items-center justify-between gap-4 sm:justify-end">
+                                            <StatusBadge
+                                                tone="outline"
+                                                label={t.type === 'total' ? '总积分' : '可兑换'}
+                                            />
+                                            <StatusBadge
+                                                tone={t.amount > 0 ? 'success' : 'destructive'}
+                                                label={`${t.amount > 0 ? '+' : ''}${t.amount}`}
+                                                className="min-w-20 justify-center"
+                                            />
                                         </div>
                                     </div>
                                 ))}
@@ -105,13 +110,7 @@ export default function ParentChildTransactions({ child, transactions }: PagePro
                 </Card>
 
                 {transactions.last_page > 1 && (
-                    <div className="flex justify-center">
-                        <Pagination
-                            currentPage={transactions.current_page}
-                            lastPage={transactions.last_page}
-                            links={transactions.links}
-                        />
-                    </div>
+                    <PaginationBar links={transactions.links} />
                 )}
             </div>
         </AppLayout>

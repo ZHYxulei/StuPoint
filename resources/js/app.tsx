@@ -1,6 +1,6 @@
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { StrictMode } from 'react';
+import { StrictMode, type ComponentType } from 'react';
 import { hydrateRoot, createRoot } from 'react-dom/client';
 import '../css/app.css';
 import { initializeTheme } from './hooks/use-appearance';
@@ -15,7 +15,7 @@ createInertiaApp({
     resolve: (name) =>
         resolvePageComponent(
             `./pages/${name}.tsx`,
-            import.meta.glob('./pages/**/*.tsx'),
+            import.meta.glob<ComponentType<any>>('./pages/**/*.tsx'),
         ),
     setup({ el, App, props }) {
         // Make page props available globally for i18n

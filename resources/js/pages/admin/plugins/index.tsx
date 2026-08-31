@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -74,8 +74,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
     const [searching, setSearching] = useState(false);
 
     const installPlugin = (slug: string) => {
-        post('/admin/plugins/install', {
-            data: { slug },
+        router.post('/admin/plugins/install', {
+            slug,
+        }, {
             onSuccess: () => window.location.reload(),
         });
     };
@@ -159,7 +160,7 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
             setMarketplacePlugins(data.plugins || []);
         } catch (error) {
             console.error('Search error:', error);
-            alert('搜索失败: ' + error.message);
+            alert('搜索失败: ' + (error instanceof Error ? error.message : String(error)));
         } finally {
             setSearching(false);
         }

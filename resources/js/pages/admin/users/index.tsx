@@ -1,4 +1,4 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
@@ -43,6 +43,7 @@ interface Paginator {
     last_page: number;
     from: number | null;
     to: number | null;
+    total: number;
     links: Array<{
         url: string | null;
         label: string;
@@ -282,8 +283,10 @@ export default function UserIndex({ users, roles, filters, import_results }: Pag
                                     type="text"
                                     placeholder="姓名或邮箱..."
                                     value={filters.search || ''}
-                                    onChange={(e) => get('/admin/users', {
-                                        data: { ...filters, search: e.target.value || null },
+                                    onChange={(e) => router.get('/admin/users', {
+                                        ...filters,
+                                        search: e.target.value || null,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 />
@@ -293,8 +296,10 @@ export default function UserIndex({ users, roles, filters, import_results }: Pag
                                 <Label htmlFor="role">角色</Label>
                                 <Select
                                     value={filters.role || 'all'}
-                                    onValueChange={(value) => get('/admin/users', {
-                                        data: { ...filters, role: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get('/admin/users', {
+                                        ...filters,
+                                        role: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >

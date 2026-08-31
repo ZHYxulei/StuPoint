@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
@@ -175,8 +175,10 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
                                 <label className="text-sm font-medium">积分类型</label>
                                 <Select
                                     value={filters.type || 'all'}
-                                    onValueChange={(value) => get(`/admin/users/${user.id}/transactions`, {
-                                        data: { ...filters, type: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get(`/admin/users/${user.id}/transactions`, {
+                                        ...filters,
+                                        type: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >
@@ -195,8 +197,10 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
                                 <label className="text-sm font-medium">来源</label>
                                 <Select
                                     value={filters.source || 'all'}
-                                    onValueChange={(value) => get(`/admin/users/${user.id}/transactions`, {
-                                        data: { ...filters, source: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get(`/admin/users/${user.id}/transactions`, {
+                                        ...filters,
+                                        source: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >

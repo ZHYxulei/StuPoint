@@ -1,5 +1,4 @@
-import { Head } from '@inertiajs/react';
-import { useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/input-error';
@@ -18,6 +17,8 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
         password: '',
         password_confirmation: '',
     });
+
+    const pageErrors = usePage().props.errors as Record<string, string>;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -107,11 +108,11 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                     <InputError message={errors.password_confirmation} className="mt-2" />
                                 </div>
 
-                                {errors.install && (
+                                {pageErrors.install && (
                                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
                                         <p className="text-sm text-red-700 dark:text-red-300 flex items-center">
                                             <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                                            {errors.install}
+                                            {pageErrors.install}
                                         </p>
                                     </div>
                                 )}

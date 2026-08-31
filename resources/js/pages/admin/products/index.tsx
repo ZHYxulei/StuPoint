@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
@@ -160,8 +160,10 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                                     type="text"
                                     placeholder="商品名称..."
                                     value={filters.search || ''}
-                                    onChange={(e) => get('/admin/products', {
-                                        data: { ...filters, search: e.target.value || null },
+                                    onChange={(e) => router.get('/admin/products', {
+                                        ...filters,
+                                        search: e.target.value || null,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 />
@@ -171,8 +173,10 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                                 <Label htmlFor="status">状态</Label>
                                 <Select
                                     value={filters.status || 'all'}
-                                    onValueChange={(value) => get('/admin/products', {
-                                        data: { ...filters, status: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get('/admin/products', {
+                                        ...filters,
+                                        status: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >
@@ -192,8 +196,10 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                                 <Label htmlFor="category">分类</Label>
                                 <Select
                                     value={filters.category || 'all'}
-                                    onValueChange={(value) => get('/admin/products', {
-                                        data: { ...filters, category: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get('/admin/products', {
+                                        ...filters,
+                                        category: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >

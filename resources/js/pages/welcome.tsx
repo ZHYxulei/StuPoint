@@ -9,7 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import PublicNavbar from '@/components/public-navbar';
+import PublicLayout from '@/layouts/public-layout';
 import {
     Coins,
     Trophy,
@@ -21,7 +21,6 @@ import {
     Award,
     School,
 } from 'lucide-react';
-import { useState } from 'react';
 
 interface UserStats {
     id: number;
@@ -44,9 +43,7 @@ interface WelcomeProps {
 }
 
 export default function Welcome({ canRegister, userStats }: WelcomeProps) {
-    const { auth, siteSettings, footerSettings, contactSettings } =
-        usePage<SharedData>().props;
-    const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const { auth, footerSettings } = usePage<SharedData>().props;
     const user = auth.user;
 
     const siteName = '学生积分管理系统';
@@ -59,21 +56,17 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
     const localStats = userStats;
 
     return (
-        <>
+        <PublicLayout>
             <Head title={siteName} />
-            <PublicNavbar
-                showMobileMenu={showMobileMenu}
-                onMobileMenuToggle={() => setShowMobileMenu(!showMobileMenu)}
-            />
 
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+            <div className="min-h-screen bg-background">
                 {/* User Stats Section - Only show for logged in users */}
                 {localStats ? (
                     <div className="container px-4 py-8">
                         <div className="mx-auto max-w-6xl">
                             {/* Welcome Message */}
                             <div className="mb-8">
-                                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                                <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                                     欢迎回来，
                                     {localStats.nickname || localStats.name}！
                                 </h1>
@@ -85,18 +78,18 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             {/* Stats Cards Grid */}
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                                 {/* Total Points Card */}
-                                <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 dark:border-amber-800 dark:from-amber-950/30 dark:to-orange-950/30">
+                                <Card className="border-warning/20 bg-warning-soft/60">
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-warning-foreground">
                                             <Coins className="h-4 w-4" />
                                             总积分
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">
+                                        <div className="text-3xl font-bold text-warning-foreground">
                                             {localStats.total_points.toLocaleString()}
                                         </div>
-                                        <p className="mt-1 text-xs text-amber-600/70 dark:text-amber-400/70">
+                                        <p className="mt-1 text-xs text-warning-foreground/70">
                                             可兑换:{' '}
                                             {localStats.redeemable_points.toLocaleString()}
                                         </p>
@@ -105,11 +98,13 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
 
                                 {/* Today's Change Card */}
                                 <Card
-                                    className={`bg-gradient-to-br ${localStats.today_change >= 0 ? 'border-green-200 from-green-50 to-emerald-50 dark:border-green-800 dark:from-green-950/30 dark:to-emerald-950/30' : 'border-red-200 from-red-50 to-rose-50 dark:border-red-800 dark:from-red-950/30 dark:to-rose-950/30'} `}
+                                    className={localStats.today_change >= 0
+                                        ? 'border-success/20 bg-success-soft/60'
+                                        : 'border-destructive/20 bg-destructive/5'}
                                 >
                                     <CardHeader className="pb-2">
                                         <CardTitle
-                                            className={`flex items-center gap-2 text-sm font-medium ${localStats.today_change >= 0 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}
+                                            className={`flex items-center gap-2 text-sm font-medium ${localStats.today_change >= 0 ? 'text-success-foreground' : 'text-destructive'}`}
                                         >
                                             {localStats.today_change >= 0 ? (
                                                 <TrendingUp className="h-4 w-4" />
@@ -121,7 +116,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                     </CardHeader>
                                     <CardContent>
                                         <div
-                                            className={`text-3xl font-bold ${localStats.today_change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+                                            className={`text-3xl font-bold ${localStats.today_change >= 0 ? 'text-success-foreground' : 'text-destructive'}`}
                                         >
                                             {localStats.today_change >= 0
                                                 ? '+'
@@ -135,18 +130,18 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                 </Card>
 
                                 {/* School Rank Card */}
-                                <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 dark:border-blue-800 dark:from-blue-950/30 dark:to-indigo-950/30">
+                                <Card className="border-info/20 bg-info-soft/60">
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-blue-700 dark:text-blue-300">
+                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-info-foreground">
                                             <Trophy className="h-4 w-4" />
                                             全校排名
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                                        <div className="text-3xl font-bold text-info-foreground">
                                             #{localStats.school_rank}
                                         </div>
-                                        <p className="mt-1 text-xs text-blue-600/70 dark:text-blue-400/70">
+                                        <p className="mt-1 text-xs text-info-foreground/70">
                                             全校学生
                                         </p>
                                     </CardContent>
@@ -215,19 +210,19 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             </div>
 
                             {/* Quick Actions */}
-                            <div className="mt-8 flex items-center justify-center gap-4">
-                                <Link href={dashboard()}>
-                                    <Button size="lg">
+                            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                                <Button asChild size="lg">
+                                    <Link href={dashboard()}>
                                         进入仪表盘
-                                        <ArrowRight className="ml-2 h-5 w-5" />
-                                    </Button>
-                                </Link>
-                                <Link href={ranking()}>
-                                    <Button size="lg" variant="outline">
+                                        <ArrowRight className="size-5" />
+                                    </Link>
+                                </Button>
+                                <Button asChild size="lg" variant="outline">
+                                    <Link href={ranking()}>
                                         查看排行榜
-                                        <Trophy className="ml-2 h-5 w-5" />
-                                    </Button>
-                                </Link>
+                                        <Trophy className="size-5" />
+                                    </Link>
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -243,16 +238,14 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                 让教育更有趣。
                             </p>
 
-                            <div className="mt-8 flex items-center justify-center gap-4">
-                                <Link href={login()}>
-                                    <Button size="lg">立即登录</Button>
-                                </Link>
+                            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                                <Button asChild size="lg">
+                                    <Link href={login()}>立即登录</Link>
+                                </Button>
                                 {canRegister && (
-                                    <Link href={register()}>
-                                        <Button size="lg" variant="outline">
-                                            注册账户
-                                        </Button>
-                                    </Link>
+                                    <Button asChild size="lg" variant="outline">
+                                        <Link href={register()}>注册账户</Link>
+                                    </Button>
                                 )}
                             </div>
                         </div>
@@ -344,12 +337,12 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                 </CardHeader>
                                 <CardContent className="text-center">
                                     {canRegister && (
-                                        <Link href={register()}>
-                                            <Button size="lg">
+                                        <Button asChild size="lg">
+                                            <Link href={register()}>
                                                 免费注册
-                                                <ArrowRight className="ml-2 h-5 w-5" />
-                                            </Button>
-                                        </Link>
+                                                <ArrowRight className="size-5" />
+                                            </Link>
+                                        </Button>
                                     )}
                                 </CardContent>
                             </Card>
@@ -367,6 +360,6 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                     </div>
                 </div>
             </div>
-        </>
+        </PublicLayout>
     );
 }

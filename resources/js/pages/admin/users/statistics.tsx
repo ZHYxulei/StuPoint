@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
@@ -182,8 +182,10 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                     type="text"
                                     placeholder="姓名、邮箱或学号..."
                                     value={filters.search || ''}
-                                    onChange={(e) => get('/admin/users/statistics', {
-                                        data: { ...filters, search: e.target.value || null },
+                                    onChange={(e) => router.get('/admin/users/statistics', {
+                                        ...filters,
+                                        search: e.target.value || null,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 />
@@ -193,8 +195,10 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                 <Label htmlFor="role">角色</Label>
                                 <Select
                                     value={filters.role || 'all'}
-                                    onValueChange={(value) => get('/admin/users/statistics', {
-                                        data: { ...filters, role: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get('/admin/users/statistics', {
+                                        ...filters,
+                                        role: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >
@@ -216,8 +220,10 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                 <Label htmlFor="sort_by">排序方式</Label>
                                 <Select
                                     value={filters.sort_by || 'total_points'}
-                                    onValueChange={(value) => get('/admin/users/statistics', {
-                                        data: { ...filters, sort_by: value },
+                                    onValueChange={(value) => router.get('/admin/users/statistics', {
+                                        ...filters,
+                                        sort_by: value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >
@@ -237,8 +243,10 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                 <Label htmlFor="per_page">每页显示</Label>
                                 <Select
                                     value={filters.per_page || '20'}
-                                    onValueChange={(value) => get('/admin/users/statistics', {
-                                        data: { ...filters, per_page: value },
+                                    onValueChange={(value) => router.get('/admin/users/statistics', {
+                                        ...filters,
+                                        per_page: value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >

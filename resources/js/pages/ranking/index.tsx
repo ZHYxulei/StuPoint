@@ -1,10 +1,11 @@
-import { Head, Link, usePage } from '@inertiajs/react';
-import PublicNavbar from '@/components/public-navbar';
+import { Head, usePage } from '@inertiajs/react';
+import PublicLayout from '@/layouts/public-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import PaginationBar from '@/components/pagination-bar';
+import { Empty } from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
 import { Trophy, TrendingUp, User } from 'lucide-react';
-import { useState } from 'react';
 
 interface RankingEntry {
     id: number;
@@ -22,6 +23,11 @@ interface PageProps {
         current_page: number;
         last_page: number;
         total: number;
+        links: Array<{
+            url: string | null;
+            label: string;
+            active: boolean;
+        }>;
     };
     userRanking: RankingEntry | null;
     filters: {
@@ -30,8 +36,7 @@ interface PageProps {
     };
 }
 
-export default function RankingIndex({ rankings, userRanking, filters }: PageProps) {
-    const [showMobileMenu, setShowMobileMenu] = useState(false);
+export default function RankingIndex({ rankings, userRanking }: PageProps) {
     const { auth } = usePage<{ auth: { user: { id: number } | null } }>().props;
     const currentUserId = auth.user?.id;
 
@@ -52,8 +57,8 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
             return (
                 <div className={`flex items-center gap-3 ${containerClass}`}>
                     {rankText}
-                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-lg">
-                        <Trophy className="h-7 w-7" />
+                    <div className="flex size-14 items-center justify-center rounded-full border border-warning/30 bg-warning-soft text-warning-foreground shadow-sm">
+                        <Trophy className="size-7" aria-hidden="true" />
                     </div>
                 </div>
             );
@@ -62,8 +67,8 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
             return (
                 <div className={`flex items-center gap-3 ${containerClass}`}>
                     {rankText}
-                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 text-white shadow-lg">
-                        <Trophy className="h-7 w-7" />
+                    <div className="flex size-14 items-center justify-center rounded-full border border-border bg-surface-3 text-muted-foreground shadow-sm">
+                        <Trophy className="size-7" aria-hidden="true" />
                     </div>
                 </div>
             );
@@ -72,8 +77,8 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
             return (
                 <div className={`flex items-center gap-3 ${containerClass}`}>
                     {rankText}
-                    <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 text-white shadow-lg">
-                        <Trophy className="h-7 w-7" />
+                    <div className="flex size-14 items-center justify-center rounded-full border border-warning/20 bg-warning-soft/70 text-warning-foreground shadow-sm">
+                        <Trophy className="size-7" aria-hidden="true" />
                     </div>
                 </div>
             );
@@ -88,9 +93,8 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
     };
 
     return (
-        <>
+        <PublicLayout>
             <Head title="积分排行榜" />
-            <PublicNavbar showMobileMenu={showMobileMenu} onMobileMenuToggle={() => setShowMobileMenu(!showMobileMenu)} />
 
             <div className="min-h-screen bg-background">
                 {/* Hero Section */}
@@ -188,40 +192,21 @@ export default function RankingIndex({ rankings, userRanking, filters }: PagePro
                                 })}
 
                                 {rankings.data.length === 0 && (
-                                    <div className="text-center py-12 text-muted-foreground">
-                                        暂无排名数据
-                                    </div>
+                                    <Empty
+                                        icon={Trophy}
+                                        title="暂无排名数据"
+                                        description="积分产生后，学生排名会显示在这里。"
+                                    />
                                 )}
                             </div>
 
-                            {/* Pagination */}
                             {rankings.last_page > 1 && (
-                                <div className="flex justify-center gap-2 mt-6">
-                                    {rankings.current_page > 1 && (
-                                        <Link
-                                            href={`?page=${rankings.current_page - 1}`}
-                                            className="px-4 py-2 border rounded-md hover:bg-accent"
-                                        >
-                                            上一页
-                                        </Link>
-                                    )}
-                                    <span className="px-4 py-2">
-                                        第 {rankings.current_page} / {rankings.last_page} 页
-                                    </span>
-                                    {rankings.current_page < rankings.last_page && (
-                                        <Link
-                                            href={`?page=${rankings.current_page + 1}`}
-                                            className="px-4 py-2 border rounded-md hover:bg-accent"
-                                        >
-                                            下一页
-                                        </Link>
-                                    )}
-                                </div>
+                                <PaginationBar links={rankings.links} />
                             )}
                         </CardContent>
                     </Card>
                 </div>
             </div>
-        </>
+        </PublicLayout>
     );
 }

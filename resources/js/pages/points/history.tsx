@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
@@ -100,8 +100,10 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                 <Label htmlFor="type">Type</Label>
                                 <Select
                                     value={filters.type || 'all'}
-                                    onValueChange={(value) => get('/points/history', {
-                                        data: { ...filters, type: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get('/points/history', {
+                                        ...filters,
+                                        type: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >
@@ -123,8 +125,10 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                     type="text"
                                     placeholder="Search by source..."
                                     value={filters.source || ''}
-                                    onChange={(e) => get('/points/history', {
-                                        data: { ...filters, source: e.target.value || null },
+                                    onChange={(e) => router.get('/points/history', {
+                                        ...filters,
+                                        source: e.target.value || null,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 />

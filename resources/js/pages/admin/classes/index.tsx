@@ -37,7 +37,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ClassIndex({ classes, grades, filters }: PageProps) {
-    const { get, processing } = useForm({
+    const { get, setData, processing } = useForm({
         grade: filters.grade || '',
     });
 
@@ -82,19 +82,11 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                 <Select
                                     value={filters.grade || ''}
                                     onValueChange={(value) => {
-                                        if (value === 'all') {
-                                            get('/admin/classes', {
-                                                data: { grade: '' },
-                                                preserveScroll: true,
-                                                preserveState: true,
-                                            });
-                                        } else {
-                                            get('/admin/classes', {
-                                                data: { grade: value },
-                                                preserveScroll: true,
-                                                preserveState: true,
-                                            });
-                                        }
+                                        setData('grade', value === 'all' ? '' : value);
+                                        get('/admin/classes', {
+                                            preserveScroll: true,
+                                            preserveState: true,
+                                        });
                                     }}
                                 >
                                     <SelectTrigger>

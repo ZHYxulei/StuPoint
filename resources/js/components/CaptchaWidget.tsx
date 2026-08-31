@@ -43,9 +43,10 @@ export default function CaptchaWidget({ siteKey, provider, onVerify, onExpire }:
             script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
             script.async = true;
             script.onload = () => {
-                if (window.grecaptcha) {
-                    window.grecaptcha.ready(() => {
-                        window.grecaptcha.execute(siteKey, { action: 'login' }).then((token: string) => {
+                const grecaptcha = window.grecaptcha;
+                if (grecaptcha) {
+                    grecaptcha.ready(() => {
+                        grecaptcha.execute(siteKey, { action: 'login' }).then((token: string) => {
                             onVerify(token);
                         });
                     });

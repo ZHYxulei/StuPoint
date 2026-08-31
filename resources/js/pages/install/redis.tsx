@@ -20,6 +20,7 @@ interface SharedPageProps {
     old: {
         install?: Record<string, string>;
     };
+    [key: string]: unknown;
 }
 
 export default function InstallRedis({ form }: InstallRedisProps) {

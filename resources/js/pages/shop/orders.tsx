@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
@@ -119,8 +119,10 @@ export default function ShopOrders({ orders, filters }: PageProps) {
                                 <Label htmlFor="status">Order Status</Label>
                                 <Select
                                     value={filters.status || 'all'}
-                                    onValueChange={(value) => get('/shop/orders', {
-                                        data: { ...filters, status: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get('/shop/orders', {
+                                        ...filters,
+                                        status: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >

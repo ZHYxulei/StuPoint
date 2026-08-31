@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import PaginationBar from '@/components/pagination-bar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Heading from '@/components/heading';
@@ -108,8 +108,10 @@ export default function ShopIndex({ products, categories, filters }: PageProps) 
                                     type="text"
                                     placeholder="Search products..."
                                     value={filters.search || ''}
-                                    onChange={(e) => get('/shop', {
-                                        data: { ...filters, search: e.target.value || null },
+                                    onChange={(e) => router.get('/shop', {
+                                        ...filters,
+                                        search: e.target.value || null,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 />
@@ -119,8 +121,10 @@ export default function ShopIndex({ products, categories, filters }: PageProps) 
                                 <Label htmlFor="category">Category</Label>
                                 <Select
                                     value={filters.category || 'all'}
-                                    onValueChange={(value) => get('/shop', {
-                                        data: { ...filters, category: value === 'all' ? null : value },
+                                    onValueChange={(value) => router.get('/shop', {
+                                        ...filters,
+                                        category: value === 'all' ? null : value,
+                                    }, {
                                         preserveScroll: true,
                                     })}
                                 >

@@ -51,7 +51,7 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
         },
     };
 
-    const t = texts[locale] || texts.zh;
+    const t = texts[locale as keyof typeof texts] ?? texts.zh;
 
     useEffect(() => {
         const checkRequirements = async () => {

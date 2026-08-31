@@ -207,8 +207,8 @@ export default function ShopProduct({ product }: PageProps) {
                                             placeholder="Enter recipient name"
                                             required
                                         />
-                                        {errors.name && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.name}</p>
+                                        {errors['shipping_info.name'] && (
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors['shipping_info.name']}</p>
                                         )}
                                     </div>
 
@@ -225,8 +225,8 @@ export default function ShopProduct({ product }: PageProps) {
                                             placeholder="Enter phone number"
                                             required
                                         />
-                                        {errors.phone && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.phone}</p>
+                                        {errors['shipping_info.phone'] && (
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors['shipping_info.phone']}</p>
                                         )}
                                     </div>
 
@@ -243,8 +243,8 @@ export default function ShopProduct({ product }: PageProps) {
                                             rows={3}
                                             required
                                         />
-                                        {errors.address && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.address}</p>
+                                        {errors['shipping_info.address'] && (
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors['shipping_info.address']}</p>
                                         )}
                                     </div>
 

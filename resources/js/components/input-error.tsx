@@ -1,17 +1,27 @@
-import type { HTMLAttributes } from 'react';
+import type { ComponentProps, JSX } from 'react';
 import { cn } from '@/lib/utils';
+
+export type InputErrorProps = ComponentProps<'p'> & {
+    message?: string | null;
+};
 
 export default function InputError({
     message,
-    className = '',
+    className,
     ...props
-}: HTMLAttributes<HTMLParagraphElement> & { message?: string }) {
-    return message ? (
+}: InputErrorProps): JSX.Element | null {
+    if (!message) {
+        return null;
+    }
+
+    return (
         <p
+            role="alert"
+            aria-live="polite"
+            className={cn('text-sm text-destructive', className)}
             {...props}
-            className={cn('text-sm text-red-600 dark:text-red-400', className)}
         >
             {message}
         </p>
-    ) : null;
+    );
 }

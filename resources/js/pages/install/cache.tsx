@@ -15,6 +15,7 @@ interface SharedPageProps {
     old: {
         install?: Record<string, string>;
     };
+    [key: string]: unknown;
 }
 
 export default function InstallCache({ form }: InstallCacheProps) {

@@ -1,4 +1,18 @@
 import { Link, usePage } from '@inertiajs/react';
+import {
+    ChevronDown,
+    Home,
+    LayoutDashboard,
+    LogIn,
+    LogOut,
+    Menu,
+    Trophy,
+    User,
+    UserPlus,
+    X,
+} from 'lucide-react';
+import { useId, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -7,258 +21,182 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Home, Trophy, LogIn, UserPlus, LayoutDashboard, User, LogOut, ChevronDown, Menu } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { dashboard, login, register, ranking } from '@/routes';
 import type { SharedData } from '@/types';
-import { dashboard, login, register } from '@/routes';
 
-interface PublicNavbarProps {
-    showMobileMenu?: boolean;
-    onMobileMenuToggle?: () => void;
+export interface PublicNavbarProps {
+    className?: string;
 }
 
-export default function PublicNavbar({ showMobileMenu = false, onMobileMenuToggle }: PublicNavbarProps) {
-    const { auth } = usePage<SharedData>().props;
+const publicNavigation = [
+    { label: '主页', href: '/', icon: Home },
+    { label: '积分排行', href: ranking(), icon: Trophy },
+];
+
+const accountNavigation = [
+    { label: '仪表盘', href: dashboard(), icon: LayoutDashboard },
+    { label: '账户信息', href: '/profile', icon: User },
+    { label: '编辑账户', href: '/settings/profile', icon: User },
+];
+
+export default function PublicNavbar({ className }: PublicNavbarProps) {
+    const { auth, siteSettings } = usePage<SharedData>().props;
     const user = auth.user;
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const mobileMenuId = useId();
+    const displayName = user ? user.nickname || user.name : '';
 
-    // Helper function to get display name
-    const getDisplayName = (user: any) => {
-        return user.nickname || user.name;
-    };
-
-    if (user) {
-        return (
-            <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-16 items-center">
-                    {/* Left side */}
-                    <div className="flex items-center gap-6">
-                        <Link href="/" className="flex items-center space-x-2">
-                            <span className="hidden font-bold sm:inline-block">
-                                学生积分管理系统
-                            </span>
-                        </Link>
-
-                        {/* Desktop navigation */}
-                        <div className="hidden md:flex items-center gap-4 text-sm font-medium">
-                            <Link
-                                href="/"
-                                className="transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <Home className="mr-2 h-4 w-4 inline" />
-                                主页
-                            </Link>
-                            <Link
-                                href="/ranking"
-                                className="transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <Trophy className="mr-2 h-4 w-4 inline" />
-                                积分排行
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Right side - User menu */}
-                    <div className="ml-auto flex items-center gap-4">
-                        {/* Desktop user menu */}
-                        <div className="hidden md:flex items-center gap-4">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="gap-2">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={user.avatar || undefined} alt={getDisplayName(user)} />
-                                            <AvatarFallback>
-                                                {getDisplayName(user)?.charAt(0).toUpperCase()}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className="text-sm font-medium">{getDisplayName(user)}</span>
-                                        <ChevronDown className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56">
-                                    <DropdownMenuItem asChild>
-                                        <Link href={dashboard()} className="cursor-pointer">
-                                            <LayoutDashboard className="mr-2 h-4 w-4" />
-                                            <span>仪表盘</span>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/profile" className="cursor-pointer">
-                                            <User className="mr-2 h-4 w-4" />
-                                            <span>账户信息</span>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/settings/profile" className="cursor-pointer">
-                                            <User className="mr-2 h-4 w-4" />
-                                            <span>编辑账户</span>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/logout" method="post" as="button" className="cursor-pointer w-full">
-                                            <LogOut className="mr-2 h-4 w-4" />
-                                            <span>登出</span>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-
-                        {/* Mobile menu button */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="md:hidden"
-                            onClick={onMobileMenuToggle}
-                        >
-                            <Menu className="h-5 w-5" />
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Mobile menu */}
-                {showMobileMenu && (
-                    <div className="md:hidden border-t py-4">
-                        <div className="flex flex-col space-y-3 px-4">
-                            <Link
-                                href="/"
-                                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <Home className="h-4 w-4" />
-                                主页
-                            </Link>
-                            <Link
-                                href="/ranking"
-                                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <Trophy className="h-4 w-4" />
-                                积分排行
-                            </Link>
-                            <Link
-                                href={dashboard()}
-                                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <LayoutDashboard className="h-4 w-4" />
-                                仪表盘
-                            </Link>
-                            <Link
-                                href="/profile"
-                                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <User className="h-4 w-4" />
-                                账户信息
-                            </Link>
-                            <Link
-                                href="/settings/profile"
-                                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <User className="h-4 w-4" />
-                                编辑账户
-                            </Link>
-                            <Link
-                                href="/logout"
-                                method="post"
-                                as="button"
-                                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                            >
-                                <LogOut className="h-4 w-4" />
-                                登出
-                            </Link>
-                        </div>
-                    </div>
-                )}
-            </nav>
-        );
-    }
-
-    // Not logged in
     return (
-        <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center">
-                {/* Left side */}
-                <div className="flex items-center gap-6">
-                    <Link href="/" className="flex items-center space-x-2">
-                        <span className="hidden font-bold sm:inline-block">
-                            学生积分管理系统
-                        </span>
-                    </Link>
+        <nav
+            className={cn(
+                'sticky top-0 z-50 w-full border-b border-border/80 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/75',
+                className,
+            )}
+        >
+            <div className="container flex h-16 items-center gap-6">
+                <Link href="/" className="flex min-w-0 items-center gap-2 font-semibold">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm text-primary-foreground">
+                        S
+                    </span>
+                    <span className="truncate">
+                        {siteSettings?.site_name || '学生积分管理系统'}
+                    </span>
+                </Link>
 
-                    {/* Desktop navigation */}
-                    <div className="hidden md:flex items-center gap-4 text-sm font-medium">
-                        <Link
-                            href="/"
-                            className="transition-colors hover:text-foreground/80 text-foreground/60"
-                        >
-                            <Home className="mr-2 h-4 w-4 inline" />
-                            主页
-                        </Link>
-                        <Link
-                            href="/ranking"
-                            className="transition-colors hover:text-foreground/80 text-foreground/60"
-                        >
-                            <Trophy className="mr-2 h-4 w-4 inline" />
-                            积分排行
-                        </Link>
-                    </div>
+                <div className="hidden items-center gap-1 md:flex">
+                    {publicNavigation.map(({ label, href, icon: Icon }) => (
+                        <Button key={label} asChild variant="ghost" size="sm">
+                            <Link href={href}>
+                                <Icon className="size-4" />
+                                {label}
+                            </Link>
+                        </Button>
+                    ))}
                 </div>
 
-                {/* Right side - Auth buttons */}
-                <div className="ml-auto flex items-center gap-4">
-                    {/* Desktop auth buttons */}
-                    <div className="hidden md:flex items-center gap-2">
-                        <Link href={login()}>
-                            <Button variant="ghost">
-                                <LogIn className="mr-2 h-4 w-4" />
-                                登录
+                <div className="ml-auto hidden items-center gap-2 md:flex">
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="gap-2 px-2">
+                                    <Avatar className="size-8">
+                                        <AvatarImage
+                                            src={user.avatar || undefined}
+                                            alt={displayName}
+                                        />
+                                        <AvatarFallback>
+                                            {displayName.charAt(0).toUpperCase()}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className="max-w-36 truncate">{displayName}</span>
+                                    <ChevronDown className="size-4 text-muted-foreground" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                {accountNavigation.map(({ label, href, icon: Icon }) => (
+                                    <DropdownMenuItem key={label} asChild>
+                                        <Link href={href}>
+                                            <Icon className="size-4" />
+                                            {label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                ))}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link href="/logout" method="post" as="button" className="w-full">
+                                        <LogOut className="size-4" />
+                                        登出
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <>
+                            <Button asChild variant="ghost">
+                                <Link href={login()}>
+                                    <LogIn className="size-4" />
+                                    登录
+                                </Link>
                             </Button>
-                        </Link>
-                        <Link href={register()}>
-                            <Button>
-                                <UserPlus className="mr-2 h-4 w-4" />
-                                注册
+                            <Button asChild>
+                                <Link href={register()}>
+                                    <UserPlus className="size-4" />
+                                    注册
+                                </Link>
                             </Button>
-                        </Link>
-                    </div>
-
-                    {/* Mobile menu button */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="md:hidden"
-                        onClick={onMobileMenuToggle}
-                    >
-                        <Menu className="h-5 w-5" />
-                    </Button>
+                        </>
+                    )}
                 </div>
+
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="ml-auto md:hidden"
+                    aria-label={mobileMenuOpen ? '关闭导航菜单' : '打开导航菜单'}
+                    aria-expanded={mobileMenuOpen}
+                    aria-controls={mobileMenuId}
+                    onClick={() => setMobileMenuOpen((open) => !open)}
+                >
+                    {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+                </Button>
             </div>
 
-            {/* Mobile menu */}
-            {showMobileMenu && (
-                <div className="md:hidden border-t py-4">
-                    <div className="flex flex-col space-y-3 px-4">
-                        <Link
-                            href="/"
-                            className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                        >
-                            <Home className="h-4 w-4" />
-                            主页
-                        </Link>
-                        <Link
-                            href="/ranking"
-                            className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                        >
-                            <Trophy className="h-4 w-4" />
-                            积分排行
-                        </Link>
-                        <Link href={login()} className="flex items-center gap-2 text-sm font-medium">
-                            <LogIn className="h-4 w-4" />
-                            登录
-                        </Link>
-                        <Link href={register()} className="flex items-center gap-2 text-sm font-medium">
-                            <UserPlus className="h-4 w-4" />
-                            注册
-                        </Link>
+            {mobileMenuOpen && (
+                <div id={mobileMenuId} className="border-t bg-background md:hidden">
+                    <div className="container grid gap-1 py-3">
+                        {publicNavigation.map(({ label, href, icon: Icon }) => (
+                            <Button
+                                key={label}
+                                asChild
+                                variant="ghost"
+                                className="justify-start"
+                            >
+                                <Link href={href} onClick={() => setMobileMenuOpen(false)}>
+                                    <Icon className="size-4" />
+                                    {label}
+                                </Link>
+                            </Button>
+                        ))}
+                        {user ? (
+                            <>
+                                {accountNavigation.map(({ label, href, icon: Icon }) => (
+                                    <Button
+                                key={label}
+                                asChild
+                                variant="ghost"
+                                className="justify-start"
+                            >
+                                        <Link href={href} onClick={() => setMobileMenuOpen(false)}>
+                                            <Icon className="size-4" />
+                                            {label}
+                                        </Link>
+                                    </Button>
+                                ))}
+                                <Button asChild variant="ghost" className="justify-start">
+                                    <Link href="/logout" method="post" as="button" className="w-full">
+                                        <LogOut className="size-4" />
+                                        登出
+                                    </Link>
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button asChild variant="ghost" className="justify-start">
+                                    <Link href={login()}>
+                                        <LogIn className="size-4" />
+                                        登录
+                                    </Link>
+                                </Button>
+                                <Button asChild className="justify-start">
+                                    <Link href={register()}>
+                                        <UserPlus className="size-4" />
+                                        注册
+                                    </Link>
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

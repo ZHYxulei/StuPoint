@@ -1,36 +1,43 @@
 import { router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-interface PaginationLink {
+export interface LaravelPaginationLink {
     url: string | null;
     label: string;
     active: boolean;
 }
 
-interface PaginationBarProps {
-    links: PaginationLink[];
+export interface PaginationBarProps {
+    links: LaravelPaginationLink[];
+    preserveScroll?: boolean;
+    preserveState?: boolean;
+    className?: string;
 }
 
-/**
- * Safely renders pagination link labels by stripping HTML tags.
- * Replaces dangerouslySetInnerHTML pattern across all pages.
- */
 function sanitizeLabel(html: string): string {
-    // Laravel paginator uses &laquo; &raquo; for prev/next and <span> for active page
     return html
-        .replace(/<[^>]*>/g, '')    // strip all HTML tags
-        .replace(/&laquo;/g, '«')   // left chevron entity
-        .replace(/&raquo;/g, '»')   // right chevron entity
+        .replace(/<[^>]*>/g, '')
+        .replace(/&laquo;/g, '«')
+        .replace(/&raquo;/g, '»')
         .replace(/&nbsp;/g, ' ')
         .trim();
 }
 
-export default function PaginationBar({ links }: PaginationBarProps) {
+export default function PaginationBar({
+    links,
+    preserveScroll = true,
+    preserveState = true,
+    className,
+}: PaginationBarProps) {
     if (links.length <= 3) return null;
 
     return (
-        <div className="flex justify-center gap-1 mt-6">
+        <nav
+            aria-label="分页导航"
+            className={cn('mt-6 flex justify-center gap-1', className)}
+        >
             {links.map((link, index) => {
                 const text = sanitizeLabel(link.label);
                 const isPrev = text === '«';
@@ -38,29 +45,50 @@ export default function PaginationBar({ links }: PaginationBarProps) {
 
                 if (!link.url && !link.active) {
                     return (
-                        <Button key={index} variant="ghost" size="sm" disabled className="min-w-[36px] px-2">
-                            {isPrev ? <ChevronLeft className="h-4 w-4" /> : isNext ? <ChevronRight className="h-4 w-4" /> : text}
+                        <Button
+                            key={`${link.label}-${index}`}
+                            variant="ghost"
+                            size="sm"
+                            disabled
+                            className="min-w-9 px-2"
+                            aria-label={isPrev ? '上一页' : isNext ? '下一页' : undefined}
+                        >
+                            {isPrev ? (
+                                <ChevronLeft className="size-4" aria-hidden="true" />
+                            ) : isNext ? (
+                                <ChevronRight className="size-4" aria-hidden="true" />
+                            ) : (
+                                text
+                            )}
                         </Button>
                     );
                 }
 
                 return (
                     <Button
-                        key={index}
+                        key={`${link.label}-${index}`}
                         variant={link.active ? 'default' : 'outline'}
                         size="sm"
-                        className="min-w-[36px] px-2"
+                        className="min-w-9 px-2"
+                        aria-current={link.active ? 'page' : undefined}
+                        aria-label={isPrev ? '上一页' : isNext ? '下一页' : `第 ${text} 页`}
                         onClick={() => {
                             if (link.url) {
-                                router.get(link.url, {}, { preserveScroll: true, preserveState: true });
+                                router.get(link.url, {}, { preserveScroll, preserveState });
                             }
                         }}
                         disabled={!link.url}
                     >
-                        {isPrev ? <ChevronLeft className="h-4 w-4" /> : isNext ? <ChevronRight className="h-4 w-4" /> : text}
+                        {isPrev ? (
+                            <ChevronLeft className="size-4" aria-hidden="true" />
+                        ) : isNext ? (
+                            <ChevronRight className="size-4" aria-hidden="true" />
+                        ) : (
+                            text
+                        )}
                     </Button>
                 );
             })}
-        </div>
+        </nav>
     );
 }

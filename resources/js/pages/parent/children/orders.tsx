@@ -1,8 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Heading from '@/components/heading';
-import { Badge } from '@/components/ui/badge';
-import { Pagination } from '@/components/ui/pagination';
+import PageHeader from '@/components/page-header';
+import { Button } from '@/components/ui/button';
+import { Empty } from '@/components/ui/empty';
+import PaginationBar from '@/components/pagination-bar';
+import StatusBadge, { type StatusTone } from '@/components/status-badge';
 import { ArrowLeft, ShoppingCart, Package } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -46,15 +48,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function ParentChildOrders({ child, orders }: PageProps) {
     const getStatusBadge = (status: string) => {
-        const statusMap: Record<string, { label: string; variant: any }> = {
-            pending: { label: '待处理', variant: 'secondary' },
-            processing: { label: '处理中', variant: 'default' },
-            completed: { label: '已完成', variant: 'default' },
-            cancelled: { label: '已取消', variant: 'destructive' },
-            failed: { label: '失败', variant: 'destructive' },
+        const statusMap: Record<string, { label: string; tone: StatusTone }> = {
+            pending: { label: '待处理', tone: 'warning' },
+            processing: { label: '处理中', tone: 'info' },
+            completed: { label: '已完成', tone: 'success' },
+            cancelled: { label: '已取消', tone: 'secondary' },
+            failed: { label: '失败', tone: 'destructive' },
         };
-        const info = statusMap[status] || { label: status, variant: 'secondary' };
-        return <Badge variant={info.variant}>{info.label}</Badge>;
+        const info = statusMap[status] || { label: status, tone: 'secondary' };
+
+        return <StatusBadge tone={info.tone} label={info.label} />;
     };
 
     return (
@@ -62,17 +65,18 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
             <Head title={`${child.name} - 兑换记录`} />
 
             <div className="space-y-6 p-4">
-                <div className="flex items-center gap-4">
-                    <Link href={`/parent/children/${child.id}`}>
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="h-4 w-4" />
+                <PageHeader
+                    title={`${child.name} 的兑换记录`}
+                    description={`学号: ${child.student_id}`}
+                    actions={(
+                        <Button asChild variant="outline">
+                            <Link href={`/parent/children/${child.id}`}>
+                                <ArrowLeft className="size-4" />
+                                返回详情
+                            </Link>
                         </Button>
-                    </Link>
-                    <Heading
-                        title={`${child.name} 的兑换记录`}
-                        description={`学号: ${child.student_id}`}
-                    />
-                </div>
+                    )}
+                />
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
@@ -83,18 +87,20 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                     </CardHeader>
                     <CardContent>
                         {orders.data.length === 0 ? (
-                            <p className="text-center text-muted-foreground py-12">
-                                暂无兑换记录
-                            </p>
+                            <Empty
+                                icon={Package}
+                                title="暂无兑换记录"
+                                description="孩子完成积分兑换后，订单会显示在这里。"
+                            />
                         ) : (
                             <div className="space-y-3">
                                 {orders.data.map((order) => (
                                     <div
                                         key={order.id}
-                                        className="flex items-center justify-between p-4 bg-muted/30 rounded-lg"
+                                        className="flex flex-col gap-4 rounded-lg border border-border/70 bg-surface-2 p-4 sm:flex-row sm:items-center sm:justify-between"
                                     >
-                                        <div className="flex items-center gap-4 flex-1">
-                                            <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                                                 <Package className="h-6 w-6 text-primary" />
                                             </div>
                                             <div>
@@ -107,7 +113,7 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center justify-between gap-4 sm:justify-end">
                                             <div className="text-right">
                                                 <p className="font-bold text-primary text-lg">
                                                     -{order.points_spent}
@@ -124,13 +130,7 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                 </Card>
 
                 {orders.last_page > 1 && (
-                    <div className="flex justify-center">
-                        <Pagination
-                            currentPage={orders.current_page}
-                            lastPage={orders.last_page}
-                            links={orders.links}
-                        />
-                    </div>
+                    <PaginationBar links={orders.links} />
                 )}
             </div>
         </AppLayout>
