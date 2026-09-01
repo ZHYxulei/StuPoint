@@ -10,9 +10,11 @@
     "mcp": true,
     "sail": false,
     "skills": [
+        "infer-conventions",
         "folio-routing",
         "fortify-development",
         "laravel-best-practices",
+        "testing-best-practices",
         "configuring-horizon",
         "passport-development",
         "pulse-development",
@@ -21,7 +23,6 @@
         "wayfinder-development",
         "livewire-development",
         "volt-development",
-        "pest-testing",
         "inertia-react-development",
         "tailwindcss-development"
     ]
