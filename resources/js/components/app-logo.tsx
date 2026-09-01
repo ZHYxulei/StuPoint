@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
-import AppLogoIcon from './app-logo-icon';
 import { home } from '@/routes';
 import type { SharedData } from '@/types';
+import AppLogoIcon from './app-logo-icon';
 
 export default function AppLogo() {
     const { siteSettings } = usePage<SharedData>().props;

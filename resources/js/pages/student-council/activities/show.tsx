@@ -1,11 +1,23 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, Calendar, MapPin, Users, Trophy, Edit, Trash2, Gift, Award } from 'lucide-react';
 import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
     Select,
     SelectContent,
@@ -21,19 +33,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { ArrowLeft, Calendar, MapPin, Users, Trophy, Edit, Trash2, Gift, Award } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -85,7 +85,7 @@ const statusConfig: Record<string, { label: string; variant: 'default' | 'second
 export default function ShowActivity({ activity }: PageProps) {
     const { processing: awardProcessing } = useForm({});
     const { delete: destroyDelete, processing: deleteProcessing } = useForm({});
-    const { data, setData, post, put, processing: updateProcessing } = useForm({
+    const { data, setData } = useForm({
         note: '',
     });
 

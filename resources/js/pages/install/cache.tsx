@@ -1,8 +1,8 @@
 import { Head, usePage } from '@inertiajs/react';
+import { ChevronRight } from 'lucide-react';
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import InputError from '@/components/input-error';
-import { ChevronRight } from 'lucide-react';
 
 interface InstallCacheProps {
     form: {

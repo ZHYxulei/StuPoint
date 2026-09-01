@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
+import { Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Rocket } from 'lucide-react';
 
 export default function InstallWelcome() {
     return (

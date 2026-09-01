@@ -1,11 +1,11 @@
 import { Head, usePage } from '@inertiajs/react';
-import PublicLayout from '@/layouts/public-layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import PaginationBar from '@/components/pagination-bar';
-import { Empty } from '@/components/ui/empty';
-import { Button } from '@/components/ui/button';
 import { Trophy, TrendingUp, User } from 'lucide-react';
+import PaginationBar from '@/components/pagination-bar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Empty } from '@/components/ui/empty';
+import PublicLayout from '@/layouts/public-layout';
 
 interface RankingEntry {
     id: number;

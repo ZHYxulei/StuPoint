@@ -1,13 +1,13 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import PaginationBar from '@/components/pagination-bar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Search, BarChart3, Award, TrendingUp, Users, ChevronRight } from 'lucide-react';
 import Heading from '@/components/heading';
+import PaginationBar from '@/components/pagination-bar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Search, BarChart3, Award, TrendingUp, Users, ChevronRight } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -81,11 +81,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function UserStatistics({ users, roles, stats, filters }: PageProps) {
-    const { get, processing } = useForm({
+    const { get } = useForm({
         search: filters.search || '',
         role: filters.role || 'all',
         sort_by: filters.sort_by || 'total_points',
-        sort_order: filters.sort_order || 'desc',
         per_page: filters.per_page || '20',
     });
 

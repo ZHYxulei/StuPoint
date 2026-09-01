@@ -1,11 +1,11 @@
 import { Head } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
+import { User, Mail, Phone, IdCard, Award, Shield, Calendar, User as UserIcon, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import PublicLayout from '@/layouts/public-layout';
-import { User, Mail, Phone, IdCard, Award, Shield, Calendar, User as UserIcon, Clock } from 'lucide-react';
-import { Link } from '@inertiajs/react';
 
 interface UserRole {
     id: number;

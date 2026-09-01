@@ -1,15 +1,4 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { dashboard, login, register, ranking } from '@/routes';
-import type { SharedData } from '@/types';
-import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import PublicLayout from '@/layouts/public-layout';
 import {
     Coins,
     Trophy,
@@ -21,6 +10,17 @@ import {
     Award,
     School,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import PublicLayout from '@/layouts/public-layout';
+import { dashboard, login, register, ranking } from '@/routes';
+import type { SharedData } from '@/types';
 
 interface UserStats {
     id: number;

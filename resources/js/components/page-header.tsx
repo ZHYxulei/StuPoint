@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import type { BreadcrumbItem } from '@/types';
 import { cn } from '@/lib/utils';
+import type { BreadcrumbItem } from '@/types';
 
 export type PageHeaderProps = {
     title: ReactNode;

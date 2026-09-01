@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
+import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Globe } from 'lucide-react';
 
 const languages = [
     { code: 'zh', name: '简体中文', flag: '🇨🇳' },

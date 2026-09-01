@@ -1,11 +1,11 @@
-import { Head, Link, router, useForm } from '@inertiajs/react';
-import PaginationBar from '@/components/pagination-bar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, TrendingUp, TrendingDown, Filter, Calendar } from 'lucide-react';
+import Heading from '@/components/heading';
+import PaginationBar from '@/components/pagination-bar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -64,11 +64,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function UserTransactions({ user, transactions, filters }: PageProps) {
-    const { get, processing } = useForm({
-        type: filters.type || 'all',
-        source: filters.source || 'all',
-    });
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${user.name} - 交易记录`} />

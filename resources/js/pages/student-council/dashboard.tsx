@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Heading from '@/components/heading';
 import { Calendar, Users, Trophy, TrendingUp, Activity, Plus } from 'lucide-react';
+import Heading from '@/components/heading';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 

@@ -1,5 +1,5 @@
-import zhCN from '@/locales/zh-CN';
 import en from '@/locales/en';
+import zhCN from '@/locales/zh-CN';
 
 type Translations = typeof zhCN;
 

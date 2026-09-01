@@ -1,19 +1,19 @@
-import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Search, Eye, Package, User, Calendar, TrendingUp, ShoppingCart, ShieldCheck, AlertCircle } from 'lucide-react';
+import { useState, useRef } from 'react';
 import Heading from '@/components/heading';
+import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Eye, Package, User, Calendar, TrendingUp, ShoppingCart, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
-import { useState, useRef } from 'react';
-import InputError from '@/components/input-error';
 
 interface ProductCategory {
     id: number;
@@ -335,7 +335,7 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
     const [showSuccess, setShowSuccess] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const verificationSuccessfulRef = useRef(false);
-    const codeInputRefs = Array(6).fill(null).map(() => useState<HTMLInputElement | null>(null));
+    const codeInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     const handleCodeChange = (index: number, value: string) => {
         // Only allow numbers
@@ -352,18 +352,18 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
 
         // Auto-focus next input
         if (numValue && index < 5) {
-            codeInputRefs[index + 1][0]?.focus();
+            codeInputRefs.current[index + 1]?.focus();
         }
     };
 
     const handleCodeKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Backspace' && !codeDigits[index] && index > 0) {
             // Move to previous input on backspace if current is empty
-            codeInputRefs[index - 1][0]?.focus();
+            codeInputRefs.current[index - 1]?.focus();
         } else if (e.key === 'ArrowLeft' && index > 0) {
-            codeInputRefs[index - 1][0]?.focus();
+            codeInputRefs.current[index - 1]?.focus();
         } else if (e.key === 'ArrowRight' && index < 5) {
-            codeInputRefs[index + 1][0]?.focus();
+            codeInputRefs.current[index + 1]?.focus();
         }
     };
 
@@ -381,7 +381,7 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
 
         // Focus the last filled input or the first empty one
         const lastIndex = Math.min(numbers.length - 1, 5);
-        codeInputRefs[lastIndex][0]?.focus();
+        codeInputRefs.current[lastIndex]?.focus();
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -517,7 +517,9 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
                                     {codeDigits.map((digit, index) => (
                                         <Input
                                             key={index}
-                                            ref={codeInputRefs[index][1]}
+                                            ref={(el) => {
+                                        codeInputRefs.current[index] = el;
+                                    }}
                                             id={`code-${index}`}
                                             type="text"
                                             inputMode="numeric"

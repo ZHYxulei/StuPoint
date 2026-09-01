@@ -21,8 +21,14 @@ import {
     Info,
     Zap,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavUser } from '@/components/nav-user';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
     Sidebar,
     SidebarContent,
@@ -39,15 +45,9 @@ import {
     SidebarGroupContent,
     SidebarSeparator,
 } from '@/components/ui/sidebar';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import { dashboard } from '@/routes';
 import type { SharedData } from '@/types';
 import AppLogo from './app-logo';
-import { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'sidebar_groups_state';
 

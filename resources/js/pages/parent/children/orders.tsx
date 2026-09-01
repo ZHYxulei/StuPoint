@@ -1,11 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, ShoppingCart, Package } from 'lucide-react';
 import PageHeader from '@/components/page-header';
-import { Button } from '@/components/ui/button';
-import { Empty } from '@/components/ui/empty';
 import PaginationBar from '@/components/pagination-bar';
 import StatusBadge, { type StatusTone } from '@/components/status-badge';
-import { ArrowLeft, ShoppingCart, Package } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Empty } from '@/components/ui/empty';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 

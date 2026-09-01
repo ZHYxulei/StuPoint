@@ -1,8 +1,8 @@
+import { Send } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Send } from 'lucide-react';
 
 interface SmsVerificationProps {
     phone: string;

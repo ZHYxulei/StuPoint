@@ -1,8 +1,8 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
+import { User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import InputError from '@/components/input-error';
-import { User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface InstallAccountProps {
     siteConfig: {
