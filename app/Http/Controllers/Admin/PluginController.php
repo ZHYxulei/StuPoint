@@ -109,6 +109,8 @@ class PluginController extends Controller
      */
     public function install(Request $request)
     {
+        Gate::authorize('managePlugins');
+
         $validated = $request->validate([
             'slug' => 'required|string',
         ]);
@@ -134,6 +136,8 @@ class PluginController extends Controller
      */
     public function enable(string $id)
     {
+        Gate::authorize('managePlugins');
+
         $plugin = Plugin::findOrFail($id);
 
         try {
@@ -152,6 +156,8 @@ class PluginController extends Controller
      */
     public function disable(string $id)
     {
+        Gate::authorize('managePlugins');
+
         $plugin = Plugin::findOrFail($id);
 
         try {
@@ -168,6 +174,8 @@ class PluginController extends Controller
      */
     public function uninstall(string $id)
     {
+        Gate::authorize('managePlugins');
+
         $plugin = Plugin::findOrFail($id);
 
         try {
@@ -188,7 +196,7 @@ class PluginController extends Controller
      */
     public function upload(Request $request)
     {
-        Gate::authorize('uploadPlugin');
+        Gate::authorize('managePlugins');
 
         $validated = $request->validate([
             'plugin' => ['required', FileRule::types(['zip'])->max(50 * 1024)],
@@ -208,6 +216,8 @@ class PluginController extends Controller
      */
     public function updateConfig(Request $request, string $id)
     {
+        Gate::authorize('managePlugins');
+
         $plugin = Plugin::findOrFail($id);
 
         $validated = $request->validate([

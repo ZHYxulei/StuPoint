@@ -9,11 +9,68 @@ use App\Models\Setting;
 use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
+    /**
+     * Keys whose values must never be sent back to the browser.
+     *
+     * @var list<string>
+     */
+    private const SECRET_KEYS = [
+        'mail_password',
+        'sms_aliyun_access_key_secret',
+        'sms_tencent_secret_key',
+        'captcha_cloudflare_secret_key',
+        'captcha_google_secret_key',
+    ];
+
+    /**
+     * Replace stored secret values with a boolean "已配置" flag.
+     *
+     * @param  Collection<string, mixed>  $settings
+     * @return array<string, mixed>
+     */
+    private function redactSecrets(Collection $settings): array
+    {
+        $redacted = [];
+
+        foreach ($settings as $key => $value) {
+            if (in_array($key, self::SECRET_KEYS, true)) {
+                $redacted[$key.'_set'] = filled($value);
+
+                continue;
+            }
+
+            $redacted[$key] = $value;
+        }
+
+        return $redacted;
+    }
+
+    /**
+     * Persist a settings group, keeping existing secrets when the form submits blank.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    private function persistSettings(array $settings, string $group): void
+    {
+        foreach ($settings as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            if ($value === '' && in_array($key, self::SECRET_KEYS, true)) {
+                continue;
+            }
+
+            Setting::set($key, $value, 'string', $group);
+        }
+    }
+
     /**
      * Verify the user is a super admin.
      */
@@ -48,9 +105,9 @@ class SettingsController extends Controller
         $contactSettings = $allSettings->where('group', 'contact')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
         $footerSettings = $allSettings->where('group', 'footer')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
         $socialSettings = $allSettings->where('group', 'social')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
-        $mailSettings = $allSettings->where('group', 'mail')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
-        $smsSettings = $allSettings->where('group', 'sms')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
-        $captchaSettings = $allSettings->where('group', 'captcha')->mapWithKeys(fn ($s) => [$s->key => $s->value]);
+        $mailSettings = $this->redactSecrets($allSettings->where('group', 'mail')->mapWithKeys(fn ($s) => [$s->key => $s->value]));
+        $smsSettings = $this->redactSecrets($allSettings->where('group', 'sms')->mapWithKeys(fn ($s) => [$s->key => $s->value]));
+        $captchaSettings = $this->redactSecrets($allSettings->where('group', 'captcha')->mapWithKeys(fn ($s) => [$s->key => $s->value]));
 
         return inertia('admin/settings/index', [
             'pluginSources' => $pluginSources,
@@ -266,9 +323,7 @@ class SettingsController extends Controller
             'mail_from_name' => 'nullable|string|max:255',
         ]);
 
-        foreach ($validated as $key => $value) {
-            Setting::set($key, $value, 'string', 'mail');
-        }
+        $this->persistSettings($validated, 'mail');
 
         // Re-apply mail config
         MailConfigService::apply();
@@ -313,9 +368,7 @@ class SettingsController extends Controller
             'sms_tencent_sign_name' => 'nullable|string|max:255',
         ]);
 
-        foreach ($validated as $key => $value) {
-            Setting::set($key, $value, 'string', 'sms');
-        }
+        $this->persistSettings($validated, 'sms');
 
         return back()->with('success', '短信设置已更新');
     }
@@ -335,9 +388,7 @@ class SettingsController extends Controller
             'captcha_google_secret_key' => 'nullable|string|max:255',
         ]);
 
-        foreach ($validated as $key => $value) {
-            Setting::set($key, $value, 'string', 'captcha');
-        }
+        $this->persistSettings($validated, 'captcha');
 
         return back()->with('success', '人机验证设置已更新');
     }

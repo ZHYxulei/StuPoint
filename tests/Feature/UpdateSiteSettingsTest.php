@@ -111,3 +111,55 @@ it('prevents non super admin from updating settings', function () {
         ])
         ->assertForbidden();
 });
+
+it('does not expose stored secrets to the settings page', function () {
+    $role = Role::create([
+        'name' => 'Super Admin',
+        'slug' => 'super_admin',
+        'description' => 'System administrator',
+        'is_system' => true,
+        'level' => 100,
+    ]);
+    $user = createUserWithRole($role);
+
+    Setting::set('mail_password', 'super-secret-smtp', 'string', 'mail');
+    Setting::set('sms_tencent_secret_key', 'super-secret-sms', 'string', 'sms');
+    Setting::set('captcha_google_secret_key', 'super-secret-captcha', 'string', 'captcha');
+
+    $response = actingAs($user)->get('/admin/settings');
+
+    $response->assertOk();
+
+    $props = json_encode($response->inertiaProps());
+
+    expect($props)
+        ->not->toContain('super-secret-smtp')
+        ->not->toContain('super-secret-sms')
+        ->not->toContain('super-secret-captcha');
+
+    expect($response->inertiaProps('mailSettings.mail_password_set'))->toBeTrue()
+        ->and($response->inertiaProps('smsSettings.sms_tencent_secret_key_set'))->toBeTrue()
+        ->and($response->inertiaProps('captchaSettings.captcha_google_secret_key_set'))->toBeTrue();
+});
+
+it('keeps the stored secret when the settings form submits a blank secret', function () {
+    $role = Role::create([
+        'name' => 'Super Admin',
+        'slug' => 'super_admin',
+        'description' => 'System administrator',
+        'is_system' => true,
+        'level' => 100,
+    ]);
+    $user = createUserWithRole($role);
+
+    Setting::set('mail_password', 'super-secret-smtp', 'string', 'mail');
+
+    actingAs($user)
+        ->post('/admin/settings/mail', [
+            'mail_host' => 'smtp.example.com',
+            'mail_password' => '',
+        ])
+        ->assertRedirect();
+
+    expect(Setting::get('mail_password'))->toBe('super-secret-smtp');
+});

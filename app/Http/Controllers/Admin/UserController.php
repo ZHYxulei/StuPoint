@@ -198,6 +198,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
+        Gate::authorize('update', $user);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'nickname' => 'nullable|string|max:255',

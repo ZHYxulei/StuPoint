@@ -125,7 +125,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('bind-parent-child', fn (User $user): bool => $user->hasRole('parent') && $user->isApproved());
 
-        Gate::define('uploadPlugin', fn (User $user): bool => $user->hasRole('super_admin') || $user->hasRole('admin'));
+        Gate::define('managePlugins', fn (User $user): bool => $user->hasRole('super_admin') || $user->hasRole('admin'));
     }
 
     protected function configureViewShare(): void

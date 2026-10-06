@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Plugin;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -70,3 +71,47 @@ it('forbids a principal from updating arbitrary users through the admin api', fu
     expect($target->fresh()->name)->not->toBe('Unauthorized Update')
         ->and($target->fresh()->is_head_teacher)->toBeFalse();
 });
+
+it('forbids a principal from updating arbitrary users through the web admin route', function () {
+    $principal = createApprovedWebUserWithRole(Role::factory()->principal()->create());
+    $target = createApprovedWebUserWithRole(Role::factory()->student()->create());
+
+    actingAs($principal)
+        ->put(route('admin.users.update', $target->id), [
+            'name' => 'Web Unauthorized Update',
+            'email' => $target->email,
+            'is_head_teacher' => true,
+        ])
+        ->assertForbidden();
+
+    expect($target->fresh()->name)->not->toBe('Web Unauthorized Update')
+        ->and($target->fresh()->is_head_teacher)->toBeFalse();
+});
+
+it('forbids a grade director from driving the plugin lifecycle', function (string $method, string $routeName) {
+    $gradeDirector = createApprovedWebUserWithRole(Role::factory()->gradeDirector()->create());
+    $plugin = Plugin::create([
+        'name' => 'Lifecycle Plugin',
+        'slug' => 'lifecycle-plugin',
+        'version' => '1.0.0',
+        'description' => 'Plugin used to assert lifecycle authorization',
+        'author' => 'Tester',
+        'status' => 'disabled',
+        'dependencies' => ['composer' => [], 'plugins' => []],
+        'config' => [],
+    ]);
+
+    $payload = $method === 'put' ? ['config' => ['secret' => 'value']] : [];
+
+    actingAs($gradeDirector)
+        ->{$method}(route($routeName, $plugin->id), $payload)
+        ->assertForbidden();
+
+    expect($plugin->fresh()->status)->toBe('disabled')
+        ->and($plugin->fresh()->config)->toBe([]);
+})->with([
+    'enable' => ['post', 'admin.plugins.enable'],
+    'disable' => ['post', 'admin.plugins.disable'],
+    'uninstall' => ['delete', 'admin.plugins.uninstall'],
+    'update config' => ['put', 'admin.plugins.updateConfig'],
+]);

@@ -87,7 +87,7 @@
             "@php artisan test --compact"
         ],
         "test:mysql": [
-            "@php artisan test --compact --group=mysql"
+            "@php artisan test --compact --group=mysql --fail-on-skipped"
         ],
         "test": [
             "@test:php"

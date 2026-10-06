@@ -111,7 +111,7 @@ class CreateNewUser implements CreatesNewUsers
                 'class_id' => ['required', 'exists:classes,id'],
                 'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
                 'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
-                'email_or_phone' => ['required_without:email,phone', function ($attribute, $value, $fail) {
+                'email_or_phone' => ['required_without_all:email,phone', function ($attribute, $value, $fail) {
                     // Custom validation for email_or_phone field
                     if (! $value) {
                         return;
@@ -140,7 +140,7 @@ class CreateNewUser implements CreatesNewUsers
                 ...$baseRules,
                 'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
                 'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
-                'email_or_phone' => ['required_without:email,phone', function ($attribute, $value, $fail) {
+                'email_or_phone' => ['required_without_all:email,phone', function ($attribute, $value, $fail) {
                     if (! $value) {
                         return;
                     }
@@ -161,7 +161,7 @@ class CreateNewUser implements CreatesNewUsers
                 'student_union_department' => ['required', 'string', 'max:100'],
                 'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
                 'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
-                'email_or_phone' => ['required_without:email,phone', function ($attribute, $value, $fail) {
+                'email_or_phone' => ['required_without_all:email,phone', function ($attribute, $value, $fail) {
                     if (! $value) {
                         return;
                     }
@@ -201,7 +201,7 @@ class CreateNewUser implements CreatesNewUsers
                 'grade_id' => $input['grade_id'] ?? null,
             ],
             'parent' => [
-                'name' => null,
+                'name' => $this->parentDisplayName($input),
                 'email' => $input['email'] ?: null,
                 'phone' => $input['phone'] ?: null,
             ],
@@ -218,6 +218,34 @@ class CreateNewUser implements CreatesNewUsers
             ],
             default => [],
         };
+    }
+
+    /**
+     * Derive a display name for a parent, who is not asked to provide one.
+     *
+     * @param  array<string, string>  $input
+     */
+    protected function parentDisplayName(array $input): string
+    {
+        $name = trim((string) ($input['name'] ?? ''));
+
+        if ($name !== '') {
+            return $name;
+        }
+
+        $email = trim((string) ($input['email'] ?? ''));
+
+        if ($email !== '') {
+            return explode('@', $email)[0];
+        }
+
+        $phone = trim((string) ($input['phone'] ?? ''));
+
+        if ($phone !== '') {
+            return $phone;
+        }
+
+        return '家长';
     }
 
     /**

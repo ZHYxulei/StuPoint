@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Services\ExchangeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use RuntimeException;
 
 class ShopController extends Controller
 {
@@ -82,11 +83,18 @@ class ShopController extends Controller
                     'status' => $order->status,
                 ],
             ], 201);
-        } catch (\Exception $e) {
+        } catch (RuntimeException $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 400);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => '下单失败，请稍后重试',
+            ], 500);
         }
     }
 

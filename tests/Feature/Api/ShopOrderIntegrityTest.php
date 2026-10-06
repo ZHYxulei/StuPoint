@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserPoint;
+use App\Services\ExchangeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\actingAs;
@@ -63,6 +64,41 @@ it('persists an active verification code when creating an order', function () {
         ->getJson('/api/shop/orders')
         ->assertOk()
         ->assertJsonPath('data.0.verification_code', $order->verification_code);
+});
+
+it('does not leak internal exception details when order creation fails unexpectedly', function () {
+    $user = createApprovedShopUser();
+
+    UserPoint::create([
+        'user_id' => $user->id,
+        'total_points' => 100,
+        'redeemable_points' => 100,
+    ]);
+
+    $product = Product::factory()->create([
+        'status' => 'active',
+        'stock' => 5,
+        'points_required' => 25,
+    ]);
+
+    $this->mock(ExchangeService::class, function ($mock): void {
+        $mock->shouldReceive('exchange')->andThrow(
+            new LogicException('Internal table orders_internal_addresses is missing')
+        );
+    });
+
+    $response = actingAs($user, 'api')
+        ->postJson('/api/shop/orders', [
+            'product_id' => $product->id,
+            'quantity' => 1,
+            'shipping_info' => shippingInfo(),
+        ]);
+
+    $response->assertStatus(500);
+
+    expect($response->json('message'))
+        ->not->toContain('orders_internal_addresses')
+        ->not->toContain('LogicException');
 });
 
 it('honors quantity end to end when creating an order', function () {
