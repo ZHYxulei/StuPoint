@@ -7,7 +7,12 @@ interface CaptchaWidgetProps {
     onExpire?: () => void;
 }
 
-export default function CaptchaWidget({ siteKey, provider, onVerify, onExpire }: CaptchaWidgetProps) {
+export default function CaptchaWidget({
+    siteKey,
+    provider,
+    onVerify,
+    onExpire,
+}: CaptchaWidgetProps) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -20,7 +25,8 @@ export default function CaptchaWidget({ siteKey, provider, onVerify, onExpire }:
         if (provider === 'cloudflare') {
             // Load Cloudflare Turnstile
             const script = document.createElement('script');
-            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+            script.src =
+                'https://challenges.cloudflare.com/turnstile/v0/api.js';
             script.async = true;
             script.onload = () => {
                 if (window.turnstile && containerRef.current) {
@@ -46,9 +52,11 @@ export default function CaptchaWidget({ siteKey, provider, onVerify, onExpire }:
                 const grecaptcha = window.grecaptcha;
                 if (grecaptcha) {
                     grecaptcha.ready(() => {
-                        grecaptcha.execute(siteKey, { action: 'login' }).then((token: string) => {
-                            onVerify(token);
-                        });
+                        grecaptcha
+                            .execute(siteKey, { action: 'login' })
+                            .then((token: string) => {
+                                onVerify(token);
+                            });
                     });
                 }
             };
@@ -71,10 +79,20 @@ declare global {
     interface Window {
         grecaptcha?: {
             ready: (cb: () => void) => void;
-            execute: (siteKey: string, options: { action: string }) => Promise<string>;
+            execute: (
+                siteKey: string,
+                options: { action: string },
+            ) => Promise<string>;
         };
         turnstile?: {
-            render: (container: HTMLElement, options: { sitekey: string; callback: (token: string) => void; 'expired-callback'?: () => void }) => void;
+            render: (
+                container: HTMLElement,
+                options: {
+                    sitekey: string;
+                    callback: (token: string) => void;
+                    'expired-callback'?: () => void;
+                },
+            ) => void;
         };
     }
 }

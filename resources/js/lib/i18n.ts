@@ -5,10 +5,13 @@ type Translations = typeof zhCN;
 
 const messages: Record<string, Translations> = {
     'zh-CN': zhCN,
-    'en': en,
+    en: en,
 };
 
-export function t(key: string, params?: Record<string, string | number>): string {
+export function t(
+    key: string,
+    params?: Record<string, string | number>,
+): string {
     // Get locale from page props or default to zh-CN
     const locale = (window as any).pageProps?.locale || 'zh-CN';
     const keys = key.split('.');

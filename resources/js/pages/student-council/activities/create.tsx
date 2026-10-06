@@ -2,7 +2,13 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar as CalendarIcon } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -27,7 +33,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '创建活动', href: '/student-council/activities/create' },
 ];
 
-export default function CreateActivity({ }: PageProps) {
+export default function CreateActivity({}: PageProps) {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         description: '',
@@ -48,7 +54,7 @@ export default function CreateActivity({ }: PageProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="创建活动" />
 
-            <div className="space-y-6 p-4 max-w-3xl mx-auto">
+            <div className="mx-auto max-w-3xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
                     <Link href="/student-council/activities">
                         <Button variant="ghost" size="icon">
@@ -65,7 +71,9 @@ export default function CreateActivity({ }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
                             <CardTitle>基本信息</CardTitle>
-                            <CardDescription>填写活动的基本信息</CardDescription>
+                            <CardDescription>
+                                填写活动的基本信息
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
@@ -73,12 +81,16 @@ export default function CreateActivity({ }: PageProps) {
                                 <Input
                                     id="title"
                                     value={data.title}
-                                    onChange={(e) => setData('title', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('title', e.target.value)
+                                    }
                                     placeholder="输入活动标题"
                                     required
                                 />
                                 {errors.title && (
-                                    <p className="text-sm text-destructive">{errors.title}</p>
+                                    <p className="text-sm text-destructive">
+                                        {errors.title}
+                                    </p>
                                 )}
                             </div>
 
@@ -87,27 +99,40 @@ export default function CreateActivity({ }: PageProps) {
                                 <Textarea
                                     id="description"
                                     value={data.description}
-                                    onChange={(e) => setData('description', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('description', e.target.value)
+                                    }
                                     placeholder="描述活动内容、目的等"
                                     rows={4}
                                 />
                                 {errors.description && (
-                                    <p className="text-sm text-destructive">{errors.description}</p>
+                                    <p className="text-sm text-destructive">
+                                        {errors.description}
+                                    </p>
                                 )}
                             </div>
 
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="start_date">开始时间 *</Label>
+                                    <Label htmlFor="start_date">
+                                        开始时间 *
+                                    </Label>
                                     <Input
                                         id="start_date"
                                         type="datetime-local"
                                         value={data.start_date}
-                                        onChange={(e) => setData('start_date', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'start_date',
+                                                e.target.value,
+                                            )
+                                        }
                                         required
                                     />
                                     {errors.start_date && (
-                                        <p className="text-sm text-destructive">{errors.start_date}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.start_date}
+                                        </p>
                                     )}
                                 </div>
 
@@ -117,11 +142,15 @@ export default function CreateActivity({ }: PageProps) {
                                         id="end_date"
                                         type="datetime-local"
                                         value={data.end_date}
-                                        onChange={(e) => setData('end_date', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('end_date', e.target.value)
+                                        }
                                         required
                                     />
                                     {errors.end_date && (
-                                        <p className="text-sm text-destructive">{errors.end_date}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.end_date}
+                                        </p>
                                     )}
                                 </div>
                             </div>
@@ -131,12 +160,16 @@ export default function CreateActivity({ }: PageProps) {
                                 <Input
                                     id="location"
                                     value={data.location}
-                                    onChange={(e) => setData('location', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('location', e.target.value)
+                                    }
                                     placeholder="输入活动地点"
                                     required
                                 />
                                 {errors.location && (
-                                    <p className="text-sm text-destructive">{errors.location}</p>
+                                    <p className="text-sm text-destructive">
+                                        {errors.location}
+                                    </p>
                                 )}
                             </div>
                         </CardContent>
@@ -145,39 +178,59 @@ export default function CreateActivity({ }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
                             <CardTitle>活动设置</CardTitle>
-                            <CardDescription>设置参与人数和积分奖励</CardDescription>
+                            <CardDescription>
+                                设置参与人数和积分奖励
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="max_participants">最大参与人数 *</Label>
+                                    <Label htmlFor="max_participants">
+                                        最大参与人数 *
+                                    </Label>
                                     <Input
                                         id="max_participants"
                                         type="number"
                                         min="1"
                                         value={data.max_participants}
-                                        onChange={(e) => setData('max_participants', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'max_participants',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="输入最大人数"
                                         required
                                     />
                                     {errors.max_participants && (
-                                        <p className="text-sm text-destructive">{errors.max_participants}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.max_participants}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="points_reward">积分奖励 *</Label>
+                                    <Label htmlFor="points_reward">
+                                        积分奖励 *
+                                    </Label>
                                     <Input
                                         id="points_reward"
                                         type="number"
                                         min="0"
                                         value={data.points_reward}
-                                        onChange={(e) => setData('points_reward', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'points_reward',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="输入积分数量"
                                         required
                                     />
                                     {errors.points_reward && (
-                                        <p className="text-sm text-destructive">{errors.points_reward}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.points_reward}
+                                        </p>
                                     )}
                                 </div>
                             </div>
@@ -186,19 +239,29 @@ export default function CreateActivity({ }: PageProps) {
                                 <Label htmlFor="status">活动状态 *</Label>
                                 <Select
                                     value={data.status}
-                                    onValueChange={(value) => setData('status', value)}
+                                    onValueChange={(value) =>
+                                        setData('status', value)
+                                    }
                                 >
                                     <SelectTrigger id="status">
                                         <SelectValue placeholder="选择状态" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="draft">草稿</SelectItem>
-                                        <SelectItem value="active">进行中</SelectItem>
-                                        <SelectItem value="closed">已结束</SelectItem>
+                                        <SelectItem value="draft">
+                                            草稿
+                                        </SelectItem>
+                                        <SelectItem value="active">
+                                            进行中
+                                        </SelectItem>
+                                        <SelectItem value="closed">
+                                            已结束
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                                 {errors.status && (
-                                    <p className="text-sm text-destructive">{errors.status}</p>
+                                    <p className="text-sm text-destructive">
+                                        {errors.status}
+                                    </p>
                                 )}
                             </div>
                         </CardContent>

@@ -1,13 +1,33 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Search, Plus, Edit, Trash2, Package, TrendingUp, AlertCircle } from 'lucide-react';
+import {
+    Search,
+    Plus,
+    Edit,
+    Trash2,
+    Package,
+    TrendingUp,
+    AlertCircle,
+} from 'lucide-react';
 import Heading from '@/components/heading';
 import PaginationBar from '@/components/pagination-bar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -65,13 +85,30 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '商品管理', href: '/admin/products' },
 ];
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
+const statusConfig: Record<
+    string,
+    {
+        label: string;
+        variant:
+            | 'default'
+            | 'secondary'
+            | 'destructive'
+            | 'outline'
+            | 'success'
+            | 'warning';
+    }
+> = {
     active: { label: '上架', variant: 'success' },
     inactive: { label: '下架', variant: 'secondary' },
     out_of_stock: { label: '缺货', variant: 'destructive' },
 };
 
-export default function ProductIndex({ products, categories, stats, filters }: PageProps) {
+export default function ProductIndex({
+    products,
+    categories,
+    stats,
+    filters,
+}: PageProps) {
     const { get } = useForm({
         search: filters.search || '',
         status: filters.status || 'all',
@@ -108,37 +145,53 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                 <div className="grid gap-4 md:grid-cols-4">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium">商品总数</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                商品总数
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total}</div>
+                            <div className="text-2xl font-bold">
+                                {stats.total}
+                            </div>
                         </CardContent>
                     </Card>
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-green-600 dark:text-green-400">上架商品</CardTitle>
+                            <CardTitle className="text-sm font-medium text-green-600 dark:text-green-400">
+                                上架商品
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.active}</div>
+                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                                {stats.active}
+                            </div>
                         </CardContent>
                     </Card>
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-red-600 dark:text-red-400">缺货商品</CardTitle>
+                            <CardTitle className="text-sm font-medium text-red-600 dark:text-red-400">
+                                缺货商品
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.out_of_stock}</div>
+                            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                                {stats.out_of_stock}
+                            </div>
                         </CardContent>
                     </Card>
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium">总兑换次数</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                总兑换次数
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_exchanges}</div>
+                            <div className="text-2xl font-bold">
+                                {stats.total_exchanges}
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
@@ -146,13 +199,16 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                 {/* Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
                             筛选商品
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-3">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="grid gap-4 md:grid-cols-3"
+                        >
                             <div className="grid gap-2">
                                 <Label htmlFor="search">搜索</Label>
                                 <Input
@@ -160,12 +216,18 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                                     type="text"
                                     placeholder="商品名称..."
                                     value={filters.search || ''}
-                                    onChange={(e) => router.get('/admin/products', {
-                                        ...filters,
-                                        search: e.target.value || null,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onChange={(e) =>
+                                        router.get(
+                                            '/admin/products',
+                                            {
+                                                ...filters,
+                                                search: e.target.value || null,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 />
                             </div>
 
@@ -173,21 +235,38 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                                 <Label htmlFor="status">状态</Label>
                                 <Select
                                     value={filters.status || 'all'}
-                                    onValueChange={(value) => router.get('/admin/products', {
-                                        ...filters,
-                                        status: value === 'all' ? null : value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            '/admin/products',
+                                            {
+                                                ...filters,
+                                                status:
+                                                    value === 'all'
+                                                        ? null
+                                                        : value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="status">
                                         <SelectValue placeholder="所有状态" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">所有状态</SelectItem>
-                                        <SelectItem value="active">上架</SelectItem>
-                                        <SelectItem value="inactive">下架</SelectItem>
-                                        <SelectItem value="out_of_stock">缺货</SelectItem>
+                                        <SelectItem value="all">
+                                            所有状态
+                                        </SelectItem>
+                                        <SelectItem value="active">
+                                            上架
+                                        </SelectItem>
+                                        <SelectItem value="inactive">
+                                            下架
+                                        </SelectItem>
+                                        <SelectItem value="out_of_stock">
+                                            缺货
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -196,20 +275,34 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                                 <Label htmlFor="category">分类</Label>
                                 <Select
                                     value={filters.category || 'all'}
-                                    onValueChange={(value) => router.get('/admin/products', {
-                                        ...filters,
-                                        category: value === 'all' ? null : value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            '/admin/products',
+                                            {
+                                                ...filters,
+                                                category:
+                                                    value === 'all'
+                                                        ? null
+                                                        : value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="category">
                                         <SelectValue placeholder="所有分类" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">所有分类</SelectItem>
+                                        <SelectItem value="all">
+                                            所有分类
+                                        </SelectItem>
                                         {categories.map((category) => (
-                                            <SelectItem key={category.id} value={category.id.toString()}>
+                                            <SelectItem
+                                                key={category.id}
+                                                value={category.id.toString()}
+                                            >
                                                 {category.name}
                                             </SelectItem>
                                         ))}
@@ -225,7 +318,8 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                     <CardHeader>
                         <CardTitle>商品列表</CardTitle>
                         <CardDescription>
-                            显示 {products.from} 到 {products.to}，共 {products.total} 件商品
+                            显示 {products.from} 到 {products.to}，共{' '}
+                            {products.total} 件商品
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -233,43 +327,65 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                             {products.data.map((product) => (
                                 <div
                                     key={product.id}
-                                    className="flex items-center gap-4 p-4 rounded-lg border border-sidebar-border/70 dark:border-sidebar-border hover:bg-muted/50 transition-colors"
+                                    className="flex items-center gap-4 rounded-lg border border-sidebar-border/70 p-4 transition-colors hover:bg-muted/50 dark:border-sidebar-border"
                                 >
-                                    <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center shrink-0">
+                                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-muted">
                                         {product.image ? (
                                             <img
                                                 src={`/storage/${product.image}`}
                                                 alt={product.name}
-                                                className="w-full h-full object-cover rounded-lg"
+                                                className="h-full w-full rounded-lg object-cover"
                                             />
                                         ) : (
                                             <Package className="h-8 w-8 text-muted-foreground" />
                                         )}
                                     </div>
 
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <p className="font-semibold truncate">{product.name}</p>
-                                            <Badge variant={statusConfig[product.status].variant}>
-                                                {statusConfig[product.status].label}
+                                    <div className="min-w-0 flex-1">
+                                        <div className="mb-1 flex items-center gap-2">
+                                            <p className="truncate font-semibold">
+                                                {product.name}
+                                            </p>
+                                            <Badge
+                                                variant={
+                                                    statusConfig[product.status]
+                                                        .variant
+                                                }
+                                            >
+                                                {
+                                                    statusConfig[product.status]
+                                                        .label
+                                                }
                                             </Badge>
                                         </div>
                                         {product.description && (
-                                            <p className="text-sm text-muted-foreground line-clamp-1 mb-1">
+                                            <p className="mb-1 line-clamp-1 text-sm text-muted-foreground">
                                                 {product.description}
                                             </p>
                                         )}
                                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                                            <span>积分: {product.points_required.toLocaleString()}</span>
+                                            <span>
+                                                积分:{' '}
+                                                {product.points_required.toLocaleString()}
+                                            </span>
                                             <span>•</span>
-                                            <span>库存: {product.stock === -1 ? '无限' : product.stock}</span>
+                                            <span>
+                                                库存:{' '}
+                                                {product.stock === -1
+                                                    ? '无限'
+                                                    : product.stock}
+                                            </span>
                                             <span>•</span>
-                                            <span>兑换: {product.orders_count}次</span>
+                                            <span>
+                                                兑换: {product.orders_count}次
+                                            </span>
                                         </div>
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <Link href={`/admin/products/${product.id}/edit`}>
+                                        <Link
+                                            href={`/admin/products/${product.id}/edit`}
+                                        >
                                             <Button variant="outline" size="sm">
                                                 <Edit className="h-4 w-4" />
                                             </Button>
@@ -278,23 +394,46 @@ export default function ProductIndex({ products, categories, stats, filters }: P
                                             variant="outline"
                                             size="sm"
                                             onClick={() => {
-                                                if (confirm(`确定要删除商品 "${product.name}" 吗？`)) {
+                                                if (
+                                                    confirm(
+                                                        `确定要删除商品 "${product.name}" 吗？`,
+                                                    )
+                                                ) {
                                                     // Use a form submission for DELETE
-                                                    const form = document.createElement('form');
+                                                    const form =
+                                                        document.createElement(
+                                                            'form',
+                                                        );
                                                     form.method = 'POST';
                                                     form.action = `/admin/products/${product.id}`;
-                                                    const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content;
+                                                    const csrfToken = (
+                                                        document.querySelector(
+                                                            'meta[name="csrf-token"]',
+                                                        ) as HTMLMetaElement
+                                                    )?.content;
                                                     if (csrfToken) {
-                                                        const input = document.createElement('input');
+                                                        const input =
+                                                            document.createElement(
+                                                                'input',
+                                                            );
                                                         input.name = '_token';
                                                         input.value = csrfToken;
                                                         form.appendChild(input);
                                                     }
-                                                    const methodInput = document.createElement('input');
-                                                    methodInput.name = '_method';
-                                                    methodInput.value = 'DELETE';
-                                                    form.appendChild(methodInput);
-                                                    document.body.appendChild(form);
+                                                    const methodInput =
+                                                        document.createElement(
+                                                            'input',
+                                                        );
+                                                    methodInput.name =
+                                                        '_method';
+                                                    methodInput.value =
+                                                        'DELETE';
+                                                    form.appendChild(
+                                                        methodInput,
+                                                    );
+                                                    document.body.appendChild(
+                                                        form,
+                                                    );
                                                     form.submit();
                                                 }
                                             }}

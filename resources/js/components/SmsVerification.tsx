@@ -10,7 +10,11 @@ interface SmsVerificationProps {
     onVerified: () => void;
 }
 
-export default function SmsVerification({ phone, type, onVerified }: SmsVerificationProps) {
+export default function SmsVerification({
+    phone,
+    type,
+    onVerified,
+}: SmsVerificationProps) {
     const [code, setCode] = useState('');
     const [sending, setSending] = useState(false);
     const [verifying, setVerifying] = useState(false);
@@ -25,7 +29,13 @@ export default function SmsVerification({ phone, type, onVerified }: SmsVerifica
         try {
             const res = await fetch('/api/verification/send', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') || '',
+                },
                 body: JSON.stringify({ phone, type }),
             });
             const data = await res.json();
@@ -34,7 +44,10 @@ export default function SmsVerification({ phone, type, onVerified }: SmsVerifica
                 setCountdown(60);
                 const timer = setInterval(() => {
                     setCountdown((prev) => {
-                        if (prev <= 1) { clearInterval(timer); return 0; }
+                        if (prev <= 1) {
+                            clearInterval(timer);
+                            return 0;
+                        }
                         return prev - 1;
                     });
                 }, 1000);
@@ -54,11 +67,19 @@ export default function SmsVerification({ phone, type, onVerified }: SmsVerifica
         try {
             const res = await fetch('/api/verification/verify', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') || '',
+                },
                 body: JSON.stringify({ phone, code, type }),
             });
             const data = await res.json();
-            setMessage(data.message || (data.success ? '验证成功' : '验证失败'));
+            setMessage(
+                data.message || (data.success ? '验证成功' : '验证失败'),
+            );
             if (data.success) onVerified();
         } catch {
             setMessage('网络错误');
@@ -78,16 +99,37 @@ export default function SmsVerification({ phone, type, onVerified }: SmsVerifica
                         maxLength={6}
                     />
                 </div>
-                <Button type="button" variant="outline" onClick={handleSendCode} disabled={sending || countdown > 0 || !phone}>
-                    {countdown > 0 ? `${countdown}s` : <Send className="h-4 w-4" />}
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleSendCode}
+                    disabled={sending || countdown > 0 || !phone}
+                >
+                    {countdown > 0 ? (
+                        `${countdown}s`
+                    ) : (
+                        <Send className="h-4 w-4" />
+                    )}
                 </Button>
             </div>
             {code.length === 6 && (
-                <Button type="button" variant="outline" onClick={handleVerify} disabled={verifying} className="w-full">
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleVerify}
+                    disabled={verifying}
+                    className="w-full"
+                >
                     {verifying ? '验证中...' : '确认验证码'}
                 </Button>
             )}
-            {message && <p className={`text-xs ${message.includes('成功') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
+            {message && (
+                <p
+                    className={`text-xs ${message.includes('成功') ? 'text-green-600' : 'text-red-600'}`}
+                >
+                    {message}
+                </p>
+            )}
         </div>
     );
 }

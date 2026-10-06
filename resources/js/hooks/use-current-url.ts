@@ -42,7 +42,8 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
 
         return exact
             ? targetUrl === currentUrl
-            : currentUrl === targetUrl || currentUrl.startsWith(`${targetUrl}/`);
+            : currentUrl === targetUrl ||
+                  currentUrl.startsWith(`${targetUrl}/`);
     };
 
     const whenCurrentUrl: WhenCurrentUrlFn = <TIfTrue, TIfFalse = null>(

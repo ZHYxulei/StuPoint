@@ -1,13 +1,32 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Search, BarChart3, Award, TrendingUp, Users, ChevronRight } from 'lucide-react';
+import {
+    Search,
+    BarChart3,
+    Award,
+    TrendingUp,
+    Users,
+    ChevronRight,
+} from 'lucide-react';
 import Heading from '@/components/heading';
 import PaginationBar from '@/components/pagination-bar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -80,7 +99,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '用户统计', href: '/admin/users/statistics' },
 ];
 
-export default function UserStatistics({ users, roles, stats, filters }: PageProps) {
+export default function UserStatistics({
+    users,
+    roles,
+    stats,
+    filters,
+}: PageProps) {
     const { get } = useForm({
         search: filters.search || '',
         role: filters.role || 'all',
@@ -88,9 +112,10 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
         per_page: filters.per_page || '20',
     });
 
-    const maxPoints = users.data.length > 0
-        ? Math.max(...users.data.map(u => u.points?.total_points || 0))
-        : 100;
+    const maxPoints =
+        users.data.length > 0
+            ? Math.max(...users.data.map((u) => u.points?.total_points || 0))
+            : 100;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -108,56 +133,77 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">总用户数</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                总用户数
+                            </CardTitle>
                             <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_users.toLocaleString()}</div>
-                            <p className="text-xs text-muted-foreground">系统注册用户</p>
+                            <div className="text-2xl font-bold">
+                                {stats.total_users.toLocaleString()}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                系统注册用户
+                            </p>
                         </CardContent>
                     </Card>
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">总积分</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                总积分
+                            </CardTitle>
                             <Award className="h-4 w-4 text-primary" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_points.toLocaleString()}</div>
-                            <p className="text-xs text-muted-foreground">累计积分总量</p>
+                            <div className="text-2xl font-bold">
+                                {stats.total_points.toLocaleString()}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                累计积分总量
+                            </p>
                         </CardContent>
                     </Card>
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">可兑换积分</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                可兑换积分
+                            </CardTitle>
                             <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                                 {stats.total_redeemable.toLocaleString()}
                             </div>
-                            <p className="text-xs text-muted-foreground">可用于兑换</p>
+                            <p className="text-xs text-muted-foreground">
+                                可用于兑换
+                            </p>
                         </CardContent>
                     </Card>
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">积分榜首</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                积分榜首
+                            </CardTitle>
                             <BarChart3 className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                         </CardHeader>
                         <CardContent>
                             {stats.top_user ? (
                                 <>
-                                    <div className="text-lg font-bold truncate">
+                                    <div className="truncate text-lg font-bold">
                                         {stats.top_user.user.name}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        {stats.top_user.total_points.toLocaleString()} 分
+                                        {stats.top_user.total_points.toLocaleString()}{' '}
+                                        分
                                     </p>
                                 </>
                             ) : (
-                                <p className="text-sm text-muted-foreground">暂无数据</p>
+                                <p className="text-sm text-muted-foreground">
+                                    暂无数据
+                                </p>
                             )}
                         </CardContent>
                     </Card>
@@ -166,14 +212,21 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                 {/* Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
                             筛选条件
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={(e) => { e.preventDefault(); get('/admin/users/statistics', { preserveScroll: true }); }}
-                              className="grid gap-4 md:grid-cols-4">
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                get('/admin/users/statistics', {
+                                    preserveScroll: true,
+                                });
+                            }}
+                            className="grid gap-4 md:grid-cols-4"
+                        >
                             <div className="grid gap-2">
                                 <Label htmlFor="search">搜索</Label>
                                 <Input
@@ -181,12 +234,18 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                     type="text"
                                     placeholder="姓名、邮箱或学号..."
                                     value={filters.search || ''}
-                                    onChange={(e) => router.get('/admin/users/statistics', {
-                                        ...filters,
-                                        search: e.target.value || null,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onChange={(e) =>
+                                        router.get(
+                                            '/admin/users/statistics',
+                                            {
+                                                ...filters,
+                                                search: e.target.value || null,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 />
                             </div>
 
@@ -194,20 +253,34 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                 <Label htmlFor="role">角色</Label>
                                 <Select
                                     value={filters.role || 'all'}
-                                    onValueChange={(value) => router.get('/admin/users/statistics', {
-                                        ...filters,
-                                        role: value === 'all' ? null : value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            '/admin/users/statistics',
+                                            {
+                                                ...filters,
+                                                role:
+                                                    value === 'all'
+                                                        ? null
+                                                        : value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="role">
                                         <SelectValue placeholder="所有角色" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">所有角色</SelectItem>
+                                        <SelectItem value="all">
+                                            所有角色
+                                        </SelectItem>
                                         {roles.map((role) => (
-                                            <SelectItem key={role.id} value={role.slug}>
+                                            <SelectItem
+                                                key={role.id}
+                                                value={role.slug}
+                                            >
                                                 {role.name}
                                             </SelectItem>
                                         ))}
@@ -219,21 +292,35 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                 <Label htmlFor="sort_by">排序方式</Label>
                                 <Select
                                     value={filters.sort_by || 'total_points'}
-                                    onValueChange={(value) => router.get('/admin/users/statistics', {
-                                        ...filters,
-                                        sort_by: value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            '/admin/users/statistics',
+                                            {
+                                                ...filters,
+                                                sort_by: value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="sort_by">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="total_points">总积分</SelectItem>
-                                        <SelectItem value="redeemable_points">可兑换积分</SelectItem>
-                                        <SelectItem value="name">姓名</SelectItem>
-                                        <SelectItem value="created_at">注册时间</SelectItem>
+                                        <SelectItem value="total_points">
+                                            总积分
+                                        </SelectItem>
+                                        <SelectItem value="redeemable_points">
+                                            可兑换积分
+                                        </SelectItem>
+                                        <SelectItem value="name">
+                                            姓名
+                                        </SelectItem>
+                                        <SelectItem value="created_at">
+                                            注册时间
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -242,21 +329,35 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                 <Label htmlFor="per_page">每页显示</Label>
                                 <Select
                                     value={filters.per_page || '20'}
-                                    onValueChange={(value) => router.get('/admin/users/statistics', {
-                                        ...filters,
-                                        per_page: value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            '/admin/users/statistics',
+                                            {
+                                                ...filters,
+                                                per_page: value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="per_page">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="10">10 条</SelectItem>
-                                        <SelectItem value="20">20 条</SelectItem>
-                                        <SelectItem value="50">50 条</SelectItem>
-                                        <SelectItem value="100">100 条</SelectItem>
+                                        <SelectItem value="10">
+                                            10 条
+                                        </SelectItem>
+                                        <SelectItem value="20">
+                                            20 条
+                                        </SelectItem>
+                                        <SelectItem value="50">
+                                            50 条
+                                        </SelectItem>
+                                        <SelectItem value="100">
+                                            100 条
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -272,15 +373,21 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                             积分排行榜
                         </CardTitle>
                         <CardDescription>
-                            显示 {users.from} 到 {users.to}，共 {users.total} 名用户
+                            显示 {users.from} 到 {users.to}，共 {users.total}{' '}
+                            名用户
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
                             {users.data.map((user, index) => {
-                                const totalPoints = user.points?.total_points || 0;
-                                const redeemablePoints = user.points?.redeemable_points || 0;
-                                const widthPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
+                                const totalPoints =
+                                    user.points?.total_points || 0;
+                                const redeemablePoints =
+                                    user.points?.redeemable_points || 0;
+                                const widthPercentage =
+                                    maxPoints > 0
+                                        ? (totalPoints / maxPoints) * 100
+                                        : 0;
 
                                 return (
                                     <Link
@@ -288,66 +395,86 @@ export default function UserStatistics({ users, roles, stats, filters }: PagePro
                                         href={`/admin/users/${user.id}/transactions`}
                                         className="block"
                                     >
-                                        <div className="flex items-center gap-4 p-4 rounded-lg border border-sidebar-border/70 dark:border-sidebar-border hover:bg-muted/50 transition-colors cursor-pointer group">
+                                        <div className="group flex cursor-pointer items-center gap-4 rounded-lg border border-sidebar-border/70 p-4 transition-colors hover:bg-muted/50 dark:border-sidebar-border">
                                             {/* Rank Badge */}
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                                                index === 0
-                                                    ? 'bg-yellow-500 text-white'
-                                                    : index === 1
-                                                        ? 'bg-gray-400 text-white'
-                                                        : index === 2
+                                            <div
+                                                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                                                    index === 0
+                                                        ? 'bg-yellow-500 text-white'
+                                                        : index === 1
+                                                          ? 'bg-gray-400 text-white'
+                                                          : index === 2
                                                             ? 'bg-orange-500 text-white'
                                                             : 'bg-muted text-muted-foreground'
-                                            }`}>
-                                                {users.from ? users.from + index : index + 1}
+                                                }`}
+                                            >
+                                                {users.from
+                                                    ? users.from + index
+                                                    : index + 1}
                                             </div>
 
                                             {/* User Info */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <p className="font-semibold truncate group-hover:text-primary transition-colors">
+                                            <div className="min-w-0 flex-1">
+                                                <div className="mb-1 flex items-center gap-2">
+                                                    <p className="truncate font-semibold transition-colors group-hover:text-primary">
                                                         {user.name}
                                                     </p>
                                                     {user.roles.map((role) => (
-                                                        <Badge key={role.id} variant="outline" className="text-xs">
+                                                        <Badge
+                                                            key={role.id}
+                                                            variant="outline"
+                                                            className="text-xs"
+                                                        >
                                                             {role.name}
                                                         </Badge>
                                                     ))}
                                                 </div>
-                                                <p className="text-sm text-muted-foreground truncate">
+                                                <p className="truncate text-sm text-muted-foreground">
                                                     {user.email}
-                                                    {user.student_id && ` · ${user.student_id}`}
-                                                    {user.grade && user.class && ` · ${user.grade}${user.class}`}
+                                                    {user.student_id &&
+                                                        ` · ${user.student_id}`}
+                                                    {user.grade &&
+                                                        user.class &&
+                                                        ` · ${user.grade}${user.class}`}
                                                 </p>
 
                                                 {/* Stacked Bar Chart */}
                                                 <div className="mt-2">
-                                                    <div className="h-6 bg-muted rounded-full overflow-hidden flex">
+                                                    <div className="flex h-6 overflow-hidden rounded-full bg-muted">
                                                         {/* Total Points Bar (Primary) */}
                                                         <div
-                                                            className="h-full bg-primary flex items-center justify-end pr-2 transition-all duration-500"
-                                                            style={{ width: `${widthPercentage}%` }}
+                                                            className="flex h-full items-center justify-end bg-primary pr-2 transition-all duration-500"
+                                                            style={{
+                                                                width: `${widthPercentage}%`,
+                                                            }}
                                                         >
-                                                            {widthPercentage > 15 && (
+                                                            {widthPercentage >
+                                                                15 && (
                                                                 <span className="text-xs font-medium text-primary-foreground">
                                                                     {totalPoints.toLocaleString()}
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center justify-between mt-1 text-xs">
+                                                    <div className="mt-1 flex items-center justify-between text-xs">
                                                         <span className="text-muted-foreground">
-                                                            总积分: <span className="font-semibold text-primary">{totalPoints.toLocaleString()}</span>
+                                                            总积分:{' '}
+                                                            <span className="font-semibold text-primary">
+                                                                {totalPoints.toLocaleString()}
+                                                            </span>
                                                         </span>
                                                         <span className="text-muted-foreground">
-                                                            可兑换: <span className="font-semibold text-green-600 dark:text-green-400">{redeemablePoints.toLocaleString()}</span>
+                                                            可兑换:{' '}
+                                                            <span className="font-semibold text-green-600 dark:text-green-400">
+                                                                {redeemablePoints.toLocaleString()}
+                                                            </span>
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {/* Chevron */}
-                                            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                            <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-primary" />
                                         </div>
                                     </Link>
                                 );

@@ -68,19 +68,19 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                 <PageHeader
                     title={`${child.name} 的兑换记录`}
                     description={`学号: ${child.student_id}`}
-                    actions={(
+                    actions={
                         <Button asChild variant="outline">
                             <Link href={`/parent/children/${child.id}`}>
                                 <ArrowLeft className="size-4" />
                                 返回详情
                             </Link>
                         </Button>
-                    )}
+                    }
                 />
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <ShoppingCart className="h-4 w-4" />
                             全部兑换记录
                         </CardTitle>
@@ -104,21 +104,27 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                                                 <Package className="h-6 w-6 text-primary" />
                                             </div>
                                             <div>
-                                                <p className="font-medium">{order.product_name}</p>
+                                                <p className="font-medium">
+                                                    {order.product_name}
+                                                </p>
                                                 <p className="text-sm text-muted-foreground">
                                                     订单号: {order.order_no}
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {new Date(order.created_at).toLocaleString('zh-CN')}
+                                                    {new Date(
+                                                        order.created_at,
+                                                    ).toLocaleString('zh-CN')}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="flex items-center justify-between gap-4 sm:justify-end">
                                             <div className="text-right">
-                                                <p className="font-bold text-primary text-lg">
+                                                <p className="text-lg font-bold text-primary">
                                                     -{order.points_spent}
                                                 </p>
-                                                <p className="text-xs text-muted-foreground">积分</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    积分
+                                                </p>
                                             </div>
                                             {getStatusBadge(order.status)}
                                         </div>
@@ -129,9 +135,7 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                     </CardContent>
                 </Card>
 
-                {orders.last_page > 1 && (
-                    <PaginationBar links={orders.links} />
-                )}
+                {orders.last_page > 1 && <PaginationBar links={orders.links} />}
             </div>
         </AppLayout>
     );

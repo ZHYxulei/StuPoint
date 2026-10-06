@@ -1,11 +1,32 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Package, Calendar, Coins, User, MapPin, Phone, CheckCircle2, XCircle, Clock, AlertCircle, RefreshCw, Copy, Check } from 'lucide-react';
+import {
+    ArrowLeft,
+    Package,
+    Calendar,
+    Coins,
+    User,
+    MapPin,
+    Phone,
+    CheckCircle2,
+    XCircle,
+    Clock,
+    AlertCircle,
+    RefreshCw,
+    Copy,
+    Check,
+} from 'lucide-react';
 import { useState } from 'react';
 import Heading from '@/components/heading';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -48,12 +69,21 @@ interface PageProps {
     verification_code_expired: boolean;
 }
 
-const statusConfig: Record<string, {
-    label: string;
-    variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning';
-    icon: React.ElementType;
-    color: string;
-}> = {
+const statusConfig: Record<
+    string,
+    {
+        label: string;
+        variant:
+            | 'default'
+            | 'secondary'
+            | 'destructive'
+            | 'outline'
+            | 'success'
+            | 'warning';
+        icon: React.ElementType;
+        color: string;
+    }
+> = {
     pending: {
         label: '待处理',
         variant: 'warning',
@@ -101,7 +131,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function ShopOrderDetail({ order, verification_code, verification_code_expires_at, verification_code_expired }: PageProps) {
+export default function ShopOrderDetail({
+    order,
+    verification_code,
+    verification_code_expires_at,
+    verification_code_expired,
+}: PageProps) {
     const [copied, setCopied] = useState(false);
     const StatusIcon = statusConfig[order.status].icon;
 
@@ -134,114 +169,145 @@ export default function ShopOrderDetail({ order, verification_code, verification
                                 返回订单列表
                             </Button>
                         </Link>
-                        <h1 className="text-2xl font-bold mt-3">订单详情</h1>
+                        <h1 className="mt-3 text-2xl font-bold">订单详情</h1>
                     </div>
-                    <Badge variant={statusConfig[order.status].variant} className="text-sm px-3 py-1">
-                        <StatusIcon className="h-4 w-4 mr-1" />
+                    <Badge
+                        variant={statusConfig[order.status].variant}
+                        className="px-3 py-1 text-sm"
+                    >
+                        <StatusIcon className="mr-1 h-4 w-4" />
                         {statusConfig[order.status].label}
                     </Badge>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     {/* Main Content */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="space-y-6 lg:col-span-2">
                         {/* Verification Code Card */}
-                        {!order.verified_at && order.status !== 'completed' && order.status !== 'cancelled' && (
-                            <Card className="border-sidebar-border/70 dark:border-sidebar-border">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Package className="h-5 w-5" />
-                                        核销验证码
-                                    </CardTitle>
-                                    <CardDescription>
-                                        向核销人员出示此验证码以兑换商品
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    {verification_code ? (
-                                        <>
-                                            <div className="bg-muted rounded-lg p-6 text-center">
-                                                <p className="text-sm text-muted-foreground mb-2">您的验证码</p>
-                                                <div className="flex items-center justify-center gap-4">
-                                                    <p className="text-4xl font-bold font-mono tracking-wider">
-                                                        {verification_code}
+                        {!order.verified_at &&
+                            order.status !== 'completed' &&
+                            order.status !== 'cancelled' && (
+                                <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center gap-2">
+                                            <Package className="h-5 w-5" />
+                                            核销验证码
+                                        </CardTitle>
+                                        <CardDescription>
+                                            向核销人员出示此验证码以兑换商品
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        {verification_code ? (
+                                            <>
+                                                <div className="rounded-lg bg-muted p-6 text-center">
+                                                    <p className="mb-2 text-sm text-muted-foreground">
+                                                        您的验证码
                                                     </p>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={handleCopyCode}
-                                                        className="shrink-0"
+                                                    <div className="flex items-center justify-center gap-4">
+                                                        <p className="font-mono text-4xl font-bold tracking-wider">
+                                                            {verification_code}
+                                                        </p>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={
+                                                                handleCopyCode
+                                                            }
+                                                            className="shrink-0"
+                                                        >
+                                                            {copied ? (
+                                                                <Check className="h-4 w-4" />
+                                                            ) : (
+                                                                <Copy className="h-4 w-4" />
+                                                            )}
+                                                        </Button>
+                                                    </div>
+                                                    <p
+                                                        className={`mt-3 text-xs ${isCodeExpired ? 'text-red-600' : 'text-muted-foreground'}`}
                                                     >
-                                                        {copied ? (
-                                                            <Check className="h-4 w-4" />
+                                                        {isCodeExpired ? (
+                                                            <span className="flex items-center justify-center gap-1">
+                                                                <XCircle className="h-3 w-3" />
+                                                                验证码已过期
+                                                            </span>
                                                         ) : (
-                                                            <Copy className="h-4 w-4" />
+                                                            <span>
+                                                                有效期至：
+                                                                {verification_code_expires_at
+                                                                    ? new Date(
+                                                                          verification_code_expires_at,
+                                                                      ).toLocaleString()
+                                                                    : '未知'}
+                                                            </span>
                                                         )}
-                                                    </Button>
+                                                    </p>
                                                 </div>
-                                                <p className={`text-xs mt-3 ${isCodeExpired ? 'text-red-600' : 'text-muted-foreground'}`}>
-                                                    {isCodeExpired ? (
-                                                        <span className="flex items-center justify-center gap-1">
-                                                            <XCircle className="h-3 w-3" />
-                                                            验证码已过期
-                                                        </span>
-                                                    ) : (
-                                                        <span>
-                                                            有效期至：{verification_code_expires_at ? new Date(verification_code_expires_at).toLocaleString() : '未知'}
-                                                        </span>
-                                                    )}
-                                                </p>
-                                            </div>
 
+                                                <Alert>
+                                                    <AlertCircle className="h-4 w-4" />
+                                                    <AlertDescription>
+                                                        验证码每24小时自动过期，过期后需要重新生成
+                                                    </AlertDescription>
+                                                </Alert>
+
+                                                <Button
+                                                    onClick={
+                                                        handleRegenerateCode
+                                                    }
+                                                    disabled={processing}
+                                                    className="w-full"
+                                                >
+                                                    <RefreshCw
+                                                        className={`mr-2 h-4 w-4 ${processing ? 'animate-spin' : ''}`}
+                                                    />
+                                                    {processing
+                                                        ? '生成中...'
+                                                        : '重新生成验证码'}
+                                                </Button>
+                                            </>
+                                        ) : (
                                             <Alert>
                                                 <AlertCircle className="h-4 w-4" />
                                                 <AlertDescription>
-                                                    验证码每24小时自动过期，过期后需要重新生成
+                                                    暂无验证码，点击下方按钮生成
                                                 </AlertDescription>
                                             </Alert>
+                                        )}
 
+                                        {!verification_code && (
                                             <Button
                                                 onClick={handleRegenerateCode}
                                                 disabled={processing}
                                                 className="w-full"
                                             >
-                                                <RefreshCw className={`mr-2 h-4 w-4 ${processing ? 'animate-spin' : ''}`} />
-                                                {processing ? '生成中...' : '重新生成验证码'}
+                                                <RefreshCw
+                                                    className={`mr-2 h-4 w-4 ${processing ? 'animate-spin' : ''}`}
+                                                />
+                                                {processing
+                                                    ? '生成中...'
+                                                    : '生成验证码'}
                                             </Button>
-                                        </>
-                                    ) : (
-                                        <Alert>
-                                            <AlertCircle className="h-4 w-4" />
-                                            <AlertDescription>
-                                                暂无验证码，点击下方按钮生成
-                                            </AlertDescription>
-                                        </Alert>
-                                    )}
-
-                                    {!verification_code && (
-                                        <Button
-                                            onClick={handleRegenerateCode}
-                                            disabled={processing}
-                                            className="w-full"
-                                        >
-                                            <RefreshCw className={`mr-2 h-4 w-4 ${processing ? 'animate-spin' : ''}`} />
-                                            {processing ? '生成中...' : '生成验证码'}
-                                        </Button>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        )}
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            )}
 
                         {/* Verified Badge */}
                         {order.verified_at && (
-                            <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
+                            <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20">
                                 <CardContent className="pt-6">
                                     <div className="flex items-center gap-3">
                                         <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
                                         <div>
-                                            <p className="font-semibold text-green-900 dark:text-green-100">订单已核销</p>
+                                            <p className="font-semibold text-green-900 dark:text-green-100">
+                                                订单已核销
+                                            </p>
                                             <p className="text-sm text-green-700 dark:text-green-300">
-                                                核销时间：{new Date(order.verified_at).toLocaleString()}
+                                                核销时间：
+                                                {new Date(
+                                                    order.verified_at,
+                                                ).toLocaleString()}
                                             </p>
                                         </div>
                                     </div>
@@ -250,35 +316,41 @@ export default function ShopOrderDetail({ order, verification_code, verification
                         )}
 
                         {/* Order Status Alert for Completed/Cancelled */}
-                        {(order.status === 'completed' || order.status === 'cancelled') && !order.verified_at && (
-                            <Card className="border-sidebar-border/70 dark:border-sidebar-border">
-                                <CardContent className="pt-6">
-                                    <div className="flex items-center gap-3">
-                                        {order.status === 'completed' ? (
-                                            <>
-                                                <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
-                                                <div>
-                                                    <p className="font-semibold text-green-900 dark:text-green-100">订单已完成</p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        该订单已完成，无法生成验证码
-                                                    </p>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
-                                                <div>
-                                                    <p className="font-semibold text-red-900 dark:text-red-100">订单已取消</p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        该订单已取消，无法生成验证码
-                                                    </p>
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
+                        {(order.status === 'completed' ||
+                            order.status === 'cancelled') &&
+                            !order.verified_at && (
+                                <Card className="border-sidebar-border/70 dark:border-sidebar-border">
+                                    <CardContent className="pt-6">
+                                        <div className="flex items-center gap-3">
+                                            {order.status === 'completed' ? (
+                                                <>
+                                                    <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+                                                    <div>
+                                                        <p className="font-semibold text-green-900 dark:text-green-100">
+                                                            订单已完成
+                                                        </p>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            该订单已完成，无法生成验证码
+                                                        </p>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+                                                    <div>
+                                                        <p className="font-semibold text-red-900 dark:text-red-100">
+                                                            订单已取消
+                                                        </p>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            该订单已取消，无法生成验证码
+                                                        </p>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
 
                         {/* Product Info */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
@@ -287,31 +359,39 @@ export default function ShopOrderDetail({ order, verification_code, verification
                             </CardHeader>
                             <CardContent>
                                 <div className="flex gap-4">
-                                    <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center shrink-0">
+                                    <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-lg bg-muted">
                                         {order.product.image ? (
                                             <img
                                                 src={order.product.image}
                                                 alt={order.product.name}
-                                                className="w-full h-full object-cover rounded-lg"
+                                                className="h-full w-full rounded-lg object-cover"
                                             />
                                         ) : (
                                             <Package className="h-16 w-16 text-muted-foreground opacity-20" />
                                         )}
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-lg mb-2">{order.product.name}</h3>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="mb-2 text-lg font-semibold">
+                                            {order.product.name}
+                                        </h3>
                                         {order.product.description && (
-                                            <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                                            <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">
                                                 {order.product.description}
                                             </p>
                                         )}
                                         <div className="flex items-center gap-3 text-sm">
                                             {order.product.category && (
-                                                <Badge variant="outline">{order.product.category.name}</Badge>
+                                                <Badge variant="outline">
+                                                    {
+                                                        order.product.category
+                                                            .name
+                                                    }
+                                                </Badge>
                                             )}
-                                            <div className="flex items-center gap-1 text-primary font-semibold">
+                                            <div className="flex items-center gap-1 font-semibold text-primary">
                                                 <Coins className="h-4 w-4" />
-                                                {order.product.points_required.toLocaleString()} 积分
+                                                {order.product.points_required.toLocaleString()}{' '}
+                                                积分
                                             </div>
                                         </div>
                                     </div>
@@ -326,26 +406,38 @@ export default function ShopOrderDetail({ order, verification_code, verification
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-start gap-3">
-                                    <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                    <User className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-sm text-muted-foreground">收货人</p>
-                                        <p className="font-medium">{order.shipping_info.name}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            收货人
+                                        </p>
+                                        <p className="font-medium">
+                                            {order.shipping_info.name}
+                                        </p>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="flex items-start gap-3">
-                                    <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                    <Phone className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-sm text-muted-foreground">联系电话</p>
-                                        <p className="font-medium">{order.shipping_info.phone}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            联系电话
+                                        </p>
+                                        <p className="font-medium">
+                                            {order.shipping_info.phone}
+                                        </p>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="flex items-start gap-3">
-                                    <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                                    <MapPin className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-sm text-muted-foreground">收货地址</p>
-                                        <p className="font-medium whitespace-pre-wrap">{order.shipping_info.address}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            收货地址
+                                        </p>
+                                        <p className="font-medium whitespace-pre-wrap">
+                                            {order.shipping_info.address}
+                                        </p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -360,33 +452,57 @@ export default function ShopOrderDetail({ order, verification_code, verification
                                 <CardTitle>订单摘要</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">订单号</span>
-                                    <span className="font-mono font-medium">{order.order_no}</span>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        订单号
+                                    </span>
+                                    <span className="font-mono font-medium">
+                                        {order.order_no}
+                                    </span>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">下单时间</span>
-                                    <span className="text-sm">{new Date(order.created_at).toLocaleString()}</span>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        下单时间
+                                    </span>
+                                    <span className="text-sm">
+                                        {new Date(
+                                            order.created_at,
+                                        ).toLocaleString()}
+                                    </span>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">更新时间</span>
-                                    <span className="text-sm">{new Date(order.updated_at).toLocaleString()}</span>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        更新时间
+                                    </span>
+                                    <span className="text-sm">
+                                        {new Date(
+                                            order.updated_at,
+                                        ).toLocaleString()}
+                                    </span>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">消耗积分</span>
-                                    <div className="flex items-center gap-1 text-primary font-bold text-lg">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        消耗积分
+                                    </span>
+                                    <div className="flex items-center gap-1 text-lg font-bold text-primary">
                                         <Coins className="h-5 w-5" />
                                         {order.points_spent.toLocaleString()}
                                     </div>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-muted-foreground">订单状态</span>
-                                    <Badge variant={statusConfig[order.status].variant}>
-                                        <StatusIcon className="h-3 w-3 mr-1" />
+                                <div className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">
+                                        订单状态
+                                    </span>
+                                    <Badge
+                                        variant={
+                                            statusConfig[order.status].variant
+                                        }
+                                    >
+                                        <StatusIcon className="mr-1 h-3 w-3" />
                                         {statusConfig[order.status].label}
                                     </Badge>
                                 </div>
@@ -397,15 +513,19 @@ export default function ShopOrderDetail({ order, verification_code, verification
                         {order.third_party_order_id && (
                             <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader>
-                                    <CardTitle className="text-base flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-base">
                                         <Package className="h-4 w-4" />
                                         第三方订单
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-2">
-                                        <p className="text-sm text-muted-foreground">外部订单号</p>
-                                        <p className="font-mono text-sm">{order.third_party_order_id}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            外部订单号
+                                        </p>
+                                        <p className="font-mono text-sm">
+                                            {order.third_party_order_id}
+                                        </p>
                                     </div>
                                 </CardContent>
                             </Card>

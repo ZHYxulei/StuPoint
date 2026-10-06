@@ -1,10 +1,25 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, Trophy, Target, Coins, History, ShoppingCart, Package, Eye } from 'lucide-react';
+import {
+    ArrowLeft,
+    Trophy,
+    Target,
+    Coins,
+    History,
+    ShoppingCart,
+    Package,
+    Eye,
+} from 'lucide-react';
 import { useState } from 'react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -54,7 +69,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ParentChildShow({ child }: PageProps) {
-    const [activeTab, setActiveTab] = useState<'overview' | 'transactions' | 'orders'>('overview');
+    const [activeTab, setActiveTab] = useState<
+        'overview' | 'transactions' | 'orders'
+    >('overview');
 
     const getStatusBadge = (status: string) => {
         const statusMap: Record<string, { label: string; variant: any }> = {
@@ -64,7 +81,10 @@ export default function ParentChildShow({ child }: PageProps) {
             cancelled: { label: '已取消', variant: 'destructive' },
             failed: { label: '失败', variant: 'destructive' },
         };
-        const info = statusMap[status] || { label: status, variant: 'secondary' };
+        const info = statusMap[status] || {
+            label: status,
+            variant: 'secondary',
+        };
         return <Badge variant={info.variant}>{info.label}</Badge>;
     };
 
@@ -89,19 +109,21 @@ export default function ParentChildShow({ child }: PageProps) {
                 <div className="grid gap-4 md:grid-cols-4">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-base">
                                 <Coins className="h-4 w-4" />
                                 总积分
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold">{child.points.total_points}</p>
+                            <p className="text-2xl font-bold">
+                                {child.points.total_points}
+                            </p>
                         </CardContent>
                     </Card>
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-base">
                                 <Target className="h-4 w-4" />
                                 可兑换积分
                             </CardTitle>
@@ -115,14 +137,16 @@ export default function ParentChildShow({ child }: PageProps) {
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-base">
                                 <Trophy className="h-4 w-4" />
                                 全校排名
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold">第 {child.points.rank} 名</p>
-                            <p className="text-sm text-muted-foreground mt-1">
+                            <p className="text-2xl font-bold">
+                                第 {child.points.rank} 名
+                            </p>
+                            <p className="mt-1 text-sm text-muted-foreground">
                                 共 {child.points.total_users} 人
                             </p>
                         </CardContent>
@@ -130,7 +154,9 @@ export default function ParentChildShow({ child }: PageProps) {
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base">年级班级</CardTitle>
+                            <CardTitle className="text-base">
+                                年级班级
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="text-lg font-medium">
@@ -141,7 +167,10 @@ export default function ParentChildShow({ child }: PageProps) {
                 </div>
 
                 {/* Details Tabs */}
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+                <Tabs
+                    value={activeTab}
+                    onValueChange={(v) => setActiveTab(v as any)}
+                >
                     <TabsList>
                         <TabsTrigger value="overview">概览</TabsTrigger>
                         <TabsTrigger value="transactions">
@@ -159,8 +188,12 @@ export default function ParentChildShow({ child }: PageProps) {
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base">最近积分变动</CardTitle>
-                                    <Link href={`/parent/children/${child.id}/transactions`}>
+                                    <CardTitle className="text-base">
+                                        最近积分变动
+                                    </CardTitle>
+                                    <Link
+                                        href={`/parent/children/${child.id}/transactions`}
+                                    >
                                         <Button variant="ghost" size="sm">
                                             查看全部
                                             <Eye className="ml-2 h-3.5 w-3.5" />
@@ -170,7 +203,7 @@ export default function ParentChildShow({ child }: PageProps) {
                             </CardHeader>
                             <CardContent>
                                 {child.recent_transactions.length === 0 ? (
-                                    <p className="text-center text-muted-foreground py-8">
+                                    <p className="py-8 text-center text-muted-foreground">
                                         暂无积分变动记录
                                     </p>
                                 ) : (
@@ -178,19 +211,30 @@ export default function ParentChildShow({ child }: PageProps) {
                                         {child.recent_transactions.map((t) => (
                                             <div
                                                 key={t.id}
-                                                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                                                className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
                                             >
                                                 <div className="flex-1">
-                                                    <p className="font-medium">{t.description}</p>
+                                                    <p className="font-medium">
+                                                        {t.description}
+                                                    </p>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {new Date(t.created_at).toLocaleString('zh-CN')}
+                                                        {new Date(
+                                                            t.created_at,
+                                                        ).toLocaleString(
+                                                            'zh-CN',
+                                                        )}
                                                     </p>
                                                 </div>
                                                 <Badge
-                                                    variant={t.amount > 0 ? 'default' : 'destructive'}
+                                                    variant={
+                                                        t.amount > 0
+                                                            ? 'default'
+                                                            : 'destructive'
+                                                    }
                                                     className="ml-4"
                                                 >
-                                                    {t.amount > 0 ? '+' : ''}{t.amount}
+                                                    {t.amount > 0 ? '+' : ''}
+                                                    {t.amount}
                                                 </Badge>
                                             </div>
                                         ))}
@@ -203,8 +247,12 @@ export default function ParentChildShow({ child }: PageProps) {
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base">最近兑换</CardTitle>
-                                    <Link href={`/parent/children/${child.id}/orders`}>
+                                    <CardTitle className="text-base">
+                                        最近兑换
+                                    </CardTitle>
+                                    <Link
+                                        href={`/parent/children/${child.id}/orders`}
+                                    >
                                         <Button variant="ghost" size="sm">
                                             查看全部
                                             <Eye className="ml-2 h-3.5 w-3.5" />
@@ -214,7 +262,7 @@ export default function ParentChildShow({ child }: PageProps) {
                             </CardHeader>
                             <CardContent>
                                 {child.recent_orders.length === 0 ? (
-                                    <p className="text-center text-muted-foreground py-8">
+                                    <p className="py-8 text-center text-muted-foreground">
                                         暂无兑换记录
                                     </p>
                                 ) : (
@@ -222,24 +270,33 @@ export default function ParentChildShow({ child }: PageProps) {
                                         {child.recent_orders.map((order) => (
                                             <div
                                                 key={order.id}
-                                                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                                                className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                                                         <Package className="h-5 w-5 text-primary" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-medium">{order.product_name}</p>
+                                                        <p className="font-medium">
+                                                            {order.product_name}
+                                                        </p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            {new Date(order.created_at).toLocaleString('zh-CN')}
+                                                            {new Date(
+                                                                order.created_at,
+                                                            ).toLocaleString(
+                                                                'zh-CN',
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-medium text-primary">
-                                                        -{order.points_spent} 积分
+                                                        -{order.points_spent}{' '}
+                                                        积分
                                                     </p>
-                                                    {getStatusBadge(order.status)}
+                                                    {getStatusBadge(
+                                                        order.status,
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}

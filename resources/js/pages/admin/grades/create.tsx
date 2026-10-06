@@ -3,7 +3,13 @@ import { ArrowLeft, Save } from 'lucide-react';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,29 +46,27 @@ export default function CreateGrade() {
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                     </Link>
-                    <Heading
-                        title="添加年级"
-                        description="创建新的年级信息"
-                    />
+                    <Heading title="添加年级" description="创建新的年级信息" />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
                         <CardTitle>年级信息</CardTitle>
-                        <CardDescription>
-                            填写年级的基本信息
-                        </CardDescription>
+                        <CardDescription>填写年级的基本信息</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="name">
-                                    年级名称 <span className="text-destructive">*</span>
+                                    年级名称{' '}
+                                    <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
                                     id="name"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                     placeholder="例如：高一、高二、高三"
                                     required
                                 />
@@ -74,7 +78,9 @@ export default function CreateGrade() {
                                 <Textarea
                                     id="description"
                                     value={data.description}
-                                    onChange={(e) => setData('description', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('description', e.target.value)
+                                    }
                                     placeholder="简要描述该年级..."
                                     rows={3}
                                 />
@@ -86,7 +92,12 @@ export default function CreateGrade() {
                                     <Checkbox
                                         id="is_active"
                                         checked={data.is_active}
-                                        onCheckedChange={(checked) => setData('is_active', checked as boolean)}
+                                        onCheckedChange={(checked) =>
+                                            setData(
+                                                'is_active',
+                                                checked as boolean,
+                                            )
+                                        }
                                     />
                                     启用该年级
                                 </Label>

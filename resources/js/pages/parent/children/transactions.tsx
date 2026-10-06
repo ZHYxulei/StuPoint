@@ -45,7 +45,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '积分记录', href: '/parent/children/[id]/transactions' },
 ];
 
-export default function ParentChildTransactions({ child, transactions }: PageProps) {
+export default function ParentChildTransactions({
+    child,
+    transactions,
+}: PageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${child.name} - 积分记录`} />
@@ -54,19 +57,19 @@ export default function ParentChildTransactions({ child, transactions }: PagePro
                 <PageHeader
                     title={`${child.name} 的积分记录`}
                     description={`学号: ${child.student_id}`}
-                    actions={(
+                    actions={
                         <Button asChild variant="outline">
                             <Link href={`/parent/children/${child.id}`}>
                                 <ArrowLeft className="size-4" />
                                 返回详情
                             </Link>
                         </Button>
-                    )}
+                    }
                 />
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <History className="h-4 w-4" />
                             全部交易记录
                         </CardTitle>
@@ -86,18 +89,30 @@ export default function ParentChildTransactions({ child, transactions }: PagePro
                                         className="flex flex-col gap-4 rounded-lg border border-border/70 bg-surface-2 p-4 sm:flex-row sm:items-center sm:justify-between"
                                     >
                                         <div className="flex-1">
-                                            <p className="font-medium">{t.description}</p>
-                                            <p className="text-sm text-muted-foreground mt-1">
-                                                {new Date(t.created_at).toLocaleString('zh-CN')}
+                                            <p className="font-medium">
+                                                {t.description}
+                                            </p>
+                                            <p className="mt-1 text-sm text-muted-foreground">
+                                                {new Date(
+                                                    t.created_at,
+                                                ).toLocaleString('zh-CN')}
                                             </p>
                                         </div>
                                         <div className="flex items-center justify-between gap-4 sm:justify-end">
                                             <StatusBadge
                                                 tone="outline"
-                                                label={t.type === 'total' ? '总积分' : '可兑换'}
+                                                label={
+                                                    t.type === 'total'
+                                                        ? '总积分'
+                                                        : '可兑换'
+                                                }
                                             />
                                             <StatusBadge
-                                                tone={t.amount > 0 ? 'success' : 'destructive'}
+                                                tone={
+                                                    t.amount > 0
+                                                        ? 'success'
+                                                        : 'destructive'
+                                                }
                                                 label={`${t.amount > 0 ? '+' : ''}${t.amount}`}
                                                 className="min-w-20 justify-center"
                                             />

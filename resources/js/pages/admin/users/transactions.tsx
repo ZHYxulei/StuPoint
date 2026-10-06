@@ -1,11 +1,29 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowLeft, TrendingUp, TrendingDown, Filter, Calendar } from 'lucide-react';
+import {
+    ArrowLeft,
+    TrendingUp,
+    TrendingDown,
+    Filter,
+    Calendar,
+} from 'lucide-react';
 import Heading from '@/components/heading';
 import PaginationBar from '@/components/pagination-bar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -63,7 +81,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '交易记录', href: '#' },
 ];
 
-export default function UserTransactions({ user, transactions, filters }: PageProps) {
+export default function UserTransactions({
+    user,
+    transactions,
+    filters,
+}: PageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${user.name} - 交易记录`} />
@@ -88,28 +110,46 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
                 <div className="grid gap-4 md:grid-cols-2">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle className="text-base">用户信息</CardTitle>
+                            <CardTitle className="text-base">
+                                用户信息
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">姓名</span>
-                                    <span className="font-medium">{user.name}</span>
+                                    <span className="text-muted-foreground">
+                                        姓名
+                                    </span>
+                                    <span className="font-medium">
+                                        {user.name}
+                                    </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">邮箱</span>
-                                    <span className="font-medium">{user.email}</span>
+                                    <span className="text-muted-foreground">
+                                        邮箱
+                                    </span>
+                                    <span className="font-medium">
+                                        {user.email}
+                                    </span>
                                 </div>
                                 {user.student_id && (
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">学号</span>
-                                        <span className="font-medium">{user.student_id}</span>
+                                        <span className="text-muted-foreground">
+                                            学号
+                                        </span>
+                                        <span className="font-medium">
+                                            {user.student_id}
+                                        </span>
                                     </div>
                                 )}
                                 {user.grade && user.class && (
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">班级</span>
-                                        <span className="font-medium">{user.grade} {user.class}</span>
+                                        <span className="text-muted-foreground">
+                                            班级
+                                        </span>
+                                        <span className="font-medium">
+                                            {user.grade} {user.class}
+                                        </span>
                                     </div>
                                 )}
                             </div>
@@ -118,35 +158,45 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle className="text-base">当前积分</CardTitle>
+                            <CardTitle className="text-base">
+                                当前积分
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 <div>
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm text-muted-foreground">总积分</span>
+                                    <div className="mb-2 flex items-center justify-between">
+                                        <span className="text-sm text-muted-foreground">
+                                            总积分
+                                        </span>
                                         <span className="text-2xl font-bold text-primary">
                                             {user.points.total_points.toLocaleString()}
                                         </span>
                                     </div>
-                                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                                        <div className="h-full bg-primary" style={{ width: '100%' }} />
+                                    <div className="h-2 overflow-hidden rounded-full bg-muted">
+                                        <div
+                                            className="h-full bg-primary"
+                                            style={{ width: '100%' }}
+                                        />
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm text-muted-foreground">可兑换积分</span>
+                                    <div className="mb-2 flex items-center justify-between">
+                                        <span className="text-sm text-muted-foreground">
+                                            可兑换积分
+                                        </span>
                                         <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                                             {user.points.redeemable_points.toLocaleString()}
                                         </span>
                                     </div>
-                                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                    <div className="h-2 overflow-hidden rounded-full bg-muted">
                                         <div
                                             className="h-full bg-green-600 dark:bg-green-400"
                                             style={{
-                                                width: user.points.total_points > 0
-                                                    ? `${(user.points.redeemable_points / user.points.total_points) * 100}%`
-                                                    : '0%'
+                                                width:
+                                                    user.points.total_points > 0
+                                                        ? `${(user.points.redeemable_points / user.points.total_points) * 100}%`
+                                                        : '0%',
                                             }}
                                         />
                                     </div>
@@ -159,7 +209,7 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
                 {/* Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <Filter className="h-4 w-4" />
                             筛选记录
                         </CardTitle>
@@ -167,48 +217,88 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
                     <CardContent>
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="grid gap-2">
-                                <label className="text-sm font-medium">积分类型</label>
+                                <label className="text-sm font-medium">
+                                    积分类型
+                                </label>
                                 <Select
                                     value={filters.type || 'all'}
-                                    onValueChange={(value) => router.get(`/admin/users/${user.id}/transactions`, {
-                                        ...filters,
-                                        type: value === 'all' ? null : value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            `/admin/users/${user.id}/transactions`,
+                                            {
+                                                ...filters,
+                                                type:
+                                                    value === 'all'
+                                                        ? null
+                                                        : value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">全部</SelectItem>
-                                        <SelectItem value="total">总积分</SelectItem>
-                                        <SelectItem value="redeemable">可兑换积分</SelectItem>
+                                        <SelectItem value="all">
+                                            全部
+                                        </SelectItem>
+                                        <SelectItem value="total">
+                                            总积分
+                                        </SelectItem>
+                                        <SelectItem value="redeemable">
+                                            可兑换积分
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="grid gap-2">
-                                <label className="text-sm font-medium">来源</label>
+                                <label className="text-sm font-medium">
+                                    来源
+                                </label>
                                 <Select
                                     value={filters.source || 'all'}
-                                    onValueChange={(value) => router.get(`/admin/users/${user.id}/transactions`, {
-                                        ...filters,
-                                        source: value === 'all' ? null : value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            `/admin/users/${user.id}/transactions`,
+                                            {
+                                                ...filters,
+                                                source:
+                                                    value === 'all'
+                                                        ? null
+                                                        : value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">全部</SelectItem>
-                                        <SelectItem value="check_in">每日签到</SelectItem>
-                                        <SelectItem value="task_complete">完成任务</SelectItem>
-                                        <SelectItem value="activity_reward">活动奖励</SelectItem>
-                                        <SelectItem value="manual_adjust">手动调整</SelectItem>
-                                        <SelectItem value="product_exchange">商品兑换</SelectItem>
+                                        <SelectItem value="all">
+                                            全部
+                                        </SelectItem>
+                                        <SelectItem value="check_in">
+                                            每日签到
+                                        </SelectItem>
+                                        <SelectItem value="task_complete">
+                                            完成任务
+                                        </SelectItem>
+                                        <SelectItem value="activity_reward">
+                                            活动奖励
+                                        </SelectItem>
+                                        <SelectItem value="manual_adjust">
+                                            手动调整
+                                        </SelectItem>
+                                        <SelectItem value="product_exchange">
+                                            商品兑换
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -224,28 +314,33 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
                             交易记录
                         </CardTitle>
                         <CardDescription>
-                            显示 {transactions.from} 到 {transactions.to}，共 {transactions.total} 条记录
+                            显示 {transactions.from} 到 {transactions.to}，共{' '}
+                            {transactions.total} 条记录
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {transactions.data.length === 0 ? (
-                            <div className="text-center py-12">
-                                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                                <p className="text-muted-foreground">暂无交易记录</p>
+                            <div className="py-12 text-center">
+                                <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                                <p className="text-muted-foreground">
+                                    暂无交易记录
+                                </p>
                             </div>
                         ) : (
                             <div className="space-y-2">
                                 {transactions.data.map((transaction) => (
                                     <div
                                         key={transaction.id}
-                                        className="flex items-start gap-4 p-4 rounded-lg border border-sidebar-border/70 dark:border-sidebar-border hover:bg-muted/50 transition-colors"
+                                        className="flex items-start gap-4 rounded-lg border border-sidebar-border/70 p-4 transition-colors hover:bg-muted/50 dark:border-sidebar-border"
                                     >
                                         {/* Icon */}
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                                            transaction.amount > 0
-                                                ? 'bg-green-100 dark:bg-green-900'
-                                                : 'bg-red-100 dark:bg-red-900'
-                                        }`}>
+                                        <div
+                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                                                transaction.amount > 0
+                                                    ? 'bg-green-100 dark:bg-green-900'
+                                                    : 'bg-red-100 dark:bg-red-900'
+                                            }`}
+                                        >
                                             {transaction.amount > 0 ? (
                                                 <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
                                             ) : (
@@ -254,37 +349,54 @@ export default function UserTransactions({ user, transactions, filters }: PagePr
                                         </div>
 
                                         {/* Content */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-1">
+                                        <div className="min-w-0 flex-1">
+                                            <div className="mb-1 flex items-center gap-2">
                                                 <span className="font-medium">
-                                                    {transaction.description || transaction.source}
+                                                    {transaction.description ||
+                                                        transaction.source}
                                                 </span>
                                                 <Badge
-                                                    variant={transaction.type === 'total' ? 'default' : 'secondary'}
+                                                    variant={
+                                                        transaction.type ===
+                                                        'total'
+                                                            ? 'default'
+                                                            : 'secondary'
+                                                    }
                                                     className="text-xs"
                                                 >
-                                                    {transaction.type === 'total' ? '总积分' : '可兑换'}
+                                                    {transaction.type ===
+                                                    'total'
+                                                        ? '总积分'
+                                                        : '可兑换'}
                                                 </Badge>
                                             </div>
                                             <p className="text-sm text-muted-foreground">
                                                 来源: {transaction.source}
                                             </p>
-                                            <p className="text-xs text-muted-foreground mt-1">
-                                                {new Date(transaction.created_at).toLocaleString('zh-CN')}
+                                            <p className="mt-1 text-xs text-muted-foreground">
+                                                {new Date(
+                                                    transaction.created_at,
+                                                ).toLocaleString('zh-CN')}
                                             </p>
                                         </div>
 
                                         {/* Amount */}
-                                        <div className="text-right shrink-0">
-                                            <p className={`text-lg font-bold ${
-                                                transaction.amount > 0
-                                                    ? 'text-green-600 dark:text-green-400'
-                                                    : 'text-red-600 dark:text-red-400'
-                                            }`}>
-                                                {transaction.amount > 0 ? '+' : ''}{transaction.amount}
+                                        <div className="shrink-0 text-right">
+                                            <p
+                                                className={`text-lg font-bold ${
+                                                    transaction.amount > 0
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-red-600 dark:text-red-400'
+                                                }`}
+                                            >
+                                                {transaction.amount > 0
+                                                    ? '+'
+                                                    : ''}
+                                                {transaction.amount}
                                             </p>
                                             <p className="text-xs text-muted-foreground">
-                                                余额: {transaction.balance_after}
+                                                余额:{' '}
+                                                {transaction.balance_after}
                                             </p>
                                         </div>
                                     </div>

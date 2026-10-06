@@ -2,10 +2,22 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Save } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -62,72 +74,99 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
                     />
                 </div>
 
-                <Card className="border-sidebar-border/70 dark:border-sidebar-border max-w-2xl">
+                <Card className="max-w-2xl border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
                         <CardTitle>班级信息</CardTitle>
-                        <CardDescription>
-                            修改班级的基本信息
-                        </CardDescription>
+                        <CardDescription>修改班级的基本信息</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="grade">
-                                        年级 <span className="text-destructive">*</span>
+                                        年级{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="grade"
                                         placeholder="例如: 高三、初一"
                                         value={data.grade}
-                                        onChange={(e) => setData('grade', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('grade', e.target.value)
+                                        }
                                     />
                                     {errors.grade && (
-                                        <p className="text-sm text-destructive">{errors.grade}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.grade}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        班级名称 <span className="text-destructive">*</span>
+                                        班级名称{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="name"
                                         placeholder="例如: 1班、2班"
                                         value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
                                     />
                                     {errors.name && (
-                                        <p className="text-sm text-destructive">{errors.name}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.name}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="head_teacher_id">班主任</Label>
+                                    <Label htmlFor="head_teacher_id">
+                                        班主任
+                                    </Label>
                                     <Select
                                         value={data.head_teacher_id}
-                                        onValueChange={(value) => setData('head_teacher_id', value)}
+                                        onValueChange={(value) =>
+                                            setData('head_teacher_id', value)
+                                        }
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="选择班主任" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="">无班主任</SelectItem>
+                                            <SelectItem value="">
+                                                无班主任
+                                            </SelectItem>
                                             {teachers.map((teacher) => (
-                                                <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                                                    {teacher.name} ({teacher.email})
+                                                <SelectItem
+                                                    key={teacher.id}
+                                                    value={teacher.id.toString()}
+                                                >
+                                                    {teacher.name} (
+                                                    {teacher.email})
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                     {errors.head_teacher_id && (
-                                        <p className="text-sm text-destructive">{errors.head_teacher_id}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.head_teacher_id}
+                                        </p>
                                     )}
                                 </div>
                             </div>
 
                             <div className="flex gap-4">
-                                <Link href={`/admin/classes/${classData.id}`} className="flex-1">
+                                <Link
+                                    href={`/admin/classes/${classData.id}`}
+                                    className="flex-1"
+                                >
                                     <Button
                                         type="button"
                                         variant="outline"

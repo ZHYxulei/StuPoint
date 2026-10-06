@@ -51,12 +51,24 @@ export default function PaginationBar({
                             size="sm"
                             disabled
                             className="min-w-9 px-2"
-                            aria-label={isPrev ? '上一页' : isNext ? '下一页' : undefined}
+                            aria-label={
+                                isPrev
+                                    ? '上一页'
+                                    : isNext
+                                      ? '下一页'
+                                      : undefined
+                            }
                         >
                             {isPrev ? (
-                                <ChevronLeft className="size-4" aria-hidden="true" />
+                                <ChevronLeft
+                                    className="size-4"
+                                    aria-hidden="true"
+                                />
                             ) : isNext ? (
-                                <ChevronRight className="size-4" aria-hidden="true" />
+                                <ChevronRight
+                                    className="size-4"
+                                    aria-hidden="true"
+                                />
                             ) : (
                                 text
                             )}
@@ -71,18 +83,34 @@ export default function PaginationBar({
                         size="sm"
                         className="min-w-9 px-2"
                         aria-current={link.active ? 'page' : undefined}
-                        aria-label={isPrev ? '上一页' : isNext ? '下一页' : `第 ${text} 页`}
+                        aria-label={
+                            isPrev
+                                ? '上一页'
+                                : isNext
+                                  ? '下一页'
+                                  : `第 ${text} 页`
+                        }
                         onClick={() => {
                             if (link.url) {
-                                router.get(link.url, {}, { preserveScroll, preserveState });
+                                router.get(
+                                    link.url,
+                                    {},
+                                    { preserveScroll, preserveState },
+                                );
                             }
                         }}
                         disabled={!link.url}
                     >
                         {isPrev ? (
-                            <ChevronLeft className="size-4" aria-hidden="true" />
+                            <ChevronLeft
+                                className="size-4"
+                                aria-hidden="true"
+                            />
                         ) : isNext ? (
-                            <ChevronRight className="size-4" aria-hidden="true" />
+                            <ChevronRight
+                                className="size-4"
+                                aria-hidden="true"
+                            />
                         ) : (
                             text
                         )}

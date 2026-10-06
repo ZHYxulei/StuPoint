@@ -10,7 +10,13 @@ export default function FilterCard({
     ...props
 }: FilterCardProps) {
     return (
-        <Card className={cn('gap-0 border-border/80 bg-surface-1 py-0 shadow-xs', className)} {...props}>
+        <Card
+            className={cn(
+                'gap-0 border-border/80 bg-surface-1 py-0 shadow-xs',
+                className,
+            )}
+            {...props}
+        >
             <CardContent className="p-4 sm:p-5">{children}</CardContent>
         </Card>
     );

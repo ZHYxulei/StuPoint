@@ -13,7 +13,7 @@ export default function InstallComplete() {
 
             <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-6 dark:bg-gray-900">
                 <div className="w-full max-w-lg">
-                    <div className="bg-white p-8 shadow-lg rounded-lg dark:bg-gray-800">
+                    <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
                         <div className="mb-8 text-center">
                             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                                 <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
@@ -40,10 +40,7 @@ export default function InstallComplete() {
                                 </ul>
                             </div>
 
-                            <Link
-                                href="/"
-                                className="block"
-                            >
+                            <Link href="/" className="block">
                                 <Button className="w-full" size="lg">
                                     前往系统首页
                                 </Button>

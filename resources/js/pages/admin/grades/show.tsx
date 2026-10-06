@@ -1,9 +1,22 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, GraduationCap, CheckCircle2, XCircle, Users2, Settings } from 'lucide-react';
+import {
+    ArrowLeft,
+    GraduationCap,
+    CheckCircle2,
+    XCircle,
+    Users2,
+    Settings,
+} from 'lucide-react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -55,17 +68,24 @@ export default function ShowGrade({ grade }: PageProps) {
                     <CardHeader>
                         <div className="flex items-start justify-between">
                             <div>
-                                <CardTitle className="text-2xl">{grade.name}</CardTitle>
-                                <CardDescription className="flex items-center gap-1 mt-2">
+                                <CardTitle className="text-2xl">
+                                    {grade.name}
+                                </CardTitle>
+                                <CardDescription className="mt-2 flex items-center gap-1">
                                     <GraduationCap className="h-4 w-4" />
                                     年级
                                 </CardDescription>
                             </div>
-                            <Badge variant={grade.is_active ? 'default' : 'secondary'} className="text-base px-3 py-1">
+                            <Badge
+                                variant={
+                                    grade.is_active ? 'default' : 'secondary'
+                                }
+                                className="px-3 py-1 text-base"
+                            >
                                 {grade.is_active ? (
-                                    <CheckCircle2 className="h-4 w-4 mr-1" />
+                                    <CheckCircle2 className="mr-1 h-4 w-4" />
                                 ) : (
-                                    <XCircle className="h-4 w-4 mr-1" />
+                                    <XCircle className="mr-1 h-4 w-4" />
                                 )}
                                 {grade.is_active ? '启用' : '禁用'}
                             </Badge>
@@ -75,22 +95,32 @@ export default function ShowGrade({ grade }: PageProps) {
                         <div className="space-y-4">
                             {grade.description && (
                                 <div>
-                                    <h3 className="font-semibold mb-2">描述</h3>
-                                    <p className="text-muted-foreground">{grade.description}</p>
+                                    <h3 className="mb-2 font-semibold">描述</h3>
+                                    <p className="text-muted-foreground">
+                                        {grade.description}
+                                    </p>
                                 </div>
                             )}
                             <div>
-                                <h3 className="font-semibold mb-2">基本信息</h3>
+                                <h3 className="mb-2 font-semibold">基本信息</h3>
                                 <dl className="grid gap-2 text-sm">
                                     <div className="flex items-center justify-between">
-                                        <dt className="text-muted-foreground">创建时间</dt>
+                                        <dt className="text-muted-foreground">
+                                            创建时间
+                                        </dt>
                                         <dd className="font-medium">
-                                            {new Date(grade.created_at).toLocaleString('zh-CN')}
+                                            {new Date(
+                                                grade.created_at,
+                                            ).toLocaleString('zh-CN')}
                                         </dd>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <dt className="text-muted-foreground">班级数量</dt>
-                                        <dd className="font-medium">{grade.classes.length} 个</dd>
+                                        <dt className="text-muted-foreground">
+                                            班级数量
+                                        </dt>
+                                        <dd className="font-medium">
+                                            {grade.classes.length} 个
+                                        </dd>
                                     </div>
                                 </dl>
                             </div>
@@ -113,9 +143,7 @@ export default function ShowGrade({ grade }: PageProps) {
                             <Users2 className="h-5 w-5" />
                             关联班级
                         </CardTitle>
-                        <CardDescription>
-                            该年级下的所有班级
-                        </CardDescription>
+                        <CardDescription>该年级下的所有班级</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {grade.classes.length > 0 ? (
@@ -125,10 +153,12 @@ export default function ShowGrade({ grade }: PageProps) {
                                         key={classItem.id}
                                         href={`/admin/classes/${classItem.id}`}
                                     >
-                                        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                                        <Card className="cursor-pointer transition-shadow hover:shadow-md">
                                             <CardContent className="p-4">
-                                                <div className="font-medium">{classItem.name}</div>
-                                                <div className="text-sm text-muted-foreground mt-1">
+                                                <div className="font-medium">
+                                                    {classItem.name}
+                                                </div>
+                                                <div className="mt-1 text-sm text-muted-foreground">
                                                     {classItem.grade}
                                                 </div>
                                             </CardContent>
@@ -137,10 +167,13 @@ export default function ShowGrade({ grade }: PageProps) {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-8 text-muted-foreground">
-                                <Users2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                            <div className="py-8 text-center text-muted-foreground">
+                                <Users2 className="mx-auto mb-3 h-12 w-12 opacity-50" />
                                 <p>该年级下暂无班级</p>
-                                <Link href="/admin/classes/create" className="mt-4 inline-block">
+                                <Link
+                                    href="/admin/classes/create"
+                                    className="mt-4 inline-block"
+                                >
                                     <Button variant="outline" size="sm">
                                         创建班级
                                     </Button>

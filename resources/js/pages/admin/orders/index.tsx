@@ -1,15 +1,44 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { Search, Eye, Package, User, Calendar, TrendingUp, ShoppingCart, ShieldCheck, AlertCircle } from 'lucide-react';
+import {
+    Search,
+    Eye,
+    Package,
+    User,
+    Calendar,
+    TrendingUp,
+    ShoppingCart,
+    ShieldCheck,
+    AlertCircle,
+} from 'lucide-react';
 import { useState, useRef } from 'react';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
@@ -77,7 +106,19 @@ interface PageProps {
 
 type VerificationMethod = 'code' | 'password' | 'id_card' | 'direct';
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
+const statusConfig: Record<
+    string,
+    {
+        label: string;
+        variant:
+            | 'default'
+            | 'secondary'
+            | 'destructive'
+            | 'outline'
+            | 'success'
+            | 'warning';
+    }
+> = {
     pending: { label: '待处理', variant: 'warning' },
     processing: { label: '处理中', variant: 'default' },
     completed: { label: '已完成', variant: 'success' },
@@ -119,8 +160,12 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">总订单</p>
-                                    <p className="text-2xl font-bold">{stats.total}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        总订单
+                                    </p>
+                                    <p className="text-2xl font-bold">
+                                        {stats.total}
+                                    </p>
                                 </div>
                                 <ShoppingCart className="h-8 w-8 text-muted-foreground" />
                             </div>
@@ -130,8 +175,12 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">待处理</p>
-                                    <p className="text-2xl font-bold">{stats.pending}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        待处理
+                                    </p>
+                                    <p className="text-2xl font-bold">
+                                        {stats.pending}
+                                    </p>
                                 </div>
                                 <Calendar className="h-8 w-8 text-yellow-600" />
                             </div>
@@ -141,8 +190,12 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">处理中</p>
-                                    <p className="text-2xl font-bold">{stats.processing}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        处理中
+                                    </p>
+                                    <p className="text-2xl font-bold">
+                                        {stats.processing}
+                                    </p>
                                 </div>
                                 <TrendingUp className="h-8 w-8 text-blue-600" />
                             </div>
@@ -152,8 +205,12 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">已完成</p>
-                                    <p className="text-2xl font-bold">{stats.completed}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        已完成
+                                    </p>
+                                    <p className="text-2xl font-bold">
+                                        {stats.completed}
+                                    </p>
                                 </div>
                                 <Package className="h-8 w-8 text-green-600" />
                             </div>
@@ -163,8 +220,12 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">消耗积分</p>
-                                    <p className="text-2xl font-bold">{stats.total_points_spent.toLocaleString()}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        消耗积分
+                                    </p>
+                                    <p className="text-2xl font-bold">
+                                        {stats.total_points_spent.toLocaleString()}
+                                    </p>
                                 </div>
                                 <User className="h-8 w-8 text-primary" />
                             </div>
@@ -178,16 +239,21 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                         <CardTitle className="text-base">搜索和筛选</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-4">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="grid gap-4 md:grid-cols-4"
+                        >
                             <div className="space-y-2">
                                 <Label htmlFor="search">搜索订单</Label>
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                     <Input
                                         id="search"
                                         placeholder="订单号..."
                                         value={filters.search || ''}
-                                        onChange={(e) => setData('search', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('search', e.target.value)
+                                        }
                                         className="pl-10"
                                     />
                                 </div>
@@ -196,17 +262,29 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                 <Label htmlFor="status">订单状态</Label>
                                 <Select
                                     value={filters.status || 'all'}
-                                    onValueChange={(value) => setData('status', value)}
+                                    onValueChange={(value) =>
+                                        setData('status', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="选择状态" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">全部</SelectItem>
-                                        <SelectItem value="pending">待处理</SelectItem>
-                                        <SelectItem value="processing">处理中</SelectItem>
-                                        <SelectItem value="completed">已完成</SelectItem>
-                                        <SelectItem value="cancelled">已取消</SelectItem>
+                                        <SelectItem value="all">
+                                            全部
+                                        </SelectItem>
+                                        <SelectItem value="pending">
+                                            待处理
+                                        </SelectItem>
+                                        <SelectItem value="processing">
+                                            处理中
+                                        </SelectItem>
+                                        <SelectItem value="completed">
+                                            已完成
+                                        </SelectItem>
+                                        <SelectItem value="cancelled">
+                                            已取消
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -216,11 +294,17 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                     id="product"
                                     placeholder="商品名称..."
                                     value={filters.product || ''}
-                                    onChange={(e) => setData('product', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('product', e.target.value)
+                                    }
                                 />
                             </div>
                             <div className="flex items-end">
-                                <Button type="submit" disabled={processing} className="w-full">
+                                <Button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full"
+                                >
                                     搜索
                                 </Button>
                             </div>
@@ -230,7 +314,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
 
                 {/* Success Message */}
                 {successMessage && (
-                    <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg flex items-center gap-2">
+                    <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800 dark:border-green-800 dark:bg-green-950/20 dark:text-green-200">
                         <AlertCircle className="h-4 w-4" />
                         {successMessage}
                     </div>
@@ -240,70 +324,143 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
                         <CardTitle>订单列表</CardTitle>
-                        <CardDescription>共 {orders.total} 个订单</CardDescription>
+                        <CardDescription>
+                            共 {orders.total} 个订单
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b">
-                                        <th className="text-left p-3 font-medium text-sm">订单号</th>
-                                        <th className="text-left p-3 font-medium text-sm">商品</th>
-                                        <th className="text-left p-3 font-medium text-sm">用户</th>
-                                        <th className="text-left p-3 font-medium text-sm">积分</th>
-                                        <th className="text-left p-3 font-medium text-sm">状态</th>
-                                        <th className="text-left p-3 font-medium text-sm">核销状态</th>
-                                        <th className="text-left p-3 font-medium text-sm">下单时间</th>
-                                        <th className="text-left p-3 font-medium text-sm">操作</th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            订单号
+                                        </th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            商品
+                                        </th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            用户
+                                        </th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            积分
+                                        </th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            状态
+                                        </th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            核销状态
+                                        </th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            下单时间
+                                        </th>
+                                        <th className="p-3 text-left text-sm font-medium">
+                                            操作
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {orders.data.map((order) => (
-                                        <tr key={order.id} className="border-b hover:bg-muted/50">
+                                        <tr
+                                            key={order.id}
+                                            className="border-b hover:bg-muted/50"
+                                        >
                                             <td className="p-3">
-                                                <Link href={`/admin/orders/${order.id}`} className="font-mono text-sm hover:underline">
+                                                <Link
+                                                    href={`/admin/orders/${order.id}`}
+                                                    className="font-mono text-sm hover:underline"
+                                                >
                                                     {order.order_no}
                                                 </Link>
                                             </td>
-                                            <td className="p-3 text-sm">{order.product.name}</td>
+                                            <td className="p-3 text-sm">
+                                                {order.product.name}
+                                            </td>
                                             <td className="p-3 text-sm">
                                                 <div>{order.user.name}</div>
-                                                <div className="text-xs text-muted-foreground">{order.user.email}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {order.user.email}
+                                                </div>
                                             </td>
-                                            <td className="p-3 text-sm font-medium">{order.points_spent.toLocaleString()}</td>
+                                            <td className="p-3 text-sm font-medium">
+                                                {order.points_spent.toLocaleString()}
+                                            </td>
                                             <td className="p-3">
-                                                <Badge variant={statusConfig[order.status]?.variant}>
-                                                    {statusConfig[order.status]?.label}
+                                                <Badge
+                                                    variant={
+                                                        statusConfig[
+                                                            order.status
+                                                        ]?.variant
+                                                    }
+                                                >
+                                                    {
+                                                        statusConfig[
+                                                            order.status
+                                                        ]?.label
+                                                    }
                                                 </Badge>
                                             </td>
                                             <td className="p-3">
                                                 {order.verified_at ? (
-                                                    <span className="text-xs text-green-600 flex items-center gap-1">
+                                                    <span className="flex items-center gap-1 text-xs text-green-600">
                                                         <Package className="h-3 w-3" />
                                                         已核销
                                                     </span>
                                                 ) : (
-                                                    <span className="text-xs text-muted-foreground">未核销</span>
+                                                    <span className="text-xs text-muted-foreground">
+                                                        未核销
+                                                    </span>
                                                 )}
                                             </td>
-                                            <td className="p-3 text-sm">{new Date(order.created_at).toLocaleString()}</td>
+                                            <td className="p-3 text-sm">
+                                                {new Date(
+                                                    order.created_at,
+                                                ).toLocaleString()}
+                                            </td>
                                             <td className="p-3">
                                                 <div className="flex gap-2">
-                                                    <Link href={`/admin/orders/${order.id}`}>
-                                                        <Button variant="outline" size="sm">查看详情</Button>
+                                                    <Link
+                                                        href={`/admin/orders/${order.id}`}
+                                                    >
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                        >
+                                                            查看详情
+                                                        </Button>
                                                     </Link>
-                                                    {order.status === 'pending' && (
-                                                        <Link href={`/admin/orders/${order.id}/edit`}>
-                                                            <Button variant="outline" size="sm">更新状态</Button>
+                                                    {order.status ===
+                                                        'pending' && (
+                                                        <Link
+                                                            href={`/admin/orders/${order.id}/edit`}
+                                                        >
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                            >
+                                                                更新状态
+                                                            </Button>
                                                         </Link>
                                                     )}
-                                                    {(!order.verified_at && order.status !== 'cancelled' && order.status !== 'completed') && (
-                                                        <VerifyOrderDialog
-                                                            orderId={order.id}
-                                                            orderNo={order.order_no}
-                                                            onSuccess={() => setSuccessMessage('订单核销成功')}
-                                                        />
-                                                    )}
+                                                    {!order.verified_at &&
+                                                        order.status !==
+                                                            'cancelled' &&
+                                                        order.status !==
+                                                            'completed' && (
+                                                            <VerifyOrderDialog
+                                                                orderId={
+                                                                    order.id
+                                                                }
+                                                                orderNo={
+                                                                    order.order_no
+                                                                }
+                                                                onSuccess={() =>
+                                                                    setSuccessMessage(
+                                                                        '订单核销成功',
+                                                                    )
+                                                                }
+                                                            />
+                                                        )}
                                                 </div>
                                             </td>
                                         </tr>
@@ -318,7 +475,15 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
     );
 }
 
-function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | number; orderNo: string; onSuccess: () => void }) {
+function VerifyOrderDialog({
+    orderId,
+    orderNo,
+    onSuccess,
+}: {
+    orderId: string | number;
+    orderNo: string;
+    onSuccess: () => void;
+}) {
     const { data, setData, processing, reset } = useForm({
         method: 'code' as VerificationMethod,
         code: '',
@@ -356,7 +521,10 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
         }
     };
 
-    const handleCodeKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleCodeKeyDown = (
+        index: number,
+        e: React.KeyboardEvent<HTMLInputElement>,
+    ) => {
         if (e.key === 'Backspace' && !codeDigits[index] && index > 0) {
             // Move to previous input on backspace if current is empty
             codeInputRefs.current[index - 1]?.focus();
@@ -397,7 +565,12 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+                    'X-CSRF-TOKEN':
+                        (
+                            document.querySelector(
+                                'meta[name="csrf-token"]',
+                            ) as HTMLMetaElement
+                        )?.content || '',
                 },
                 body: JSON.stringify({
                     method: activeTab,
@@ -430,7 +603,9 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
                 if (result.errors) {
                     Object.keys(result.errors).forEach((key) => {
                         const errorArray = result.errors[key];
-                        newErrors[key] = Array.isArray(errorArray) ? errorArray[0] : errorArray;
+                        newErrors[key] = Array.isArray(errorArray)
+                            ? errorArray[0]
+                            : errorArray;
                     });
                 }
 
@@ -460,10 +635,13 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
     };
 
     return (
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            handleOpenChange(open);
-        }}>
+        <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+                setIsDialogOpen(open);
+                handleOpenChange(open);
+            }}
+        >
             <DialogTrigger asChild>
                 <Button variant="default" size="sm">
                     <ShieldCheck className="mr-2 h-4 w-4" />
@@ -473,14 +651,12 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>订单核销</DialogTitle>
-                    <DialogDescription>
-                        订单号: {orderNo}
-                    </DialogDescription>
+                    <DialogDescription>订单号: {orderNo}</DialogDescription>
                 </DialogHeader>
 
                 {/* Show global error if any */}
                 {errors.__all__ && (
-                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg flex items-center gap-2 text-sm">
+                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/20 dark:text-red-200">
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <span>{errors.__all__}</span>
                     </div>
@@ -488,47 +664,74 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
 
                 {/* Show success message if any */}
                 {showSuccess && successMessage && (
-                    <div className="mb-4 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg flex items-center gap-2 text-sm">
+                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-950/20 dark:text-green-200">
                         <ShieldCheck className="h-4 w-4 shrink-0" />
                         <span>{successMessage}</span>
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className={showSuccess ? 'hidden' : 'space-y-4'}>
-                    <Tabs value={activeTab} onValueChange={(v) => {
-                        setActiveTab(v as VerificationMethod);
-                        // Clear errors when switching tabs
-                        setErrors({});
-                    }}>
-                        <TabsList className="grid grid-cols-4 w-full">
-                            <TabsTrigger value="code" className="text-xs">验证码</TabsTrigger>
-                            <TabsTrigger value="password" className="text-xs">密码</TabsTrigger>
-                            <TabsTrigger value="id_card" className="text-xs">身份证</TabsTrigger>
-                            <TabsTrigger value="direct" className="text-xs">直接核销</TabsTrigger>
+                <form
+                    onSubmit={handleSubmit}
+                    className={showSuccess ? 'hidden' : 'space-y-4'}
+                >
+                    <Tabs
+                        value={activeTab}
+                        onValueChange={(v) => {
+                            setActiveTab(v as VerificationMethod);
+                            // Clear errors when switching tabs
+                            setErrors({});
+                        }}
+                    >
+                        <TabsList className="grid w-full grid-cols-4">
+                            <TabsTrigger value="code" className="text-xs">
+                                验证码
+                            </TabsTrigger>
+                            <TabsTrigger value="password" className="text-xs">
+                                密码
+                            </TabsTrigger>
+                            <TabsTrigger value="id_card" className="text-xs">
+                                身份证
+                            </TabsTrigger>
+                            <TabsTrigger value="direct" className="text-xs">
+                                直接核销
+                            </TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="code" className="space-y-3 mt-4">
-                            <div className="bg-muted/50 p-3 rounded-lg">
-                                <p className="text-xs text-muted-foreground">使用6位验证码进行核销</p>
+                        <TabsContent value="code" className="mt-4 space-y-3">
+                            <div className="rounded-lg bg-muted/50 p-3">
+                                <p className="text-xs text-muted-foreground">
+                                    使用6位验证码进行核销
+                                </p>
                             </div>
                             <div className="space-y-2">
-                                <Label>验证码 <span className="text-destructive">*</span></Label>
-                                <div className="flex gap-2 justify-center">
+                                <Label>
+                                    验证码{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
+                                <div className="flex justify-center gap-2">
                                     {codeDigits.map((digit, index) => (
                                         <Input
                                             key={index}
                                             ref={(el) => {
-                                        codeInputRefs.current[index] = el;
-                                    }}
+                                                codeInputRefs.current[index] =
+                                                    el;
+                                            }}
                                             id={`code-${index}`}
                                             type="text"
                                             inputMode="numeric"
                                             maxLength={1}
                                             value={digit}
-                                            onChange={(e) => handleCodeChange(index, e.target.value)}
-                                            onKeyDown={(e) => handleCodeKeyDown(index, e)}
+                                            onChange={(e) =>
+                                                handleCodeChange(
+                                                    index,
+                                                    e.target.value,
+                                                )
+                                            }
+                                            onKeyDown={(e) =>
+                                                handleCodeKeyDown(index, e)
+                                            }
                                             onPaste={handleCodePaste}
-                                            className="w-12 h-14 text-center text-2xl font-mono tracking-wider"
+                                            className="h-14 w-12 text-center font-mono text-2xl tracking-wider"
                                             autoFocus={index === 0}
                                         />
                                     ))}
@@ -537,63 +740,93 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="password" className="space-y-3 mt-4">
-                            <div className="bg-muted/50 p-3 rounded-lg">
-                                <p className="text-xs text-muted-foreground">使用下单账号的密码进行核销</p>
+                        <TabsContent
+                            value="password"
+                            className="mt-4 space-y-3"
+                        >
+                            <div className="rounded-lg bg-muted/50 p-3">
+                                <p className="text-xs text-muted-foreground">
+                                    使用下单账号的密码进行核销
+                                </p>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password">密码 <span className="text-destructive">*</span></Label>
+                                <Label htmlFor="password">
+                                    密码{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Input
                                     id="password"
                                     type="password"
                                     placeholder="请输入用户密码"
                                     value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
                                 />
                                 <InputError message={errors.password} />
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="id_card" className="space-y-3 mt-4">
-                            <div className="bg-muted/50 p-3 rounded-lg">
-                                <p className="text-xs text-muted-foreground">使用下单人的身份证号和姓名进行核销</p>
+                        <TabsContent value="id_card" className="mt-4 space-y-3">
+                            <div className="rounded-lg bg-muted/50 p-3">
+                                <p className="text-xs text-muted-foreground">
+                                    使用下单人的身份证号和姓名进行核销
+                                </p>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="id_number">身份证号 <span className="text-destructive">*</span></Label>
+                                <Label htmlFor="id_number">
+                                    身份证号{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Input
                                     id="id_number"
                                     placeholder="请输入身份证号"
                                     value={data.id_number}
-                                    onChange={(e) => setData('id_number', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('id_number', e.target.value)
+                                    }
                                 />
                                 <InputError message={errors.id_number} />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="name">姓名 <span className="text-destructive">*</span></Label>
+                                <Label htmlFor="name">
+                                    姓名{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Input
                                     id="name"
                                     placeholder="请输入姓名"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                 />
                                 <InputError message={errors.name} />
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="direct" className="space-y-3 mt-4">
-                            <div className="bg-muted/50 p-3 rounded-lg">
-                                <p className="text-sm text-muted-foreground text-center">
+                        <TabsContent value="direct" className="mt-4 space-y-3">
+                            <div className="rounded-lg bg-muted/50 p-3">
+                                <p className="text-center text-sm text-muted-foreground">
                                     直接核销需要输入当前管理员密码确认
                                 </p>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="admin_password">管理员密码 <span className="text-destructive">*</span></Label>
+                                <Label htmlFor="admin_password">
+                                    管理员密码{' '}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Input
                                     id="admin_password"
                                     type="password"
                                     placeholder="请输入您的密码"
                                     value={data.admin_password}
-                                    onChange={(e) => setData('admin_password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'admin_password',
+                                            e.target.value,
+                                        )
+                                    }
                                 />
                                 <InputError message={errors.admin_password} />
                             </div>
@@ -602,11 +835,19 @@ function VerifyOrderDialog({ orderId, orderNo, onSuccess }: { orderId: string | 
 
                     <div className="flex gap-3 pt-2">
                         <DialogTrigger asChild>
-                            <Button type="button" variant="outline" className="flex-1">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex-1"
+                            >
                                 取消
                             </Button>
                         </DialogTrigger>
-                        <Button type="submit" disabled={processing} className="flex-1">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="flex-1"
+                        >
                             {processing ? '核销中...' : '确认核销'}
                         </Button>
                     </div>

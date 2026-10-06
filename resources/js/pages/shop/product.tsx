@@ -1,10 +1,32 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Coins, Package, Star, ShoppingCart, MapPin, Phone, User } from 'lucide-react';
+import {
+    ArrowLeft,
+    Coins,
+    Package,
+    Star,
+    ShoppingCart,
+    MapPin,
+    Phone,
+    User,
+} from 'lucide-react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -77,16 +99,16 @@ export default function ShopProduct({ product }: PageProps) {
 
                 <div className="grid gap-6 lg:grid-cols-2">
                     {/* Product Image */}
-                    <Card className="border-sidebar-border/70 dark:border-sidebar-border overflow-hidden">
+                    <Card className="overflow-hidden border-sidebar-border/70 dark:border-sidebar-border">
                         <div className="aspect-square bg-muted">
                             {product.image ? (
                                 <img
                                     src={product.image}
                                     alt={product.name}
-                                    className="w-full h-full object-cover"
+                                    className="h-full w-full object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center">
+                                <div className="flex h-full w-full items-center justify-center">
                                     <Package className="h-32 w-32 text-muted-foreground opacity-20" />
                                 </div>
                             )}
@@ -96,11 +118,13 @@ export default function ShopProduct({ product }: PageProps) {
                     {/* Product Details */}
                     <div className="space-y-6">
                         <div>
-                            <div className="flex items-start justify-between gap-4 mb-2">
-                                <h1 className="text-3xl font-bold">{product.name}</h1>
+                            <div className="mb-2 flex items-start justify-between gap-4">
+                                <h1 className="text-3xl font-bold">
+                                    {product.name}
+                                </h1>
                                 {product.is_third_party && (
-                                    <Badge className="bg-primary/90 shrink-0">
-                                        <Star className="h-3 w-3 mr-1" />
+                                    <Badge className="shrink-0 bg-primary/90">
+                                        <Star className="mr-1 h-3 w-3" />
                                         Third Party
                                     </Badge>
                                 )}
@@ -116,19 +140,24 @@ export default function ShopProduct({ product }: PageProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Coins className="h-5 w-5 text-primary" />
-                                    {product.points_required.toLocaleString()} Points
+                                    {product.points_required.toLocaleString()}{' '}
+                                    Points
                                 </CardTitle>
-                                <CardDescription>Required to exchange</CardDescription>
+                                <CardDescription>
+                                    Required to exchange
+                                </CardDescription>
                             </CardHeader>
                         </Card>
 
                         {product.description && (
                             <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader>
-                                    <CardTitle className="text-base">Description</CardTitle>
+                                    <CardTitle className="text-base">
+                                        Description
+                                    </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-muted-foreground whitespace-pre-wrap">
+                                    <p className="whitespace-pre-wrap text-muted-foreground">
                                         {product.description}
                                     </p>
                                 </CardContent>
@@ -137,25 +166,29 @@ export default function ShopProduct({ product }: PageProps) {
 
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle className="text-base">Stock Information</CardTitle>
+                                <CardTitle className="text-base">
+                                    Stock Information
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {isInfiniteStock ? (
-                                    <p className="text-green-600 dark:text-green-400 font-medium">
+                                    <p className="font-medium text-green-600 dark:text-green-400">
                                         ✓ In Stock
                                     </p>
                                 ) : isOutOfStock ? (
-                                    <p className="text-red-600 dark:text-red-400 font-medium">
+                                    <p className="font-medium text-red-600 dark:text-red-400">
                                         × Out of Stock
                                     </p>
                                 ) : (
                                     <div className="space-y-1">
-                                        <p className="text-green-600 dark:text-green-400 font-medium">
-                                            ✓ In Stock ({product.stock} available)
+                                        <p className="font-medium text-green-600 dark:text-green-400">
+                                            ✓ In Stock ({product.stock}{' '}
+                                            available)
                                         </p>
                                         {product.stock < 10 && (
                                             <p className="text-sm text-orange-600 dark:text-orange-400">
-                                                Only {product.stock} left! Order soon.
+                                                Only {product.stock} left! Order
+                                                soon.
                                             </p>
                                         )}
                                     </div>
@@ -172,24 +205,33 @@ export default function ShopProduct({ product }: PageProps) {
                                     disabled={isOutOfStock}
                                 >
                                     <ShoppingCart className="mr-2 h-5 w-5" />
-                                    {isOutOfStock ? 'Out of Stock' : 'Exchange Now'}
+                                    {isOutOfStock
+                                        ? 'Out of Stock'
+                                        : 'Exchange Now'}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[500px]">
                                 <DialogHeader>
                                     <DialogTitle>Exchange Product</DialogTitle>
                                     <DialogDescription>
-                                        Enter your shipping information to complete the exchange
+                                        Enter your shipping information to
+                                        complete the exchange
                                     </DialogDescription>
                                 </DialogHeader>
-                                <form onSubmit={handleSubmit} className="space-y-4">
+                                <form
+                                    onSubmit={handleSubmit}
+                                    className="space-y-4"
+                                >
                                     <div className="space-y-2">
-                                        <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                                        <div className="flex items-center gap-2 rounded-lg bg-muted p-3">
                                             <Package className="h-10 w-10 text-muted-foreground" />
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-medium truncate">{product.name}</p>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="truncate font-medium">
+                                                    {product.name}
+                                                </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {product.points_required.toLocaleString()} points
+                                                    {product.points_required.toLocaleString()}{' '}
+                                                    points
                                                 </p>
                                             </div>
                                         </div>
@@ -197,65 +239,100 @@ export default function ShopProduct({ product }: PageProps) {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="name">
-                                            <User className="h-4 w-4 inline mr-1" />
+                                            <User className="mr-1 inline h-4 w-4" />
                                             Recipient Name
                                         </Label>
                                         <Input
                                             id="name"
                                             value={data.shipping_info.name}
-                                            onChange={(e) => setData('shipping_info', { ...data.shipping_info, name: e.target.value })}
+                                            onChange={(e) =>
+                                                setData('shipping_info', {
+                                                    ...data.shipping_info,
+                                                    name: e.target.value,
+                                                })
+                                            }
                                             placeholder="Enter recipient name"
                                             required
                                         />
                                         {errors['shipping_info.name'] && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">{errors['shipping_info.name']}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">
+                                                {errors['shipping_info.name']}
+                                            </p>
                                         )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="phone">
-                                            <Phone className="h-4 w-4 inline mr-1" />
+                                            <Phone className="mr-1 inline h-4 w-4" />
                                             Phone Number
                                         </Label>
                                         <Input
                                             id="phone"
                                             type="tel"
                                             value={data.shipping_info.phone}
-                                            onChange={(e) => setData('shipping_info', { ...data.shipping_info, phone: e.target.value })}
+                                            onChange={(e) =>
+                                                setData('shipping_info', {
+                                                    ...data.shipping_info,
+                                                    phone: e.target.value,
+                                                })
+                                            }
                                             placeholder="Enter phone number"
                                             required
                                         />
                                         {errors['shipping_info.phone'] && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">{errors['shipping_info.phone']}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">
+                                                {errors['shipping_info.phone']}
+                                            </p>
                                         )}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="address">
-                                            <MapPin className="h-4 w-4 inline mr-1" />
+                                            <MapPin className="mr-1 inline h-4 w-4" />
                                             Delivery Address
                                         </Label>
                                         <Textarea
                                             id="address"
                                             value={data.shipping_info.address}
-                                            onChange={(e) => setData('shipping_info', { ...data.shipping_info, address: e.target.value })}
+                                            onChange={(e) =>
+                                                setData('shipping_info', {
+                                                    ...data.shipping_info,
+                                                    address: e.target.value,
+                                                })
+                                            }
                                             placeholder="Enter complete delivery address"
                                             rows={3}
                                             required
                                         />
                                         {errors['shipping_info.address'] && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">{errors['shipping_info.address']}</p>
+                                            <p className="text-sm text-red-600 dark:text-red-400">
+                                                {
+                                                    errors[
+                                                        'shipping_info.address'
+                                                    ]
+                                                }
+                                            </p>
                                         )}
                                     </div>
 
                                     <div className="flex gap-3 pt-2">
                                         <DialogTrigger asChild>
-                                            <Button type="button" variant="outline" className="flex-1">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="flex-1"
+                                            >
                                                 Cancel
                                             </Button>
                                         </DialogTrigger>
-                                        <Button type="submit" disabled={processing} className="flex-1">
-                                            {processing ? 'Processing...' : 'Confirm Exchange'}
+                                        <Button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="flex-1"
+                                        >
+                                            {processing
+                                                ? 'Processing...'
+                                                : 'Confirm Exchange'}
                                         </Button>
                                     </div>
                                 </form>

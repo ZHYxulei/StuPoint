@@ -3,10 +3,22 @@ import { ArrowLeft, Save } from 'lucide-react';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -44,7 +56,7 @@ export default function ParentChildCreate() {
                     />
                 </div>
 
-                <Card className="border-sidebar-border/70 dark:border-sidebar-border max-w-2xl">
+                <Card className="max-w-2xl border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
                         <CardTitle>绑定子女</CardTitle>
                         <CardDescription>
@@ -55,13 +67,19 @@ export default function ParentChildCreate() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="child_student_id">
-                                    子女学号 <span className="text-destructive">*</span>
+                                    子女学号{' '}
+                                    <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
                                     id="child_student_id"
                                     placeholder="请输入子女的学号"
                                     value={data.child_student_id}
-                                    onChange={(e) => setData('child_student_id', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'child_student_id',
+                                            e.target.value,
+                                        )
+                                    }
                                 />
                                 <InputError message={errors.child_student_id} />
                                 <p className="text-sm text-muted-foreground">
@@ -71,25 +89,34 @@ export default function ParentChildCreate() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="relationship">
-                                    关系 <span className="text-destructive">*</span>
+                                    关系{' '}
+                                    <span className="text-destructive">*</span>
                                 </Label>
                                 <Select
                                     value={data.relationship}
-                                    onValueChange={(value) => setData('relationship', value)}
+                                    onValueChange={(value) =>
+                                        setData('relationship', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="选择您与子女的关系" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="父亲">父亲</SelectItem>
-                                        <SelectItem value="母亲">母亲</SelectItem>
-                                        <SelectItem value="其他">其他</SelectItem>
+                                        <SelectItem value="父亲">
+                                            父亲
+                                        </SelectItem>
+                                        <SelectItem value="母亲">
+                                            母亲
+                                        </SelectItem>
+                                        <SelectItem value="其他">
+                                            其他
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <InputError message={errors.relationship} />
                             </div>
 
-                            <div className="bg-muted/50 p-4 rounded-lg">
+                            <div className="rounded-lg bg-muted/50 p-4">
                                 <p className="text-sm text-muted-foreground">
                                     绑定后，您可以查看子女的积分、排名、兑换记录等信息。
                                     绑定关系需要经过确认后方可查看详细信息。
@@ -97,7 +124,10 @@ export default function ParentChildCreate() {
                             </div>
 
                             <div className="flex gap-4">
-                                <Link href="/parent/children" className="flex-1">
+                                <Link
+                                    href="/parent/children"
+                                    className="flex-1"
+                                >
                                     <Button
                                         type="button"
                                         variant="outline"

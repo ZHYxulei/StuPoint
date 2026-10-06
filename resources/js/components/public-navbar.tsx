@@ -55,7 +55,10 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
             )}
         >
             <div className="container flex h-16 items-center gap-6">
-                <Link href="/" className="flex min-w-0 items-center gap-2 font-semibold">
+                <Link
+                    href="/"
+                    className="flex min-w-0 items-center gap-2 font-semibold"
+                >
                     <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm text-primary-foreground">
                         S
                     </span>
@@ -86,25 +89,36 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                                             alt={displayName}
                                         />
                                         <AvatarFallback>
-                                            {displayName.charAt(0).toUpperCase()}
+                                            {displayName
+                                                .charAt(0)
+                                                .toUpperCase()}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <span className="max-w-36 truncate">{displayName}</span>
+                                    <span className="max-w-36 truncate">
+                                        {displayName}
+                                    </span>
                                     <ChevronDown className="size-4 text-muted-foreground" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56">
-                                {accountNavigation.map(({ label, href, icon: Icon }) => (
-                                    <DropdownMenuItem key={label} asChild>
-                                        <Link href={href}>
-                                            <Icon className="size-4" />
-                                            {label}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                ))}
+                                {accountNavigation.map(
+                                    ({ label, href, icon: Icon }) => (
+                                        <DropdownMenuItem key={label} asChild>
+                                            <Link href={href}>
+                                                <Icon className="size-4" />
+                                                {label}
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    ),
+                                )}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                    <Link href="/logout" method="post" as="button" className="w-full">
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        className="w-full"
+                                    >
                                         <LogOut className="size-4" />
                                         登出
                                     </Link>
@@ -134,17 +148,26 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                     variant="ghost"
                     size="icon"
                     className="ml-auto md:hidden"
-                    aria-label={mobileMenuOpen ? '关闭导航菜单' : '打开导航菜单'}
+                    aria-label={
+                        mobileMenuOpen ? '关闭导航菜单' : '打开导航菜单'
+                    }
                     aria-expanded={mobileMenuOpen}
                     aria-controls={mobileMenuId}
                     onClick={() => setMobileMenuOpen((open) => !open)}
                 >
-                    {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+                    {mobileMenuOpen ? (
+                        <X className="size-5" />
+                    ) : (
+                        <Menu className="size-5" />
+                    )}
                 </Button>
             </div>
 
             {mobileMenuOpen && (
-                <div id={mobileMenuId} className="border-t bg-background md:hidden">
+                <div
+                    id={mobileMenuId}
+                    className="border-t bg-background md:hidden"
+                >
                     <div className="container grid gap-1 py-3">
                         {publicNavigation.map(({ label, href, icon: Icon }) => (
                             <Button
@@ -153,7 +176,10 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                                 variant="ghost"
                                 className="justify-start"
                             >
-                                <Link href={href} onClick={() => setMobileMenuOpen(false)}>
+                                <Link
+                                    href={href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
                                     <Icon className="size-4" />
                                     {label}
                                 </Link>
@@ -161,21 +187,37 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                         ))}
                         {user ? (
                             <>
-                                {accountNavigation.map(({ label, href, icon: Icon }) => (
-                                    <Button
-                                key={label}
-                                asChild
-                                variant="ghost"
-                                className="justify-start"
-                            >
-                                        <Link href={href} onClick={() => setMobileMenuOpen(false)}>
-                                            <Icon className="size-4" />
-                                            {label}
-                                        </Link>
-                                    </Button>
-                                ))}
-                                <Button asChild variant="ghost" className="justify-start">
-                                    <Link href="/logout" method="post" as="button" className="w-full">
+                                {accountNavigation.map(
+                                    ({ label, href, icon: Icon }) => (
+                                        <Button
+                                            key={label}
+                                            asChild
+                                            variant="ghost"
+                                            className="justify-start"
+                                        >
+                                            <Link
+                                                href={href}
+                                                onClick={() =>
+                                                    setMobileMenuOpen(false)
+                                                }
+                                            >
+                                                <Icon className="size-4" />
+                                                {label}
+                                            </Link>
+                                        </Button>
+                                    ),
+                                )}
+                                <Button
+                                    asChild
+                                    variant="ghost"
+                                    className="justify-start"
+                                >
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        className="w-full"
+                                    >
                                         <LogOut className="size-4" />
                                         登出
                                     </Link>
@@ -183,7 +225,11 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                             </>
                         ) : (
                             <>
-                                <Button asChild variant="ghost" className="justify-start">
+                                <Button
+                                    asChild
+                                    variant="ghost"
+                                    className="justify-start"
+                                >
                                     <Link href={login()}>
                                         <LogIn className="size-4" />
                                         登录

@@ -45,7 +45,10 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                     </SelectTrigger>
                     <SelectContent>
                         {sidebarNavItems.map((item) => (
-                            <SelectItem key={toUrl(item.href)} value={toUrl(item.href)}>
+                            <SelectItem
+                                key={toUrl(item.href)}
+                                value={toUrl(item.href)}
+                            >
                                 {item.title}
                             </SelectItem>
                         ))}
@@ -63,14 +66,22 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 variant="ghost"
                                 asChild
                                 className={cn('w-full justify-start', {
-                                    'bg-muted text-foreground': isCurrentUrl(item.href),
+                                    'bg-muted text-foreground': isCurrentUrl(
+                                        item.href,
+                                    ),
                                 })}
                             >
                                 <Link
                                     href={item.href}
-                                    aria-current={isCurrentUrl(item.href) ? 'page' : undefined}
+                                    aria-current={
+                                        isCurrentUrl(item.href)
+                                            ? 'page'
+                                            : undefined
+                                    }
                                 >
-                                    {item.icon && <item.icon className="size-4" />}
+                                    {item.icon && (
+                                        <item.icon className="size-4" />
+                                    )}
                                     {item.title}
                                 </Link>
                             </Button>
@@ -81,7 +92,9 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                 <Separator className="my-6 lg:hidden" />
 
                 <div className="min-w-0 flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">{children}</section>
+                    <section className="max-w-xl space-y-12">
+                        {children}
+                    </section>
                 </div>
             </div>
         </div>

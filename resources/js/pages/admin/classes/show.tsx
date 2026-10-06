@@ -1,13 +1,33 @@
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import { ArrowLeft, Save, Users2, Settings2, Plus, Trash2, Mail } from 'lucide-react';
+import {
+    ArrowLeft,
+    Save,
+    Users2,
+    Settings2,
+    Plus,
+    Trash2,
+    Mail,
+} from 'lucide-react';
 import { useState } from 'react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -69,15 +89,33 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '班级详情', href: '/admin/classes/[id]' },
 ];
 
-export default function ShowClass({ class: classData, availableTeachers, availableStudents }: PageProps) {
-    const [activeTab, setActiveTab] = useState<'teachers' | 'students'>('teachers');
+export default function ShowClass({
+    class: classData,
+    availableTeachers,
+    availableStudents,
+}: PageProps) {
+    const [activeTab, setActiveTab] = useState<'teachers' | 'students'>(
+        'teachers',
+    );
 
-    const { data: teacherData, setData: setTeacherData, post: postTeacher, processing: teacherProcessing, reset: resetTeacher } = useForm({
+    const {
+        data: teacherData,
+        setData: setTeacherData,
+        post: postTeacher,
+        processing: teacherProcessing,
+        reset: resetTeacher,
+    } = useForm({
         teacher_id: '',
         subject: '',
     });
 
-    const { data: studentData, setData: setStudentData, post: postStudent, processing: studentProcessing, reset: resetStudent } = useForm({
+    const {
+        data: studentData,
+        setData: setStudentData,
+        post: postStudent,
+        processing: studentProcessing,
+        reset: resetStudent,
+    } = useForm({
         student_id: '',
     });
 
@@ -97,17 +135,23 @@ export default function ShowClass({ class: classData, availableTeachers, availab
 
     const removeTeacher = (teacherId: string) => {
         if (confirm('确认移除该任课老师？')) {
-            router.delete(`/admin/classes/${classData.id}/teachers/${teacherId}`, {
-                preserveScroll: true,
-            });
+            router.delete(
+                `/admin/classes/${classData.id}/teachers/${teacherId}`,
+                {
+                    preserveScroll: true,
+                },
+            );
         }
     };
 
     const removeStudent = (studentId: string) => {
         if (confirm('确认移除该学生？')) {
-            router.delete(`/admin/classes/${classData.id}/students/${studentId}`, {
-                preserveScroll: true,
-            });
+            router.delete(
+                `/admin/classes/${classData.id}/students/${studentId}`,
+                {
+                    preserveScroll: true,
+                },
+            );
         }
     };
 
@@ -132,19 +176,27 @@ export default function ShowClass({ class: classData, availableTeachers, availab
                 <div className="grid gap-4 md:grid-cols-3">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-base">
                                 <Users2 className="h-4 w-4" />
                                 班级信息
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">年级</span>
-                                <span className="font-medium">{classData.grade}</span>
+                                <span className="text-muted-foreground">
+                                    年级
+                                </span>
+                                <span className="font-medium">
+                                    {classData.grade}
+                                </span>
                             </div>
                             <div className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">班级</span>
-                                <span className="font-medium">{classData.name}</span>
+                                <span className="text-muted-foreground">
+                                    班级
+                                </span>
+                                <span className="font-medium">
+                                    {classData.name}
+                                </span>
                             </div>
                         </CardContent>
                     </Card>
@@ -156,14 +208,18 @@ export default function ShowClass({ class: classData, availableTeachers, availab
                         <CardContent>
                             {classData.head_teacher ? (
                                 <div className="space-y-1">
-                                    <p className="font-medium">{classData.head_teacher.name}</p>
-                                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                    <p className="font-medium">
+                                        {classData.head_teacher.name}
+                                    </p>
+                                    <p className="flex items-center gap-1 text-sm text-muted-foreground">
                                         <Mail className="h-3 w-3" />
                                         {classData.head_teacher.email}
                                     </p>
                                 </div>
                             ) : (
-                                <p className="text-sm text-muted-foreground">未设置</p>
+                                <p className="text-sm text-muted-foreground">
+                                    未设置
+                                </p>
                             )}
                         </CardContent>
                     </Card>
@@ -174,19 +230,30 @@ export default function ShowClass({ class: classData, availableTeachers, availab
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">任课老师</span>
-                                <span className="font-medium">{classData.teachers.length} 人</span>
+                                <span className="text-muted-foreground">
+                                    任课老师
+                                </span>
+                                <span className="font-medium">
+                                    {classData.teachers.length} 人
+                                </span>
                             </div>
                             <div className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">学生</span>
-                                <span className="font-medium">{classData.students.length} 人</span>
+                                <span className="text-muted-foreground">
+                                    学生
+                                </span>
+                                <span className="font-medium">
+                                    {classData.students.length} 人
+                                </span>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Teachers and Students Tabs */}
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+                <Tabs
+                    value={activeTab}
+                    onValueChange={(v) => setActiveTab(v as any)}
+                >
                     <TabsList>
                         <TabsTrigger value="teachers">
                             <Settings2 className="mr-2 h-4 w-4" />
@@ -207,35 +274,58 @@ export default function ShowClass({ class: classData, availableTeachers, availab
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form onSubmit={handleAssignTeacher} className="flex gap-4 items-end">
+                                <form
+                                    onSubmit={handleAssignTeacher}
+                                    className="flex items-end gap-4"
+                                >
                                     <div className="flex-1 space-y-2">
                                         <Label htmlFor="teacher_id">教师</Label>
                                         <Select
                                             value={teacherData.teacher_id}
-                                            onValueChange={(value) => setTeacherData('teacher_id', value)}
+                                            onValueChange={(value) =>
+                                                setTeacherData(
+                                                    'teacher_id',
+                                                    value,
+                                                )
+                                            }
                                         >
                                             <SelectTrigger>
                                                 <SelectValue placeholder="选择教师" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {availableTeachers.map((teacher) => (
-                                                    <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                                                        {teacher.name}
-                                                    </SelectItem>
-                                                ))}
+                                                {availableTeachers.map(
+                                                    (teacher) => (
+                                                        <SelectItem
+                                                            key={teacher.id}
+                                                            value={teacher.id.toString()}
+                                                        >
+                                                            {teacher.name}
+                                                        </SelectItem>
+                                                    ),
+                                                )}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                     <div className="flex-1 space-y-2">
-                                        <Label htmlFor="subject">任教科目</Label>
+                                        <Label htmlFor="subject">
+                                            任教科目
+                                        </Label>
                                         <Input
                                             id="subject"
                                             placeholder="例如: 数学、语文"
                                             value={teacherData.subject}
-                                            onChange={(e) => setTeacherData('subject', e.target.value)}
+                                            onChange={(e) =>
+                                                setTeacherData(
+                                                    'subject',
+                                                    e.target.value,
+                                                )
+                                            }
                                         />
                                     </div>
-                                    <Button type="submit" disabled={teacherProcessing}>
+                                    <Button
+                                        type="submit"
+                                        disabled={teacherProcessing}
+                                    >
                                         <Plus className="mr-2 h-4 w-4" />
                                         添加
                                     </Button>
@@ -245,7 +335,10 @@ export default function ShowClass({ class: classData, availableTeachers, availab
 
                         <div className="grid gap-4 md:grid-cols-2">
                             {classData.teachers.map((assignment) => (
-                                <Card key={assignment.id} className="border-sidebar-border/70 dark:border-sidebar-border">
+                                <Card
+                                    key={assignment.id}
+                                    className="border-sidebar-border/70 dark:border-sidebar-border"
+                                >
                                     <CardHeader className="pb-3">
                                         <div className="flex items-center justify-between">
                                             <CardTitle className="text-base">
@@ -254,19 +347,25 @@ export default function ShowClass({ class: classData, availableTeachers, availab
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => removeTeacher(assignment.teacher.id.toString())}
+                                                onClick={() =>
+                                                    removeTeacher(
+                                                        assignment.teacher.id.toString(),
+                                                    )
+                                                }
                                             >
                                                 <Trash2 className="h-4 w-4 text-destructive" />
                                             </Button>
                                         </div>
                                     </CardHeader>
                                     <CardContent>
-                                        <p className="text-sm text-muted-foreground flex items-center gap-1 mb-2">
+                                        <p className="mb-2 flex items-center gap-1 text-sm text-muted-foreground">
                                             <Mail className="h-3 w-3" />
                                             {assignment.teacher.email}
                                         </p>
                                         {assignment.subject && (
-                                            <Badge variant="secondary">{assignment.subject}</Badge>
+                                            <Badge variant="secondary">
+                                                {assignment.subject}
+                                            </Badge>
                                         )}
                                     </CardContent>
                                 </Card>
@@ -283,26 +382,44 @@ export default function ShowClass({ class: classData, availableTeachers, availab
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form onSubmit={handleAddStudent} className="flex gap-4 items-end">
+                                <form
+                                    onSubmit={handleAddStudent}
+                                    className="flex items-end gap-4"
+                                >
                                     <div className="flex-1 space-y-2">
                                         <Label htmlFor="student_id">学生</Label>
                                         <Select
                                             value={studentData.student_id}
-                                            onValueChange={(value) => setStudentData('student_id', value)}
+                                            onValueChange={(value) =>
+                                                setStudentData(
+                                                    'student_id',
+                                                    value,
+                                                )
+                                            }
                                         >
                                             <SelectTrigger>
                                                 <SelectValue placeholder="选择学生" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {availableStudents.map((student) => (
-                                                    <SelectItem key={student.id} value={student.id.toString()}>
-                                                        {student.name} ({student.student_id})
-                                                    </SelectItem>
-                                                ))}
+                                                {availableStudents.map(
+                                                    (student) => (
+                                                        <SelectItem
+                                                            key={student.id}
+                                                            value={student.id.toString()}
+                                                        >
+                                                            {student.name} (
+                                                            {student.student_id}
+                                                            )
+                                                        </SelectItem>
+                                                    ),
+                                                )}
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                    <Button type="submit" disabled={studentProcessing}>
+                                    <Button
+                                        type="submit"
+                                        disabled={studentProcessing}
+                                    >
                                         <Plus className="mr-2 h-4 w-4" />
                                         添加
                                     </Button>
@@ -319,15 +436,25 @@ export default function ShowClass({ class: classData, availableTeachers, availab
                                             className="flex items-center justify-between p-4 hover:bg-muted/50"
                                         >
                                             <div>
-                                                <p className="font-medium">{assignment.student.name}</p>
+                                                <p className="font-medium">
+                                                    {assignment.student.name}
+                                                </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    学号: {assignment.student.student_id}
+                                                    学号:{' '}
+                                                    {
+                                                        assignment.student
+                                                            .student_id
+                                                    }
                                                 </p>
                                             </div>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => removeStudent(assignment.student.id.toString())}
+                                                onClick={() =>
+                                                    removeStudent(
+                                                        assignment.student.id.toString(),
+                                                    )
+                                                }
                                             >
                                                 <Trash2 className="h-4 w-4 text-destructive" />
                                             </Button>

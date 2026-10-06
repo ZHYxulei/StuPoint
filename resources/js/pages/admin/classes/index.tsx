@@ -2,10 +2,22 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { Search, Plus, Users2, GraduationCap, Settings2 } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -70,19 +82,25 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                 {/* Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
                             筛选班级
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="grid gap-4 md:grid-cols-2"
+                        >
                             <div className="space-y-2">
                                 <Label htmlFor="grade">年级</Label>
                                 <Select
                                     value={filters.grade || ''}
                                     onValueChange={(value) => {
-                                        setData('grade', value === 'all' ? '' : value);
+                                        setData(
+                                            'grade',
+                                            value === 'all' ? '' : value,
+                                        );
                                         get('/admin/classes', {
                                             preserveScroll: true,
                                             preserveState: true,
@@ -93,9 +111,14 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                         <SelectValue placeholder="选择年级" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">全部年级</SelectItem>
+                                        <SelectItem value="all">
+                                            全部年级
+                                        </SelectItem>
                                         {grades.map((grade) => (
-                                            <SelectItem key={grade} value={grade}>
+                                            <SelectItem
+                                                key={grade}
+                                                value={grade}
+                                            >
                                                 {grade}
                                             </SelectItem>
                                         ))}
@@ -111,7 +134,7 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                     {classes.map((classItem) => (
                         <Card
                             key={classItem.id}
-                            className="border-sidebar-border/70 dark:border-sidebar-border hover:shadow-md transition-shadow"
+                            className="border-sidebar-border/70 transition-shadow hover:shadow-md dark:border-sidebar-border"
                         >
                             <CardHeader>
                                 <CardTitle className="text-lg">
@@ -125,13 +148,16 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                             <CardContent>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">班主任</span>
+                                        <span className="text-muted-foreground">
+                                            班主任
+                                        </span>
                                         <span className="font-medium">
-                                            {classItem.head_teacher?.name || '未设置'}
+                                            {classItem.head_teacher?.name ||
+                                                '未设置'}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground flex items-center gap-1">
+                                        <span className="flex items-center gap-1 text-muted-foreground">
                                             <Users2 className="h-3.5 w-3.5" />
                                             学生
                                         </span>
@@ -140,7 +166,7 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground flex items-center gap-1">
+                                        <span className="flex items-center gap-1 text-muted-foreground">
                                             <Settings2 className="h-3.5 w-3.5" />
                                             任课老师
                                         </span>
@@ -148,7 +174,7 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                             {classItem.teacher_count} 人
                                         </span>
                                     </div>
-                                    <div className="pt-2 flex gap-2">
+                                    <div className="flex gap-2 pt-2">
                                         <Link
                                             href={`/admin/classes/${classItem.id}`}
                                             className="flex-1"
@@ -171,7 +197,7 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                 {classes.length === 0 && (
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardContent className="flex flex-col items-center justify-center py-12">
-                            <Users2 className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                            <Users2 className="mb-4 h-12 w-12 text-muted-foreground/50" />
                             <p className="text-muted-foreground">暂无班级</p>
                             <Link href="/admin/classes/create" className="mt-4">
                                 <Button>

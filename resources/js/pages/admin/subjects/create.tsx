@@ -3,7 +3,13 @@ import { ArrowLeft, Save } from 'lucide-react';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,30 +48,30 @@ export default function CreateSubject() {
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                     </Link>
-                    <Heading
-                        title="添加科目"
-                        description="创建新的科目信息"
-                    />
+                    <Heading title="添加科目" description="创建新的科目信息" />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
                         <CardTitle>科目信息</CardTitle>
-                        <CardDescription>
-                            填写科目的基本信息
-                        </CardDescription>
+                        <CardDescription>填写科目的基本信息</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        科目名称 <span className="text-destructive">*</span>
+                                        科目名称{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="name"
                                         value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
                                         placeholder="例如：数学、语文、英语"
                                         required
                                     />
@@ -74,12 +80,17 @@ export default function CreateSubject() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="code">
-                                        科目代码 <span className="text-destructive">*</span>
+                                        科目代码{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="code"
                                         value={data.code}
-                                        onChange={(e) => setData('code', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('code', e.target.value)
+                                        }
                                         placeholder="例如：MATH、CHN、ENG"
                                         required
                                     />
@@ -92,7 +103,9 @@ export default function CreateSubject() {
                                 <Textarea
                                     id="description"
                                     value={data.description}
-                                    onChange={(e) => setData('description', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('description', e.target.value)
+                                    }
                                     placeholder="简要描述该科目..."
                                     rows={3}
                                 />
@@ -101,15 +114,18 @@ export default function CreateSubject() {
 
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="sort_order">
-                                        排序顺序
-                                    </Label>
+                                    <Label htmlFor="sort_order">排序顺序</Label>
                                     <Input
                                         id="sort_order"
                                         type="number"
                                         min="0"
                                         value={data.sort_order}
-                                        onChange={(e) => setData('sort_order', parseInt(e.target.value) || 0)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'sort_order',
+                                                parseInt(e.target.value) || 0,
+                                            )
+                                        }
                                     />
                                     <InputError message={errors.sort_order} />
                                 </div>
@@ -119,7 +135,12 @@ export default function CreateSubject() {
                                         <Checkbox
                                             id="is_active"
                                             checked={data.is_active}
-                                            onCheckedChange={(checked) => setData('is_active', checked as boolean)}
+                                            onCheckedChange={(checked) =>
+                                                setData(
+                                                    'is_active',
+                                                    checked as boolean,
+                                                )
+                                            }
                                         />
                                         启用该科目
                                     </Label>

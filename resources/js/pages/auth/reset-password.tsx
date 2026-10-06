@@ -14,10 +14,7 @@ type Props = {
 
 export default function ResetPassword({ token, email }: Props) {
     return (
-        <AuthLayout
-            title="重置密码"
-            description="请在下方输入您的新密码"
-        >
+        <AuthLayout title="重置密码" description="请在下方输入您的新密码">
             <Head title="重置密码" />
 
             <Form

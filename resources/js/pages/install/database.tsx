@@ -27,7 +27,10 @@ interface SharedPageProps {
 export default function InstallDatabase({ form }: InstallDatabaseProps) {
     const { errors, old } = usePage<SharedPageProps>().props;
     const installOld = old.install ?? {};
-    const initialConnection = (installOld.connection as InstallDatabaseProps['form']['connection'] | undefined) ?? form.connection;
+    const initialConnection =
+        (installOld.connection as
+            InstallDatabaseProps['form']['connection'] | undefined) ??
+        form.connection;
     const host = installOld.host ?? form.host;
     const port = installOld.port ?? form.port;
     const username = installOld.username ?? form.username;
@@ -42,90 +45,162 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
                             <CardTitle>数据库配置 (3/7)</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <form action="/install/database" method="POST" className="space-y-4">
-                                <input type="hidden" name="_token" value={window.document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
+                            <form
+                                action="/install/database"
+                                method="POST"
+                                className="space-y-4"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="_token"
+                                    value={
+                                        window.document
+                                            .querySelector(
+                                                'meta[name="csrf-token"]',
+                                            )
+                                            ?.getAttribute('content') || ''
+                                    }
+                                />
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                         数据库类型
                                     </label>
                                     <select
                                         name="connection"
                                         value={connectionType}
-                                        onChange={(e) => setConnectionType(e.target.value as InstallDatabaseProps['form']['connection'])}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        onChange={(e) =>
+                                            setConnectionType(
+                                                e.target
+                                                    .value as InstallDatabaseProps['form']['connection'],
+                                            )
+                                        }
+                                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     >
-                                        <option value="sqlite">SQLite (推荐)</option>
+                                        <option value="sqlite">
+                                            SQLite (推荐)
+                                        </option>
                                         <option value="mysql">MySQL</option>
-                                        <option value="pgsql">PostgreSQL</option>
+                                        <option value="pgsql">
+                                            PostgreSQL
+                                        </option>
                                     </select>
-                                    <InputError message={errors.connection || errors.database} className="mt-2" />
+                                    <InputError
+                                        message={
+                                            errors.connection || errors.database
+                                        }
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 {connectionType !== 'sqlite' && (
                                     <div className="space-y-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                 主机
                                             </label>
-                                            <input type="text" name="host" defaultValue={host} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                                            <InputError message={errors.host} className="mt-2" />
+                                            <input
+                                                type="text"
+                                                name="host"
+                                                defaultValue={host}
+                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            />
+                                            <InputError
+                                                message={errors.host}
+                                                className="mt-2"
+                                            />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                 端口
                                             </label>
-                                            <input type="text" name="port" defaultValue={port || (connectionType === 'mysql' ? '3306' : '5432')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                                            <InputError message={errors.port} className="mt-2" />
+                                            <input
+                                                type="text"
+                                                name="port"
+                                                defaultValue={
+                                                    port ||
+                                                    (connectionType === 'mysql'
+                                                        ? '3306'
+                                                        : '5432')
+                                                }
+                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            />
+                                            <InputError
+                                                message={errors.port}
+                                                className="mt-2"
+                                            />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                 用户名
                                             </label>
-                                            <input type="text" name="username" defaultValue={username} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                                            <InputError message={errors.username} className="mt-2" />
+                                            <input
+                                                type="text"
+                                                name="username"
+                                                defaultValue={username}
+                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            />
+                                            <InputError
+                                                message={errors.username}
+                                                className="mt-2"
+                                            />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                 密码
                                             </label>
                                             <input
                                                 type="password"
                                                 name="password"
                                                 defaultValue={password}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             />
-                                            <InputError message={errors.password} className="mt-2" />
+                                            <InputError
+                                                message={errors.password}
+                                                className="mt-2"
+                                            />
                                         </div>
                                     </div>
                                 )}
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                         数据库名称
                                     </label>
                                     <input
                                         type="text"
                                         name="database"
                                         defaultValue={database}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
-                                    <p className="mt-1 text-xs text-gray-500">SQLite使用相对路径，MySQL/PostgreSQL使用数据库名</p>
-                                    <InputError message={errors.database} className="mt-2" />
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        SQLite使用相对路径，MySQL/PostgreSQL使用数据库名
+                                    </p>
+                                    <InputError
+                                        message={errors.database}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div className="flex gap-4 pt-4">
                                     <a href="/install/check" className="flex-1">
-                                        <Button variant="outline" className="w-full" type="button">返回</Button>
+                                        <Button
+                                            variant="outline"
+                                            className="w-full"
+                                            type="button"
+                                        >
+                                            返回
+                                        </Button>
                                     </a>
                                     <Button type="submit" className="flex-1">
-                                        下一步 <ChevronRight className="ml-2 h-4 w-4" />
+                                        下一步{' '}
+                                        <ChevronRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>
                             </form>

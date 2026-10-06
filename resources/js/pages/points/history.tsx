@@ -3,10 +3,22 @@ import { Coins, ArrowLeft, Search, Filter } from 'lucide-react';
 import Heading from '@/components/heading';
 import PaginationBar from '@/components/pagination-bar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -89,31 +101,49 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                 {/* Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <Filter className="h-4 w-4" />
                             Filter Transactions
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-3">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="grid gap-4 md:grid-cols-3"
+                        >
                             <div className="grid gap-2">
                                 <Label htmlFor="type">Type</Label>
                                 <Select
                                     value={filters.type || 'all'}
-                                    onValueChange={(value) => router.get('/points/history', {
-                                        ...filters,
-                                        type: value === 'all' ? null : value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            '/points/history',
+                                            {
+                                                ...filters,
+                                                type:
+                                                    value === 'all'
+                                                        ? null
+                                                        : value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="type">
                                         <SelectValue placeholder="All types" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">All types</SelectItem>
-                                        <SelectItem value="total">Total Points</SelectItem>
-                                        <SelectItem value="redeemable">Redeemable Points</SelectItem>
+                                        <SelectItem value="all">
+                                            All types
+                                        </SelectItem>
+                                        <SelectItem value="total">
+                                            Total Points
+                                        </SelectItem>
+                                        <SelectItem value="redeemable">
+                                            Redeemable Points
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -125,12 +155,18 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                     type="text"
                                     placeholder="Search by source..."
                                     value={filters.source || ''}
-                                    onChange={(e) => router.get('/points/history', {
-                                        ...filters,
-                                        source: e.target.value || null,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onChange={(e) =>
+                                        router.get(
+                                            '/points/history',
+                                            {
+                                                ...filters,
+                                                source: e.target.value || null,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 />
                             </div>
 
@@ -153,13 +189,14 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                     <CardHeader>
                         <CardTitle>Transactions</CardTitle>
                         <CardDescription>
-                            Showing {transactions.from} to {transactions.to} of {transactions.total} transactions
+                            Showing {transactions.from} to {transactions.to} of{' '}
+                            {transactions.total} transactions
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {transactions.data.length === 0 ? (
-                            <div className="text-center py-12 text-muted-foreground">
-                                <Coins className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            <div className="py-12 text-center text-muted-foreground">
+                                <Coins className="mx-auto mb-4 h-12 w-12 opacity-50" />
                                 <p>No transactions found</p>
                             </div>
                         ) : (
@@ -167,43 +204,62 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                 {transactions.data.map((transaction) => (
                                     <div
                                         key={transaction.id}
-                                        className="flex items-center justify-between p-4 rounded-lg border border-sidebar-border/70 dark:border-sidebar-border hover:bg-muted/50 transition-colors"
+                                        className="flex items-center justify-between rounded-lg border border-sidebar-border/70 p-4 transition-colors hover:bg-muted/50 dark:border-sidebar-border"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className={`p-3 rounded-full ${
-                                                transaction.amount > 0
-                                                    ? 'bg-green-100 dark:bg-green-900/20'
-                                                    : 'bg-red-100 dark:bg-red-900/20'
-                                            }`}>
-                                                <Coins className={`h-5 w-5 ${
+                                            <div
+                                                className={`rounded-full p-3 ${
                                                     transaction.amount > 0
-                                                        ? 'text-green-600 dark:text-green-400'
-                                                        : 'text-red-600 dark:text-red-400'
-                                                }`} />
+                                                        ? 'bg-green-100 dark:bg-green-900/20'
+                                                        : 'bg-red-100 dark:bg-red-900/20'
+                                                }`}
+                                            >
+                                                <Coins
+                                                    className={`h-5 w-5 ${
+                                                        transaction.amount > 0
+                                                            ? 'text-green-600 dark:text-green-400'
+                                                            : 'text-red-600 dark:text-red-400'
+                                                    }`}
+                                                />
                                             </div>
                                             <div>
                                                 <p className="font-medium">
-                                                    {transaction.description || transaction.source}
+                                                    {transaction.description ||
+                                                        transaction.source}
                                                 </p>
                                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                    <span>{transaction.source}</span>
+                                                    <span>
+                                                        {transaction.source}
+                                                    </span>
                                                     <span>•</span>
-                                                    <span className="capitalize">{transaction.type}</span>
+                                                    <span className="capitalize">
+                                                        {transaction.type}
+                                                    </span>
                                                     <span>•</span>
-                                                    <span>{new Date(transaction.created_at).toLocaleString()}</span>
+                                                    <span>
+                                                        {new Date(
+                                                            transaction.created_at,
+                                                        ).toLocaleString()}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className={`text-lg font-semibold ${
-                                                transaction.amount > 0
-                                                    ? 'text-green-600 dark:text-green-400'
-                                                    : 'text-red-600 dark:text-red-400'
-                                            }`}>
-                                                {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString()}
+                                            <p
+                                                className={`text-lg font-semibold ${
+                                                    transaction.amount > 0
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-red-600 dark:text-red-400'
+                                                }`}
+                                            >
+                                                {transaction.amount > 0
+                                                    ? '+'
+                                                    : ''}
+                                                {transaction.amount.toLocaleString()}
                                             </p>
                                             <p className="text-sm text-muted-foreground">
-                                                Balance: {transaction.balance_after.toLocaleString()}
+                                                Balance:{' '}
+                                                {transaction.balance_after.toLocaleString()}
                                             </p>
                                         </div>
                                     </div>

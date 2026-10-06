@@ -32,7 +32,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
@@ -41,85 +41,118 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        昵称 <span className="text-red-500">*</span>
+                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        昵称{' '}
+                                        <span className="text-red-500">*</span>
                                     </label>
                                     <div className="relative">
-                                        <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                                        <User className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
                                         <input
                                             type="text"
                                             value={data.nickname}
-                                            onChange={e => setData('nickname', e.target.value)}
-                                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                            onChange={(e) =>
+                                                setData(
+                                                    'nickname',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="请输入管理员昵称"
                                         />
                                     </div>
-                                    <InputError message={errors.nickname} className="mt-2" />
+                                    <InputError
+                                        message={errors.nickname}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        邮箱 <span className="text-red-500">*</span>
+                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        邮箱{' '}
+                                        <span className="text-red-500">*</span>
                                     </label>
                                     <div className="relative">
-                                        <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                                        <Mail className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
                                         <input
                                             type="email"
                                             value={data.email}
-                                            onChange={e => setData('email', e.target.value)}
-                                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                            onChange={(e) =>
+                                                setData('email', e.target.value)
+                                            }
+                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="admin@example.com"
                                         />
                                     </div>
-                                    <InputError message={errors.email} className="mt-2" />
+                                    <InputError
+                                        message={errors.email}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        密码 <span className="text-red-500">*</span>
+                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        密码{' '}
+                                        <span className="text-red-500">*</span>
                                     </label>
                                     <div className="relative">
-                                        <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                                        <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
                                         <input
                                             type="password"
                                             value={data.password}
-                                            onChange={e => setData('password', e.target.value)}
-                                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                            onChange={(e) =>
+                                                setData(
+                                                    'password',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="至少8位字符"
                                         />
                                     </div>
-                                    <InputError message={errors.password} className="mt-2" />
+                                    <InputError
+                                        message={errors.password}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        确认密码 <span className="text-red-500">*</span>
+                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        确认密码{' '}
+                                        <span className="text-red-500">*</span>
                                     </label>
                                     <div className="relative">
-                                        <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                                        <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
                                         <input
                                             type="password"
                                             value={data.password_confirmation}
-                                            onChange={e => setData('password_confirmation', e.target.value)}
-                                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                            onChange={(e) =>
+                                                setData(
+                                                    'password_confirmation',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="请再次输入密码，必须与上面一致"
                                         />
                                     </div>
-                                    <InputError message={errors.password_confirmation} className="mt-2" />
+                                    <InputError
+                                        message={errors.password_confirmation}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 {pageErrors.install && (
-                                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
-                                        <p className="text-sm text-red-700 dark:text-red-300 flex items-center">
-                                            <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+                                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+                                        <p className="flex items-center text-sm text-red-700 dark:text-red-300">
+                                            <AlertCircle className="mr-2 h-4 w-4 flex-shrink-0" />
                                             {pageErrors.install}
                                         </p>
                                     </div>
                                 )}
 
-                                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                                <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
                                     <p className="text-sm text-blue-700 dark:text-blue-300">
-                                        <CheckCircle className="inline h-4 w-4 mr-1" />
+                                        <CheckCircle className="mr-1 inline h-4 w-4" />
                                         点击"完成安装"后，系统将一次性写入配置并自动创建数据库表、初始化数据
                                     </p>
                                     {siteConfig.app_name && (
@@ -131,10 +164,22 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
 
                                 <div className="flex gap-4 pt-4">
                                     <a href="/install/site" className="flex-1">
-                                        <Button variant="outline" className="w-full" type="button" disabled={processing}>返回</Button>
+                                        <Button
+                                            variant="outline"
+                                            className="w-full"
+                                            type="button"
+                                            disabled={processing}
+                                        >
+                                            返回
+                                        </Button>
                                     </a>
-                                    <Button type="submit" className="flex-1" disabled={processing}>
-                                        {processing ? '安装中...' : '完成安装'} <CheckCircle className="ml-2 h-4 w-4" />
+                                    <Button
+                                        type="submit"
+                                        className="flex-1"
+                                        disabled={processing}
+                                    >
+                                        {processing ? '安装中...' : '完成安装'}{' '}
+                                        <CheckCircle className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>
                             </form>

@@ -2,11 +2,23 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Upload, Package } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
@@ -47,7 +59,7 @@ export default function ProductCreate({ categories }: PageProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="添加商品" />
 
-            <div className="space-y-6 p-4 max-w-2xl">
+            <div className="max-w-2xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
                     <Link href="/admin/products">
                         <Button variant="outline" size="sm">
@@ -55,7 +67,10 @@ export default function ProductCreate({ categories }: PageProps) {
                             返回
                         </Button>
                     </Link>
-                    <Heading title="添加商品" description="创建新的可兑换商品" />
+                    <Heading
+                        title="添加商品"
+                        description="创建新的可兑换商品"
+                    />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
@@ -70,11 +85,17 @@ export default function ProductCreate({ categories }: PageProps) {
                                 <Input
                                     id="name"
                                     value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
                                     placeholder="输入商品名称"
                                     required
                                 />
-                                {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
+                                {errors.name && (
+                                    <p className="text-sm text-red-600">
+                                        {errors.name}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid gap-2">
@@ -82,7 +103,9 @@ export default function ProductCreate({ categories }: PageProps) {
                                 <Textarea
                                     id="description"
                                     value={data.description}
-                                    onChange={(e) => setData('description', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('description', e.target.value)
+                                    }
                                     placeholder="输入商品描述..."
                                     rows={4}
                                 />
@@ -91,12 +114,14 @@ export default function ProductCreate({ categories }: PageProps) {
                             <div className="grid gap-2">
                                 <Label htmlFor="image">商品图片</Label>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center border-2 border-dashed">
+                                    <div className="flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed bg-muted">
                                         {data.image ? (
                                             <img
-                                                src={URL.createObjectURL(data.image)}
+                                                src={URL.createObjectURL(
+                                                    data.image,
+                                                )}
                                                 alt="Preview"
-                                                className="w-full h-full object-cover rounded-lg"
+                                                className="h-full w-full rounded-lg object-cover"
                                             />
                                         ) : (
                                             <Package className="h-12 w-12 text-muted-foreground" />
@@ -108,33 +133,49 @@ export default function ProductCreate({ categories }: PageProps) {
                                             type="file"
                                             accept="image/*"
                                             onChange={(e) => {
-                                                const file = e.target.files?.[0];
+                                                const file =
+                                                    e.target.files?.[0];
                                                 if (file) {
                                                     setData('image', file);
                                                 }
                                             }}
                                             className="cursor-pointer"
                                         />
-                                        <p className="text-xs text-muted-foreground mt-1">
+                                        <p className="mt-1 text-xs text-muted-foreground">
                                             支持 JPG, PNG, GIF 格式，最大 2MB
                                         </p>
-                                        {errors.image && <p className="text-sm text-red-600">{errors.image}</p>}
+                                        {errors.image && (
+                                            <p className="text-sm text-red-600">
+                                                {errors.image}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="points_required">所需积分 *</Label>
+                                <Label htmlFor="points_required">
+                                    所需积分 *
+                                </Label>
                                 <Input
                                     id="points_required"
                                     type="number"
                                     min="0"
                                     value={data.points_required}
-                                    onChange={(e) => setData('points_required', e.target.value)}
+                                    onChange={(e) =>
+                                        setData(
+                                            'points_required',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="0"
                                     required
                                 />
-                                {errors.points_required && <p className="text-sm text-red-600">{errors.points_required}</p>}
+                                {errors.points_required && (
+                                    <p className="text-sm text-red-600">
+                                        {errors.points_required}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid gap-2">
@@ -144,25 +185,38 @@ export default function ProductCreate({ categories }: PageProps) {
                                     type="number"
                                     min="-1"
                                     value={data.stock}
-                                    onChange={(e) => setData('stock', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('stock', e.target.value)
+                                    }
                                     placeholder="-1"
                                 />
-                                <p className="text-xs text-muted-foreground">设置为 -1 表示库存无限</p>
-                                {errors.stock && <p className="text-sm text-red-600">{errors.stock}</p>}
+                                <p className="text-xs text-muted-foreground">
+                                    设置为 -1 表示库存无限
+                                </p>
+                                {errors.stock && (
+                                    <p className="text-sm text-red-600">
+                                        {errors.stock}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="category_id">商品分类</Label>
                                 <Select
                                     value={data.category_id}
-                                    onValueChange={(value) => setData('category_id', value)}
+                                    onValueChange={(value) =>
+                                        setData('category_id', value)
+                                    }
                                 >
                                     <SelectTrigger id="category_id">
                                         <SelectValue placeholder="选择分类" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {categories.map((category) => (
-                                            <SelectItem key={category.id} value={category.id.toString()}>
+                                            <SelectItem
+                                                key={category.id}
+                                                value={category.id.toString()}
+                                            >
                                                 {category.name}
                                             </SelectItem>
                                         ))}
@@ -174,35 +228,58 @@ export default function ProductCreate({ categories }: PageProps) {
                                 <Checkbox
                                     id="is_third_party"
                                     checked={data.is_third_party}
-                                    onCheckedChange={(checked) => setData('is_third_party', checked as boolean)}
+                                    onCheckedChange={(checked) =>
+                                        setData(
+                                            'is_third_party',
+                                            checked as boolean,
+                                        )
+                                    }
                                 />
-                                <Label htmlFor="is_third_party">第三方商品</Label>
+                                <Label htmlFor="is_third_party">
+                                    第三方商品
+                                </Label>
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="status">状态</Label>
                                 <Select
                                     value={data.status}
-                                    onValueChange={(value) => setData('status', value)}
+                                    onValueChange={(value) =>
+                                        setData('status', value)
+                                    }
                                 >
                                     <SelectTrigger id="status">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="active">上架</SelectItem>
-                                        <SelectItem value="inactive">下架</SelectItem>
-                                        <SelectItem value="out_of_stock">缺货</SelectItem>
+                                        <SelectItem value="active">
+                                            上架
+                                        </SelectItem>
+                                        <SelectItem value="inactive">
+                                            下架
+                                        </SelectItem>
+                                        <SelectItem value="out_of_stock">
+                                            缺货
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="flex gap-4 pt-4">
                                 <Link href="/admin/products" className="flex-1">
-                                    <Button type="button" variant="outline" className="w-full">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="w-full"
+                                    >
                                         取消
                                     </Button>
                                 </Link>
-                                <Button type="submit" disabled={processing} className="flex-1">
+                                <Button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="flex-1"
+                                >
                                     {processing ? '保存中...' : '创建商品'}
                                 </Button>
                             </div>

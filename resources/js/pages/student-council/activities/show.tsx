@@ -1,5 +1,15 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { ArrowLeft, Calendar, MapPin, Users, Trophy, Edit, Trash2, Gift, Award } from 'lucide-react';
+import {
+    ArrowLeft,
+    Calendar,
+    MapPin,
+    Users,
+    Trophy,
+    Edit,
+    Trash2,
+    Gift,
+    Award,
+} from 'lucide-react';
 import Heading from '@/components/heading';
 import {
     AlertDialog,
@@ -14,8 +24,22 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -76,7 +100,19 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: '活动列表', href: '/student-council/activities' },
 ];
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
+const statusConfig: Record<
+    string,
+    {
+        label: string;
+        variant:
+            | 'default'
+            | 'secondary'
+            | 'destructive'
+            | 'outline'
+            | 'success'
+            | 'warning';
+    }
+> = {
     draft: { label: '草稿', variant: 'secondary' },
     active: { label: '进行中', variant: 'success' },
     closed: { label: '已结束', variant: 'outline' },
@@ -90,25 +126,33 @@ export default function ShowActivity({ activity }: PageProps) {
     });
 
     const handleAwardPoints = () => {
-        router.post(`/student-council/activities/${activity.id}/award-points`, {
-            note: data.note,
-        }, {
-            onSuccess: () => setData('note', ''),
-        });
+        router.post(
+            `/student-council/activities/${activity.id}/award-points`,
+            {
+                note: data.note,
+            },
+            {
+                onSuccess: () => setData('note', ''),
+            },
+        );
     };
 
     const handleDelete = () => {
         destroyDelete(`/student-council/activities/${activity.id}`);
     };
 
-    const awardedCount = activity.participants.filter(p => p.points_awarded).length;
-    const canAward = activity.status === 'closed' && awardedCount < activity.participants.length;
+    const awardedCount = activity.participants.filter(
+        (p) => p.points_awarded,
+    ).length;
+    const canAward =
+        activity.status === 'closed' &&
+        awardedCount < activity.participants.length;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={activity.title} />
 
-            <div className="space-y-6 p-4 max-w-5xl mx-auto">
+            <div className="mx-auto max-w-5xl space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link href="/student-council/activities">
@@ -124,32 +168,48 @@ export default function ShowActivity({ activity }: PageProps) {
                     <div className="flex gap-2">
                         {activity.status !== 'closed' && (
                             <>
-                                <Link href={`/student-council/activities/${activity.id}/edit`}>
+                                <Link
+                                    href={`/student-council/activities/${activity.id}/edit`}
+                                >
                                     <Button variant="outline">
-                                        <Edit className="h-4 w-4 mr-2" />
+                                        <Edit className="mr-2 h-4 w-4" />
                                         编辑
                                     </Button>
                                 </Link>
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button variant="destructive" disabled={activity.participants.length > 0}>
-                                            <Trash2 className="h-4 w-4 mr-2" />
+                                        <Button
+                                            variant="destructive"
+                                            disabled={
+                                                activity.participants.length > 0
+                                            }
+                                        >
+                                            <Trash2 className="mr-2 h-4 w-4" />
                                             删除
                                         </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                         <AlertDialogHeader>
-                                            <AlertDialogTitle>确定要删除这个活动吗？</AlertDialogTitle>
+                                            <AlertDialogTitle>
+                                                确定要删除这个活动吗？
+                                            </AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                {activity.participants.length > 0
+                                                {activity.participants.length >
+                                                0
                                                     ? '活动已有参与者，无法删除。'
                                                     : '此操作无法撤销，活动将被永久删除。'}
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                            <AlertDialogCancel>取消</AlertDialogCancel>
-                                            {activity.participants.length === 0 && (
-                                                <AlertDialogAction onClick={handleDelete} disabled={deleteProcessing}>
+                                            <AlertDialogCancel>
+                                                取消
+                                            </AlertDialogCancel>
+                                            {activity.participants.length ===
+                                                0 && (
+                                                <AlertDialogAction
+                                                    onClick={handleDelete}
+                                                    disabled={deleteProcessing}
+                                                >
                                                     确认删除
                                                 </AlertDialogAction>
                                             )}
@@ -165,13 +225,22 @@ export default function ShowActivity({ activity }: PageProps) {
                 <div className="grid gap-6 md:grid-cols-2">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle className="text-base">活动信息</CardTitle>
+                            <CardTitle className="text-base">
+                                活动信息
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
-                                    <h3 className="text-lg font-semibold mb-2">{activity.title}</h3>
-                                    <Badge variant={statusConfig[activity.status].variant}>
+                                    <h3 className="mb-2 text-lg font-semibold">
+                                        {activity.title}
+                                    </h3>
+                                    <Badge
+                                        variant={
+                                            statusConfig[activity.status]
+                                                .variant
+                                        }
+                                    >
                                         {statusConfig[activity.status].label}
                                     </Badge>
                                 </div>
@@ -179,7 +248,7 @@ export default function ShowActivity({ activity }: PageProps) {
 
                             {activity.description && (
                                 <div>
-                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                                    <p className="text-sm whitespace-pre-wrap text-muted-foreground">
                                         {activity.description}
                                     </p>
                                 </div>
@@ -189,7 +258,13 @@ export default function ShowActivity({ activity }: PageProps) {
                                 <div className="flex items-center gap-2">
                                     <Calendar className="h-4 w-4 text-muted-foreground" />
                                     <span>
-                                        {new Date(activity.start_date).toLocaleString('zh-CN')} - {new Date(activity.end_date).toLocaleString('zh-CN')}
+                                        {new Date(
+                                            activity.start_date,
+                                        ).toLocaleString('zh-CN')}{' '}
+                                        -{' '}
+                                        {new Date(
+                                            activity.end_date,
+                                        ).toLocaleString('zh-CN')}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -198,15 +273,20 @@ export default function ShowActivity({ activity }: PageProps) {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Users className="h-4 w-4 text-muted-foreground" />
-                                    <span>{activity.participants.length}/{activity.max_participants} 人参与</span>
+                                    <span>
+                                        {activity.participants.length}/
+                                        {activity.max_participants} 人参与
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Trophy className="h-4 w-4 text-muted-foreground" />
-                                    <span>{activity.points_reward} 积分奖励</span>
+                                    <span>
+                                        {activity.points_reward} 积分奖励
+                                    </span>
                                 </div>
                             </div>
 
-                            <div className="pt-2 border-t text-xs text-muted-foreground">
+                            <div className="border-t pt-2 text-xs text-muted-foreground">
                                 创建者：{activity.organizer.name}
                             </div>
                         </CardContent>
@@ -215,27 +295,39 @@ export default function ShowActivity({ activity }: PageProps) {
                     {/* Award Points Card */}
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle className="text-base">积分奖励</CardTitle>
+                            <CardTitle className="text-base">
+                                积分奖励
+                            </CardTitle>
                             <CardDescription>为参与者发放积分</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-2xl font-bold">{activity.participants.length}</p>
-                                    <p className="text-xs text-muted-foreground">总参与人数</p>
+                                    <p className="text-2xl font-bold">
+                                        {activity.participants.length}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        总参与人数
+                                    </p>
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold">{awardedCount}</p>
-                                    <p className="text-xs text-muted-foreground">已奖励人数</p>
+                                    <p className="text-2xl font-bold">
+                                        {awardedCount}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        已奖励人数
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="pt-4 border-t space-y-2">
+                            <div className="space-y-2 border-t pt-4">
                                 <Label htmlFor="note">备注（可选）</Label>
                                 <Textarea
                                     id="note"
                                     value={data.note}
-                                    onChange={(e) => setData('note', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('note', e.target.value)
+                                    }
                                     placeholder="添加备注信息..."
                                     rows={3}
                                 />
@@ -247,7 +339,7 @@ export default function ShowActivity({ activity }: PageProps) {
                                         className="w-full"
                                         disabled={!canAward || awardProcessing}
                                     >
-                                        <Award className="h-4 w-4 mr-2" />
+                                        <Award className="mr-2 h-4 w-4" />
                                         发放积分
                                     </Button>
                                 </DialogTrigger>
@@ -255,14 +347,23 @@ export default function ShowActivity({ activity }: PageProps) {
                                     <DialogHeader>
                                         <DialogTitle>确认发放积分</DialogTitle>
                                         <DialogDescription>
-                                            将为 {activity.participants.length - awardedCount} 名未奖励参与者每人发放 {activity.points_reward} 积分。
+                                            将为{' '}
+                                            {activity.participants.length -
+                                                awardedCount}{' '}
+                                            名未奖励参与者每人发放{' '}
+                                            {activity.points_reward} 积分。
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter>
                                         <DialogTrigger asChild>
-                                            <Button variant="outline">取消</Button>
+                                            <Button variant="outline">
+                                                取消
+                                            </Button>
                                         </DialogTrigger>
-                                        <Button onClick={handleAwardPoints} disabled={awardProcessing}>
+                                        <Button
+                                            onClick={handleAwardPoints}
+                                            disabled={awardProcessing}
+                                        >
                                             确认发放
                                         </Button>
                                     </DialogFooter>
@@ -270,8 +371,10 @@ export default function ShowActivity({ activity }: PageProps) {
                             </Dialog>
 
                             {!canAward && activity.participants.length > 0 && (
-                                <p className="text-xs text-muted-foreground text-center">
-                                    {activity.status !== 'closed' ? '活动结束后才可发放积分' : '所有参与者已获得积分'}
+                                <p className="text-center text-xs text-muted-foreground">
+                                    {activity.status !== 'closed'
+                                        ? '活动结束后才可发放积分'
+                                        : '所有参与者已获得积分'}
                                 </p>
                             )}
                         </CardContent>
@@ -283,13 +386,14 @@ export default function ShowActivity({ activity }: PageProps) {
                     <CardHeader>
                         <CardTitle>参与人员</CardTitle>
                         <CardDescription>
-                            共 {activity.participants.length} 人参与，{awardedCount} 人已获得积分
+                            共 {activity.participants.length} 人参与，
+                            {awardedCount} 人已获得积分
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {activity.participants.length === 0 ? (
-                            <div className="text-center py-8 text-muted-foreground">
-                                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            <div className="py-8 text-center text-muted-foreground">
+                                <Users className="mx-auto mb-4 h-12 w-12 opacity-50" />
                                 <p>暂无参与者</p>
                             </div>
                         ) : (
@@ -304,27 +408,37 @@ export default function ShowActivity({ activity }: PageProps) {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {activity.participants.map((participant) => (
-                                            <TableRow key={participant.id}>
-                                                <TableCell className="font-medium">
-                                                    {participant.user.name}
-                                                </TableCell>
-                                                <TableCell>{participant.user.email}</TableCell>
-                                                <TableCell>
-                                                    {new Date(participant.created_at).toLocaleString('zh-CN')}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {participant.points_awarded ? (
-                                                        <Badge variant="success">
-                                                            <Gift className="h-3 w-3 mr-1" />
-                                                            已发放
-                                                        </Badge>
-                                                    ) : (
-                                                        <Badge variant="secondary">未发放</Badge>
-                                                    )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {activity.participants.map(
+                                            (participant) => (
+                                                <TableRow key={participant.id}>
+                                                    <TableCell className="font-medium">
+                                                        {participant.user.name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {participant.user.email}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {new Date(
+                                                            participant.created_at,
+                                                        ).toLocaleString(
+                                                            'zh-CN',
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {participant.points_awarded ? (
+                                                            <Badge variant="success">
+                                                                <Gift className="mr-1 h-3 w-3" />
+                                                                已发放
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge variant="secondary">
+                                                                未发放
+                                                            </Badge>
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ),
+                                        )}
                                     </TableBody>
                                 </Table>
                             </div>

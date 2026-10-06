@@ -4,10 +4,22 @@ import Heading from '@/components/heading';
 import PaginationBar from '@/components/pagination-bar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -55,7 +67,19 @@ interface PageProps {
     };
 }
 
-const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' }> = {
+const statusConfig: Record<
+    string,
+    {
+        label: string;
+        variant:
+            | 'default'
+            | 'secondary'
+            | 'destructive'
+            | 'outline'
+            | 'success'
+            | 'warning';
+    }
+> = {
     pending: { label: 'Pending', variant: 'warning' },
     processing: { label: 'Processing', variant: 'default' },
     completed: { label: 'Completed', variant: 'success' },
@@ -108,34 +132,58 @@ export default function ShopOrders({ orders, filters }: PageProps) {
                 {/* Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
                             <Filter className="h-4 w-4" />
                             Filter Orders
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="grid gap-4 md:grid-cols-2"
+                        >
                             <div className="grid gap-2">
                                 <Label htmlFor="status">Order Status</Label>
                                 <Select
                                     value={filters.status || 'all'}
-                                    onValueChange={(value) => router.get('/shop/orders', {
-                                        ...filters,
-                                        status: value === 'all' ? null : value,
-                                    }, {
-                                        preserveScroll: true,
-                                    })}
+                                    onValueChange={(value) =>
+                                        router.get(
+                                            '/shop/orders',
+                                            {
+                                                ...filters,
+                                                status:
+                                                    value === 'all'
+                                                        ? null
+                                                        : value,
+                                            },
+                                            {
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="status">
                                         <SelectValue placeholder="All statuses" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">All statuses</SelectItem>
-                                        <SelectItem value="pending">Pending</SelectItem>
-                                        <SelectItem value="processing">Processing</SelectItem>
-                                        <SelectItem value="completed">Completed</SelectItem>
-                                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                                        <SelectItem value="failed">Failed</SelectItem>
+                                        <SelectItem value="all">
+                                            All statuses
+                                        </SelectItem>
+                                        <SelectItem value="pending">
+                                            Pending
+                                        </SelectItem>
+                                        <SelectItem value="processing">
+                                            Processing
+                                        </SelectItem>
+                                        <SelectItem value="completed">
+                                            Completed
+                                        </SelectItem>
+                                        <SelectItem value="cancelled">
+                                            Cancelled
+                                        </SelectItem>
+                                        <SelectItem value="failed">
+                                            Failed
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -159,27 +207,33 @@ export default function ShopOrders({ orders, filters }: PageProps) {
                     <CardHeader>
                         <CardTitle>Orders</CardTitle>
                         <CardDescription>
-                            Showing {orders.from} to {orders.to} of {orders.total} orders
+                            Showing {orders.from} to {orders.to} of{' '}
+                            {orders.total} orders
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {orders.data.length === 0 ? (
-                            <div className="text-center py-12 text-muted-foreground">
-                                <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            <div className="py-12 text-center text-muted-foreground">
+                                <Package className="mx-auto mb-4 h-12 w-12 opacity-50" />
                                 <p>No orders found</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 {orders.data.map((order) => (
-                                    <Card key={order.id} className="border border-sidebar-border/70 dark:border-sidebar-border overflow-hidden hover:shadow-md transition-shadow">
+                                    <Card
+                                        key={order.id}
+                                        className="overflow-hidden border border-sidebar-border/70 transition-shadow hover:shadow-md dark:border-sidebar-border"
+                                    >
                                         <div className="flex flex-col sm:flex-row">
                                             {/* Product Image */}
-                                            <div className="sm:w-32 sm:h-32 bg-muted flex items-center justify-center p-4">
+                                            <div className="flex items-center justify-center bg-muted p-4 sm:h-32 sm:w-32">
                                                 {order.product.image ? (
                                                     <img
-                                                        src={order.product.image}
+                                                        src={
+                                                            order.product.image
+                                                        }
                                                         alt={order.product.name}
-                                                        className="w-full h-full object-cover rounded"
+                                                        className="h-full w-full rounded object-cover"
                                                     />
                                                 ) : (
                                                     <Package className="h-16 w-16 text-muted-foreground opacity-20" />
@@ -188,39 +242,74 @@ export default function ShopOrders({ orders, filters }: PageProps) {
 
                                             {/* Order Details */}
                                             <div className="flex-1 p-4">
-                                                <div className="flex items-start justify-between gap-4 mb-2">
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <p className="font-semibold truncate">{order.product.name}</p>
-                                                            <Badge variant={statusConfig[order.status].variant}>
-                                                                {statusConfig[order.status].label}
+                                                <div className="mb-2 flex items-start justify-between gap-4">
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="mb-1 flex items-center gap-2">
+                                                            <p className="truncate font-semibold">
+                                                                {
+                                                                    order
+                                                                        .product
+                                                                        .name
+                                                                }
+                                                            </p>
+                                                            <Badge
+                                                                variant={
+                                                                    statusConfig[
+                                                                        order
+                                                                            .status
+                                                                    ].variant
+                                                                }
+                                                            >
+                                                                {
+                                                                    statusConfig[
+                                                                        order
+                                                                            .status
+                                                                    ].label
+                                                                }
                                                             </Badge>
                                                         </div>
-                                                        <p className="text-sm text-muted-foreground flex items-center gap-2">
-                                                            <span>Order: {order.order_no}</span>
+                                                        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                            <span>
+                                                                Order:{' '}
+                                                                {order.order_no}
+                                                            </span>
                                                             <span>•</span>
                                                             <span className="flex items-center gap-1">
                                                                 <Calendar className="h-3 w-3" />
-                                                                {new Date(order.created_at).toLocaleDateString()}
+                                                                {new Date(
+                                                                    order.created_at,
+                                                                ).toLocaleDateString()}
                                                             </span>
                                                         </p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <div className="flex items-center gap-1 text-primary font-bold">
+                                                        <div className="flex items-center gap-1 font-bold text-primary">
                                                             <Coins className="h-4 w-4" />
                                                             {order.points_spent.toLocaleString()}
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center justify-between mt-3">
+                                                <div className="mt-3 flex items-center justify-between">
                                                     {order.product.category && (
-                                                        <Badge variant="outline" className="text-xs">
-                                                            {order.product.category.name}
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="text-xs"
+                                                        >
+                                                            {
+                                                                order.product
+                                                                    .category
+                                                                    .name
+                                                            }
                                                         </Badge>
                                                     )}
-                                                    <Link href={`/shop/orders/${order.id}`}>
-                                                        <Button variant="outline" size="sm">
+                                                    <Link
+                                                        href={`/shop/orders/${order.id}`}
+                                                    >
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                        >
                                                             <Eye className="mr-2 h-4 w-4" />
                                                             View Details
                                                         </Button>

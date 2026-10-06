@@ -84,7 +84,8 @@ export default function AppearanceToggleTab({
                     ))}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                    颜色会保存到本地（localStorage）并同步到 Cookie，刷新/SSR 也能保持。
+                    颜色会保存到本地（localStorage）并同步到 Cookie，刷新/SSR
+                    也能保持。
                 </p>
             </div>
         </div>

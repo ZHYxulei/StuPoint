@@ -2,10 +2,22 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Save } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -54,7 +66,7 @@ export default function CreateClass({ teachers }: PageProps) {
                     />
                 </div>
 
-                <Card className="border-sidebar-border/70 dark:border-sidebar-border max-w-2xl">
+                <Card className="max-w-2xl border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
                         <CardTitle>Class Information</CardTitle>
                         <CardDescription>
@@ -66,53 +78,77 @@ export default function CreateClass({ teachers }: PageProps) {
                             <div className="grid gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="grade">
-                                        Grade <span className="text-destructive">*</span>
+                                        Grade{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="grade"
                                         placeholder="e.g.: Senior 3, Grade 7"
                                         value={data.grade}
-                                        onChange={(e) => setData('grade', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('grade', e.target.value)
+                                        }
                                     />
                                     {errors.grade && (
-                                        <p className="text-sm text-destructive">{errors.grade}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.grade}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        Class Name <span className="text-destructive">*</span>
+                                        Class Name{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="name"
                                         placeholder="e.g.: Class 1, Class 2"
                                         value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
                                     />
                                     {errors.name && (
-                                        <p className="text-sm text-destructive">{errors.name}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.name}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="head_teacher_id">Head Teacher</Label>
+                                    <Label htmlFor="head_teacher_id">
+                                        Head Teacher
+                                    </Label>
                                     <Select
                                         value={data.head_teacher_id}
-                                        onValueChange={(value) => setData('head_teacher_id', value)}
+                                        onValueChange={(value) =>
+                                            setData('head_teacher_id', value)
+                                        }
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select head teacher" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {teachers.map((teacher) => (
-                                                <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                                                    {teacher.name} ({teacher.email})
+                                                <SelectItem
+                                                    key={teacher.id}
+                                                    value={teacher.id.toString()}
+                                                >
+                                                    {teacher.name} (
+                                                    {teacher.email})
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                     {errors.head_teacher_id && (
-                                        <p className="text-sm text-destructive">{errors.head_teacher_id}</p>
+                                        <p className="text-sm text-destructive">
+                                            {errors.head_teacher_id}
+                                        </p>
                                     )}
                                 </div>
                             </div>

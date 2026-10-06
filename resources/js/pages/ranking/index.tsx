@@ -3,7 +3,13 @@ import { Trophy, TrendingUp, User } from 'lucide-react';
 import PaginationBar from '@/components/pagination-bar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Empty } from '@/components/ui/empty';
 import PublicLayout from '@/layouts/public-layout';
 
@@ -46,9 +52,11 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
     };
 
     const getRankDisplay = (rank: number, isCurrentUser?: boolean) => {
-        const containerClass = isCurrentUser ? 'ring-2 ring-primary ring-offset-2 p-2 rounded-xl' : '';
+        const containerClass = isCurrentUser
+            ? 'ring-2 ring-primary ring-offset-2 p-2 rounded-xl'
+            : '';
         const rankText = (
-            <span className="text-xl font-bold text-muted-foreground min-w-[3rem]">
+            <span className="min-w-[3rem] text-xl font-bold text-muted-foreground">
                 #{rank}
             </span>
         );
@@ -103,14 +111,14 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
                             <Trophy className="h-7 w-7" />
                         </div>
-                        <h1 className="text-4xl font-bold mb-2">积分排行榜</h1>
+                        <h1 className="mb-2 text-4xl font-bold">积分排行榜</h1>
                         <p className="text-muted-foreground">
                             查看学生积分排名，激励学习进步
                         </p>
                     </div>
                 </div>
 
-                <div className="container py-8 space-y-6">
+                <div className="container space-y-6 py-8">
                     {/* User's Ranking Card */}
                     {userRanking && userRanking.total_points && (
                         <Card className="border-primary/50 bg-primary/5">
@@ -125,17 +133,23 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                                     <div className="flex items-center gap-4">
                                         {getRankDisplay(userRanking.rank)}
                                         <div>
-                                            <p className="font-semibold">{getDisplayName(userRanking)}</p>
+                                            <p className="font-semibold">
+                                                {getDisplayName(userRanking)}
+                                            </p>
                                             <p className="text-sm text-muted-foreground">
-                                                {userRanking.grade} {userRanking.class}
+                                                {userRanking.grade}{' '}
+                                                {userRanking.class}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="text-right">
                                         <div className="text-3xl font-bold text-primary">
-                                            {userRanking.total_points?.toLocaleString() || 0}
+                                            {userRanking.total_points?.toLocaleString() ||
+                                                0}
                                         </div>
-                                        <p className="text-sm text-muted-foreground">总积分</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            总积分
+                                        </p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -156,35 +170,52 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                         <CardContent>
                             <div className="space-y-4">
                                 {rankings.data.map((user) => {
-                                    const isCurrentUser = currentUserId === user.id;
+                                    const isCurrentUser =
+                                        currentUserId === user.id;
 
                                     return (
                                         <div
                                             key={user.id}
-                                            className={`flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors ${isCurrentUser ? 'border-primary/50 bg-primary/5' : ''}`}
+                                            className={`flex items-center justify-between rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50 ${isCurrentUser ? 'border-primary/50 bg-primary/5' : ''}`}
                                         >
                                             <div className="flex items-center gap-4">
-                                                <div className="w-32 flex justify-center">
-                                                    {getRankDisplay(user.rank, isCurrentUser)}
+                                                <div className="flex w-32 justify-center">
+                                                    {getRankDisplay(
+                                                        user.rank,
+                                                        isCurrentUser,
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-2">
-                                                        <p className="font-semibold">{getDisplayName(user)}</p>
+                                                        <p className="font-semibold">
+                                                            {getDisplayName(
+                                                                user,
+                                                            )}
+                                                        </p>
                                                         {isCurrentUser && (
-                                                            <Badge variant="default" className="text-xs">我</Badge>
+                                                            <Badge
+                                                                variant="default"
+                                                                className="text-xs"
+                                                            >
+                                                                我
+                                                            </Badge>
                                                         )}
                                                     </div>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {user.grade} {user.class}
+                                                        {user.grade}{' '}
+                                                        {user.class}
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-2xl font-bold text-primary">
-                                                    {user.total_points?.toLocaleString() || 0}
+                                                    {user.total_points?.toLocaleString() ||
+                                                        0}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground">
-                                                    可用: {user.redeemable_points?.toLocaleString() || 0}
+                                                    可用:{' '}
+                                                    {user.redeemable_points?.toLocaleString() ||
+                                                        0}
                                                 </p>
                                             </div>
                                         </div>

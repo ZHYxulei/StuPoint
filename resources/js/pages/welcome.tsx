@@ -98,9 +98,11 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
 
                                 {/* Today's Change Card */}
                                 <Card
-                                    className={localStats.today_change >= 0
-                                        ? 'border-success/20 bg-success-soft/60'
-                                        : 'border-destructive/20 bg-destructive/5'}
+                                    className={
+                                        localStats.today_change >= 0
+                                            ? 'border-success/20 bg-success-soft/60'
+                                            : 'border-destructive/20 bg-destructive/5'
+                                    }
                                 >
                                     <CardHeader className="pb-2">
                                         <CardTitle

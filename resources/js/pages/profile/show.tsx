@@ -1,10 +1,26 @@
 import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
-import { User, Mail, Phone, IdCard, Award, Shield, Calendar, User as UserIcon, Clock } from 'lucide-react';
+import {
+    User,
+    Mail,
+    Phone,
+    IdCard,
+    Award,
+    Shield,
+    Calendar,
+    User as UserIcon,
+    Clock,
+} from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import PublicLayout from '@/layouts/public-layout';
 
 interface UserRole {
@@ -60,14 +76,23 @@ export default function ProfileShow({ user }: PageProps) {
                     <div className="container">
                         <div className="flex items-center gap-6">
                             <Avatar className="h-24 w-24 border shadow-lg">
-                                <AvatarImage src={user.avatar} alt={getDisplayName(user)} />
-                                <AvatarFallback className="text-2xl bg-primary/10 text-primary">
-                                    {getDisplayName(user).charAt(0).toUpperCase()}
+                                <AvatarImage
+                                    src={user.avatar}
+                                    alt={getDisplayName(user)}
+                                />
+                                <AvatarFallback className="bg-primary/10 text-2xl text-primary">
+                                    {getDisplayName(user)
+                                        .charAt(0)
+                                        .toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <h1 className="text-3xl font-bold">{getDisplayName(user)}</h1>
-                                <p className="text-muted-foreground mt-1">查看您的账户信息</p>
+                                <h1 className="text-3xl font-bold">
+                                    {getDisplayName(user)}
+                                </h1>
+                                <p className="mt-1 text-muted-foreground">
+                                    查看您的账户信息
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -82,58 +107,88 @@ export default function ProfileShow({ user }: PageProps) {
                                     <User className="h-5 w-5" />
                                     基本信息
                                 </CardTitle>
-                                <CardDescription>您的个人基本信息</CardDescription>
+                                <CardDescription>
+                                    您的个人基本信息
+                                </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">姓名</label>
-                                    <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        姓名
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md bg-muted p-2">
                                         <User className="h-4 w-4 text-muted-foreground" />
-                                        <span className="text-muted-foreground">{user.name}</span>
+                                        <span className="text-muted-foreground">
+                                            {user.name}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">昵称</label>
-                                    <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        昵称
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <User className="h-4 w-4" />
                                         <span>{user.nickname || '未设置'}</span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">身份证号</label>
-                                    <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        身份证号
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md bg-muted p-2">
                                         <IdCard className="h-4 w-4 text-muted-foreground" />
-                                        <span className="text-muted-foreground">{user.id_number || '未设置'}</span>
+                                        <span className="text-muted-foreground">
+                                            {user.id_number || '未设置'}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">学号</label>
-                                    <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        学号
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Award className="h-4 w-4" />
-                                        <span>{user.student_id || '未设置'}</span>
+                                        <span>
+                                            {user.student_id || '未设置'}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">手机号码</label>
-                                    <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        手机号码
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Phone className="h-4 w-4" />
                                         <span>{user.phone || '未设置'}</span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">电子邮箱</label>
-                                    <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        电子邮箱
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Mail className="h-4 w-4" />
                                         <span>{user.email}</span>
                                         {user.email_verified_at ? (
-                                            <Badge variant="success" className="ml-auto">已验证</Badge>
+                                            <Badge
+                                                variant="success"
+                                                className="ml-auto"
+                                            >
+                                                已验证
+                                            </Badge>
                                         ) : (
-                                            <Badge variant="warning" className="ml-auto">未验证</Badge>
+                                            <Badge
+                                                variant="warning"
+                                                className="ml-auto"
+                                            >
+                                                未验证
+                                            </Badge>
                                         )}
                                     </div>
                                 </div>
@@ -147,14 +202,21 @@ export default function ProfileShow({ user }: PageProps) {
                                     <Shield className="h-5 w-5" />
                                     角色与年级
                                 </CardTitle>
-                                <CardDescription>您的角色和年级信息</CardDescription>
+                                <CardDescription>
+                                    您的角色和年级信息
+                                </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-muted-foreground">角色</label>
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        角色
+                                    </label>
                                     <div className="flex flex-wrap gap-2">
                                         {user.roles.map((role) => (
-                                            <Badge key={role.id} variant="secondary">
+                                            <Badge
+                                                key={role.id}
+                                                variant="secondary"
+                                            >
                                                 {role.name}
                                             </Badge>
                                         ))}
@@ -163,43 +225,59 @@ export default function ProfileShow({ user }: PageProps) {
 
                                 {user.is_head_teacher && (
                                     <div className="space-y-1">
-                                        <label className="text-sm font-medium text-muted-foreground">职务</label>
+                                        <label className="text-sm font-medium text-muted-foreground">
+                                            职务
+                                        </label>
                                         <div className="rounded-md border border-info/20 bg-info-soft p-2">
-                                            <span className="text-info-foreground">班主任</span>
+                                            <span className="text-info-foreground">
+                                                班主任
+                                            </span>
                                         </div>
                                     </div>
                                 )}
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">年级</label>
-                                    <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        年级
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <UserIcon className="h-4 w-4" />
                                         <span>{user.grade || '未设置'}</span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">班级</label>
-                                    <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        班级
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <User className="h-4 w-4" />
                                         <span>{user.class || '未设置'}</span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-muted-foreground">注册时间</label>
-                                    <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                        注册时间
+                                    </label>
+                                    <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Calendar className="h-4 w-4" />
-                                        <span>{formatDate(user.created_at)}</span>
+                                        <span>
+                                            {formatDate(user.created_at)}
+                                        </span>
                                     </div>
                                 </div>
 
                                 {user.last_login_at && (
                                     <div className="space-y-1">
-                                        <label className="text-sm font-medium text-muted-foreground">最后登录</label>
-                                        <div className="flex items-center gap-2 p-2 bg-background rounded-md border">
+                                        <label className="text-sm font-medium text-muted-foreground">
+                                            最后登录
+                                        </label>
+                                        <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                             <Clock className="h-4 w-4" />
-                                            <span>{formatDate(user.last_login_at)}</span>
+                                            <span>
+                                                {formatDate(user.last_login_at)}
+                                            </span>
                                         </div>
                                     </div>
                                 )}
