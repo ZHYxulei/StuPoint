@@ -300,7 +300,7 @@ export default function ShopOrderDetail({
                                     <div className="flex items-center gap-3">
                                         <CheckCircle2 className="h-8 w-8 text-success" />
                                         <div>
-                                            <p className="font-semibold text-green-900 dark:text-green-100">
+                                            <p className="font-semibold text-success-foreground">
                                                 订单已核销
                                             </p>
                                             <p className="text-sm text-success">
@@ -326,7 +326,7 @@ export default function ShopOrderDetail({
                                                 <>
                                                     <CheckCircle2 className="h-8 w-8 text-success" />
                                                     <div>
-                                                        <p className="font-semibold text-green-900 dark:text-green-100">
+                                                        <p className="font-semibold text-success-foreground">
                                                             订单已完成
                                                         </p>
                                                         <p className="text-sm text-muted-foreground">
@@ -338,7 +338,7 @@ export default function ShopOrderDetail({
                                                 <>
                                                     <XCircle className="h-8 w-8 text-destructive" />
                                                     <div>
-                                                        <p className="font-semibold text-red-900 dark:text-red-100">
+                                                        <p className="font-semibold text-destructive">
                                                             订单已取消
                                                         </p>
                                                         <p className="text-sm text-muted-foreground">

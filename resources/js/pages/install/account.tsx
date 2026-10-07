@@ -32,7 +32,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+            <div className="flex min-h-screen items-center justify-center bg-muted p-6">
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
@@ -58,7 +58,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border bg-background py-2 pr-3 pl-10 focus:ring-2 focus:ring-ring focus:outline-none"
                                             placeholder="请输入管理员昵称"
                                         />
                                     </div>
@@ -83,7 +83,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                             onChange={(e) =>
                                                 setData('email', e.target.value)
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border bg-background py-2 pr-3 pl-10 focus:ring-2 focus:ring-ring focus:outline-none"
                                             placeholder="admin@example.com"
                                         />
                                     </div>
@@ -111,7 +111,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border bg-background py-2 pr-3 pl-10 focus:ring-2 focus:ring-ring focus:outline-none"
                                             placeholder="至少8位字符"
                                         />
                                     </div>
@@ -139,7 +139,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border bg-background py-2 pr-3 pl-10 focus:ring-2 focus:ring-ring focus:outline-none"
                                             placeholder="请再次输入密码，必须与上面一致"
                                         />
                                     </div>
@@ -159,12 +159,12 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                 )}
 
                                 <div className="rounded-lg bg-info-soft p-4">
-                                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                                    <p className="text-sm text-info">
                                         <CheckCircle className="mr-1 inline h-4 w-4" />
                                         点击"完成安装"后，系统将一次性写入配置并自动创建数据库表、初始化数据
                                     </p>
                                     {siteConfig.app_name && (
-                                        <p className="mt-2 text-xs text-blue-700 dark:text-blue-300">
+                                        <p className="mt-2 text-xs text-info">
                                             当前站点名称：{siteConfig.app_name}
                                         </p>
                                     )}

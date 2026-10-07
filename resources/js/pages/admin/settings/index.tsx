@@ -938,7 +938,7 @@ export default function SystemSettings({
                                                             className={`flex h-10 w-10 items-center justify-center rounded-full ${
                                                                 source.is_active
                                                                     ? 'bg-success-soft/20'
-                                                                    : 'bg-gray-100 dark:bg-gray-800'
+                                                                    : 'bg-muted'
                                                             }`}
                                                         >
                                                             <Globe

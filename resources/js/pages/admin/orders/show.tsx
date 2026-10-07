@@ -699,7 +699,7 @@ export default function OrderShow({
                                             {verificationSuccess && (
                                                 <Alert
                                                     variant="default"
-                                                    className="border-success/30 bg-success-soft text-green-800 dark:text-green-400"
+                                                    className="border-success/30 bg-success-soft text-success-foreground"
                                                 >
                                                     <CheckCircle2 className="h-4 w-4" />
                                                     <AlertDescription>
@@ -995,7 +995,7 @@ export default function OrderShow({
                         {verificationSuccess && (
                             <Alert
                                 variant="default"
-                                className="my-4 border-success/30 bg-success-soft text-green-800 dark:text-green-400"
+                                className="my-4 border-success/30 bg-success-soft text-success-foreground"
                             >
                                 <CheckCircle2 className="h-4 w-4" />
                                 <AlertDescription>

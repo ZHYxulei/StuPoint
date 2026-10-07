@@ -29,7 +29,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+            <div className="flex min-h-screen items-center justify-center bg-muted p-6">
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>

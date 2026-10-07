@@ -314,7 +314,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
 
                 {/* Success Message */}
                 {successMessage && (
-                    <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-green-800 dark:text-green-200">
+                    <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-success-foreground">
                         <AlertCircle className="h-4 w-4" />
                         {successMessage}
                     </div>
@@ -666,7 +666,7 @@ function VerifyOrderDialog({
 
                 {/* Show success message if any */}
                 {showSuccess && successMessage && (
-                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-success/30 bg-success-soft p-3 text-sm text-green-800 dark:text-green-200">
+                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-success/30 bg-success-soft p-3 text-sm text-success-foreground">
                         <ShieldCheck className="h-4 w-4 shrink-0" />
                         <span>{successMessage}</span>
                     </div>

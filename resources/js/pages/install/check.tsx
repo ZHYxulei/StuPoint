@@ -105,7 +105,7 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+            <div className="flex min-h-screen items-center justify-center bg-muted p-6">
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
@@ -128,7 +128,7 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                                 className={`flex items-center gap-3 rounded-lg border p-3 ${
                                                     req.status === 'fail'
                                                         ? 'border-destructive/30 bg-destructive/10'
-                                                        : 'bg-white dark:bg-gray-800'
+                                                        : 'bg-card'
                                                 }`}
                                             >
                                                 {getStatusIcon(req.status)}

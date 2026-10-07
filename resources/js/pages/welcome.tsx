@@ -150,9 +150,9 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                 </Card>
 
                                 {/* Class Rank Card */}
-                                <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-violet-50 dark:border-purple-800 dark:from-purple-950/30 dark:to-violet-950/30">
+                                <Card className="border-border bg-muted">
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-purple-700 dark:text-purple-300">
+                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-primary">
                                             <Award className="h-4 w-4" />
                                             班级排名
                                         </CardTitle>
@@ -163,16 +163,16 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                                 ? `#${localStats.class_rank}`
                                                 : '-'}
                                         </div>
-                                        <p className="mt-1 text-xs text-purple-600/70 dark:text-purple-400/70">
+                                        <p className="mt-1 text-xs text-primary/70">
                                             {localStats.class_name ||
                                                 '未分配班级'}
                                         </p>
                                     </CardContent>
                                 </Card>
 
-                                <Card className="border-teal-200 bg-gradient-to-br from-teal-50 to-emerald-50 dark:border-teal-800 dark:from-teal-950/30 dark:to-emerald-950/30">
+                                <Card className="border-border bg-muted">
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-teal-700 dark:text-teal-300">
+                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-success">
                                             <Users className="h-4 w-4" />
                                             当前班级积分
                                         </CardTitle>
@@ -183,7 +183,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                                 ? localStats.class_points.toLocaleString()
                                                 : '--'}
                                         </div>
-                                        <p className="mt-1 text-xs text-teal-600/70 dark:text-teal-400/70">
+                                        <p className="mt-1 text-xs text-success/70">
                                             {localStats.class_name ||
                                                 '未分配班级'}
                                         </p>
@@ -191,9 +191,9 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                 </Card>
 
                                 {/* Class Info Card */}
-                                <Card className="border-cyan-200 bg-gradient-to-br from-cyan-50 to-sky-50 dark:border-cyan-800 dark:from-cyan-950/30 dark:to-sky-950/30">
+                                <Card className="border-border bg-muted">
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-cyan-700 dark:text-cyan-300">
+                                        <CardTitle className="flex items-center gap-2 text-sm font-medium text-info">
                                             <School className="h-4 w-4" />
                                             所属班级
                                         </CardTitle>
@@ -202,7 +202,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                         <div className="text-xl font-bold text-info">
                                             {localStats.grade_name || '未分配'}
                                         </div>
-                                        <p className="mt-1 text-xs text-cyan-600/70 dark:text-cyan-400/70">
+                                        <p className="mt-1 text-xs text-info/70">
                                             {localStats.class_name
                                                 ? `${localStats.class_name}班`
                                                 : '请完善班级信息'}

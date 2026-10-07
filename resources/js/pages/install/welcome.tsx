@@ -11,11 +11,11 @@ export default function InstallWelcome() {
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
             </Head>
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-6 dark:from-gray-900 dark:to-gray-800">
+            <div className="flex min-h-screen items-center justify-center bg-muted p-6">
                 <div className="w-full max-w-2xl">
                     <Card className="p-12">
                         <div className="mb-8 text-center">
-                            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
                                 <Rocket className="h-8 w-8" />
                             </div>
                             <h1 className="mb-2 text-4xl font-bold text-foreground">

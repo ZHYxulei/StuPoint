@@ -75,7 +75,7 @@ export default function AboutIndex({
                             {/* System Logo */}
                             <div className="flex w-36 justify-end">
                                 <div className="flex flex-col items-center gap-2">
-                                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary shadow-lg">
                                         <span className="text-2xl font-bold text-white">
                                             SP
                                         </span>

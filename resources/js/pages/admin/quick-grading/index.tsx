@@ -236,7 +236,7 @@ export default function QuickGrading({
 
                                         {/* Points */}
                                         <div className="mt-1 flex items-center justify-center gap-1">
-                                            <Star className="h-3 w-3 text-yellow-500" />
+                                            <Star className="h-3 w-3 text-warning" />
                                             <span className="text-lg font-bold text-primary">
                                                 {totalPoints.toLocaleString()}
                                             </span>
@@ -254,7 +254,7 @@ export default function QuickGrading({
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
-                            <Zap className="h-5 w-5 text-yellow-500" />为{' '}
+                            <Zap className="h-5 w-5 text-warning" />为{' '}
                             {selectedStudent?.name} 调整积分
                         </DialogTitle>
                         <DialogDescription>
