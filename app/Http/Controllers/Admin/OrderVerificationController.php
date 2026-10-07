@@ -8,6 +8,7 @@ use App\Services\VerificationCodeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -23,6 +24,8 @@ class OrderVerificationController extends Controller
      */
     public function verify(Request $request, string $id)
     {
+        Gate::authorize('manageOrders');
+
         $method = $request->input('method');
 
         if ($method === 'password') {

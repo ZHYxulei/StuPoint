@@ -96,14 +96,21 @@ class UserController extends Controller
             'subjects.*' => 'exists:subjects,id',
         ]);
 
-        return DB::transaction(function () use ($validated) {
-            $role = Role::findOrFail($validated['role_id']);
+        $role = Role::findOrFail($validated['role_id']);
 
-            // Prevent assignment of super_admin role
-            if ($role->slug === 'super_admin') {
-                abort(403, '无法分配超级管理员角色');
-            }
+        // Prevent assignment of super_admin role
+        if ($role->slug === 'super_admin') {
+            abort(403, '无法分配超级管理员角色');
+        }
 
+        // An actor may only create accounts below their own highest role level.
+        abort_unless(
+            $request->user()->maxRoleLevel() > $role->level,
+            403,
+            '无法创建等于或高于自身级别的角色'
+        );
+
+        return DB::transaction(function () use ($validated, $role) {
             // Prepare user data
             $userData = [
                 'password' => Hash::make($validated['password']),

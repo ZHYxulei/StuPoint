@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\VerificationCodeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use RuntimeException;
 
 class OrderController extends Controller
@@ -145,6 +146,8 @@ class OrderController extends Controller
      */
     public function updateStatus(Request $request, string $id)
     {
+        Gate::authorize('manageOrders');
+
         $order = Order::findOrFail($id);
 
         $validated = $request->validate([

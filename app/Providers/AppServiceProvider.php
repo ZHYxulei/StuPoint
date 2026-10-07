@@ -126,6 +126,12 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('bind-parent-child', fn (User $user): bool => $user->hasRole('parent') && $user->isApproved());
 
         Gate::define('managePlugins', fn (User $user): bool => $user->hasRole('super_admin') || $user->hasRole('admin'));
+
+        // Order state is school-level: head teachers may read orders (masked) but not act on them.
+        Gate::define('manageOrders', fn (User $user): bool => $user->hasRole('super_admin')
+            || $user->hasRole('admin')
+            || $user->hasRole('principal')
+            || $user->hasRole('grade_director'));
     }
 
     protected function configureViewShare(): void

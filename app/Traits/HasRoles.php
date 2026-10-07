@@ -46,6 +46,14 @@ trait HasRoles
         return (bool) $this->is_head_teacher;
     }
 
+    /**
+     * Highest level among the user's roles, or 0 when they hold none.
+     */
+    public function maxRoleLevel(): int
+    {
+        return (int) $this->roles()->max('level');
+    }
+
     public function assignRole(Role|string $role, ?array $metadata = null): self
     {
         if (is_string($role)) {
