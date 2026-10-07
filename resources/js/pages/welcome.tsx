@@ -232,7 +232,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                     /* Hero Section - Only show for logged out users */
                     <div className="container px-4 py-20">
                         <div className="mx-auto max-w-4xl text-center">
-                            <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl dark:text-gray-100">
+                            <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl">
                                 学生积分管理系统
                             </h1>
                             <p className="mx-auto mt-4 max-w-2xl text-xl text-muted-foreground">

@@ -204,8 +204,8 @@ export default function UserIndex({
                                         <div
                                             className={`rounded-lg border p-4 ${
                                                 import_results.failed > 0
-                                                    ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950'
-                                                    : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950'
+                                                    ? 'border-warning/30 bg-warning-soft'
+                                                    : 'border-success/30 bg-success-soft'
                                             }`}
                                         >
                                             <div className="mb-2 flex items-center gap-2 text-sm font-medium">

@@ -127,13 +127,13 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                                 key={index}
                                                 className={`flex items-center gap-3 rounded-lg border p-3 ${
                                                     req.status === 'fail'
-                                                        ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10'
+                                                        ? 'border-destructive/30 bg-destructive/10'
                                                         : 'bg-white dark:bg-gray-800'
                                                 }`}
                                             >
                                                 {getStatusIcon(req.status)}
                                                 <div className="flex-1">
-                                                    <p className="font-medium text-foreground dark:text-white">
+                                                    <p className="font-medium text-foreground">
                                                         {req.name}
                                                         {req.required && (
                                                             <span className="ml-1 text-destructive">
@@ -155,8 +155,8 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                     </div>
 
                                     {requiredPassed ? (
-                                        <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20">
-                                            <p className="flex items-center gap-2 text-sm text-success dark:text-green-300">
+                                        <div className="mt-6 rounded-lg border border-success/30 bg-success-soft p-4">
+                                            <p className="flex items-center gap-2 text-sm text-success">
                                                 <Check className="h-4 w-4" />
                                                 {t.all_passed}
                                             </p>
@@ -165,8 +165,8 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                         requiredRequirements.some(
                                             (r) => r.status === 'fail',
                                         ) && (
-                                            <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-                                                <p className="flex items-center gap-2 text-sm text-destructive dark:text-red-300">
+                                            <div className="mt-6 rounded-lg border border-destructive/30 bg-destructive/10 p-4">
+                                                <p className="flex items-center gap-2 text-sm text-destructive">
                                                     <X className="h-4 w-4" />
                                                     {t.some_failed}
                                                 </p>

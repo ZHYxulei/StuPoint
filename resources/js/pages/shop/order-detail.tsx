@@ -295,7 +295,7 @@ export default function ShopOrderDetail({
 
                         {/* Verified Badge */}
                         {order.verified_at && (
-                            <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20">
+                            <Card className="border-success/30 bg-success-soft">
                                 <CardContent className="pt-6">
                                     <div className="flex items-center gap-3">
                                         <CheckCircle2 className="h-8 w-8 text-success" />
@@ -303,7 +303,7 @@ export default function ShopOrderDetail({
                                             <p className="font-semibold text-green-900 dark:text-green-100">
                                                 订单已核销
                                             </p>
-                                            <p className="text-sm text-success dark:text-green-300">
+                                            <p className="text-sm text-success">
                                                 核销时间：
                                                 {new Date(
                                                     order.verified_at,

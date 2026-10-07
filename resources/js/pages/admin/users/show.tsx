@@ -196,7 +196,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                 </div>
 
                 {successMessage && (
-                    <div className="rounded-md bg-green-100 px-4 py-2 text-success dark:bg-green-900/20 dark:text-green-400">
+                    <div className="rounded-md bg-success-soft px-4 py-2 text-success">
                         {successMessage}
                     </div>
                 )}
@@ -465,7 +465,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                         </DialogHeader>
 
                                         {pointsSuccess && (
-                                            <div className="rounded-md bg-green-100 px-4 py-2 text-sm text-success dark:bg-green-900/20 dark:text-green-400">
+                                            <div className="rounded-md bg-success-soft px-4 py-2 text-sm text-success">
                                                 {pointsSuccess}
                                             </div>
                                         )}

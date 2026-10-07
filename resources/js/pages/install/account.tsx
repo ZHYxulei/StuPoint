@@ -58,7 +58,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                             placeholder="请输入管理员昵称"
                                         />
                                     </div>
@@ -83,7 +83,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                             onChange={(e) =>
                                                 setData('email', e.target.value)
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                             placeholder="admin@example.com"
                                         />
                                     </div>
@@ -111,7 +111,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                             placeholder="至少8位字符"
                                         />
                                     </div>
@@ -139,7 +139,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                             placeholder="请再次输入密码，必须与上面一致"
                                         />
                                     </div>
@@ -150,15 +150,15 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                 </div>
 
                                 {pageErrors.install && (
-                                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-                                        <p className="flex items-center text-sm text-destructive dark:text-red-300">
+                                    <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4">
+                                        <p className="flex items-center text-sm text-destructive">
                                             <AlertCircle className="mr-2 h-4 w-4 flex-shrink-0" />
                                             {pageErrors.install}
                                         </p>
                                     </div>
                                 )}
 
-                                <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+                                <div className="rounded-lg bg-info-soft p-4">
                                     <p className="text-sm text-blue-700 dark:text-blue-300">
                                         <CheckCircle className="mr-1 inline h-4 w-4" />
                                         点击"完成安装"后，系统将一次性写入配置并自动创建数据库表、初始化数据

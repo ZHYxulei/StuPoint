@@ -72,7 +72,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                         type="text"
                                         name="app_name"
                                         defaultValue={appName}
-                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                     />
                                     <InputError
                                         message={errors.app_name}
@@ -88,7 +88,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                         type="url"
                                         name="app_url"
                                         defaultValue={appUrl}
-                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                     />
                                     <p className="mt-1 text-xs text-muted-foreground">
                                         请输入完整的访问地址，例如：http://your-domain.com
@@ -106,7 +106,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                     <select
                                         name="locale"
                                         defaultValue={locale}
-                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                     >
                                         <option value="zh">简体中文</option>
                                         <option value="en">English</option>

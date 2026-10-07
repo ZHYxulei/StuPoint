@@ -96,7 +96,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             type="text"
                                             name="host"
                                             defaultValue={host}
-                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                         />
                                         <InputError
                                             message={errors.host}
@@ -110,7 +110,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             type="text"
                                             name="port"
                                             defaultValue={port}
-                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                         />
                                         <InputError
                                             message={errors.port}
@@ -128,7 +128,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             min="0"
                                             max="15"
                                             defaultValue={database}
-                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                         />
                                         <p className="mt-1 text-xs text-muted-foreground">
                                             Redis支持0-15共16个数据库，默认使用0
@@ -147,7 +147,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             type="password"
                                             name="password"
                                             defaultValue={password}
-                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
                                         />
                                         <InputError
                                             message={errors.password}

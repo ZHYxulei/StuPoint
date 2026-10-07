@@ -56,7 +56,7 @@ export default function InstallLanguage() {
                                             {lang.flag}
                                         </span>
                                         <div className="flex-1">
-                                            <div className="font-semibold text-foreground dark:text-white">
+                                            <div className="font-semibold text-foreground">
                                                 {lang.name}
                                             </div>
                                             <div className="text-xs text-muted-foreground">

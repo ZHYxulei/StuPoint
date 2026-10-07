@@ -18,7 +18,7 @@ export default function InstallComplete() {
                             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-success-soft">
                                 <CheckCircle2 className="h-10 w-10 text-success" />
                             </div>
-                            <h1 className="text-3xl font-bold text-foreground dark:text-white">
+                            <h1 className="text-3xl font-bold text-foreground">
                                 安装完成！
                             </h1>
                             <p className="mt-2 text-muted-foreground">
@@ -27,11 +27,11 @@ export default function InstallComplete() {
                         </div>
 
                         <div className="space-y-4">
-                            <div className="rounded-md bg-green-50 p-4 dark:bg-green-900/20">
+                            <div className="rounded-md bg-success-soft p-4">
                                 <h3 className="font-semibold text-green-900 dark:text-green-300">
                                     接下来您可以：
                                 </h3>
-                                <ul className="mt-2 space-y-2 text-sm text-success dark:text-green-400">
+                                <ul className="mt-2 space-y-2 text-sm text-success">
                                     <li>• 使用管理员账号登录系统</li>
                                     <li>• 配置角色和权限</li>
                                     <li>• 设置积分规则和分类</li>

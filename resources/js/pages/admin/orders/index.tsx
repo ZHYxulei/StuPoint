@@ -314,7 +314,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
 
                 {/* Success Message */}
                 {successMessage && (
-                    <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800 dark:border-green-800 dark:bg-green-950/20 dark:text-green-200">
+                    <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-green-800 dark:text-green-200">
                         <AlertCircle className="h-4 w-4" />
                         {successMessage}
                     </div>
@@ -658,7 +658,7 @@ function VerifyOrderDialog({
 
                 {/* Show global error if any */}
                 {errors.__all__ && (
-                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/20 dark:text-red-200">
+                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-red-800 dark:text-red-200">
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <span>{errors.__all__}</span>
                     </div>
@@ -666,7 +666,7 @@ function VerifyOrderDialog({
 
                 {/* Show success message if any */}
                 {showSuccess && successMessage && (
-                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-950/20 dark:text-green-200">
+                    <div className="mb-4 flex items-center gap-2 rounded-lg border border-success/30 bg-success-soft p-3 text-sm text-green-800 dark:text-green-200">
                         <ShieldCheck className="h-4 w-4 shrink-0" />
                         <span>{successMessage}</span>
                     </div>

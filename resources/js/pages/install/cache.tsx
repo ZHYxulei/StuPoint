@@ -68,7 +68,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                                 className="h-4 w-4"
                                             />
                                             <div>
-                                                <div className="font-medium text-foreground dark:text-white">
+                                                <div className="font-medium text-foreground">
                                                     文件缓存
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">
@@ -87,7 +87,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                                 className="h-4 w-4"
                                             />
                                             <div>
-                                                <div className="font-medium text-foreground dark:text-white">
+                                                <div className="font-medium text-foreground">
                                                     数据库缓存
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">
@@ -106,7 +106,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                                 className="h-4 w-4"
                                             />
                                             <div>
-                                                <div className="font-medium text-foreground dark:text-white">
+                                                <div className="font-medium text-foreground">
                                                     Redis缓存
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">

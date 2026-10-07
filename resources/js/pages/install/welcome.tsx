@@ -18,7 +18,7 @@ export default function InstallWelcome() {
                             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                                 <Rocket className="h-8 w-8" />
                             </div>
-                            <h1 className="mb-2 text-4xl font-bold text-foreground dark:text-white">
+                            <h1 className="mb-2 text-4xl font-bold text-foreground">
                                 学生积分管理系统
                             </h1>
                             <p className="text-muted-foreground">
