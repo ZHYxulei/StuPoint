@@ -165,15 +165,25 @@ class AppServiceProvider extends ServiceProvider
 
     protected function hasSettingsTable(): bool
     {
-        if (! $this->canAccessSettings()) {
-            return false;
+        // Asked once per request by the Inertia share and again by the view
+        // composer; remember the answer instead of paying two round trips.
+        if (app()->bound('settings.table-present')) {
+            return app('settings.table-present');
         }
 
-        try {
-            return Schema::hasTable('settings');
-        } catch (Throwable) {
-            return false;
+        $present = false;
+
+        if ($this->canAccessSettings()) {
+            try {
+                $present = Schema::hasTable('settings');
+            } catch (Throwable) {
+                $present = false;
+            }
         }
+
+        app()->instance('settings.table-present', $present);
+
+        return $present;
     }
 
     protected function canAccessSettings(): bool

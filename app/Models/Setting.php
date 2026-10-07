@@ -7,6 +7,22 @@ use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
+    /**
+     * Cache key holding the whole settings table.
+     */
+    private const CACHE_KEY = 'settings.all';
+
+    /**
+     * Container binding holding this request's copy of the settings table.
+     *
+     * Reading settings one key at a time turned every request into dozens of
+     * cache round trips — the shared Inertia payload, the view composer and
+     * the mail config each read a dozen keys. One load serves them all. The
+     * copy lives on the container rather than in a static so it cannot leak
+     * between tests or between jobs in a long-running worker.
+     */
+    private const MEMO_KEY = 'settings.indexed';
+
     protected $fillable = [
         'key',
         'value',
@@ -16,27 +32,19 @@ class Setting extends Model
     ];
 
     /**
-     * Get a setting value by key (cached for 1 hour).
+     * Get a setting value by key.
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        return Cache::remember("setting.{$key}", 3600, function () use ($key, $default) {
-            $setting = static::where('key', $key)->first();
-
-            if (! $setting) {
-                return $default;
-            }
-
-            return static::castValue($setting->value, $setting->type);
-        });
+        return static::indexed()[$key]['value'] ?? $default;
     }
 
     /**
-     * Set a setting value by key (invalidates cache).
+     * Set a setting value by key (invalidates the cached table).
      */
     public static function set(string $key, mixed $value, string $type = 'string', ?string $group = null, ?string $description = null): self
     {
-        Cache::forget("setting.{$key}");
+        static::flushCache();
 
         $setting = static::where('key', $key)->first();
 
@@ -58,20 +66,21 @@ class Setting extends Model
     }
 
     /**
-     * Get all settings by group (cached for 1 hour).
+     * Get all settings in a group.
+     *
+     * @return array<string, mixed>
      */
     public static function getByGroup(string $group): array
     {
-        return Cache::remember("setting.group.{$group}", 3600, function () use ($group) {
-            $settings = static::where('group', $group)->get();
-            $result = [];
+        $result = [];
 
-            foreach ($settings as $setting) {
-                $result[$setting->key] = static::castValue($setting->value, $setting->type);
+        foreach (static::indexed() as $key => $setting) {
+            if ($setting['group'] === $group) {
+                $result[$key] = $setting['value'];
             }
+        }
 
-            return $result;
-        });
+        return $result;
     }
 
     /**
@@ -80,6 +89,51 @@ class Setting extends Model
     public static function getAllWithMetadata(): array
     {
         return static::all()->toArray();
+    }
+
+    /**
+     * Drop the per-request copy and the cached table.
+     */
+    public static function flushCache(): void
+    {
+        Cache::forget(self::CACHE_KEY);
+
+        if (app()->bound(self::MEMO_KEY)) {
+            app()->forgetInstance(self::MEMO_KEY);
+        }
+    }
+
+    /**
+     * Every setting, keyed by its key, cast by type.
+     *
+     * @return array<string, array{key: string, value: mixed, group: string|null}>
+     */
+    protected static function indexed(): array
+    {
+        if (app()->bound(self::MEMO_KEY)) {
+            return app(self::MEMO_KEY);
+        }
+
+        $settings = Cache::remember(self::CACHE_KEY, 3600, function (): array {
+            return static::query()
+                ->get()
+                ->map(fn (self $setting): array => [
+                    'key' => $setting->key,
+                    'value' => static::castValue($setting->value, $setting->type),
+                    'group' => $setting->group,
+                ])
+                ->all();
+        });
+
+        $indexed = [];
+
+        foreach ($settings as $setting) {
+            $indexed[$setting['key']] = $setting;
+        }
+
+        app()->instance(self::MEMO_KEY, $indexed);
+
+        return $indexed;
     }
 
     /**
