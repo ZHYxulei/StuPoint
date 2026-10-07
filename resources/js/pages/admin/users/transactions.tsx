@@ -185,13 +185,13 @@ export default function UserTransactions({
                                         <span className="text-sm text-muted-foreground">
                                             可兑换积分
                                         </span>
-                                        <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                                        <span className="text-2xl font-bold text-success">
                                             {user.points.redeemable_points.toLocaleString()}
                                         </span>
                                     </div>
                                     <div className="h-2 overflow-hidden rounded-full bg-muted">
                                         <div
-                                            className="h-full bg-green-600 dark:bg-green-400"
+                                            className="h-full bg-success"
                                             style={{
                                                 width:
                                                     user.points.total_points > 0
@@ -337,14 +337,14 @@ export default function UserTransactions({
                                         <div
                                             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
                                                 transaction.amount > 0
-                                                    ? 'bg-green-100 dark:bg-green-900'
-                                                    : 'bg-red-100 dark:bg-red-900'
+                                                    ? 'bg-success-soft'
+                                                    : 'bg-destructive/10'
                                             }`}
                                         >
                                             {transaction.amount > 0 ? (
-                                                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                                                <TrendingUp className="h-5 w-5 text-success" />
                                             ) : (
-                                                <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
+                                                <TrendingDown className="h-5 w-5 text-destructive" />
                                             )}
                                         </div>
 
@@ -385,8 +385,8 @@ export default function UserTransactions({
                                             <p
                                                 className={`text-lg font-bold ${
                                                     transaction.amount > 0
-                                                        ? 'text-green-600 dark:text-green-400'
-                                                        : 'text-red-600 dark:text-red-400'
+                                                        ? 'text-success'
+                                                        : 'text-destructive'
                                                 }`}
                                             >
                                                 {transaction.amount > 0

@@ -168,7 +168,7 @@ export default function QuickGrading({
                                 <Badge
                                     key={i}
                                     variant="outline"
-                                    className="shrink-0 border-green-200 bg-green-50 text-green-600 dark:border-green-800 dark:bg-green-950"
+                                    className="shrink-0 border-green-200 bg-green-50 text-success dark:border-green-800 dark:bg-green-950"
                                 >
                                     <Plus className="mr-1 h-3 w-3" />
                                     {preset.name} +{preset.amount}
@@ -181,7 +181,7 @@ export default function QuickGrading({
                                 <Badge
                                     key={i}
                                     variant="outline"
-                                    className="shrink-0 border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950"
+                                    className="shrink-0 border-red-200 bg-red-50 text-destructive dark:border-red-800 dark:bg-red-950"
                                 >
                                     <Minus className="mr-1 h-3 w-3" />
                                     {preset.name} -{preset.amount}
@@ -271,7 +271,7 @@ export default function QuickGrading({
                     </DialogHeader>
 
                     {successMessage && (
-                        <div className="rounded-md bg-green-100 px-4 py-2 text-sm text-green-700 dark:bg-green-950 dark:text-green-300">
+                        <div className="rounded-md bg-green-100 px-4 py-2 text-sm text-success dark:bg-green-950 dark:text-green-300">
                             {successMessage}
                         </div>
                     )}
@@ -288,7 +288,7 @@ export default function QuickGrading({
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    className="border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-950"
+                                    className="border-green-200 text-success hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-950"
                                     onClick={() => handlePresetClick(preset)}
                                     disabled={processing}
                                 >
@@ -308,7 +308,7 @@ export default function QuickGrading({
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950"
+                                    className="border-red-200 text-destructive hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950"
                                     onClick={() => handlePresetClick(preset)}
                                     disabled={processing}
                                 >

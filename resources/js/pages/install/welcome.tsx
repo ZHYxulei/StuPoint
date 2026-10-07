@@ -18,68 +18,68 @@ export default function InstallWelcome() {
                             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                                 <Rocket className="h-8 w-8" />
                             </div>
-                            <h1 className="mb-2 text-4xl font-bold text-gray-900 dark:text-white">
+                            <h1 className="mb-2 text-4xl font-bold text-foreground dark:text-white">
                                 学生积分管理系统
                             </h1>
-                            <p className="text-gray-600 dark:text-gray-400">
+                            <p className="text-muted-foreground">
                                 欢迎使用安装向导
                             </p>
                         </div>
 
                         <div className="mb-8 space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">
                                     1
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-300">
+                                <span className="text-foreground">
                                     语言选择
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">
                                     2
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-300">
+                                <span className="text-foreground">
                                     PHP环境检测
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">
                                     3
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-300">
+                                <span className="text-foreground">
                                     数据库配置
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">
                                     4
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-300">
+                                <span className="text-foreground">
                                     Redis配置（可选）
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">
                                     5
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-300">
+                                <span className="text-foreground">
                                     缓存配置
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">
                                     6
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-300">
+                                <span className="text-foreground">
                                     站点配置
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">
                                     7
                                 </div>
-                                <span className="text-gray-700 dark:text-gray-300">
+                                <span className="text-foreground">
                                     创建管理员
                                 </span>
                             </div>

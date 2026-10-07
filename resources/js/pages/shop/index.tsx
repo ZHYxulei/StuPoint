@@ -289,7 +289,7 @@ export default function ShopIndex({
                                         </div>
                                         {product.stock > 0 &&
                                             product.stock < 10 && (
-                                                <p className="mt-2 text-xs text-orange-600 dark:text-orange-400">
+                                                <p className="mt-2 text-xs text-warning">
                                                     Only {product.stock} left!
                                                 </p>
                                             )}

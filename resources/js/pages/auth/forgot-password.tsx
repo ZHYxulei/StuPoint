@@ -19,7 +19,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title="忘记密码" />
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-4 text-center text-sm font-medium text-success">
                     {status}
                 </div>
             )}

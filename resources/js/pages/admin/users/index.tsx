@@ -210,16 +210,16 @@ export default function UserIndex({
                                         >
                                             <div className="mb-2 flex items-center gap-2 text-sm font-medium">
                                                 {import_results.failed > 0 ? (
-                                                    <AlertCircle className="h-4 w-4 text-yellow-600" />
+                                                    <AlertCircle className="h-4 w-4 text-warning" />
                                                 ) : (
-                                                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                                                    <CheckCircle2 className="h-4 w-4 text-success" />
                                                 )}
                                                 导入完成
                                             </div>
                                             <div className="space-y-1 text-sm">
                                                 <p>
                                                     成功导入：
-                                                    <span className="font-semibold text-green-600">
+                                                    <span className="font-semibold text-success">
                                                         {import_results.success}
                                                     </span>{' '}
                                                     条
@@ -234,7 +234,7 @@ export default function UserIndex({
                                                 {import_results.failed > 0 && (
                                                     <p>
                                                         失败：
-                                                        <span className="font-semibold text-red-600">
+                                                        <span className="font-semibold text-destructive">
                                                             {
                                                                 import_results.failed
                                                             }
@@ -245,7 +245,7 @@ export default function UserIndex({
                                             </div>
                                             {import_results.errors.length >
                                                 0 && (
-                                                <div className="mt-3 max-h-32 space-y-1 overflow-y-auto text-xs text-red-600">
+                                                <div className="mt-3 max-h-32 space-y-1 overflow-y-auto text-xs text-destructive">
                                                     {import_results.errors.map(
                                                         (err, i) => (
                                                             <p key={i}>{err}</p>

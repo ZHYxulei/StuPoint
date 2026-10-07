@@ -78,7 +78,7 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                             <Wallet className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                            <div className="text-3xl font-bold text-success">
                                 {points.redeemable_points.toLocaleString()}
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
@@ -122,15 +122,15 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                                             <div
                                                 className={`rounded-full p-2 ${
                                                     transaction.amount > 0
-                                                        ? 'bg-green-100 dark:bg-green-900/20'
-                                                        : 'bg-red-100 dark:bg-red-900/20'
+                                                        ? 'bg-success-soft/20'
+                                                        : 'bg-destructive/10/20'
                                                 }`}
                                             >
                                                 <Coins
                                                     className={`h-4 w-4 ${
                                                         transaction.amount > 0
-                                                            ? 'text-green-600 dark:text-green-400'
-                                                            : 'text-red-600 dark:text-red-400'
+                                                            ? 'text-success'
+                                                            : 'text-destructive'
                                                     }`}
                                                 />
                                             </div>
@@ -150,8 +150,8 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                                             <p
                                                 className={`font-semibold ${
                                                     transaction.amount > 0
-                                                        ? 'text-green-600 dark:text-green-400'
-                                                        : 'text-red-600 dark:text-red-400'
+                                                        ? 'text-success'
+                                                        : 'text-destructive'
                                                 }`}
                                             >
                                                 {transaction.amount > 0

@@ -172,21 +172,21 @@ export default function ShopProduct({ product }: PageProps) {
                             </CardHeader>
                             <CardContent>
                                 {isInfiniteStock ? (
-                                    <p className="font-medium text-green-600 dark:text-green-400">
+                                    <p className="font-medium text-success">
                                         ✓ In Stock
                                     </p>
                                 ) : isOutOfStock ? (
-                                    <p className="font-medium text-red-600 dark:text-red-400">
+                                    <p className="font-medium text-destructive">
                                         × Out of Stock
                                     </p>
                                 ) : (
                                     <div className="space-y-1">
-                                        <p className="font-medium text-green-600 dark:text-green-400">
+                                        <p className="font-medium text-success">
                                             ✓ In Stock ({product.stock}{' '}
                                             available)
                                         </p>
                                         {product.stock < 10 && (
-                                            <p className="text-sm text-orange-600 dark:text-orange-400">
+                                            <p className="text-sm text-warning">
                                                 Only {product.stock} left! Order
                                                 soon.
                                             </p>
@@ -255,7 +255,7 @@ export default function ShopProduct({ product }: PageProps) {
                                             required
                                         />
                                         {errors['shipping_info.name'] && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">
+                                            <p className="text-sm text-destructive">
                                                 {errors['shipping_info.name']}
                                             </p>
                                         )}
@@ -280,7 +280,7 @@ export default function ShopProduct({ product }: PageProps) {
                                             required
                                         />
                                         {errors['shipping_info.phone'] && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">
+                                            <p className="text-sm text-destructive">
                                                 {errors['shipping_info.phone']}
                                             </p>
                                         )}
@@ -305,7 +305,7 @@ export default function ShopProduct({ product }: PageProps) {
                                             required
                                         />
                                         {errors['shipping_info.address'] && (
-                                            <p className="text-sm text-red-600 dark:text-red-400">
+                                            <p className="text-sm text-destructive">
                                                 {
                                                     errors[
                                                         'shipping_info.address'

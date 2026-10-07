@@ -69,7 +69,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                     }
                                 />
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         数据库类型
                                     </label>
                                     <select
@@ -81,7 +81,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                                     .value as InstallDatabaseProps['form']['connection'],
                                             )
                                         }
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     >
                                         <option value="sqlite">
                                             SQLite (推荐)
@@ -102,14 +102,14 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                 {connectionType !== 'sqlite' && (
                                     <div className="space-y-4">
                                         <div>
-                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            <label className="mb-2 block text-sm font-medium text-foreground">
                                                 主机
                                             </label>
                                             <input
                                                 type="text"
                                                 name="host"
                                                 defaultValue={host}
-                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                                className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             />
                                             <InputError
                                                 message={errors.host}
@@ -117,7 +117,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                             />
                                         </div>
                                         <div>
-                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            <label className="mb-2 block text-sm font-medium text-foreground">
                                                 端口
                                             </label>
                                             <input
@@ -129,7 +129,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                                         ? '3306'
                                                         : '5432')
                                                 }
-                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                                className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             />
                                             <InputError
                                                 message={errors.port}
@@ -137,14 +137,14 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                             />
                                         </div>
                                         <div>
-                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            <label className="mb-2 block text-sm font-medium text-foreground">
                                                 用户名
                                             </label>
                                             <input
                                                 type="text"
                                                 name="username"
                                                 defaultValue={username}
-                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                                className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             />
                                             <InputError
                                                 message={errors.username}
@@ -152,14 +152,14 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                             />
                                         </div>
                                         <div>
-                                            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            <label className="mb-2 block text-sm font-medium text-foreground">
                                                 密码
                                             </label>
                                             <input
                                                 type="password"
                                                 name="password"
                                                 defaultValue={password}
-                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                                className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             />
                                             <InputError
                                                 message={errors.password}
@@ -170,16 +170,16 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                 )}
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         数据库名称
                                     </label>
                                     <input
                                         type="text"
                                         name="database"
                                         defaultValue={database}
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
-                                    <p className="mt-1 text-xs text-gray-500">
+                                    <p className="mt-1 text-xs text-muted-foreground">
                                         SQLite使用相对路径，MySQL/PostgreSQL使用数据库名
                                     </p>
                                     <InputError

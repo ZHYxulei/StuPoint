@@ -183,7 +183,7 @@ export default function AboutIndex({
                             <div
                                 className={`flex items-center gap-2 rounded-lg p-3 text-sm ${
                                     checkResult.upToDate
-                                        ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
+                                        ? 'bg-green-50 text-success dark:bg-green-950 dark:text-green-300'
                                         : 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300'
                                 }`}
                             >

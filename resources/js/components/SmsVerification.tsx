@@ -125,7 +125,7 @@ export default function SmsVerification({
             )}
             {message && (
                 <p
-                    className={`text-xs ${message.includes('成功') ? 'text-green-600' : 'text-red-600'}`}
+                    className={`text-xs ${message.includes('成功') ? 'text-success' : 'text-destructive'}`}
                 >
                     {message}
                 </p>

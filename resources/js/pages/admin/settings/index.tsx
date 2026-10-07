@@ -937,15 +937,15 @@ export default function SystemSettings({
                                                         <div
                                                             className={`flex h-10 w-10 items-center justify-center rounded-full ${
                                                                 source.is_active
-                                                                    ? 'bg-green-100 dark:bg-green-900/20'
+                                                                    ? 'bg-success-soft/20'
                                                                     : 'bg-gray-100 dark:bg-gray-800'
                                                             }`}
                                                         >
                                                             <Globe
                                                                 className={`h-5 w-5 ${
                                                                     source.is_active
-                                                                        ? 'text-green-600 dark:text-green-400'
-                                                                        : 'text-gray-500'
+                                                                        ? 'text-success'
+                                                                        : 'text-muted-foreground'
                                                                 }`}
                                                             />
                                                         </div>

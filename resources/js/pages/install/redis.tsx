@@ -73,13 +73,13 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             name="enabled"
                                             value="1"
                                             defaultChecked={enabled}
-                                            className="h-5 w-5 rounded border-gray-300"
+                                            className="h-5 w-5 rounded border-border"
                                         />
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <span className="text-sm font-medium text-foreground">
                                             启用Redis缓存（推荐）
                                         </span>
                                     </label>
-                                    <p className="mt-2 text-xs text-gray-500">
+                                    <p className="mt-2 text-xs text-muted-foreground">
                                         Redis可以提供更好的缓存性能，如果您的服务器没有安装Redis，请保持未选中状态
                                     </p>
                                     <InputError
@@ -96,7 +96,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             type="text"
                                             name="host"
                                             defaultValue={host}
-                                            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         />
                                         <InputError
                                             message={errors.host}
@@ -110,7 +110,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             type="text"
                                             name="port"
                                             defaultValue={port}
-                                            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         />
                                         <InputError
                                             message={errors.port}
@@ -128,9 +128,9 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             min="0"
                                             max="15"
                                             defaultValue={database}
-                                            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         />
-                                        <p className="mt-1 text-xs text-gray-500">
+                                        <p className="mt-1 text-xs text-muted-foreground">
                                             Redis支持0-15共16个数据库，默认使用0
                                         </p>
                                         <InputError
@@ -147,7 +147,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             type="password"
                                             name="password"
                                             defaultValue={password}
-                                            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         />
                                         <InputError
                                             message={errors.password}

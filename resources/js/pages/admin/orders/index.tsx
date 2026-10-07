@@ -182,7 +182,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                         {stats.pending}
                                     </p>
                                 </div>
-                                <Calendar className="h-8 w-8 text-yellow-600" />
+                                <Calendar className="h-8 w-8 text-warning" />
                             </div>
                         </CardContent>
                     </Card>
@@ -197,7 +197,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                         {stats.processing}
                                     </p>
                                 </div>
-                                <TrendingUp className="h-8 w-8 text-blue-600" />
+                                <TrendingUp className="h-8 w-8 text-info" />
                             </div>
                         </CardContent>
                     </Card>
@@ -212,7 +212,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                         {stats.completed}
                                     </p>
                                 </div>
-                                <Package className="h-8 w-8 text-green-600" />
+                                <Package className="h-8 w-8 text-success" />
                             </div>
                         </CardContent>
                     </Card>
@@ -402,7 +402,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                             </td>
                                             <td className="p-3">
                                                 {order.verified_at ? (
-                                                    <span className="flex items-center gap-1 text-xs text-green-600">
+                                                    <span className="flex items-center gap-1 text-xs text-success">
                                                         <Package className="h-3 w-3" />
                                                         已核销
                                                     </span>

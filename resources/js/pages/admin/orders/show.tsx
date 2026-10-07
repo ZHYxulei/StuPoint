@@ -123,31 +123,31 @@ const statusConfig: Record<
         label: '待处理',
         variant: 'warning',
         icon: Clock,
-        color: 'text-yellow-600 dark:text-yellow-400',
+        color: 'text-warning',
     },
     processing: {
         label: '处理中',
         variant: 'default',
         icon: AlertCircle,
-        color: 'text-blue-600 dark:text-blue-400',
+        color: 'text-info',
     },
     completed: {
         label: '已完成',
         variant: 'success',
         icon: CheckCircle2,
-        color: 'text-green-600 dark:text-green-400',
+        color: 'text-success',
     },
     cancelled: {
         label: '已取消',
         variant: 'destructive',
         icon: AlertCircle,
-        color: 'text-red-600 dark:text-red-400',
+        color: 'text-destructive',
     },
     failed: {
         label: '失败',
         variant: 'destructive',
         icon: AlertCircle,
-        color: 'text-red-600 dark:text-red-400',
+        color: 'text-destructive',
     },
 };
 
@@ -638,7 +638,7 @@ export default function OrderShow({
                                 <CardContent>
                                     {isOrderVerified ? (
                                         <div className="space-y-3">
-                                            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                                            <div className="flex items-center gap-2 text-success">
                                                 <ShieldCheck className="h-5 w-5" />
                                                 <span className="font-medium">
                                                     已核销

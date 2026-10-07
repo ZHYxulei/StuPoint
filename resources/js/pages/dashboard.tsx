@@ -111,10 +111,10 @@ export default function Dashboard({
                                     <CardTitle className="text-sm font-medium">
                                         {t('today_added')}
                                     </CardTitle>
-                                    <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                    <TrendingUp className="h-4 w-4 text-success" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                                    <div className="text-2xl font-bold text-success">
                                         +{todayAdded.toLocaleString()}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
@@ -128,10 +128,10 @@ export default function Dashboard({
                                     <CardTitle className="text-sm font-medium">
                                         {t('today_deducted')}
                                     </CardTitle>
-                                    <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                                    <TrendingDown className="h-4 w-4 text-destructive" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                                    <div className="text-2xl font-bold text-destructive">
                                         -{todayDeducted.toLocaleString()}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
@@ -194,13 +194,13 @@ export default function Dashboard({
                                             <span className="text-sm text-muted-foreground">
                                                 {t('redeemable_points')}
                                             </span>
-                                            <span className="text-lg font-bold text-green-600 dark:text-green-400">
+                                            <span className="text-lg font-bold text-success">
                                                 {userPoints.redeemable_points.toLocaleString()}
                                             </span>
                                         </div>
                                         <div className="h-2 overflow-hidden rounded-full bg-muted">
                                             <div
-                                                className="h-full bg-green-600 dark:bg-green-400"
+                                                className="h-full bg-success"
                                                 style={{
                                                     width:
                                                         userPoints.total_points >
@@ -224,7 +224,7 @@ export default function Dashboard({
                         <Card className="border-sidebar-border/70 lg:col-span-2 dark:border-sidebar-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <Trophy className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                                    <Trophy className="h-5 w-5 text-warning" />
                                     {t('top_10_users')}
                                 </CardTitle>
                                 <CardDescription>积分排行榜</CardDescription>
@@ -335,8 +335,8 @@ export default function Dashboard({
                                                             className={`rounded-full px-2 py-0.5 text-xs ${
                                                                 transaction.type ===
                                                                 'total'
-                                                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                                                                    : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                                                                    ? 'bg-info-soft text-info-foreground'
+                                                                    : 'bg-success-soft text-success-foreground'
                                                             }`}
                                                         >
                                                             {transaction.type ===
@@ -362,8 +362,8 @@ export default function Dashboard({
                                                         className={`font-bold ${
                                                             transaction.amount >
                                                             0
-                                                                ? 'text-green-600 dark:text-green-400'
-                                                                : 'text-red-600 dark:text-red-400'
+                                                                ? 'text-success'
+                                                                : 'text-destructive'
                                                         }`}
                                                     >
                                                         {transaction.amount > 0

@@ -53,11 +53,11 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                     }
                                 />
                                 <div>
-                                    <label className="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-3 block text-sm font-medium text-foreground">
                                         缓存驱动
                                     </label>
                                     <div className="space-y-2">
-                                        <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:bg-accent">
                                             <input
                                                 type="radio"
                                                 name="driver"
@@ -68,15 +68,15 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                                 className="h-4 w-4"
                                             />
                                             <div>
-                                                <div className="font-medium text-gray-900 dark:text-white">
+                                                <div className="font-medium text-foreground dark:text-white">
                                                     文件缓存
                                                 </div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="text-xs text-muted-foreground">
                                                     使用文件系统存储缓存数据，简单易用
                                                 </div>
                                             </div>
                                         </label>
-                                        <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:bg-accent">
                                             <input
                                                 type="radio"
                                                 name="driver"
@@ -87,15 +87,15 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                                 className="h-4 w-4"
                                             />
                                             <div>
-                                                <div className="font-medium text-gray-900 dark:text-white">
+                                                <div className="font-medium text-foreground dark:text-white">
                                                     数据库缓存
                                                 </div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="text-xs text-muted-foreground">
                                                     使用数据库存储缓存数据
                                                 </div>
                                             </div>
                                         </label>
-                                        <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:bg-accent">
                                             <input
                                                 type="radio"
                                                 name="driver"
@@ -106,16 +106,16 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                                 className="h-4 w-4"
                                             />
                                             <div>
-                                                <div className="font-medium text-gray-900 dark:text-white">
+                                                <div className="font-medium text-foreground dark:text-white">
                                                     Redis缓存
                                                 </div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="text-xs text-muted-foreground">
                                                     高性能缓存服务，需要配置Redis
                                                 </div>
                                             </div>
                                         </label>
                                     </div>
-                                    <p className="mt-2 text-xs text-gray-500">
+                                    <p className="mt-2 text-xs text-muted-foreground">
                                         会话存储将使用文件驱动，队列使用数据库
                                     </p>
                                     <InputError

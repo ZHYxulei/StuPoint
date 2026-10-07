@@ -88,31 +88,31 @@ const statusConfig: Record<
         label: '待处理',
         variant: 'warning',
         icon: Clock,
-        color: 'text-yellow-600 dark:text-yellow-400',
+        color: 'text-warning',
     },
     processing: {
         label: '处理中',
         variant: 'default',
         icon: AlertCircle,
-        color: 'text-blue-600 dark:text-blue-400',
+        color: 'text-info',
     },
     completed: {
         label: '已完成',
         variant: 'success',
         icon: CheckCircle2,
-        color: 'text-green-600 dark:text-green-400',
+        color: 'text-success',
     },
     cancelled: {
         label: '已取消',
         variant: 'destructive',
         icon: XCircle,
-        color: 'text-red-600 dark:text-red-400',
+        color: 'text-destructive',
     },
     failed: {
         label: '失败',
         variant: 'destructive',
         icon: XCircle,
-        color: 'text-red-600 dark:text-red-400',
+        color: 'text-destructive',
     },
 };
 
@@ -224,7 +224,7 @@ export default function ShopOrderDetail({
                                                         </Button>
                                                     </div>
                                                     <p
-                                                        className={`mt-3 text-xs ${isCodeExpired ? 'text-red-600' : 'text-muted-foreground'}`}
+                                                        className={`mt-3 text-xs ${isCodeExpired ? 'text-destructive' : 'text-muted-foreground'}`}
                                                     >
                                                         {isCodeExpired ? (
                                                             <span className="flex items-center justify-center gap-1">
@@ -298,12 +298,12 @@ export default function ShopOrderDetail({
                             <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20">
                                 <CardContent className="pt-6">
                                     <div className="flex items-center gap-3">
-                                        <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+                                        <CheckCircle2 className="h-8 w-8 text-success" />
                                         <div>
                                             <p className="font-semibold text-green-900 dark:text-green-100">
                                                 订单已核销
                                             </p>
-                                            <p className="text-sm text-green-700 dark:text-green-300">
+                                            <p className="text-sm text-success dark:text-green-300">
                                                 核销时间：
                                                 {new Date(
                                                     order.verified_at,
@@ -324,7 +324,7 @@ export default function ShopOrderDetail({
                                         <div className="flex items-center gap-3">
                                             {order.status === 'completed' ? (
                                                 <>
-                                                    <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+                                                    <CheckCircle2 className="h-8 w-8 text-success" />
                                                     <div>
                                                         <p className="font-semibold text-green-900 dark:text-green-100">
                                                             订单已完成
@@ -336,7 +336,7 @@ export default function ShopOrderDetail({
                                                 </>
                                             ) : (
                                                 <>
-                                                    <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+                                                    <XCircle className="h-8 w-8 text-destructive" />
                                                     <div>
                                                         <p className="font-semibold text-red-900 dark:text-red-100">
                                                             订单已取消

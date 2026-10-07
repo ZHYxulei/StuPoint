@@ -43,7 +43,7 @@ export default function InstallLanguage() {
                                 {languages.map((lang) => (
                                     <label
                                         key={lang.code}
-                                        className="flex cursor-pointer items-center gap-4 rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                                        className="flex cursor-pointer items-center gap-4 rounded-lg border p-4 transition-colors hover:bg-accent"
                                     >
                                         <input
                                             type="radio"
@@ -56,10 +56,10 @@ export default function InstallLanguage() {
                                             {lang.flag}
                                         </span>
                                         <div className="flex-1">
-                                            <div className="font-semibold text-gray-900 dark:text-white">
+                                            <div className="font-semibold text-foreground dark:text-white">
                                                 {lang.name}
                                             </div>
-                                            <div className="text-xs text-gray-500">
+                                            <div className="text-xs text-muted-foreground">
                                                 {lang.code === 'zh' &&
                                                     '简体中文'}
                                             </div>

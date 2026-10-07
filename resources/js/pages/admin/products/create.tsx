@@ -92,7 +92,7 @@ export default function ProductCreate({ categories }: PageProps) {
                                     required
                                 />
                                 {errors.name && (
-                                    <p className="text-sm text-red-600">
+                                    <p className="text-sm text-destructive">
                                         {errors.name}
                                     </p>
                                 )}
@@ -145,7 +145,7 @@ export default function ProductCreate({ categories }: PageProps) {
                                             支持 JPG, PNG, GIF 格式，最大 2MB
                                         </p>
                                         {errors.image && (
-                                            <p className="text-sm text-red-600">
+                                            <p className="text-sm text-destructive">
                                                 {errors.image}
                                             </p>
                                         )}
@@ -172,7 +172,7 @@ export default function ProductCreate({ categories }: PageProps) {
                                     required
                                 />
                                 {errors.points_required && (
-                                    <p className="text-sm text-red-600">
+                                    <p className="text-sm text-destructive">
                                         {errors.points_required}
                                     </p>
                                 )}
@@ -194,7 +194,7 @@ export default function ProductCreate({ categories }: PageProps) {
                                     设置为 -1 表示库存无限
                                 </p>
                                 {errors.stock && (
-                                    <p className="text-sm text-red-600">
+                                    <p className="text-sm text-destructive">
                                         {errors.stock}
                                     </p>
                                 )}

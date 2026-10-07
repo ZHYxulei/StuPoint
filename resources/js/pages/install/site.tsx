@@ -65,14 +65,14 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                     }
                                 />
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         站点名称
                                     </label>
                                     <input
                                         type="text"
                                         name="app_name"
                                         defaultValue={appName}
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
                                     <InputError
                                         message={errors.app_name}
@@ -81,16 +81,16 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         站点URL
                                     </label>
                                     <input
                                         type="url"
                                         name="app_url"
                                         defaultValue={appUrl}
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     />
-                                    <p className="mt-1 text-xs text-gray-500">
+                                    <p className="mt-1 text-xs text-muted-foreground">
                                         请输入完整的访问地址，例如：http://your-domain.com
                                     </p>
                                     <InputError
@@ -100,13 +100,13 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         默认语言
                                     </label>
                                     <select
                                         name="locale"
                                         defaultValue={locale}
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        className="w-full rounded-md border border-border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                     >
                                         <option value="zh">简体中文</option>
                                         <option value="en">English</option>
@@ -119,11 +119,11 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         班级积分计算方式
                                     </label>
                                     <div className="space-y-3">
-                                        <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                        <label className="flex items-start gap-2 text-sm text-foreground">
                                             <input
                                                 type="radio"
                                                 name="class_points_mode"
@@ -135,13 +135,13 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                             />
                                             <span>
                                                 学生总分平均值
-                                                <span className="mt-1 block text-xs text-gray-500">
+                                                <span className="mt-1 block text-xs text-muted-foreground">
                                                     班级积分 =
                                                     同班学生总积分平均值
                                                 </span>
                                             </span>
                                         </label>
-                                        <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                        <label className="flex items-start gap-2 text-sm text-foreground">
                                             <input
                                                 type="radio"
                                                 name="class_points_mode"
@@ -153,13 +153,13 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                             />
                                             <span>
                                                 学生总分累加
-                                                <span className="mt-1 block text-xs text-gray-500">
+                                                <span className="mt-1 block text-xs text-muted-foreground">
                                                     班级积分 =
                                                     同班学生总积分之和
                                                 </span>
                                             </span>
                                         </label>
-                                        <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                        <label className="flex items-start gap-2 text-sm text-foreground">
                                             <input
                                                 type="radio"
                                                 name="class_points_mode"
@@ -172,13 +172,13 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                             />
                                             <span>
                                                 独立班级积分
-                                                <span className="mt-1 block text-xs text-gray-500">
+                                                <span className="mt-1 block text-xs text-muted-foreground">
                                                     班级积分单独计算，不依赖学生积分
                                                 </span>
                                             </span>
                                         </label>
                                     </div>
-                                    <p className="mt-2 text-xs text-gray-500">
+                                    <p className="mt-2 text-xs text-muted-foreground">
                                         该设置安装完成后不可修改
                                     </p>
                                     <InputError

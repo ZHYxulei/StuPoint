@@ -170,10 +170,10 @@ export default function UserStatistics({
                             <CardTitle className="text-sm font-medium">
                                 可兑换积分
                             </CardTitle>
-                            <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                            <TrendingUp className="h-4 w-4 text-success" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                            <div className="text-2xl font-bold text-success">
                                 {stats.total_redeemable.toLocaleString()}
                             </div>
                             <p className="text-xs text-muted-foreground">
@@ -187,7 +187,7 @@ export default function UserStatistics({
                             <CardTitle className="text-sm font-medium">
                                 积分榜首
                             </CardTitle>
-                            <BarChart3 className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                            <BarChart3 className="h-4 w-4 text-warning" />
                         </CardHeader>
                         <CardContent>
                             {stats.top_user ? (
@@ -465,7 +465,7 @@ export default function UserStatistics({
                                                         </span>
                                                         <span className="text-muted-foreground">
                                                             可兑换:{' '}
-                                                            <span className="font-semibold text-green-600 dark:text-green-400">
+                                                            <span className="font-semibold text-success">
                                                                 {redeemablePoints.toLocaleString()}
                                                             </span>
                                                         </span>

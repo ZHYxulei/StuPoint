@@ -158,7 +158,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                                        <div className="text-3xl font-bold text-primary">
                                             {localStats.class_rank
                                                 ? `#${localStats.class_rank}`
                                                 : '-'}
@@ -178,7 +178,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
+                                        <div className="text-3xl font-bold text-success">
                                             {localStats.class_points !== null
                                                 ? localStats.class_points.toLocaleString()
                                                 : '--'}
@@ -199,7 +199,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-xl font-bold text-cyan-600 dark:text-cyan-400">
+                                        <div className="text-xl font-bold text-info">
                                             {localStats.grade_name || '未分配'}
                                         </div>
                                         <p className="mt-1 text-xs text-cyan-600/70 dark:text-cyan-400/70">
@@ -232,7 +232,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                     /* Hero Section - Only show for logged out users */
                     <div className="container px-4 py-20">
                         <div className="mx-auto max-w-4xl text-center">
-                            <h1 className="mb-6 text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl dark:text-gray-100">
+                            <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl dark:text-gray-100">
                                 学生积分管理系统
                             </h1>
                             <p className="mx-auto mt-4 max-w-2xl text-xl text-muted-foreground">

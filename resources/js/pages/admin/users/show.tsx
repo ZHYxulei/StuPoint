@@ -196,7 +196,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                 </div>
 
                 {successMessage && (
-                    <div className="rounded-md bg-green-100 px-4 py-2 text-green-600 dark:bg-green-900/20 dark:text-green-400">
+                    <div className="rounded-md bg-green-100 px-4 py-2 text-success dark:bg-green-900/20 dark:text-green-400">
                         {successMessage}
                     </div>
                 )}
@@ -226,7 +226,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                         required
                                     />
                                     {updateErrors.name && (
-                                        <p className="text-sm text-red-600">
+                                        <p className="text-sm text-destructive">
                                             {updateErrors.name}
                                         </p>
                                     )}
@@ -243,7 +243,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                         placeholder="留空则使用姓名"
                                     />
                                     {updateErrors.nickname && (
-                                        <p className="text-sm text-red-600">
+                                        <p className="text-sm text-destructive">
                                             {updateErrors.nickname}
                                         </p>
                                     )}
@@ -259,7 +259,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                         }
                                     />
                                     {updateErrors.id_number && (
-                                        <p className="text-sm text-red-600">
+                                        <p className="text-sm text-destructive">
                                             {updateErrors.id_number}
                                         </p>
                                     )}
@@ -277,7 +277,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                         required
                                     />
                                     {updateErrors.email && (
-                                        <p className="text-sm text-red-600">
+                                        <p className="text-sm text-destructive">
                                             {updateErrors.email}
                                         </p>
                                     )}
@@ -433,7 +433,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                     <p className="text-sm text-muted-foreground">
                                         可兑换积分
                                     </p>
-                                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                                    <p className="text-2xl font-bold text-success">
                                         {user.points.redeemable_points.toLocaleString()}
                                     </p>
                                 </div>
@@ -465,7 +465,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                         </DialogHeader>
 
                                         {pointsSuccess && (
-                                            <div className="rounded-md bg-green-100 px-4 py-2 text-sm text-green-600 dark:bg-green-900/20 dark:text-green-400">
+                                            <div className="rounded-md bg-green-100 px-4 py-2 text-sm text-success dark:bg-green-900/20 dark:text-green-400">
                                                 {pointsSuccess}
                                             </div>
                                         )}
@@ -523,7 +523,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                     required
                                                 />
                                                 {pointsErrors.amount && (
-                                                    <p className="text-sm text-red-600">
+                                                    <p className="text-sm text-destructive">
                                                         {pointsErrors.amount}
                                                     </p>
                                                 )}
@@ -547,7 +547,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                     required
                                                 />
                                                 {pointsErrors.reason && (
-                                                    <p className="text-sm text-red-600">
+                                                    <p className="text-sm text-destructive">
                                                         {pointsErrors.reason}
                                                     </p>
                                                 )}
@@ -618,7 +618,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                     minLength={8}
                                 />
                                 {passwordErrors.password && (
-                                    <p className="text-sm text-red-600">
+                                    <p className="text-sm text-destructive">
                                         {passwordErrors.password}
                                     </p>
                                 )}

@@ -210,15 +210,15 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                             <div
                                                 className={`rounded-full p-3 ${
                                                     transaction.amount > 0
-                                                        ? 'bg-green-100 dark:bg-green-900/20'
-                                                        : 'bg-red-100 dark:bg-red-900/20'
+                                                        ? 'bg-success-soft/20'
+                                                        : 'bg-destructive/10/20'
                                                 }`}
                                             >
                                                 <Coins
                                                     className={`h-5 w-5 ${
                                                         transaction.amount > 0
-                                                            ? 'text-green-600 dark:text-green-400'
-                                                            : 'text-red-600 dark:text-red-400'
+                                                            ? 'text-success'
+                                                            : 'text-destructive'
                                                     }`}
                                                 />
                                             </div>
@@ -248,8 +248,8 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                             <p
                                                 className={`text-lg font-semibold ${
                                                     transaction.amount > 0
-                                                        ? 'text-green-600 dark:text-green-400'
-                                                        : 'text-red-600 dark:text-red-400'
+                                                        ? 'text-success'
+                                                        : 'text-destructive'
                                                 }`}
                                             >
                                                 {transaction.amount > 0

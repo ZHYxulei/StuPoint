@@ -158,12 +158,12 @@ export default function ProductIndex({
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-green-600 dark:text-green-400">
+                            <CardTitle className="text-sm font-medium text-success">
                                 上架商品
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                            <div className="text-2xl font-bold text-success">
                                 {stats.active}
                             </div>
                         </CardContent>
@@ -171,12 +171,12 @@ export default function ProductIndex({
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-red-600 dark:text-red-400">
+                            <CardTitle className="text-sm font-medium text-destructive">
                                 缺货商品
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                            <div className="text-2xl font-bold text-destructive">
                                 {stats.out_of_stock}
                             </div>
                         </CardContent>

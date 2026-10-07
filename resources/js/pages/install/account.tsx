@@ -41,12 +41,14 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         昵称{' '}
-                                        <span className="text-red-500">*</span>
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </label>
                                     <div className="relative">
-                                        <User className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                                        <User className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                                         <input
                                             type="text"
                                             value={data.nickname}
@@ -56,7 +58,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="请输入管理员昵称"
                                         />
                                     </div>
@@ -67,19 +69,21 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         邮箱{' '}
-                                        <span className="text-red-500">*</span>
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </label>
                                     <div className="relative">
-                                        <Mail className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                                        <Mail className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                                         <input
                                             type="email"
                                             value={data.email}
                                             onChange={(e) =>
                                                 setData('email', e.target.value)
                                             }
-                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="admin@example.com"
                                         />
                                     </div>
@@ -90,12 +94,14 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         密码{' '}
-                                        <span className="text-red-500">*</span>
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </label>
                                     <div className="relative">
-                                        <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                                        <Lock className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                                         <input
                                             type="password"
                                             value={data.password}
@@ -105,7 +111,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="至少8位字符"
                                         />
                                     </div>
@@ -116,12 +122,14 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         确认密码{' '}
-                                        <span className="text-red-500">*</span>
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </label>
                                     <div className="relative">
-                                        <Lock className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
+                                        <Lock className="absolute top-3 left-3 h-5 w-5 text-muted-foreground" />
                                         <input
                                             type="password"
                                             value={data.password_confirmation}
@@ -131,7 +139,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                     e.target.value,
                                                 )
                                             }
-                                            className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                            className="w-full rounded-md border border-border py-2 pr-3 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                             placeholder="请再次输入密码，必须与上面一致"
                                         />
                                     </div>
@@ -143,7 +151,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
 
                                 {pageErrors.install && (
                                     <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-                                        <p className="flex items-center text-sm text-red-700 dark:text-red-300">
+                                        <p className="flex items-center text-sm text-destructive dark:text-red-300">
                                             <AlertCircle className="mr-2 h-4 w-4 flex-shrink-0" />
                                             {pageErrors.install}
                                         </p>
