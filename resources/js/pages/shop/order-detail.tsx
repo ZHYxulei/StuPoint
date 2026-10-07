@@ -163,12 +163,12 @@ export default function ShopOrderDetail({
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <Link href="/shop/orders">
-                            <Button variant="ghost" size="sm">
+                        <Button asChild variant="ghost" size="sm">
+                            <Link href="/shop/orders">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 返回订单列表
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                         <h1 className="mt-3 text-2xl font-bold">订单详情</h1>
                     </div>
                     <Badge

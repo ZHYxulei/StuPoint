@@ -155,11 +155,11 @@ export default function ShowActivity({ activity }: PageProps) {
             <div className="mx-auto max-w-5xl space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/student-council/activities">
-                            <Button variant="ghost" size="icon">
+                        <Button asChild variant="ghost" size="icon">
+                            <Link href="/student-council/activities">
                                 <ArrowLeft className="h-4 w-4" />
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                         <Heading
                             title={activity.title}
                             description="活动详情和参与人员"
@@ -168,14 +168,14 @@ export default function ShowActivity({ activity }: PageProps) {
                     <div className="flex gap-2">
                         {activity.status !== 'closed' && (
                             <>
-                                <Link
-                                    href={`/student-council/activities/${activity.id}/edit`}
-                                >
-                                    <Button variant="outline">
+                                <Button asChild variant="outline">
+                                    <Link
+                                        href={`/student-council/activities/${activity.id}/edit`}
+                                    >
                                         <Edit className="mr-2 h-4 w-4" />
                                         编辑
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button

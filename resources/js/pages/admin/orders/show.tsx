@@ -339,12 +339,12 @@ export default function OrderShow({
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
-                    <Link href="/admin/orders">
-                        <Button variant="outline" size="sm">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/admin/orders">
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             返回
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl font-bold">
                             {localOrder.order_no}

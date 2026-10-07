@@ -41,11 +41,11 @@ export default function CreateGrade() {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/grades">
-                        <Button variant="outline" size="icon">
+                    <Button asChild variant="outline" size="icon">
+                        <Link href="/admin/grades">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading title="添加年级" description="创建新的年级信息" />
                 </div>
 
@@ -112,11 +112,9 @@ export default function CreateGrade() {
                                     <Save className="mr-2 h-4 w-4" />
                                     保存年级
                                 </Button>
-                                <Link href="/admin/grades">
-                                    <Button type="button" variant="outline">
-                                        取消
-                                    </Button>
-                                </Link>
+                                <Button asChild type="button" variant="outline">
+                                    <Link href="/admin/grades">取消</Link>
+                                </Button>
                             </div>
                         </form>
                     </CardContent>

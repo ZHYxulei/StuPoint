@@ -351,12 +351,12 @@ export default function UserIndex({
                             </DialogContent>
                         </Dialog>
 
-                        <Link href="/admin/users/create">
-                            <Button>
+                        <Button asChild>
+                            <Link href="/admin/users/create">
                                 <UserPlus className="mr-2 h-4 w-4" />
                                 添加用户
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                     </div>
                 </div>
 
@@ -533,16 +533,17 @@ export default function UserIndex({
                                             </div>
                                         )}
                                         <div className="flex gap-2">
-                                            <Link
-                                                href={`/admin/users/${user.id}`}
+                                            <Button
+                                                asChild
+                                                variant="outline"
+                                                size="sm"
                                             >
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
+                                                <Link
+                                                    href={`/admin/users/${user.id}`}
                                                 >
                                                     <Edit className="h-4 w-4" />
-                                                </Button>
-                                            </Link>
+                                                </Link>
+                                            </Button>
                                             {user.id !== currentUserId && (
                                                 <Button
                                                     variant="outline"

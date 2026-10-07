@@ -109,14 +109,18 @@ export default function ApprovalsAll({ approvals }: PageProps) {
                                                 ))}
                                             </div>
                                         </div>
-                                        <Link
-                                            href={`/admin/approvals/${user.id}`}
+                                        <Button
+                                            asChild
+                                            size="sm"
+                                            variant="outline"
                                         >
-                                            <Button size="sm" variant="outline">
+                                            <Link
+                                                href={`/admin/approvals/${user.id}`}
+                                            >
                                                 <Eye className="mr-2 h-4 w-4" />
                                                 查看
-                                            </Button>
-                                        </Link>
+                                            </Link>
+                                        </Button>
                                     </div>
                                 ))
                             )}

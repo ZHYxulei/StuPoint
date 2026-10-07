@@ -161,11 +161,11 @@ export default function ShowClass({
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/classes">
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/admin/classes">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title={classData.full_name}
                         description="管理班级信息、教师和学生"

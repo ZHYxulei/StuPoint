@@ -52,11 +52,11 @@ export default function ShowGrade({ grade }: PageProps) {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/grades">
-                        <Button variant="outline" size="icon">
+                    <Button asChild variant="outline" size="icon">
+                        <Link href="/admin/grades">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title={grade.name}
                         description="查看年级详细信息"
@@ -125,12 +125,14 @@ export default function ShowGrade({ grade }: PageProps) {
                                 </dl>
                             </div>
                             <div className="flex gap-2 pt-4">
-                                <Link href={`/admin/grades/${grade.id}/edit`}>
-                                    <Button>
+                                <Button asChild>
+                                    <Link
+                                        href={`/admin/grades/${grade.id}/edit`}
+                                    >
                                         <Settings className="mr-2 h-4 w-4" />
                                         编辑年级
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                             </div>
                         </div>
                     </CardContent>
@@ -170,14 +172,14 @@ export default function ShowGrade({ grade }: PageProps) {
                             <div className="py-8 text-center text-muted-foreground">
                                 <Users2 className="mx-auto mb-3 h-12 w-12 opacity-50" />
                                 <p>该年级下暂无班级</p>
-                                <Link
-                                    href="/admin/classes/create"
-                                    className="mt-4 inline-block"
-                                >
-                                    <Button variant="outline" size="sm">
+                                <Button asChild variant="outline" size="sm">
+                                    <Link
+                                        href="/admin/classes/create"
+                                        className="mt-4 inline-block"
+                                    >
                                         创建班级
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                             </div>
                         )}
                     </CardContent>

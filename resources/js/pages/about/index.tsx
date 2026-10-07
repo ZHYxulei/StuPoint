@@ -60,11 +60,11 @@ export default function AboutIndex({
 
             <div className="mx-auto max-w-2xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard">
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/dashboard">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <h1 className="text-2xl font-bold">关于 StuPoint</h1>
                 </div>
 

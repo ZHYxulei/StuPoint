@@ -69,12 +69,12 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                         title="年级管理"
                         description="管理学校年级信息，教师注册时可选"
                     />
-                    <Link href="/admin/grades/create">
-                        <Button>
+                    <Button asChild>
+                        <Link href="/admin/grades/create">
                             <Plus className="mr-2 h-4 w-4" />
                             添加年级
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Search */}
@@ -152,31 +152,33 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                                         </p>
                                     )}
                                     <div className="flex gap-2 pt-2">
-                                        <Link
-                                            href={`/admin/grades/${grade.id}`}
-                                            className="flex-1"
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full"
                                         >
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="w-full"
+                                            <Link
+                                                href={`/admin/grades/${grade.id}`}
+                                                className="flex-1"
                                             >
                                                 <Users2 className="mr-1 h-4 w-4" />
                                                 查看详情
-                                            </Button>
-                                        </Link>
-                                        <Link
-                                            href={`/admin/grades/${grade.id}/edit`}
-                                            className="flex-1"
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full"
                                         >
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="w-full"
+                                            <Link
+                                                href={`/admin/grades/${grade.id}/edit`}
+                                                className="flex-1"
                                             >
                                                 编辑
-                                            </Button>
-                                        </Link>
+                                            </Link>
+                                        </Button>
                                     </div>
                                 </div>
                             </CardContent>
@@ -189,12 +191,15 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <GraduationCap className="mb-4 h-12 w-12 text-muted-foreground/50" />
                             <p className="text-muted-foreground">暂无年级</p>
-                            <Link href="/admin/grades/create" className="mt-4">
-                                <Button>
+                            <Button asChild>
+                                <Link
+                                    href="/admin/grades/create"
+                                    className="mt-4"
+                                >
                                     <Plus className="mr-2 h-4 w-4" />
                                     添加年级
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 )}

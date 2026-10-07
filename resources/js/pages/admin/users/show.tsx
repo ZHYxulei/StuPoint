@@ -183,12 +183,12 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/users">
-                        <Button variant="outline" size="sm">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/admin/users">
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             返回
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title={user.name}
                         description={`用户 ID: ${user.id}`}

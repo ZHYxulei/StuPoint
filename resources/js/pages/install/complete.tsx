@@ -40,11 +40,11 @@ export default function InstallComplete() {
                                 </ul>
                             </div>
 
-                            <Link href="/" className="block">
-                                <Button className="w-full" size="lg">
+                            <Button asChild className="w-full" size="lg">
+                                <Link href="/" className="block">
                                     前往系统首页
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </div>
 
                         <div className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">

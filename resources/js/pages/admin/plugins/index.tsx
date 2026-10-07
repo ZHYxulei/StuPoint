@@ -307,15 +307,16 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                         </div>
                                     </div>
                                 ))}
-                                <Link href="/admin/settings#plugin-sources">
-                                    <Button
-                                        variant="outline"
-                                        className="w-full"
-                                    >
+                                <Button
+                                    asChild
+                                    variant="outline"
+                                    className="w-full"
+                                >
+                                    <Link href="/admin/settings#plugin-sources">
                                         <Plus className="mr-2 h-4 w-4" />
                                         添加插件源
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                             </div>
                         </CardContent>
                     </Card>

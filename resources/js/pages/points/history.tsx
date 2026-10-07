@@ -90,12 +90,12 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                         title="Transaction History"
                         description="View all your point transactions"
                     />
-                    <Link href="/points">
-                        <Button variant="outline" size="sm">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/points">
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Points
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}

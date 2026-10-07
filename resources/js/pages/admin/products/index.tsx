@@ -133,12 +133,12 @@ export default function ProductIndex({
                         title="商品管理"
                         description="管理商城商品和库存"
                     />
-                    <Link href="/admin/products/create">
-                        <Button>
+                    <Button asChild>
+                        <Link href="/admin/products/create">
                             <Plus className="mr-2 h-4 w-4" />
                             添加商品
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Statistics */}
@@ -383,13 +383,17 @@ export default function ProductIndex({
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <Link
-                                            href={`/admin/products/${product.id}/edit`}
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
                                         >
-                                            <Button variant="outline" size="sm">
+                                            <Link
+                                                href={`/admin/products/${product.id}/edit`}
+                                            >
                                                 <Edit className="h-4 w-4" />
-                                            </Button>
-                                        </Link>
+                                            </Link>
+                                        </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"

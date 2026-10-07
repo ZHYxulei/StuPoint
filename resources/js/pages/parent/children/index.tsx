@@ -47,12 +47,12 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                         title="我的子女"
                         description="查看和管理您绑定的子女账户"
                     />
-                    <Link href="/parent/children/create">
-                        <Button>
+                    <Button asChild>
+                        <Link href="/parent/children/create">
                             <Plus className="mr-2 h-4 w-4" />
                             绑定子女
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {children.length === 0 ? (
@@ -62,15 +62,15 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                             <p className="text-muted-foreground">
                                 暂无绑定的子女
                             </p>
-                            <Link
-                                href="/parent/children/create"
-                                className="mt-4"
-                            >
-                                <Button>
+                            <Button asChild>
+                                <Link
+                                    href="/parent/children/create"
+                                    className="mt-4"
+                                >
                                     <Plus className="mr-2 h-4 w-4" />
                                     绑定第一个子女
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 ) : (
@@ -137,19 +137,20 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                         </div>
 
                                         <div className="flex gap-2 pt-2">
-                                            <Link
-                                                href={`/parent/children/${child.id}`}
-                                                className="flex-1"
+                                            <Button
+                                                asChild
+                                                variant="outline"
+                                                size="sm"
+                                                className="w-full"
                                             >
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    className="w-full"
+                                                <Link
+                                                    href={`/parent/children/${child.id}`}
+                                                    className="flex-1"
                                                 >
                                                     <Eye className="mr-2 h-3.5 w-3.5" />
                                                     查看详情
-                                                </Button>
-                                            </Link>
+                                                </Link>
+                                            </Button>
                                         </div>
                                     </div>
                                 </CardContent>

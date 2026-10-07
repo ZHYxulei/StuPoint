@@ -55,11 +55,11 @@ export default function CreateClass({ teachers }: PageProps) {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/classes">
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/admin/classes">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title="Create Class"
                         description="Fill in class information and assign a head teacher"
@@ -154,16 +154,20 @@ export default function CreateClass({ teachers }: PageProps) {
                             </div>
 
                             <div className="flex gap-4">
-                                <Link href="/admin/classes" className="flex-1">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="w-full"
-                                        disabled={processing}
+                                <Button
+                                    asChild
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    disabled={processing}
+                                >
+                                    <Link
+                                        href="/admin/classes"
+                                        className="flex-1"
                                     >
                                         Cancel
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                                 <Button
                                     type="submit"
                                     className="flex-1"

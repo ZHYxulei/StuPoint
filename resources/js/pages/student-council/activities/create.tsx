@@ -56,11 +56,11 @@ export default function CreateActivity({}: PageProps) {
 
             <div className="mx-auto max-w-3xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/student-council/activities">
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/student-council/activities">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title="创建活动"
                         description="填写活动信息并发布"
@@ -271,11 +271,9 @@ export default function CreateActivity({}: PageProps) {
                         <Button type="submit" disabled={processing}>
                             创建活动
                         </Button>
-                        <Link href="/student-council/activities">
-                            <Button type="button" variant="outline">
-                                取消
-                            </Button>
-                        </Link>
+                        <Button asChild type="button" variant="outline">
+                            <Link href="/student-council/activities">取消</Link>
+                        </Button>
                     </div>
                 </form>
             </div>

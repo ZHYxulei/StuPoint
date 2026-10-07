@@ -99,9 +99,9 @@ export default function ApprovalsIndex({
                             {roleLabel}
                         </p>
                     </div>
-                    <Link href="/admin/approvals/all">
-                        <Button variant="outline">查看全部</Button>
-                    </Link>
+                    <Button asChild variant="outline">
+                        <Link href="/admin/approvals/all">查看全部</Link>
+                    </Button>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -202,14 +202,18 @@ export default function ApprovalsIndex({
                                                     : ''}
                                             </div>
                                         </div>
-                                        <Link
-                                            href={`/admin/approvals/${user.id}`}
+                                        <Button
+                                            asChild
+                                            size="sm"
+                                            variant="outline"
                                         >
-                                            <Button size="sm" variant="outline">
+                                            <Link
+                                                href={`/admin/approvals/${user.id}`}
+                                            >
                                                 <Eye className="mr-2 h-4 w-4" />
                                                 查看
-                                            </Button>
-                                        </Link>
+                                            </Link>
+                                        </Button>
                                     </div>
                                 ))
                             )}

@@ -90,12 +90,12 @@ export default function ShopProduct({ product }: PageProps) {
             <Head title={product.name} />
 
             <div className="space-y-6 p-4">
-                <Link href="/shop">
-                    <Button variant="ghost" size="sm">
+                <Button asChild variant="ghost" size="sm">
+                    <Link href="/shop">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Back to Shop
-                    </Button>
-                </Link>
+                    </Link>
+                </Button>
 
                 <div className="grid gap-6 lg:grid-cols-2">
                     {/* Product Image */}

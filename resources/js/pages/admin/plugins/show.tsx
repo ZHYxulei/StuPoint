@@ -99,11 +99,11 @@ export default function PluginShow({ plugin, configSchema }: PageProps) {
 
             <div className="mx-auto max-w-4xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/plugins">
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/admin/plugins">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title={plugin.name}
                         description={plugin.description}
@@ -306,11 +306,13 @@ export default function PluginShow({ plugin, configSchema }: PageProps) {
                                         <Save className="mr-2 h-4 w-4" />
                                         保存配置
                                     </Button>
-                                    <Link href="/admin/plugins">
-                                        <Button type="button" variant="outline">
-                                            取消
-                                        </Button>
-                                    </Link>
+                                    <Button
+                                        asChild
+                                        type="button"
+                                        variant="outline"
+                                    >
+                                        <Link href="/admin/plugins">取消</Link>
+                                    </Button>
                                 </div>
                             </form>
                         </CardContent>

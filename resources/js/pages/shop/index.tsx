@@ -99,12 +99,12 @@ export default function ShopIndex({
                         title="Shop"
                         description="Exchange your redeemable points for rewards"
                     />
-                    <Link href="/shop/orders">
-                        <Button variant="outline" size="sm">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/shop/orders">
                             <ShoppingCart className="mr-2 h-4 w-4" />
                             My Orders
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}
@@ -273,20 +273,19 @@ export default function ShopIndex({
                                                 <Coins className="h-4 w-4" />
                                                 {product.points_required.toLocaleString()}
                                             </div>
-                                            <Link
-                                                href={`/shop/product/${product.id}`}
+                                            <Button
+                                                asChild
+                                                size="sm"
+                                                disabled={product.stock === 0}
                                             >
-                                                <Button
-                                                    size="sm"
-                                                    disabled={
-                                                        product.stock === 0
-                                                    }
+                                                <Link
+                                                    href={`/shop/product/${product.id}`}
                                                 >
                                                     {product.stock === 0
                                                         ? 'Unavailable'
                                                         : 'View'}
-                                                </Button>
-                                            </Link>
+                                                </Link>
+                                            </Button>
                                         </div>
                                         {product.stock > 0 &&
                                             product.stock < 10 && (

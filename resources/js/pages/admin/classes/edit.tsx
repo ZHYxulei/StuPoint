@@ -63,11 +63,11 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href={`/admin/classes/${classData.id}`}>
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href={`/admin/classes/${classData.id}`}>
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title="编辑班级"
                         description="修改班级信息和班主任"
@@ -163,19 +163,20 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
                             </div>
 
                             <div className="flex gap-4">
-                                <Link
-                                    href={`/admin/classes/${classData.id}`}
-                                    className="flex-1"
+                                <Button
+                                    asChild
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    disabled={processing}
                                 >
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="w-full"
-                                        disabled={processing}
+                                    <Link
+                                        href={`/admin/classes/${classData.id}`}
+                                        className="flex-1"
                                     >
                                         取消
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                                 <Button
                                     type="submit"
                                     className="flex-1"

@@ -95,12 +95,12 @@ export default function ApprovalShow({
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/admin/approvals">
-                            <Button variant="outline" size="sm">
+                        <Button asChild variant="outline" size="sm">
+                            <Link href="/admin/approvals">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 返回
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                         <div>
                             <h2 className="text-2xl font-semibold">审批详情</h2>
                             <p className="text-sm text-muted-foreground">

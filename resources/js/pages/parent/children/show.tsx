@@ -94,11 +94,11 @@ export default function ParentChildShow({ child }: PageProps) {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/parent/children">
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/parent/children">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title={child.name}
                         description={`学号: ${child.student_id} · ${child.relationship}`}
@@ -191,14 +191,14 @@ export default function ParentChildShow({ child }: PageProps) {
                                     <CardTitle className="text-base">
                                         最近积分变动
                                     </CardTitle>
-                                    <Link
-                                        href={`/parent/children/${child.id}/transactions`}
-                                    >
-                                        <Button variant="ghost" size="sm">
+                                    <Button asChild variant="ghost" size="sm">
+                                        <Link
+                                            href={`/parent/children/${child.id}/transactions`}
+                                        >
                                             查看全部
                                             <Eye className="ml-2 h-3.5 w-3.5" />
-                                        </Button>
-                                    </Link>
+                                        </Link>
+                                    </Button>
                                 </div>
                             </CardHeader>
                             <CardContent>
@@ -250,14 +250,14 @@ export default function ParentChildShow({ child }: PageProps) {
                                     <CardTitle className="text-base">
                                         最近兑换
                                     </CardTitle>
-                                    <Link
-                                        href={`/parent/children/${child.id}/orders`}
-                                    >
-                                        <Button variant="ghost" size="sm">
+                                    <Button asChild variant="ghost" size="sm">
+                                        <Link
+                                            href={`/parent/children/${child.id}/orders`}
+                                        >
                                             查看全部
                                             <Eye className="ml-2 h-3.5 w-3.5" />
-                                        </Button>
-                                    </Link>
+                                        </Link>
+                                    </Button>
                                 </div>
                             </CardHeader>
                             <CardContent>

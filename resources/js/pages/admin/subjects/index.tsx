@@ -67,12 +67,12 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                         title="科目管理"
                         description="管理学校科目信息，教师注册时可选"
                     />
-                    <Link href="/admin/subjects/create">
-                        <Button>
+                    <Button asChild>
+                        <Link href="/admin/subjects/create">
                             <Plus className="mr-2 h-4 w-4" />
                             添加科目
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Search */}
@@ -159,18 +159,19 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                                         </span>
                                     </div>
                                     <div className="flex gap-2 pt-2">
-                                        <Link
-                                            href={`/admin/subjects/${subject.id}/edit`}
-                                            className="flex-1"
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full"
                                         >
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="w-full"
+                                            <Link
+                                                href={`/admin/subjects/${subject.id}/edit`}
+                                                className="flex-1"
                                             >
                                                 编辑
-                                            </Button>
-                                        </Link>
+                                            </Link>
+                                        </Button>
                                     </div>
                                 </div>
                             </CardContent>
@@ -183,15 +184,15 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <BookOpen className="mb-4 h-12 w-12 text-muted-foreground/50" />
                             <p className="text-muted-foreground">暂无科目</p>
-                            <Link
-                                href="/admin/subjects/create"
-                                className="mt-4"
-                            >
-                                <Button>
+                            <Button asChild>
+                                <Link
+                                    href="/admin/subjects/create"
+                                    className="mt-4"
+                                >
                                     <Plus className="mr-2 h-4 w-4" />
                                     添加科目
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 )}

@@ -98,12 +98,12 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                                     Latest point changes in your account
                                 </CardDescription>
                             </div>
-                            <Link href="/points/history">
-                                <Button variant="outline" size="sm">
+                            <Button asChild variant="outline" size="sm">
+                                <Link href="/points/history">
                                     View All
                                     <ArrowRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </div>
                     </CardHeader>
                     <CardContent>

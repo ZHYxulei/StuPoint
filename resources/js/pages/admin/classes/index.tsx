@@ -71,12 +71,12 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                         title="班级管理"
                         description="管理学校班级、班主任和任课老师"
                     />
-                    <Link href="/admin/classes/create">
-                        <Button>
+                    <Button asChild>
+                        <Link href="/admin/classes/create">
                             <Plus className="mr-2 h-4 w-4" />
                             创建班级
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}
@@ -175,18 +175,19 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                         </span>
                                     </div>
                                     <div className="flex gap-2 pt-2">
-                                        <Link
-                                            href={`/admin/classes/${classItem.id}`}
-                                            className="flex-1"
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full"
                                         >
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="w-full"
+                                            <Link
+                                                href={`/admin/classes/${classItem.id}`}
+                                                className="flex-1"
                                             >
                                                 查看详情
-                                            </Button>
-                                        </Link>
+                                            </Link>
+                                        </Button>
                                     </div>
                                 </div>
                             </CardContent>
@@ -199,12 +200,15 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <Users2 className="mb-4 h-12 w-12 text-muted-foreground/50" />
                             <p className="text-muted-foreground">暂无班级</p>
-                            <Link href="/admin/classes/create" className="mt-4">
-                                <Button>
+                            <Button asChild>
+                                <Link
+                                    href="/admin/classes/create"
+                                    className="mt-4"
+                                >
                                     <Plus className="mr-2 h-4 w-4" />
                                     创建班级
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 )}

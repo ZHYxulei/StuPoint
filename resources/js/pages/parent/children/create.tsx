@@ -45,11 +45,11 @@ export default function ParentChildCreate() {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/parent/children">
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/parent/children">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading
                         title="绑定子女"
                         description="输入子女的学号以绑定账户"
@@ -124,19 +124,20 @@ export default function ParentChildCreate() {
                             </div>
 
                             <div className="flex gap-4">
-                                <Link
-                                    href="/parent/children"
-                                    className="flex-1"
+                                <Button
+                                    asChild
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                    disabled={processing}
                                 >
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="w-full"
-                                        disabled={processing}
+                                    <Link
+                                        href="/parent/children"
+                                        className="flex-1"
                                     >
                                         取消
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                                 <Button
                                     type="submit"
                                     className="flex-1"

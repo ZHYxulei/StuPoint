@@ -75,12 +75,12 @@ export default function ProductEdit({ product, categories }: PageProps) {
 
             <div className="max-w-2xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/products">
-                        <Button variant="outline" size="sm">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/admin/products">
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             返回
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading title={product.name} description="编辑商品信息" />
                 </div>
 
@@ -268,15 +268,19 @@ export default function ProductEdit({ product, categories }: PageProps) {
                             </div>
 
                             <div className="flex gap-4 pt-4">
-                                <Link href="/admin/products" className="flex-1">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="w-full"
+                                <Button
+                                    asChild
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full"
+                                >
+                                    <Link
+                                        href="/admin/products"
+                                        className="flex-1"
                                     >
                                         取消
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                                 <Button
                                     type="submit"
                                     disabled={processing}

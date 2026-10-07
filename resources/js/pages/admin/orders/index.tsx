@@ -419,28 +419,30 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                             </td>
                                             <td className="p-3">
                                                 <div className="flex gap-2">
-                                                    <Link
-                                                        href={`/admin/orders/${order.id}`}
+                                                    <Button
+                                                        asChild
+                                                        variant="outline"
+                                                        size="sm"
                                                     >
+                                                        <Link
+                                                            href={`/admin/orders/${order.id}`}
+                                                        >
+                                                            查看详情
+                                                        </Link>
+                                                    </Button>
+                                                    {order.status ===
+                                                        'pending' && (
                                                         <Button
+                                                            asChild
                                                             variant="outline"
                                                             size="sm"
                                                         >
-                                                            查看详情
-                                                        </Button>
-                                                    </Link>
-                                                    {order.status ===
-                                                        'pending' && (
-                                                        <Link
-                                                            href={`/admin/orders/${order.id}/edit`}
-                                                        >
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
+                                                            <Link
+                                                                href={`/admin/orders/${order.id}/edit`}
                                                             >
                                                                 更新状态
-                                                            </Button>
-                                                        </Link>
+                                                            </Link>
+                                                        </Button>
                                                     )}
                                                     {!order.verified_at &&
                                                         order.status !==

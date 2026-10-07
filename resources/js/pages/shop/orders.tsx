@@ -121,12 +121,12 @@ export default function ShopOrders({ orders, filters }: PageProps) {
                         title="My Orders"
                         description="View your order history and status"
                     />
-                    <Link href="/shop">
-                        <Button variant="outline" size="sm">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/shop">
                             <Package className="mr-2 h-4 w-4" />
                             Back to Shop
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}
@@ -303,17 +303,18 @@ export default function ShopOrders({ orders, filters }: PageProps) {
                                                             }
                                                         </Badge>
                                                     )}
-                                                    <Link
-                                                        href={`/shop/orders/${order.id}`}
+                                                    <Button
+                                                        asChild
+                                                        variant="outline"
+                                                        size="sm"
                                                     >
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
+                                                        <Link
+                                                            href={`/shop/orders/${order.id}`}
                                                         >
                                                             <Eye className="mr-2 h-4 w-4" />
                                                             View Details
-                                                        </Button>
-                                                    </Link>
+                                                        </Link>
+                                                    </Button>
                                                 </div>
                                             </div>
                                         </div>

@@ -93,11 +93,11 @@ export default function UserTransactions({
             <div className="space-y-6 p-4">
                 {/* Header */}
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/users/statistics">
-                        <Button variant="outline" size="icon">
+                    <Button asChild variant="outline" size="icon">
+                        <Link href="/admin/users/statistics">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <div className="flex-1">
                         <Heading
                             title={`${user.name} 的交易记录`}

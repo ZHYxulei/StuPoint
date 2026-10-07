@@ -147,11 +147,11 @@ export default function CreateUser({
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/users">
-                        <Button variant="outline" size="icon">
+                    <Button asChild variant="outline" size="icon">
+                        <Link href="/admin/users">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading title="添加用户" description="创建新的用户账户" />
                 </div>
 
@@ -712,11 +712,9 @@ export default function CreateUser({
                                     <Save className="mr-2 h-4 w-4" />
                                     创建用户
                                 </Button>
-                                <Link href="/admin/users">
-                                    <Button type="button" variant="outline">
-                                        取消
-                                    </Button>
-                                </Link>
+                                <Button asChild type="button" variant="outline">
+                                    <Link href="/admin/users">取消</Link>
+                                </Button>
                             </div>
                         </form>
                     </CardContent>

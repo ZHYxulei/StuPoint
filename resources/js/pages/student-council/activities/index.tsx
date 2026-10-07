@@ -98,12 +98,12 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                         title="活动列表"
                         description={`共 ${activities.total} 个活动`}
                     />
-                    <Link href="/student-council/activities/create">
-                        <Button>
+                    <Button asChild>
+                        <Link href="/student-council/activities/create">
                             <Plus className="mr-2 h-4 w-4" />
                             创建活动
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}
@@ -223,28 +223,30 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                                                     </div>
                                                 </div>
                                                 <div className="ml-4 flex gap-2">
-                                                    <Link
-                                                        href={`/student-council/activities/${activity.id}`}
+                                                    <Button
+                                                        asChild
+                                                        size="sm"
+                                                        variant="outline"
                                                     >
+                                                        <Link
+                                                            href={`/student-council/activities/${activity.id}`}
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Link>
+                                                    </Button>
+                                                    {activity.status !==
+                                                        'closed' && (
                                                         <Button
+                                                            asChild
                                                             size="sm"
                                                             variant="outline"
                                                         >
-                                                            <Eye className="h-4 w-4" />
-                                                        </Button>
-                                                    </Link>
-                                                    {activity.status !==
-                                                        'closed' && (
-                                                        <Link
-                                                            href={`/student-council/activities/${activity.id}/edit`}
-                                                        >
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
+                                                            <Link
+                                                                href={`/student-council/activities/${activity.id}/edit`}
                                                             >
                                                                 <Edit className="h-4 w-4" />
-                                                            </Button>
-                                                        </Link>
+                                                            </Link>
+                                                        </Button>
                                                     )}
                                                 </div>
                                             </div>

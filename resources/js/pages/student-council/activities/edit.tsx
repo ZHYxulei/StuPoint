@@ -67,11 +67,13 @@ export default function EditActivity({ activity }: PageProps) {
 
             <div className="mx-auto max-w-3xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href={`/student-council/activities/${activity.id}`}>
-                        <Button variant="ghost" size="icon">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link
+                            href={`/student-council/activities/${activity.id}`}
+                        >
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading title="编辑活动" description="修改活动信息" />
                 </div>
 
@@ -283,13 +285,13 @@ export default function EditActivity({ activity }: PageProps) {
                         <Button type="submit" disabled={processing}>
                             保存修改
                         </Button>
-                        <Link
-                            href={`/student-council/activities/${activity.id}`}
-                        >
-                            <Button type="button" variant="outline">
+                        <Button asChild type="button" variant="outline">
+                            <Link
+                                href={`/student-council/activities/${activity.id}`}
+                            >
                                 取消
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                     </div>
                 </form>
             </div>

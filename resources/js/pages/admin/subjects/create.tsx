@@ -43,11 +43,11 @@ export default function CreateSubject() {
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/subjects">
-                        <Button variant="outline" size="icon">
+                    <Button asChild variant="outline" size="icon">
+                        <Link href="/admin/subjects">
                             <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <Heading title="添加科目" description="创建新的科目信息" />
                 </div>
 
@@ -156,11 +156,9 @@ export default function CreateSubject() {
                                     <Save className="mr-2 h-4 w-4" />
                                     保存科目
                                 </Button>
-                                <Link href="/admin/subjects">
-                                    <Button type="button" variant="outline">
-                                        取消
-                                    </Button>
-                                </Link>
+                                <Button asChild type="button" variant="outline">
+                                    <Link href="/admin/subjects">取消</Link>
+                                </Button>
                             </div>
                         </form>
                     </CardContent>
