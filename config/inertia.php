@@ -16,8 +16,12 @@ return [
     */
 
     'ssr' => [
-        'enabled' => true,
-        'url' => 'http://127.0.0.1:13714',
+        // When enabled, every Inertia response blocks on the SSR server. In
+        // development that server is the Vite dev server, so a stopped Vite
+        // (or a leftover public/hot) makes each page wait for the client
+        // timeout — 30 seconds, which is PHP's whole request budget.
+        'enabled' => env('INERTIA_SSR_ENABLED', true),
+        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:13714'),
         // 'bundle' => base_path('bootstrap/ssr/ssr.mjs'),
     ],
 
