@@ -1,12 +1,10 @@
 import { Head } from '@inertiajs/react';
-import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const languages = [
-    { code: 'zh', name: '简体中文', flag: '🇨🇳' },
+    { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
     { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
 ];
 
 export default function InstallLanguage() {
@@ -49,7 +47,9 @@ export default function InstallLanguage() {
                                             type="radio"
                                             name="locale"
                                             value={lang.code}
-                                            defaultChecked={lang.code === 'zh'}
+                                            defaultChecked={
+                                                lang.code === 'zh-CN'
+                                            }
                                             className="h-5 w-5"
                                         />
                                         <span className="text-2xl">
@@ -58,10 +58,6 @@ export default function InstallLanguage() {
                                         <div className="flex-1">
                                             <div className="font-semibold text-foreground">
                                                 {lang.name}
-                                            </div>
-                                            <div className="text-xs text-muted-foreground">
-                                                {lang.code === 'zh' &&
-                                                    '简体中文'}
                                             </div>
                                         </div>
                                     </label>

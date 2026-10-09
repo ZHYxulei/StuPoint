@@ -92,7 +92,7 @@ export default function Dashboard({
                             <Card className="relative overflow-hidden border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
-                                        {t('total_users')}
+                                        {t('dashboard.total_users')}
                                     </CardTitle>
                                     <Users className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
@@ -109,7 +109,7 @@ export default function Dashboard({
                             <Card className="relative overflow-hidden border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
-                                        {t('today_added')}
+                                        {t('dashboard.today_added')}
                                     </CardTitle>
                                     <TrendingUp className="h-4 w-4 text-success" />
                                 </CardHeader>
@@ -126,7 +126,7 @@ export default function Dashboard({
                             <Card className="relative overflow-hidden border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
-                                        {t('today_deducted')}
+                                        {t('dashboard.today_deducted')}
                                     </CardTitle>
                                     <TrendingDown className="h-4 w-4 text-destructive" />
                                 </CardHeader>
@@ -143,7 +143,7 @@ export default function Dashboard({
                             <Card className="relative overflow-hidden border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
-                                        {t('today_transactions')}
+                                        {t('dashboard.today_transactions')}
                                     </CardTitle>
                                     <Activity className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
@@ -166,7 +166,7 @@ export default function Dashboard({
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Coins className="h-5 w-5 text-primary" />
-                                {t('your_points')}
+                                {t('dashboard.your_points')}
                             </CardTitle>
                             <CardDescription>您的积分概览</CardDescription>
                         </CardHeader>
@@ -176,7 +176,7 @@ export default function Dashboard({
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm text-muted-foreground">
-                                                {t('total_points')}
+                                                {t('dashboard.total_points')}
                                             </span>
                                             <span className="text-lg font-bold text-primary">
                                                 {userPoints.total_points.toLocaleString()}
@@ -192,7 +192,9 @@ export default function Dashboard({
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm text-muted-foreground">
-                                                {t('redeemable_points')}
+                                                {t(
+                                                    'dashboard.redeemable_points',
+                                                )}
                                             </span>
                                             <span className="text-lg font-bold text-success">
                                                 {userPoints.redeemable_points.toLocaleString()}
@@ -225,7 +227,7 @@ export default function Dashboard({
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Trophy className="h-5 w-5 text-warning" />
-                                    {t('top_10_users')}
+                                    {t('dashboard.top_10_users')}
                                 </CardTitle>
                                 <CardDescription>积分排行榜</CardDescription>
                             </CardHeader>
@@ -290,7 +292,7 @@ export default function Dashboard({
                             <div>
                                 <CardTitle className="flex items-center gap-2">
                                     <Activity className="h-5 w-5 text-primary" />
-                                    {t('recent_transactions')}
+                                    {t('dashboard.recent_transactions')}
                                 </CardTitle>
                                 <CardDescription>
                                     {canViewGlobalDashboard

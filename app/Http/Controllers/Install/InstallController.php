@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\Locale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
 class InstallController extends Controller
@@ -40,11 +42,11 @@ class InstallController extends Controller
     public function storeLanguage(Request $request)
     {
         $validated = $request->validate([
-            'locale' => 'required|in:zh,en,ja',
+            'locale' => ['required', Rule::in(Locale::supported())],
         ]);
 
         // Store locale in session
-        session(['install_locale' => $validated['locale']]);
+        session(['install_locale' => Locale::normalize($validated['locale'])]);
 
         return redirect()->route('install.check');
     }
@@ -54,7 +56,7 @@ class InstallController extends Controller
      */
     public function check()
     {
-        $locale = session('install_locale', 'zh');
+        $locale = session('install_locale', Locale::DEFAULT);
         $requirements = $this->getRequirements();
 
         return inertia('install/check', [
@@ -68,7 +70,7 @@ class InstallController extends Controller
      */
     public function checkEnvironment(Request $request)
     {
-        $locale = $request->input('locale', 'zh');
+        $locale = Locale::normalize($request->input('locale'));
 
         return response()->json([
             'requirements' => $this->getRequirements(),
@@ -330,7 +332,7 @@ class InstallController extends Controller
             'form' => $this->getInstallDraft('site', [
                 'app_name' => '学生积分管理系统',
                 'app_url' => config('app.url', 'http://localhost:8000'),
-                'locale' => session('install_locale', 'zh'),
+                'locale' => session('install_locale', Locale::DEFAULT),
                 'class_points_mode' => 'avg',
             ]),
         ]);
@@ -344,19 +346,19 @@ class InstallController extends Controller
         $validated = $request->validate([
             'app_name' => 'required|string|max:255',
             'app_url' => 'required|url',
-            'locale' => 'required|in:zh,en,ja',
+            'locale' => ['required', Rule::in(Locale::supported())],
             'class_points_mode' => 'required|in:avg,sum,separate',
         ]);
 
         $siteDraft = [
             'app_name' => $validated['app_name'],
             'app_url' => $validated['app_url'],
-            'locale' => $validated['locale'],
+            'locale' => Locale::normalize($validated['locale']),
             'class_points_mode' => $validated['class_points_mode'],
         ];
 
         $this->putInstallDraft('site', $siteDraft);
-        session(['install_locale' => $validated['locale']]);
+        session(['install_locale' => Locale::normalize($validated['locale'])]);
 
         return redirect()->route('install.account');
     }

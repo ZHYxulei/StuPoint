@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Listeners\LogUserLogin;
 use App\Models\User;
 use App\Policies\UserPolicy;
+use App\Services\Locale;
 use App\Services\MailConfigService;
 use App\Services\SettingsService;
 use Carbon\CarbonImmutable;
@@ -79,10 +80,16 @@ class AppServiceProvider extends ServiceProvider
 
     protected function configureLocale(): void
     {
+        // Canonicalise before anything reads it: the installer and older
+        // `.env` files write the bare `zh`, while the frontend bundles are
+        // keyed `zh-CN`. This also feeds `<html lang>` in app.blade.php.
+        $locale = Locale::normalize(config('app.locale'));
+        App::setLocale($locale);
+
         if (class_exists('Inertia\Inertia')) {
             Inertia::share(array_merge([
-                'locale' => App::getLocale(),
-                'fallback_locale' => config('app.fallback_locale'),
+                'locale' => $locale,
+                'fallback_locale' => Locale::normalize(config('app.fallback_locale')),
             ], $this->getSharedSettings()));
         }
     }
