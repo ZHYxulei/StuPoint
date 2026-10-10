@@ -21,6 +21,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { dashboard, login, register, ranking } from '@/routes';
 import type { SharedData } from '@/types';
@@ -29,23 +30,25 @@ export interface PublicNavbarProps {
     className?: string;
 }
 
-const publicNavigation = [
-    { label: '主页', href: '/', icon: Home },
-    { label: '积分排行', href: ranking(), icon: Trophy },
-];
-
-const accountNavigation = [
-    { label: '仪表盘', href: dashboard(), icon: LayoutDashboard },
-    { label: '账户信息', href: '/profile', icon: User },
-    { label: '编辑账户', href: '/settings/profile', icon: User },
-];
-
 export default function PublicNavbar({ className }: PublicNavbarProps) {
     const { auth, siteSettings } = usePage<SharedData>().props;
     const user = auth.user;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const mobileMenuId = useId();
     const displayName = user ? user.nickname || user.name : '';
+
+    // Built inside the component on purpose: at module scope these would be
+    // evaluated on import, before the locale is known, and frozen forever.
+    const publicNavigation = [
+        { label: t('nav.home'), href: '/', icon: Home },
+        { label: t('nav.ranking'), href: ranking(), icon: Trophy },
+    ];
+
+    const accountNavigation = [
+        { label: t('nav.dashboard'), href: dashboard(), icon: LayoutDashboard },
+        { label: t('nav.account'), href: '/profile', icon: User },
+        { label: t('nav.edit_account'), href: '/settings/profile', icon: User },
+    ];
 
     return (
         <nav
@@ -63,7 +66,7 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                         S
                     </span>
                     <span className="truncate">
-                        {siteSettings?.site_name || '学生积分管理系统'}
+                        {siteSettings?.site_name || t('common.app_name')}
                     </span>
                 </Link>
 
@@ -120,7 +123,7 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                                         className="w-full"
                                     >
                                         <LogOut className="size-4" />
-                                        登出
+                                        {t('nav.logout')}
                                     </Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -130,13 +133,13 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                             <Button asChild variant="ghost">
                                 <Link href={login()}>
                                     <LogIn className="size-4" />
-                                    登录
+                                    {t('nav.login')}
                                 </Link>
                             </Button>
                             <Button asChild>
                                 <Link href={register()}>
                                     <UserPlus className="size-4" />
-                                    注册
+                                    {t('nav.register')}
                                 </Link>
                             </Button>
                         </>
@@ -149,7 +152,9 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                     size="icon"
                     className="ml-auto md:hidden"
                     aria-label={
-                        mobileMenuOpen ? '关闭导航菜单' : '打开导航菜单'
+                        mobileMenuOpen
+                            ? t('nav.close_menu')
+                            : t('nav.open_menu')
                     }
                     aria-expanded={mobileMenuOpen}
                     aria-controls={mobileMenuId}
@@ -219,7 +224,7 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                                         className="w-full"
                                     >
                                         <LogOut className="size-4" />
-                                        登出
+                                        {t('nav.logout')}
                                     </Link>
                                 </Button>
                             </>
@@ -232,13 +237,13 @@ export default function PublicNavbar({ className }: PublicNavbarProps) {
                                 >
                                     <Link href={login()}>
                                         <LogIn className="size-4" />
-                                        登录
+                                        {t('nav.login')}
                                     </Link>
                                 </Button>
                                 <Button asChild className="justify-start">
                                     <Link href={register()}>
                                         <UserPlus className="size-4" />
-                                        注册
+                                        {t('nav.register')}
                                     </Link>
                                 </Button>
                             </>

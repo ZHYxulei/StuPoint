@@ -2,7 +2,7 @@ import { Send } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { t } from '@/lib/i18n';
 
 interface SmsVerificationProps {
     phone: string;
@@ -20,11 +20,15 @@ export default function SmsVerification({
     const [verifying, setVerifying] = useState(false);
     const [countdown, setCountdown] = useState(0);
     const [message, setMessage] = useState('');
+    // Tracked explicitly rather than inferred from the message text: the text
+    // is now translated, so sniffing it for a word would break in English.
+    const [succeeded, setSucceeded] = useState<boolean | null>(null);
 
     const handleSendCode = useCallback(async () => {
         if (!phone || countdown > 0) return;
         setSending(true);
         setMessage('');
+        setSucceeded(null);
 
         try {
             const res = await fetch('/api/verification/send', {
@@ -39,7 +43,11 @@ export default function SmsVerification({
                 body: JSON.stringify({ phone, type }),
             });
             const data = await res.json();
-            setMessage(data.message || (data.success ? '已发送' : '发送失败'));
+            setMessage(
+                data.message ||
+                    (data.success ? t('sms.sent') : t('sms.send_failed')),
+            );
+            setSucceeded(Boolean(data.success));
             if (data.success) {
                 setCountdown(60);
                 const timer = setInterval(() => {
@@ -53,7 +61,8 @@ export default function SmsVerification({
                 }, 1000);
             }
         } catch {
-            setMessage('网络错误');
+            setMessage(t('sms.network_error'));
+            setSucceeded(false);
         } finally {
             setSending(false);
         }
@@ -63,6 +72,7 @@ export default function SmsVerification({
         if (!code || code.length !== 6) return;
         setVerifying(true);
         setMessage('');
+        setSucceeded(null);
 
         try {
             const res = await fetch('/api/verification/verify', {
@@ -78,11 +88,14 @@ export default function SmsVerification({
             });
             const data = await res.json();
             setMessage(
-                data.message || (data.success ? '验证成功' : '验证失败'),
+                data.message ||
+                    (data.success ? t('sms.verified') : t('sms.verify_failed')),
             );
+            setSucceeded(Boolean(data.success));
             if (data.success) onVerified();
         } catch {
-            setMessage('网络错误');
+            setMessage(t('sms.network_error'));
+            setSucceeded(false);
         } finally {
             setVerifying(false);
         }
@@ -95,7 +108,7 @@ export default function SmsVerification({
                     <Input
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                        placeholder="6位验证码"
+                        placeholder={t('sms.code_placeholder')}
                         maxLength={6}
                     />
                 </div>
@@ -120,12 +133,12 @@ export default function SmsVerification({
                     disabled={verifying}
                     className="w-full"
                 >
-                    {verifying ? '验证中...' : '确认验证码'}
+                    {verifying ? t('sms.verifying') : t('sms.confirm')}
                 </Button>
             )}
             {message && (
                 <p
-                    className={`text-xs ${message.includes('成功') ? 'text-success' : 'text-destructive'}`}
+                    className={`text-xs ${succeeded ? 'text-success' : 'text-destructive'}`}
                 >
                     {message}
                 </p>

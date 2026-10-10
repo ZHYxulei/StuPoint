@@ -24,6 +24,46 @@ export default {
         view: '查看',
         back: '返回',
         unknown: '未知',
+        app_name: '学生积分管理系统',
+        pagination_label: '分页导航',
+        previous: '上一页',
+        next: '下一页',
+        page_of: '第 {{page}} 页',
+    },
+
+    // Sidebar and public navigation labels.
+    nav: {
+        dashboard: '仪表盘',
+        my_points: '我的积分',
+        shop: '商城',
+        parent_center: '家长中心',
+        student_council: '学生会',
+        council_panel: '管理面板',
+        user_management: '用户管理',
+        approvals: '注册审批',
+        user_statistics: '用户统计',
+        quick_grading: '快速加分',
+        user_list: '用户列表',
+        point_history: '积分记录',
+        system_operations: '系统操作',
+        products: '商品管理',
+        orders: '订单管理',
+        classes: '班级管理',
+        subjects: '科目管理',
+        plugins: '插件管理',
+        settings: '系统设置',
+        repository: '代码仓库',
+        docs: '文档',
+        about: '关于',
+        home: '主页',
+        ranking: '积分排行',
+        account: '账户信息',
+        edit_account: '编辑账户',
+        login: '登录',
+        register: '注册',
+        logout: '登出',
+        open_menu: '打开导航菜单',
+        close_menu: '关闭导航菜单',
     },
 
     // Shared status labels. Kept top-level so every module reads the same
@@ -114,7 +154,44 @@ export default {
         appearance: {
             language: '语言',
             language_description: '切换界面语言，立即生效',
+            mode: '模式',
+            mode_light: '浅色',
+            mode_dark: '深色',
+            mode_system: '跟随系统',
+            theme_color: '主题颜色',
+            theme_help:
+                '颜色会保存到本地（localStorage）并同步到 Cookie，刷新/SSR 也能保持。',
+            color: {
+                emerald: '翠绿',
+                teal: '青绿',
+                blue: '蓝色',
+                indigo: '靛蓝',
+                violet: '紫罗兰',
+                rose: '玫红',
+                amber: '琥珀',
+                slate: '石板灰',
+            },
         },
+    },
+
+    // SMS verification widget.
+    sms: {
+        sent: '已发送',
+        send_failed: '发送失败',
+        network_error: '网络错误',
+        verified: '验证成功',
+        verify_failed: '验证失败',
+        code_placeholder: '6位验证码',
+        verifying: '验证中...',
+        confirm: '确认验证码',
+    },
+
+    // Installer
+    install: {
+        progress: '安装进度，第 {{current}} 步，共 {{total}} 步',
+        step_completed: '已完成',
+        step_current: '当前步骤',
+        step_pending: '未开始',
     },
 
     // Errors

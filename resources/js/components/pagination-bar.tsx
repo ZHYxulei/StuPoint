@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 export interface LaravelPaginationLink {
@@ -35,7 +36,7 @@ export default function PaginationBar({
 
     return (
         <nav
-            aria-label="分页导航"
+            aria-label={t('common.pagination_label')}
             className={cn('mt-6 flex justify-center gap-1', className)}
         >
             {links.map((link, index) => {
@@ -53,9 +54,9 @@ export default function PaginationBar({
                             className="min-w-9 px-2"
                             aria-label={
                                 isPrev
-                                    ? '上一页'
+                                    ? t('common.previous')
                                     : isNext
-                                      ? '下一页'
+                                      ? t('common.next')
                                       : undefined
                             }
                         >
@@ -85,10 +86,10 @@ export default function PaginationBar({
                         aria-current={link.active ? 'page' : undefined}
                         aria-label={
                             isPrev
-                                ? '上一页'
+                                ? t('common.previous')
                                 : isNext
-                                  ? '下一页'
-                                  : `第 ${text} 页`
+                                  ? t('common.next')
+                                  : t('common.page_of', { page: text })
                         }
                         onClick={() => {
                             if (link.url) {

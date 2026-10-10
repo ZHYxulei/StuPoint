@@ -3,6 +3,7 @@ import { Monitor, Moon, Palette, Sun } from 'lucide-react';
 import type { HTMLAttributes } from 'react';
 import type { Appearance, ThemeColor } from '@/hooks/use-appearance';
 import { useAppearance } from '@/hooks/use-appearance';
+import { t, type TranslationKey } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 export default function AppearanceToggleTab({
@@ -12,29 +13,85 @@ export default function AppearanceToggleTab({
     const { appearance, updateAppearance, themeColor, updateThemeColor } =
         useAppearance();
 
-    const tabs: { value: Appearance; icon: LucideIcon; label: string }[] = [
-        { value: 'light', icon: Sun, label: 'Light' },
-        { value: 'dark', icon: Moon, label: 'Dark' },
-        { value: 'system', icon: Monitor, label: 'System' },
+    const tabs: {
+        value: Appearance;
+        icon: LucideIcon;
+        labelKey: TranslationKey;
+    }[] = [
+        {
+            value: 'light',
+            icon: Sun,
+            labelKey: 'settings.appearance.mode_light',
+        },
+        {
+            value: 'dark',
+            icon: Moon,
+            labelKey: 'settings.appearance.mode_dark',
+        },
+        {
+            value: 'system',
+            icon: Monitor,
+            labelKey: 'settings.appearance.mode_system',
+        },
     ];
 
-    const colors: { value: ThemeColor; label: string; swatch: string }[] = [
-        { value: 'emerald', label: '翠绿', swatch: 'bg-emerald-500' },
-        { value: 'teal', label: '青绿', swatch: 'bg-teal-500' },
-        { value: 'blue', label: '蓝色', swatch: 'bg-blue-500' },
-        { value: 'indigo', label: '靛蓝', swatch: 'bg-indigo-500' },
-        { value: 'violet', label: '紫罗兰', swatch: 'bg-violet-500' },
-        { value: 'rose', label: '玫红', swatch: 'bg-rose-500' },
-        { value: 'amber', label: '琥珀', swatch: 'bg-amber-500' },
-        { value: 'slate', label: '石板灰', swatch: 'bg-slate-500' },
+    // Keys are spelled out rather than built from `value` so the compiler can
+    // check them; a template literal would defeat the TranslationKey union.
+    const colors: {
+        value: ThemeColor;
+        labelKey: TranslationKey;
+        swatch: string;
+    }[] = [
+        {
+            value: 'emerald',
+            labelKey: 'settings.appearance.color.emerald',
+            swatch: 'bg-emerald-500',
+        },
+        {
+            value: 'teal',
+            labelKey: 'settings.appearance.color.teal',
+            swatch: 'bg-teal-500',
+        },
+        {
+            value: 'blue',
+            labelKey: 'settings.appearance.color.blue',
+            swatch: 'bg-blue-500',
+        },
+        {
+            value: 'indigo',
+            labelKey: 'settings.appearance.color.indigo',
+            swatch: 'bg-indigo-500',
+        },
+        {
+            value: 'violet',
+            labelKey: 'settings.appearance.color.violet',
+            swatch: 'bg-violet-500',
+        },
+        {
+            value: 'rose',
+            labelKey: 'settings.appearance.color.rose',
+            swatch: 'bg-rose-500',
+        },
+        {
+            value: 'amber',
+            labelKey: 'settings.appearance.color.amber',
+            swatch: 'bg-amber-500',
+        },
+        {
+            value: 'slate',
+            labelKey: 'settings.appearance.color.slate',
+            swatch: 'bg-slate-500',
+        },
     ];
 
     return (
         <div className={cn('space-y-4', className)} {...props}>
             <div>
-                <div className="mb-2 text-sm font-medium">模式</div>
+                <div className="mb-2 text-sm font-medium">
+                    {t('settings.appearance.mode')}
+                </div>
                 <div className="inline-flex gap-1 rounded-lg bg-muted p-1">
-                    {tabs.map(({ value, icon: Icon, label }) => (
+                    {tabs.map(({ value, icon: Icon, labelKey }) => (
                         <button
                             key={value}
                             onClick={() => updateAppearance(value)}
@@ -46,7 +103,9 @@ export default function AppearanceToggleTab({
                             )}
                         >
                             <Icon className="-ml-1 h-4 w-4" />
-                            <span className="ml-1.5 text-sm">{label}</span>
+                            <span className="ml-1.5 text-sm">
+                                {t(labelKey)}
+                            </span>
                         </button>
                     ))}
                 </div>
@@ -55,7 +114,7 @@ export default function AppearanceToggleTab({
             <div>
                 <div className="mb-2 flex items-center gap-2 text-sm font-medium">
                     <Palette className="h-4 w-4" />
-                    主题颜色
+                    {t('settings.appearance.theme_color')}
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {colors.map((c) => (
@@ -79,13 +138,12 @@ export default function AppearanceToggleTab({
                                         : 'ring-transparent group-hover:ring-primary/40',
                                 )}
                             />
-                            {c.label}
+                            {t(c.labelKey)}
                         </button>
                     ))}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                    颜色会保存到本地（localStorage）并同步到 Cookie，刷新/SSR
-                    也能保持。
+                    {t('settings.appearance.theme_help')}
                 </p>
             </div>
         </div>

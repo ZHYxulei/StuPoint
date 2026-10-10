@@ -45,6 +45,7 @@ import {
     SidebarGroupContent,
     SidebarSeparator,
 } from '@/components/ui/sidebar';
+import { t } from '@/lib/i18n';
 import { dashboard } from '@/routes';
 import type { SharedData } from '@/types';
 import AppLogo from './app-logo';
@@ -132,7 +133,7 @@ export function AppSidebar() {
                                 <SidebarMenuButton asChild>
                                     <Link href={dashboard()}>
                                         <LayoutGrid className="h-4 w-4" />
-                                        <span>仪表盘</span>
+                                        <span>{t('nav.dashboard')}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -140,7 +141,7 @@ export function AppSidebar() {
                                 <SidebarMenuButton asChild>
                                     <Link href="/points">
                                         <Coins className="h-4 w-4" />
-                                        <span>我的积分</span>
+                                        <span>{t('nav.my_points')}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -148,7 +149,7 @@ export function AppSidebar() {
                                 <SidebarMenuButton asChild>
                                     <Link href="/shop">
                                         <Package className="h-4 w-4" />
-                                        <span>商城</span>
+                                        <span>{t('nav.shop')}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -156,7 +157,7 @@ export function AppSidebar() {
                                 <SidebarMenuButton asChild>
                                     <Link href="/parent/children">
                                         <Baby className="h-4 w-4" />
-                                        <span>家长中心</span>
+                                        <span>{t('nav.parent_center')}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -179,7 +180,7 @@ export function AppSidebar() {
                             >
                                 <SidebarGroupLabel asChild>
                                     <CollapsibleTrigger>
-                                        <span>学生会</span>
+                                        <span>{t('nav.student_council')}</span>
                                         <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                                     </CollapsibleTrigger>
                                 </SidebarGroupLabel>
@@ -190,7 +191,11 @@ export function AppSidebar() {
                                                 <SidebarMenuSubButton asChild>
                                                     <Link href="/student-council">
                                                         <MoreHorizontal className="h-4 w-4" />
-                                                        <span>管理面板</span>
+                                                        <span>
+                                                            {t(
+                                                                'nav.council_panel',
+                                                            )}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuSubButton>
                                             </SidebarMenuSubItem>
@@ -212,7 +217,7 @@ export function AppSidebar() {
                     <SidebarGroup>
                         <SidebarGroupLabel asChild>
                             <CollapsibleTrigger>
-                                <span>用户管理</span>
+                                <span>{t('nav.user_management')}</span>
                                 <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                             </CollapsibleTrigger>
                         </SidebarGroupLabel>
@@ -225,7 +230,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/approvals">
                                                         <ShieldCheck className="h-4 w-4" />
-                                                        <span>注册审批</span>
+                                                        <span>
+                                                            {t('nav.approvals')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -233,7 +240,11 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/users/statistics">
                                                         <BarChart3 className="h-4 w-4" />
-                                                        <span>用户统计</span>
+                                                        <span>
+                                                            {t(
+                                                                'nav.user_statistics',
+                                                            )}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -241,7 +252,11 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/quick-grading">
                                                         <Zap className="h-4 w-4" />
-                                                        <span>快速加分</span>
+                                                        <span>
+                                                            {t(
+                                                                'nav.quick_grading',
+                                                            )}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -249,7 +264,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/users">
                                                         <Users className="h-4 w-4" />
-                                                        <span>用户列表</span>
+                                                        <span>
+                                                            {t('nav.user_list')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -259,7 +276,9 @@ export function AppSidebar() {
                                         <SidebarMenuButton asChild>
                                             <Link href="/points/history">
                                                 <History className="h-4 w-4" />
-                                                <span>积分记录</span>
+                                                <span>
+                                                    {t('nav.point_history')}
+                                                </span>
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -282,7 +301,9 @@ export function AppSidebar() {
                             <SidebarGroup>
                                 <SidebarGroupLabel asChild>
                                     <CollapsibleTrigger>
-                                        <span>系统操作</span>
+                                        <span>
+                                            {t('nav.system_operations')}
+                                        </span>
                                         <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                                     </CollapsibleTrigger>
                                 </SidebarGroupLabel>
@@ -293,7 +314,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/products">
                                                         <PackageSearch className="h-4 w-4" />
-                                                        <span>商品管理</span>
+                                                        <span>
+                                                            {t('nav.products')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -301,7 +324,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/orders">
                                                         <ShoppingCart className="h-4 w-4" />
-                                                        <span>订单管理</span>
+                                                        <span>
+                                                            {t('nav.orders')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -309,7 +334,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/classes">
                                                         <GraduationCap className="h-4 w-4" />
-                                                        <span>班级管理</span>
+                                                        <span>
+                                                            {t('nav.classes')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -317,7 +344,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/subjects">
                                                         <BookOpen className="h-4 w-4" />
-                                                        <span>科目管理</span>
+                                                        <span>
+                                                            {t('nav.subjects')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -325,7 +354,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/plugins">
                                                         <Puzzle className="h-4 w-4" />
-                                                        <span>插件管理</span>
+                                                        <span>
+                                                            {t('nav.plugins')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -333,7 +364,9 @@ export function AppSidebar() {
                                                 <SidebarMenuButton asChild>
                                                     <Link href="/admin/settings">
                                                         <Settings className="h-4 w-4" />
-                                                        <span>系统设置</span>
+                                                        <span>
+                                                            {t('nav.settings')}
+                                                        </span>
                                                     </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -358,7 +391,7 @@ export function AppSidebar() {
                                         rel="noopener noreferrer"
                                     >
                                         <Folder className="h-4 w-4" />
-                                        <span>代码仓库</span>
+                                        <span>{t('nav.repository')}</span>
                                     </a>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -370,7 +403,7 @@ export function AppSidebar() {
                                         rel="noopener noreferrer"
                                     >
                                         <BookOpen className="h-4 w-4" />
-                                        <span>文档</span>
+                                        <span>{t('nav.docs')}</span>
                                     </a>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -378,7 +411,7 @@ export function AppSidebar() {
                                 <SidebarMenuButton asChild>
                                     <a href="/about">
                                         <Info className="h-4 w-4" />
-                                        <span>关于</span>
+                                        <span>{t('nav.about')}</span>
                                     </a>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>

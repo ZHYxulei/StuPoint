@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react';
+import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 export type InstallStepperProps = {
@@ -18,7 +19,7 @@ export default function InstallStepper({
                 'flex items-center gap-1 overflow-x-auto pb-1 sm:gap-2',
                 className,
             )}
-            aria-label={`安装进度，第 ${current} 步，共 ${total} 步`}
+            aria-label={t('install.progress', { current, total })}
         >
             {Array.from({ length: total }, (_, index) => index + 1).map(
                 (step) => {
@@ -53,10 +54,10 @@ export default function InstallStepper({
                                 )}
                                 <span className="sr-only">
                                     {completed
-                                        ? '已完成'
+                                        ? t('install.step_completed')
                                         : active
-                                          ? '当前步骤'
-                                          : '未开始'}
+                                          ? t('install.step_current')
+                                          : t('install.step_pending')}
                                 </span>
                             </span>
                             {step < total && (

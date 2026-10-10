@@ -30,6 +30,46 @@ const en: Translations = {
         view: 'View',
         back: 'Back',
         unknown: 'Unknown',
+        app_name: 'Student Points System',
+        pagination_label: 'Pagination',
+        previous: 'Previous',
+        next: 'Next',
+        page_of: 'Page {{page}}',
+    },
+
+    // Sidebar and public navigation labels.
+    nav: {
+        dashboard: 'Dashboard',
+        my_points: 'My Points',
+        shop: 'Shop',
+        parent_center: 'Parent Centre',
+        student_council: 'Student Council',
+        council_panel: 'Management Panel',
+        user_management: 'User Management',
+        approvals: 'Registrations',
+        user_statistics: 'User Statistics',
+        quick_grading: 'Quick Grading',
+        user_list: 'Users',
+        point_history: 'Point History',
+        system_operations: 'System',
+        products: 'Products',
+        orders: 'Orders',
+        classes: 'Classes',
+        subjects: 'Subjects',
+        plugins: 'Plugins',
+        settings: 'Settings',
+        repository: 'Repository',
+        docs: 'Documentation',
+        about: 'About',
+        home: 'Home',
+        ranking: 'Ranking',
+        account: 'Account',
+        edit_account: 'Edit Account',
+        login: 'Sign in',
+        register: 'Sign up',
+        logout: 'Sign out',
+        open_menu: 'Open navigation menu',
+        close_menu: 'Close navigation menu',
     },
 
     // Shared status labels. Kept top-level so every module reads the same
@@ -122,7 +162,44 @@ const en: Translations = {
             language: 'Language',
             language_description:
                 'Switch the interface language — takes effect immediately',
+            mode: 'Mode',
+            mode_light: 'Light',
+            mode_dark: 'Dark',
+            mode_system: 'System',
+            theme_color: 'Theme colour',
+            theme_help:
+                'Colours are saved locally (localStorage) and mirrored to a cookie, so they survive refreshes and SSR.',
+            color: {
+                emerald: 'Emerald',
+                teal: 'Teal',
+                blue: 'Blue',
+                indigo: 'Indigo',
+                violet: 'Violet',
+                rose: 'Rose',
+                amber: 'Amber',
+                slate: 'Slate',
+            },
         },
+    },
+
+    // SMS verification widget.
+    sms: {
+        sent: 'Sent',
+        send_failed: 'Could not send',
+        network_error: 'Network error',
+        verified: 'Verified',
+        verify_failed: 'Verification failed',
+        code_placeholder: '6-digit code',
+        verifying: 'Verifying…',
+        confirm: 'Confirm code',
+    },
+
+    // Installer
+    install: {
+        progress: 'Install progress, step {{current}} of {{total}}',
+        step_completed: 'Completed',
+        step_current: 'Current step',
+        step_pending: 'Not started',
     },
 
     // Errors
