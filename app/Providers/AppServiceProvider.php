@@ -83,14 +83,16 @@ class AppServiceProvider extends ServiceProvider
         // Canonicalise before anything reads it: the installer and older
         // `.env` files write the bare `zh`, while the frontend bundles are
         // keyed `zh-CN`. This also feeds `<html lang>` in app.blade.php.
-        $locale = Locale::normalize(config('app.locale'));
-        App::setLocale($locale);
+        // Canonicalise before anything reads it: the installer and older
+        // `.env` files write the bare `zh`, while the frontend bundles are
+        // keyed `zh-CN`. SetLocale overrides this later in the request from the
+        // visitor's stored preference.
+        App::setLocale(Locale::normalize(config('app.locale')));
 
         if (class_exists('Inertia\Inertia')) {
-            Inertia::share(array_merge([
-                'locale' => $locale,
-                'fallback_locale' => Locale::normalize(config('app.fallback_locale')),
-            ], $this->getSharedSettings()));
+            // `locale` itself is shared by HandleInertiaRequests, which runs
+            // after SetLocale; sharing it here would freeze the boot-time value.
+            Inertia::share($this->getSharedSettings());
         }
     }
 

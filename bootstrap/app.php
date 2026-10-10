@@ -7,6 +7,7 @@ use App\Http\Middleware\EnsureApiUserIsApproved;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\InstallationMiddleware;
+use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\UseFileSessionDuringInstallation;
 use App\Http\Middleware\VerifyCaptcha;
 use Illuminate\Auth\AuthenticationException;
@@ -48,7 +49,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'registration.approved.api' => EnsureApiUserIsApproved::class,
         ]);
 
+        // Appended middleware runs after the default web group, which is what
+        // starts the session — so SetLocale must come first here to run before
+        // HandleInertiaRequests shares the locale with the client.
         $middleware->web(append: [
+            SetLocale::class,
             CheckRegistrationStatus::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,

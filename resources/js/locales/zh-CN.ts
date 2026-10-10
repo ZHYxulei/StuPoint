@@ -109,6 +109,14 @@ export default {
         exchange_failed: '兑换失败',
     },
 
+    // Settings
+    settings: {
+        appearance: {
+            language: '语言',
+            language_description: '切换界面语言，立即生效',
+        },
+    },
+
     // Errors
     errors: {
         insufficient_points: '积分不足',

@@ -116,6 +116,15 @@ const en: Translations = {
         exchange_failed: 'Exchange failed',
     },
 
+    // Settings
+    settings: {
+        appearance: {
+            language: 'Language',
+            language_description:
+                'Switch the interface language — takes effect immediately',
+        },
+    },
+
     // Errors
     errors: {
         insufficient_points: 'Insufficient points',

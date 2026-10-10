@@ -51,8 +51,10 @@ type SharedProps = {
 
 /**
  * SSR-safe props access. `window` does not exist under `renderToString`, but
- * `globalThis` resolves in both Node and the browser; `app.tsx` and `ssr.tsx`
- * both assign `globalThis.pageProps` before rendering.
+ * `globalThis` resolves in both Node and the browser.
+ *
+ * Only a fallback: `setLocale()` is the primary path, called from app.tsx on
+ * boot and on every page change, and from ssr.tsx before the single render.
  */
 function sharedProps(): SharedProps | undefined {
     return (globalThis as { pageProps?: SharedProps }).pageProps;

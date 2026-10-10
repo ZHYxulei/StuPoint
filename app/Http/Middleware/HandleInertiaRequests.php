@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\Plugin;
+use App\Services\Locale;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Middleware;
 
@@ -46,6 +48,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user?->load('roles'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            // Shared here rather than in AppServiceProvider: that runs at boot,
+            // before SetLocale has applied the visitor's stored preference.
+            'locale' => App::getLocale(),
+            'fallback_locale' => Locale::normalize(config('app.fallback_locale')),
             'old' => [
                 'install' => $request->session()->getOldInput(),
             ],

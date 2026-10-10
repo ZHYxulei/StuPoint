@@ -1,10 +1,16 @@
 <?php
 
+use App\Http\Controllers\Settings\LocaleController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// Deliberately unauthenticated: the locale is a display preference, and public
+// pages should be switchable too. CSRF-protected like any other session write.
+Route::post('settings/locale', [LocaleController::class, 'update'])
+    ->name('locale.update');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', '/settings/profile');
