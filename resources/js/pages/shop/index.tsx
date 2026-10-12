@@ -21,6 +21,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface ProductCategory {
@@ -64,18 +66,20 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Shop',
-        href: '/shop',
-    },
-];
-
 export default function ShopIndex({
     products,
     categories,
     filters,
 }: PageProps) {
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('shop.title'),
+            href: '/shop',
+        },
+    ];
+
     const { get, processing } = useForm({
         category: filters.category || 'all',
         search: filters.search || '',
@@ -91,18 +95,18 @@ export default function ShopIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Shop" />
+            <Head title={t('shop.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="Shop"
-                        description="Exchange your redeemable points for rewards"
+                        title={t('shop.title')}
+                        description={t('shop.exchange_redeemable_points')}
                     />
                     <Button asChild variant="outline" size="sm">
                         <Link href="/shop/orders">
                             <ShoppingCart className="mr-2 h-4 w-4" />
-                            My Orders
+                            {t('shop.my_orders')}
                         </Link>
                     </Button>
                 </div>
@@ -112,7 +116,7 @@ export default function ShopIndex({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
-                            Search Products
+                            {t('shop.search_products')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -121,11 +125,13 @@ export default function ShopIndex({
                             className="grid gap-4 md:grid-cols-3"
                         >
                             <div className="grid gap-2">
-                                <Label htmlFor="search">Search</Label>
+                                <Label htmlFor="search">
+                                    {t('common.search')}
+                                </Label>
                                 <Input
                                     id="search"
                                     type="text"
-                                    placeholder="Search products..."
+                                    placeholder={t('shop.search_placeholder')}
                                     value={filters.search || ''}
                                     onChange={(e) =>
                                         router.get(
@@ -143,7 +149,9 @@ export default function ShopIndex({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="category">Category</Label>
+                                <Label htmlFor="category">
+                                    {t('shop.category')}
+                                </Label>
                                 <Select
                                     value={filters.category || 'all'}
                                     onValueChange={(value) =>
@@ -163,11 +171,15 @@ export default function ShopIndex({
                                     }
                                 >
                                     <SelectTrigger id="category">
-                                        <SelectValue placeholder="All categories" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'shop.all_categories',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            All categories
+                                            {t('shop.all_categories')}
                                         </SelectItem>
                                         {categories.map((category) => (
                                             <SelectItem
@@ -188,7 +200,7 @@ export default function ShopIndex({
                                     className="w-full"
                                 >
                                     <Search className="mr-2 h-4 w-4" />
-                                    Search
+                                    {t('common.search')}
                                 </Button>
                             </div>
                         </form>
@@ -201,10 +213,10 @@ export default function ShopIndex({
                         <CardContent className="py-12 text-center">
                             <Package className="mx-auto mb-4 h-16 w-16 text-muted-foreground opacity-50" />
                             <p className="text-lg font-medium text-muted-foreground">
-                                No products found
+                                {t('errors.no_products_found')}
                             </p>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Try adjusting your search or filters
+                                {t('errors.try_adjusting_filters')}
                             </p>
                         </CardContent>
                     </Card>
@@ -232,7 +244,7 @@ export default function ShopIndex({
                                             {product.is_third_party && (
                                                 <Badge className="absolute top-2 right-2 bg-primary/90">
                                                     <Star className="mr-1 h-3 w-3" />
-                                                    Third Party
+                                                    {t('shop.third_party')}
                                                 </Badge>
                                             )}
                                             {product.stock === 0 && (
@@ -240,7 +252,7 @@ export default function ShopIndex({
                                                     variant="destructive"
                                                     className="absolute top-2 left-2"
                                                 >
-                                                    Out of Stock
+                                                    {t('shop.out_of_stock')}
                                                 </Badge>
                                             )}
                                         </div>
@@ -266,12 +278,14 @@ export default function ShopIndex({
                                     <CardContent>
                                         <CardDescription className="mb-3 line-clamp-2 h-10">
                                             {product.description ||
-                                                'No description available'}
+                                                t('shop.no_description')}
                                         </CardDescription>
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-1 font-semibold text-primary">
                                                 <Coins className="h-4 w-4" />
-                                                {product.points_required.toLocaleString()}
+                                                {formatNumber(
+                                                    product.points_required,
+                                                )}
                                             </div>
                                             <Button
                                                 asChild
@@ -282,15 +296,17 @@ export default function ShopIndex({
                                                     href={`/shop/product/${product.id}`}
                                                 >
                                                     {product.stock === 0
-                                                        ? 'Unavailable'
-                                                        : 'View'}
+                                                        ? t('shop.unavailable')
+                                                        : t('common.view')}
                                                 </Link>
                                             </Button>
                                         </div>
                                         {product.stock > 0 &&
                                             product.stock < 10 && (
                                                 <p className="mt-2 text-xs text-warning">
-                                                    Only {product.stock} left!
+                                                    {t('shop.only_x_left', {
+                                                        count: product.stock,
+                                                    })}
                                                 </p>
                                             )}
                                     </CardContent>

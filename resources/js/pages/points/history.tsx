@@ -20,6 +20,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface PointTransaction {
@@ -55,18 +57,20 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Points',
-        href: '/points',
-    },
-    {
-        title: 'History',
-        href: '/points/history',
-    },
-];
-
 export default function PointsHistory({ transactions, filters }: PageProps) {
+    // Built in the component: at module scope `t()` would run on import, before
+    // the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('points.title'),
+            href: '/points',
+        },
+        {
+            title: t('points.history'),
+            href: '/points/history',
+        },
+    ];
+
     const { get, processing } = useForm({
         type: filters.type || 'all',
         source: filters.source || '',
@@ -82,18 +86,18 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Point History" />
+            <Head title={t('points.history')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="Transaction History"
-                        description="View all your point transactions"
+                        title={t('points.transaction_history')}
+                        description={t('points.history_description')}
                     />
                     <Button asChild variant="outline" size="sm">
                         <Link href="/points">
                             <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to Points
+                            {t('points.back_to_points')}
                         </Link>
                     </Button>
                 </div>
@@ -103,7 +107,7 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Filter className="h-4 w-4" />
-                            Filter Transactions
+                            {t('points.filter_transactions')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -112,7 +116,7 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                             className="grid gap-4 md:grid-cols-3"
                         >
                             <div className="grid gap-2">
-                                <Label htmlFor="type">Type</Label>
+                                <Label htmlFor="type">{t('points.type')}</Label>
                                 <Select
                                     value={filters.type || 'all'}
                                     onValueChange={(value) =>
@@ -132,28 +136,32 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                     }
                                 >
                                     <SelectTrigger id="type">
-                                        <SelectValue placeholder="All types" />
+                                        <SelectValue
+                                            placeholder={t('points.all_types')}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            All types
+                                            {t('points.all_types')}
                                         </SelectItem>
                                         <SelectItem value="total">
-                                            Total Points
+                                            {t('points.total_points')}
                                         </SelectItem>
                                         <SelectItem value="redeemable">
-                                            Redeemable Points
+                                            {t('points.redeemable_points')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="source">Source</Label>
+                                <Label htmlFor="source">
+                                    {t('points.source')}
+                                </Label>
                                 <Input
                                     id="source"
                                     type="text"
-                                    placeholder="Search by source..."
+                                    placeholder={t('points.search_by_source')}
                                     value={filters.source || ''}
                                     onChange={(e) =>
                                         router.get(
@@ -177,7 +185,7 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                     className="w-full"
                                 >
                                     <Search className="mr-2 h-4 w-4" />
-                                    Search
+                                    {t('common.search')}
                                 </Button>
                             </div>
                         </form>
@@ -187,17 +195,20 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                 {/* Transactions List */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>Transactions</CardTitle>
+                        <CardTitle>{t('points.transactions')}</CardTitle>
                         <CardDescription>
-                            Showing {transactions.from} to {transactions.to} of{' '}
-                            {transactions.total} transactions
+                            {t('points.showing_range', {
+                                from: transactions.from ?? 0,
+                                to: transactions.to ?? 0,
+                                total: transactions.total,
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {transactions.data.length === 0 ? (
                             <div className="py-12 text-center text-muted-foreground">
                                 <Coins className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                                <p>No transactions found</p>
+                                <p>{t('points.no_transactions_found')}</p>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -232,14 +243,21 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                                         {transaction.source}
                                                     </span>
                                                     <span>•</span>
-                                                    <span className="capitalize">
-                                                        {transaction.type}
+                                                    <span>
+                                                        {transaction.type ===
+                                                        'total'
+                                                            ? t(
+                                                                  'points.total_points',
+                                                              )
+                                                            : t(
+                                                                  'points.redeemable_points',
+                                                              )}
                                                     </span>
                                                     <span>•</span>
                                                     <span>
-                                                        {new Date(
+                                                        {formatDateTime(
                                                             transaction.created_at,
-                                                        ).toLocaleString()}
+                                                        )}
                                                     </span>
                                                 </div>
                                             </div>
@@ -255,11 +273,15 @@ export default function PointsHistory({ transactions, filters }: PageProps) {
                                                 {transaction.amount > 0
                                                     ? '+'
                                                     : ''}
-                                                {transaction.amount.toLocaleString()}
+                                                {formatNumber(
+                                                    transaction.amount,
+                                                )}
                                             </p>
                                             <p className="text-sm text-muted-foreground">
-                                                Balance:{' '}
-                                                {transaction.balance_after.toLocaleString()}
+                                                {t('points.balance')}:{' '}
+                                                {formatNumber(
+                                                    transaction.balance_after,
+                                                )}
                                             </p>
                                         </div>
                                     </div>

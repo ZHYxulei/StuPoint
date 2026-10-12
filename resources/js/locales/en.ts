@@ -35,6 +35,8 @@ const en: Translations = {
         previous: 'Previous',
         next: 'Next',
         page_of: 'Page {{page}}',
+        processing: 'Processing...',
+        view_details: 'View Details',
     },
 
     // Sidebar and public navigation labels.
@@ -46,6 +48,7 @@ const en: Translations = {
         student_council: 'Student Council',
         council_panel: 'Management Panel',
         user_management: 'User Management',
+        admin: 'Admin',
         approvals: 'Registrations',
         user_statistics: 'User Statistics',
         quick_grading: 'Quick Grading',
@@ -111,8 +114,16 @@ const en: Translations = {
         filter_transactions: 'Filter Transactions',
         search_by_source: 'Search by source',
         all_types: 'All types',
-        type_total: 'Total Points',
-        type_redeemable: 'Redeemable Points',
+        total_points: 'Total Points',
+        redeemable_points: 'Redeemable Points',
+        type: 'Type',
+        source: 'Source',
+        transactions: 'Transactions',
+        index_description: 'View your point balance and recent transactions',
+        latest_changes: 'Latest point changes in your account',
+        history_description: 'View all your point transactions',
+        showing_range: 'Showing {{from}} to {{to}} of {{total}} transactions',
+        balance: 'Balance',
         no_transactions_found: 'No transactions found',
         cumulative_lifetime_points: 'Cumulative lifetime points',
         available_for_exchange: 'Available for exchange',
@@ -124,6 +135,50 @@ const en: Translations = {
         my_orders: 'My Orders',
         back_to_shop: 'Back to Shop',
         search_products: 'Search Products',
+        search_placeholder: 'Search products...',
+        category: 'Category',
+        no_description: 'No description available',
+        all_statuses: 'All statuses',
+        orders: 'Orders',
+        orders_description: 'View your order history and status',
+        orders_showing: 'Showing {{from}} to {{to}} of {{total}} orders',
+        filter_orders: 'Filter Orders',
+        order_status: 'Order Status',
+        order_prefix: 'Order',
+        product: 'Product',
+        required_to_exchange: 'Required to exchange',
+        stock_information: 'Stock Information',
+        in_stock_count: 'In Stock ({{count}} available)',
+        only_x_left_order_soon: 'Only {{count}} left! Order soon.',
+        exchange_product: 'Exchange Product',
+        enter_shipping_info:
+            'Enter your shipping information to complete the exchange',
+        order_title: 'Order {{no}}',
+        back_to_orders: 'Back to order list',
+        verification_code_title: 'Verification Code',
+        verification_code_description:
+            'Show this code to the redeeming staff to claim your item',
+        your_verification_code: 'Your verification code',
+        verification_code_expired: 'Verification code expired',
+        valid_until: 'Valid until: {{time}}',
+        verification_code_expiry_note:
+            'The verification code expires automatically every 24 hours and must be regenerated after expiry',
+        generating: 'Generating...',
+        regenerate_code: 'Regenerate verification code',
+        no_verification_code:
+            'No verification code yet — click the button below to generate one',
+        generate_code: 'Generate verification code',
+        order_verified: 'Order verified',
+        verified_at: 'Verified at: {{time}}',
+        order_completed: 'Order completed',
+        order_completed_no_code:
+            'This order is completed and no verification code can be generated',
+        order_cancelled: 'Order cancelled',
+        order_cancelled_no_code:
+            'This order is cancelled and no verification code can be generated',
+        recipient: 'Recipient',
+        contact_phone: 'Contact phone',
+        updated_at: 'Updated at',
         all_categories: 'All categories',
         product_catalog: 'Product Catalog',
         exchange_redeemable_points:
@@ -154,6 +209,36 @@ const en: Translations = {
         third_party_order: 'Third Party Order',
         exchange_successful: 'Exchange successful',
         exchange_failed: 'Exchange failed',
+    },
+
+    // Ranking
+    ranking: {
+        title: 'Points Ranking',
+        subtitle:
+            'See how students rank by points, and keep the momentum going',
+        my_rank: 'My Ranking',
+        school_ranking: 'School Ranking',
+        student_count: '{{count}} students in total',
+        you: 'You',
+        available: 'Available',
+        empty_title: 'No ranking data yet',
+        empty_description:
+            'Student rankings appear here once points are awarded.',
+    },
+
+    // About
+    about: {
+        title: 'About',
+        heading: 'About StuPoint',
+        version: 'Version',
+        commit_hash: 'Commit',
+        commit_date: 'Commit date',
+        php_version: 'PHP version',
+        laravel_version: 'Laravel version',
+        check_update: 'Check for updates',
+        check_update_description: 'See whether a newer version is available',
+        checking: 'Checking…',
+        up_to_date: 'You are on the latest version',
     },
 
     // Settings

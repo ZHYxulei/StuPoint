@@ -29,6 +29,8 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface ProductCategory {
@@ -69,74 +71,76 @@ interface PageProps {
     verification_code_expired: boolean;
 }
 
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-        icon: React.ElementType;
-        color: string;
-    }
-> = {
-    pending: {
-        label: '待处理',
-        variant: 'warning',
-        icon: Clock,
-        color: 'text-warning',
-    },
-    processing: {
-        label: '处理中',
-        variant: 'default',
-        icon: AlertCircle,
-        color: 'text-info',
-    },
-    completed: {
-        label: '已完成',
-        variant: 'success',
-        icon: CheckCircle2,
-        color: 'text-success',
-    },
-    cancelled: {
-        label: '已取消',
-        variant: 'destructive',
-        icon: XCircle,
-        color: 'text-destructive',
-    },
-    failed: {
-        label: '失败',
-        variant: 'destructive',
-        icon: XCircle,
-        color: 'text-destructive',
-    },
-};
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: '商城',
-        href: '/shop',
-    },
-    {
-        title: '我的订单',
-        href: '/shop/orders',
-    },
-    {
-        title: '订单详情',
-        href: '',
-    },
-];
-
 export default function ShopOrderDetail({
     order,
     verification_code,
     verification_code_expires_at,
     verification_code_expired,
 }: PageProps) {
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+            icon: React.ElementType;
+            color: string;
+        }
+    > = {
+        pending: {
+            label: t('status.pending'),
+            variant: 'warning',
+            icon: Clock,
+            color: 'text-warning',
+        },
+        processing: {
+            label: t('status.processing'),
+            variant: 'default',
+            icon: AlertCircle,
+            color: 'text-info',
+        },
+        completed: {
+            label: t('status.completed'),
+            variant: 'success',
+            icon: CheckCircle2,
+            color: 'text-success',
+        },
+        cancelled: {
+            label: t('status.cancelled'),
+            variant: 'destructive',
+            icon: XCircle,
+            color: 'text-destructive',
+        },
+        failed: {
+            label: t('status.failed'),
+            variant: 'destructive',
+            icon: XCircle,
+            color: 'text-destructive',
+        },
+    };
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('shop.title'),
+            href: '/shop',
+        },
+        {
+            title: t('shop.my_orders'),
+            href: '/shop/orders',
+        },
+        {
+            title: t('shop.order_details'),
+            href: '',
+        },
+    ];
+
     const [copied, setCopied] = useState(false);
     const StatusIcon = statusConfig[order.status].icon;
 
@@ -158,7 +162,7 @@ export default function ShopOrderDetail({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`订单 ${order.order_no}`} />
+            <Head title={t('shop.order_title', { no: order.order_no })} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
@@ -166,10 +170,12 @@ export default function ShopOrderDetail({
                         <Button asChild variant="ghost" size="sm">
                             <Link href="/shop/orders">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                返回订单列表
+                                {t('shop.back_to_orders')}
                             </Link>
                         </Button>
-                        <h1 className="mt-3 text-2xl font-bold">订单详情</h1>
+                        <h1 className="mt-3 text-2xl font-bold">
+                            {t('shop.order_details')}
+                        </h1>
                     </div>
                     <Badge
                         variant={statusConfig[order.status].variant}
@@ -191,10 +197,12 @@ export default function ShopOrderDetail({
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2">
                                             <Package className="h-5 w-5" />
-                                            核销验证码
+                                            {t('shop.verification_code_title')}
                                         </CardTitle>
                                         <CardDescription>
-                                            向核销人员出示此验证码以兑换商品
+                                            {t(
+                                                'shop.verification_code_description',
+                                            )}
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
@@ -202,7 +210,9 @@ export default function ShopOrderDetail({
                                             <>
                                                 <div className="rounded-lg bg-muted p-6 text-center">
                                                     <p className="mb-2 text-sm text-muted-foreground">
-                                                        您的验证码
+                                                        {t(
+                                                            'shop.your_verification_code',
+                                                        )}
                                                     </p>
                                                     <div className="flex items-center justify-center gap-4">
                                                         <p className="font-mono text-4xl font-bold tracking-wider">
@@ -229,16 +239,24 @@ export default function ShopOrderDetail({
                                                         {isCodeExpired ? (
                                                             <span className="flex items-center justify-center gap-1">
                                                                 <XCircle className="h-3 w-3" />
-                                                                验证码已过期
+                                                                {t(
+                                                                    'shop.verification_code_expired',
+                                                                )}
                                                             </span>
                                                         ) : (
                                                             <span>
-                                                                有效期至：
-                                                                {verification_code_expires_at
-                                                                    ? new Date(
-                                                                          verification_code_expires_at,
-                                                                      ).toLocaleString()
-                                                                    : '未知'}
+                                                                {t(
+                                                                    'shop.valid_until',
+                                                                    {
+                                                                        time: verification_code_expires_at
+                                                                            ? formatDateTime(
+                                                                                  verification_code_expires_at,
+                                                                              )
+                                                                            : t(
+                                                                                  'common.unknown',
+                                                                              ),
+                                                                    },
+                                                                )}
                                                             </span>
                                                         )}
                                                     </p>
@@ -247,7 +265,9 @@ export default function ShopOrderDetail({
                                                 <Alert>
                                                     <AlertCircle className="h-4 w-4" />
                                                     <AlertDescription>
-                                                        验证码每24小时自动过期，过期后需要重新生成
+                                                        {t(
+                                                            'shop.verification_code_expiry_note',
+                                                        )}
                                                     </AlertDescription>
                                                 </Alert>
 
@@ -262,15 +282,19 @@ export default function ShopOrderDetail({
                                                         className={`mr-2 h-4 w-4 ${processing ? 'animate-spin' : ''}`}
                                                     />
                                                     {processing
-                                                        ? '生成中...'
-                                                        : '重新生成验证码'}
+                                                        ? t('shop.generating')
+                                                        : t(
+                                                              'shop.regenerate_code',
+                                                          )}
                                                 </Button>
                                             </>
                                         ) : (
                                             <Alert>
                                                 <AlertCircle className="h-4 w-4" />
                                                 <AlertDescription>
-                                                    暂无验证码，点击下方按钮生成
+                                                    {t(
+                                                        'shop.no_verification_code',
+                                                    )}
                                                 </AlertDescription>
                                             </Alert>
                                         )}
@@ -285,8 +309,8 @@ export default function ShopOrderDetail({
                                                     className={`mr-2 h-4 w-4 ${processing ? 'animate-spin' : ''}`}
                                                 />
                                                 {processing
-                                                    ? '生成中...'
-                                                    : '生成验证码'}
+                                                    ? t('shop.generating')
+                                                    : t('shop.generate_code')}
                                             </Button>
                                         )}
                                     </CardContent>
@@ -301,13 +325,14 @@ export default function ShopOrderDetail({
                                         <CheckCircle2 className="h-8 w-8 text-success" />
                                         <div>
                                             <p className="font-semibold text-success-foreground">
-                                                订单已核销
+                                                {t('shop.order_verified')}
                                             </p>
                                             <p className="text-sm text-success">
-                                                核销时间：
-                                                {new Date(
-                                                    order.verified_at,
-                                                ).toLocaleString()}
+                                                {t('shop.verified_at', {
+                                                    time: formatDateTime(
+                                                        order.verified_at,
+                                                    ),
+                                                })}
                                             </p>
                                         </div>
                                     </div>
@@ -327,10 +352,14 @@ export default function ShopOrderDetail({
                                                     <CheckCircle2 className="h-8 w-8 text-success" />
                                                     <div>
                                                         <p className="font-semibold text-success-foreground">
-                                                            订单已完成
+                                                            {t(
+                                                                'shop.order_completed',
+                                                            )}
                                                         </p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            该订单已完成，无法生成验证码
+                                                            {t(
+                                                                'shop.order_completed_no_code',
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </>
@@ -339,10 +368,14 @@ export default function ShopOrderDetail({
                                                     <XCircle className="h-8 w-8 text-destructive" />
                                                     <div>
                                                         <p className="font-semibold text-destructive">
-                                                            订单已取消
+                                                            {t(
+                                                                'shop.order_cancelled',
+                                                            )}
                                                         </p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            该订单已取消，无法生成验证码
+                                                            {t(
+                                                                'shop.order_cancelled_no_code',
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </>
@@ -355,7 +388,9 @@ export default function ShopOrderDetail({
                         {/* Product Info */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>商品信息</CardTitle>
+                                <CardTitle>
+                                    {t('shop.product_information')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex gap-4">
@@ -390,8 +425,11 @@ export default function ShopOrderDetail({
                                             )}
                                             <div className="flex items-center gap-1 font-semibold text-primary">
                                                 <Coins className="h-4 w-4" />
-                                                {order.product.points_required.toLocaleString()}{' '}
-                                                积分
+                                                {formatNumber(
+                                                    order.product
+                                                        .points_required,
+                                                )}{' '}
+                                                {t('points.title')}
                                             </div>
                                         </div>
                                     </div>
@@ -402,14 +440,16 @@ export default function ShopOrderDetail({
                         {/* Shipping Info */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>收货信息</CardTitle>
+                                <CardTitle>
+                                    {t('shop.shipping_information')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-start gap-3">
                                     <User className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">
-                                            收货人
+                                            {t('shop.recipient')}
                                         </p>
                                         <p className="font-medium">
                                             {order.shipping_info.name}
@@ -421,7 +461,7 @@ export default function ShopOrderDetail({
                                     <Phone className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">
-                                            联系电话
+                                            {t('shop.contact_phone')}
                                         </p>
                                         <p className="font-medium">
                                             {order.shipping_info.phone}
@@ -433,7 +473,7 @@ export default function ShopOrderDetail({
                                     <MapPin className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">
-                                            收货地址
+                                            {t('shop.delivery_address')}
                                         </p>
                                         <p className="font-medium whitespace-pre-wrap">
                                             {order.shipping_info.address}
@@ -449,12 +489,12 @@ export default function ShopOrderDetail({
                         {/* Order Summary */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>订单摘要</CardTitle>
+                                <CardTitle>{t('shop.order_summary')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        订单号
+                                        {t('shop.order_number')}
                                     </span>
                                     <span className="font-mono font-medium">
                                         {order.order_no}
@@ -463,39 +503,35 @@ export default function ShopOrderDetail({
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        下单时间
+                                        {t('shop.order_date')}
                                     </span>
                                     <span className="text-sm">
-                                        {new Date(
-                                            order.created_at,
-                                        ).toLocaleString()}
+                                        {formatDateTime(order.created_at)}
                                     </span>
                                 </div>
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        更新时间
+                                        {t('shop.updated_at')}
                                     </span>
                                     <span className="text-sm">
-                                        {new Date(
-                                            order.updated_at,
-                                        ).toLocaleString()}
+                                        {formatDateTime(order.updated_at)}
                                     </span>
                                 </div>
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        消耗积分
+                                        {t('shop.points_spent')}
                                     </span>
                                     <div className="flex items-center gap-1 text-lg font-bold text-primary">
                                         <Coins className="h-5 w-5" />
-                                        {order.points_spent.toLocaleString()}
+                                        {formatNumber(order.points_spent)}
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        订单状态
+                                        {t('shop.order_status')}
                                     </span>
                                     <Badge
                                         variant={
@@ -515,13 +551,13 @@ export default function ShopOrderDetail({
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-base">
                                         <Package className="h-4 w-4" />
-                                        第三方订单
+                                        {t('shop.third_party_order')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-2">
                                         <p className="text-sm text-muted-foreground">
-                                            外部订单号
+                                            {t('shop.external_order_id')}
                                         </p>
                                         <p className="font-mono text-sm">
                                             {order.third_party_order_id}

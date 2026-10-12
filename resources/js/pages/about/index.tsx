@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface AboutData {
@@ -24,11 +25,6 @@ interface AboutData {
     schoolLogo: string;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '关于', href: '/about' },
-];
-
 export default function AboutIndex({
     version,
     commitHash,
@@ -38,6 +34,13 @@ export default function AboutIndex({
     schoolName,
     schoolLogo,
 }: AboutData) {
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('about.title'), href: '/about' },
+    ];
+
     const [checking, setChecking] = useState(false);
     const [checkResult, setCheckResult] = useState<{
         upToDate: boolean;
@@ -49,14 +52,14 @@ export default function AboutIndex({
         setCheckResult(null);
         // Simulated check - replace with real API call later
         setTimeout(() => {
-            setCheckResult({ upToDate: true, message: '当前已是最新版本' });
+            setCheckResult({ upToDate: true, message: t('about.up_to_date') });
             setChecking(false);
         }, 1500);
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="关于" />
+            <Head title={t('about.title')} />
 
             <div className="mx-auto max-w-2xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -65,7 +68,7 @@ export default function AboutIndex({
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
-                    <h1 className="text-2xl font-bold">关于 StuPoint</h1>
+                    <h1 className="text-2xl font-bold">{t('about.heading')}</h1>
                 </div>
 
                 {/* Logo Section */}
@@ -118,7 +121,9 @@ export default function AboutIndex({
                         <div className="flex items-center justify-between border-b border-border/50 py-2">
                             <div className="flex items-center gap-2 text-muted-foreground">
                                 <Info className="h-4 w-4" />
-                                <span className="text-sm">版本号</span>
+                                <span className="text-sm">
+                                    {t('about.version')}
+                                </span>
                             </div>
                             <span className="font-mono font-semibold">
                                 v{version}
@@ -128,7 +133,9 @@ export default function AboutIndex({
                         <div className="flex items-center justify-between border-b border-border/50 py-2">
                             <div className="flex items-center gap-2 text-muted-foreground">
                                 <GitCommitHorizontal className="h-4 w-4" />
-                                <span className="text-sm">提交哈希</span>
+                                <span className="text-sm">
+                                    {t('about.commit_hash')}
+                                </span>
                             </div>
                             <span className="rounded bg-muted px-2 py-1 font-mono text-sm">
                                 {commitHash}
@@ -137,7 +144,7 @@ export default function AboutIndex({
 
                         <div className="flex items-center justify-between border-b border-border/50 py-2">
                             <span className="text-sm text-muted-foreground">
-                                提交日期
+                                {t('about.commit_date')}
                             </span>
                             <span className="text-sm">{commitDate}</span>
                         </div>
@@ -145,7 +152,9 @@ export default function AboutIndex({
                         <div className="flex items-center justify-between border-b border-border/50 py-2">
                             <div className="flex items-center gap-2 text-muted-foreground">
                                 <Code className="h-4 w-4" />
-                                <span className="text-sm">PHP 版本</span>
+                                <span className="text-sm">
+                                    {t('about.php_version')}
+                                </span>
                             </div>
                             <span className="text-sm">{phpVersion}</span>
                         </div>
@@ -153,7 +162,9 @@ export default function AboutIndex({
                         <div className="flex items-center justify-between py-2">
                             <div className="flex items-center gap-2 text-muted-foreground">
                                 <Server className="h-4 w-4" />
-                                <span className="text-sm">Laravel 版本</span>
+                                <span className="text-sm">
+                                    {t('about.laravel_version')}
+                                </span>
                             </div>
                             <span className="text-sm">{laravelVersion}</span>
                         </div>
@@ -165,9 +176,11 @@ export default function AboutIndex({
                     <CardContent className="space-y-4 pt-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-medium">检查更新</h3>
+                                <h3 className="font-medium">
+                                    {t('about.check_update')}
+                                </h3>
                                 <p className="text-sm text-muted-foreground">
-                                    检查是否有新版本可用
+                                    {t('about.check_update_description')}
                                 </p>
                             </div>
                             <Button
@@ -175,7 +188,9 @@ export default function AboutIndex({
                                 onClick={handleCheckUpdate}
                                 disabled={checking}
                             >
-                                {checking ? '检查中...' : '检查更新'}
+                                {checking
+                                    ? t('about.checking')
+                                    : t('about.check_update')}
                             </Button>
                         </div>
 

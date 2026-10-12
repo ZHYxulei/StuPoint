@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/card';
 import { Empty } from '@/components/ui/empty';
 import PublicLayout from '@/layouts/public-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 
 interface RankingEntry {
     id: number;
@@ -102,7 +104,7 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title="积分排行榜" />
+            <Head title={t('ranking.title')} />
 
             <div className="min-h-screen bg-background">
                 {/* Hero Section */}
@@ -111,9 +113,11 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
                             <Trophy className="h-7 w-7" />
                         </div>
-                        <h1 className="mb-2 text-4xl font-bold">积分排行榜</h1>
+                        <h1 className="mb-2 text-4xl font-bold">
+                            {t('ranking.title')}
+                        </h1>
                         <p className="text-muted-foreground">
-                            查看学生积分排名，激励学习进步
+                            {t('ranking.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -125,7 +129,7 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <User className="h-5 w-5" />
-                                    我的排名
+                                    {t('ranking.my_rank')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -144,11 +148,12 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                                     </div>
                                     <div className="text-right">
                                         <div className="text-3xl font-bold text-primary">
-                                            {userRanking.total_points?.toLocaleString() ||
-                                                0}
+                                            {formatNumber(
+                                                userRanking.total_points,
+                                            ) || 0}
                                         </div>
                                         <p className="text-sm text-muted-foreground">
-                                            总积分
+                                            {t('points.total_points')}
                                         </p>
                                     </div>
                                 </div>
@@ -161,10 +166,12 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <TrendingUp className="h-5 w-5" />
-                                学校积分排名
+                                {t('ranking.school_ranking')}
                             </CardTitle>
                             <CardDescription>
-                                共 {rankings.total} 名学生
+                                {t('ranking.student_count', {
+                                    count: rankings.total,
+                                })}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -197,7 +204,9 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                                                                 variant="default"
                                                                 className="text-xs"
                                                             >
-                                                                我
+                                                                {t(
+                                                                    'ranking.you',
+                                                                )}
                                                             </Badge>
                                                         )}
                                                     </div>
@@ -209,13 +218,15 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-2xl font-bold text-primary">
-                                                    {user.total_points?.toLocaleString() ||
-                                                        0}
+                                                    {formatNumber(
+                                                        user.total_points,
+                                                    ) || 0}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground">
-                                                    可用:{' '}
-                                                    {user.redeemable_points?.toLocaleString() ||
-                                                        0}
+                                                    {t('ranking.available')}:{' '}
+                                                    {formatNumber(
+                                                        user.redeemable_points,
+                                                    ) || 0}
                                                 </p>
                                             </div>
                                         </div>
@@ -225,8 +236,10 @@ export default function RankingIndex({ rankings, userRanking }: PageProps) {
                                 {rankings.data.length === 0 && (
                                     <Empty
                                         icon={Trophy}
-                                        title="暂无排名数据"
-                                        description="积分产生后，学生排名会显示在这里。"
+                                        title={t('ranking.empty_title')}
+                                        description={t(
+                                            'ranking.empty_description',
+                                        )}
                                     />
                                 )}
                             </div>

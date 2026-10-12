@@ -31,6 +31,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface ProductCategory {
@@ -54,18 +56,20 @@ interface PageProps {
     product: Product;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Shop',
-        href: '/shop',
-    },
-    {
-        title: 'Product',
-        href: '',
-    },
-];
-
 export default function ShopProduct({ product }: PageProps) {
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('shop.title'),
+            href: '/shop',
+        },
+        {
+            title: t('shop.product'),
+            href: '',
+        },
+    ];
+
     const { data, setData, post, processing, errors, reset } = useForm({
         product_id: product.id.toString(),
         shipping_info: {
@@ -93,7 +97,7 @@ export default function ShopProduct({ product }: PageProps) {
                 <Button asChild variant="ghost" size="sm">
                     <Link href="/shop">
                         <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Shop
+                        {t('shop.back_to_shop')}
                     </Link>
                 </Button>
 
@@ -125,7 +129,7 @@ export default function ShopProduct({ product }: PageProps) {
                                 {product.is_third_party && (
                                     <Badge className="shrink-0 bg-primary/90">
                                         <Star className="mr-1 h-3 w-3" />
-                                        Third Party
+                                        {t('shop.third_party')}
                                     </Badge>
                                 )}
                             </div>
@@ -140,11 +144,11 @@ export default function ShopProduct({ product }: PageProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Coins className="h-5 w-5 text-primary" />
-                                    {product.points_required.toLocaleString()}{' '}
-                                    Points
+                                    {formatNumber(product.points_required)}{' '}
+                                    {t('points.title')}
                                 </CardTitle>
                                 <CardDescription>
-                                    Required to exchange
+                                    {t('shop.required_to_exchange')}
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -153,7 +157,7 @@ export default function ShopProduct({ product }: PageProps) {
                             <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                                 <CardHeader>
                                     <CardTitle className="text-base">
-                                        Description
+                                        {t('common.description')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
@@ -167,28 +171,32 @@ export default function ShopProduct({ product }: PageProps) {
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
                                 <CardTitle className="text-base">
-                                    Stock Information
+                                    {t('shop.stock_information')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {isInfiniteStock ? (
                                     <p className="font-medium text-success">
-                                        ✓ In Stock
+                                        ✓ {t('shop.in_stock')}
                                     </p>
                                 ) : isOutOfStock ? (
                                     <p className="font-medium text-destructive">
-                                        × Out of Stock
+                                        × {t('shop.out_of_stock')}
                                     </p>
                                 ) : (
                                     <div className="space-y-1">
                                         <p className="font-medium text-success">
-                                            ✓ In Stock ({product.stock}{' '}
-                                            available)
+                                            ✓{' '}
+                                            {t('shop.in_stock_count', {
+                                                count: product.stock,
+                                            })}
                                         </p>
                                         {product.stock < 10 && (
                                             <p className="text-sm text-warning">
-                                                Only {product.stock} left! Order
-                                                soon.
+                                                {t(
+                                                    'shop.only_x_left_order_soon',
+                                                    { count: product.stock },
+                                                )}
                                             </p>
                                         )}
                                     </div>
@@ -206,16 +214,17 @@ export default function ShopProduct({ product }: PageProps) {
                                 >
                                     <ShoppingCart className="mr-2 h-5 w-5" />
                                     {isOutOfStock
-                                        ? 'Out of Stock'
-                                        : 'Exchange Now'}
+                                        ? t('shop.out_of_stock')
+                                        : t('shop.exchange_now')}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[500px]">
                                 <DialogHeader>
-                                    <DialogTitle>Exchange Product</DialogTitle>
+                                    <DialogTitle>
+                                        {t('shop.exchange_product')}
+                                    </DialogTitle>
                                     <DialogDescription>
-                                        Enter your shipping information to
-                                        complete the exchange
+                                        {t('shop.enter_shipping_info')}
                                     </DialogDescription>
                                 </DialogHeader>
                                 <form
@@ -230,8 +239,10 @@ export default function ShopProduct({ product }: PageProps) {
                                                     {product.name}
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {product.points_required.toLocaleString()}{' '}
-                                                    points
+                                                    {formatNumber(
+                                                        product.points_required,
+                                                    )}{' '}
+                                                    {t('points.title')}
                                                 </p>
                                             </div>
                                         </div>
@@ -240,7 +251,7 @@ export default function ShopProduct({ product }: PageProps) {
                                     <div className="space-y-2">
                                         <Label htmlFor="name">
                                             <User className="mr-1 inline h-4 w-4" />
-                                            Recipient Name
+                                            {t('shop.recipient_name')}
                                         </Label>
                                         <Input
                                             id="name"
@@ -251,7 +262,9 @@ export default function ShopProduct({ product }: PageProps) {
                                                     name: e.target.value,
                                                 })
                                             }
-                                            placeholder="Enter recipient name"
+                                            placeholder={t(
+                                                'shop.enter_recipient_name',
+                                            )}
                                             required
                                         />
                                         {errors['shipping_info.name'] && (
@@ -264,7 +277,7 @@ export default function ShopProduct({ product }: PageProps) {
                                     <div className="space-y-2">
                                         <Label htmlFor="phone">
                                             <Phone className="mr-1 inline h-4 w-4" />
-                                            Phone Number
+                                            {t('shop.phone_number')}
                                         </Label>
                                         <Input
                                             id="phone"
@@ -276,7 +289,9 @@ export default function ShopProduct({ product }: PageProps) {
                                                     phone: e.target.value,
                                                 })
                                             }
-                                            placeholder="Enter phone number"
+                                            placeholder={t(
+                                                'shop.enter_phone_number',
+                                            )}
                                             required
                                         />
                                         {errors['shipping_info.phone'] && (
@@ -289,7 +304,7 @@ export default function ShopProduct({ product }: PageProps) {
                                     <div className="space-y-2">
                                         <Label htmlFor="address">
                                             <MapPin className="mr-1 inline h-4 w-4" />
-                                            Delivery Address
+                                            {t('shop.delivery_address')}
                                         </Label>
                                         <Textarea
                                             id="address"
@@ -300,7 +315,9 @@ export default function ShopProduct({ product }: PageProps) {
                                                     address: e.target.value,
                                                 })
                                             }
-                                            placeholder="Enter complete delivery address"
+                                            placeholder={t(
+                                                'shop.enter_complete_address',
+                                            )}
                                             rows={3}
                                             required
                                         />
@@ -322,7 +339,7 @@ export default function ShopProduct({ product }: PageProps) {
                                                 variant="outline"
                                                 className="flex-1"
                                             >
-                                                Cancel
+                                                {t('common.cancel')}
                                             </Button>
                                         </DialogTrigger>
                                         <Button
@@ -331,8 +348,8 @@ export default function ShopProduct({ product }: PageProps) {
                                             className="flex-1"
                                         >
                                             {processing
-                                                ? 'Processing...'
-                                                : 'Confirm Exchange'}
+                                                ? t('common.processing')
+                                                : t('shop.confirm_exchange')}
                                         </Button>
                                     </div>
                                 </form>

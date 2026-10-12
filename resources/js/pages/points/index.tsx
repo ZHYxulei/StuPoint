@@ -10,6 +10,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface UserPoint {
@@ -33,22 +35,24 @@ interface PageProps {
     recentTransactions: PointTransaction[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Points',
-        href: '/points',
-    },
-];
-
 export default function PointsIndex({ points, recentTransactions }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known.
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('points.title'),
+            href: '/points',
+        },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="My Points" />
+            <Head title={t('points.my_points')} />
 
             <div className="space-y-6 p-4">
                 <Heading
-                    title="My Points"
-                    description="View your point balance and recent transactions"
+                    title={t('points.my_points')}
+                    description={t('points.index_description')}
                 />
 
                 {/* Points Cards */}
@@ -56,16 +60,16 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Total Points
+                                {t('points.total_points')}
                             </CardTitle>
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-3xl font-bold text-primary">
-                                {points.total_points.toLocaleString()}
+                                {formatNumber(points.total_points)}
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                Cumulative lifetime points
+                                {t('points.cumulative_lifetime_points')}
                             </p>
                         </CardContent>
                     </Card>
@@ -73,16 +77,16 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Redeemable Points
+                                {t('points.redeemable_points')}
                             </CardTitle>
                             <Wallet className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-3xl font-bold text-success">
-                                {points.redeemable_points.toLocaleString()}
+                                {formatNumber(points.redeemable_points)}
                             </div>
                             <p className="mt-1 text-xs text-muted-foreground">
-                                Available for exchange
+                                {t('points.available_for_exchange')}
                             </p>
                         </CardContent>
                     </Card>
@@ -93,14 +97,16 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle>Recent Transactions</CardTitle>
+                                <CardTitle>
+                                    {t('points.recent_transactions')}
+                                </CardTitle>
                                 <CardDescription>
-                                    Latest point changes in your account
+                                    {t('points.latest_changes')}
                                 </CardDescription>
                             </div>
                             <Button asChild variant="outline" size="sm">
                                 <Link href="/points/history">
-                                    View All
+                                    {t('points.view_all')}
                                     <ArrowRight className="ml-2 h-4 w-4" />
                                 </Link>
                             </Button>
@@ -109,7 +115,7 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                     <CardContent>
                         {recentTransactions.length === 0 ? (
                             <div className="py-8 text-center text-muted-foreground">
-                                No transactions yet
+                                {t('points.no_transactions')}
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -140,9 +146,9 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                                                         transaction.source}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground">
-                                                    {new Date(
+                                                    {formatDateTime(
                                                         transaction.created_at,
-                                                    ).toLocaleString()}
+                                                    )}
                                                 </p>
                                             </div>
                                         </div>
@@ -161,8 +167,10 @@ export default function PointsIndex({ points, recentTransactions }: PageProps) {
                                             </p>
                                             <p className="text-xs text-muted-foreground">
                                                 {transaction.type === 'total'
-                                                    ? 'Total'
-                                                    : 'Redeemable'}
+                                                    ? t('points.total_points')
+                                                    : t(
+                                                          'points.redeemable_points',
+                                                      )}
                                             </p>
                                         </div>
                                     </div>
