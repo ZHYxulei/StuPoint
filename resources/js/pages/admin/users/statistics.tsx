@@ -28,6 +28,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Role {
@@ -94,17 +96,17 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '用户统计', href: '/admin/users/statistics' },
-];
-
 export default function UserStatistics({
     users,
     roles,
     stats,
     filters,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.user_statistics'), href: '/admin/users/statistics' },
+    ];
+
     const { get } = useForm({
         search: filters.search || '',
         role: filters.role || 'all',
@@ -119,13 +121,15 @@ export default function UserStatistics({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="用户积分统计" />
+            <Head title={t('admin.users.statistics_title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="用户积分统计"
-                        description="查看所有用户的积分数据和排名"
+                        title={t('admin.users.statistics_title')}
+                        description={t(
+                            'admin.users.statistics_description',
+                        )}
                     />
                 </div>
 
@@ -134,16 +138,16 @@ export default function UserStatistics({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                总用户数
+                                {t('admin.users.total_users')}
                             </CardTitle>
                             <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {stats.total_users.toLocaleString()}
+                                {formatNumber(stats.total_users)}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                系统注册用户
+                                {t('dashboard.registered_users')}
                             </p>
                         </CardContent>
                     </Card>
@@ -151,16 +155,16 @@ export default function UserStatistics({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                总积分
+                                {t('points.total_points')}
                             </CardTitle>
                             <Award className="h-4 w-4 text-primary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {stats.total_points.toLocaleString()}
+                                {formatNumber(stats.total_points)}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                累计积分总量
+                                {t('admin.users.total_points_sum')}
                             </p>
                         </CardContent>
                     </Card>
@@ -168,16 +172,16 @@ export default function UserStatistics({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                可兑换积分
+                                {t('points.redeemable_points')}
                             </CardTitle>
                             <TrendingUp className="h-4 w-4 text-success" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-success">
-                                {stats.total_redeemable.toLocaleString()}
+                                {formatNumber(stats.total_redeemable)}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                可用于兑换
+                                {t('points.available_for_exchange')}
                             </p>
                         </CardContent>
                     </Card>
@@ -185,7 +189,7 @@ export default function UserStatistics({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                积分榜首
+                                {t('admin.users.top_user')}
                             </CardTitle>
                             <BarChart3 className="h-4 w-4 text-warning" />
                         </CardHeader>
@@ -196,13 +200,16 @@ export default function UserStatistics({
                                         {stats.top_user.user.name}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        {stats.top_user.total_points.toLocaleString()}{' '}
-                                        分
+                                        {t('admin.users.points_suffix', {
+                                            count: formatNumber(
+                                                stats.top_user.total_points,
+                                            ),
+                                        })}
                                     </p>
                                 </>
                             ) : (
                                 <p className="text-sm text-muted-foreground">
-                                    暂无数据
+                                    {t('common.no_data')}
                                 </p>
                             )}
                         </CardContent>
@@ -214,7 +221,7 @@ export default function UserStatistics({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
-                            筛选条件
+                            {t('admin.users.filter_conditions')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -228,11 +235,15 @@ export default function UserStatistics({
                             className="grid gap-4 md:grid-cols-4"
                         >
                             <div className="grid gap-2">
-                                <Label htmlFor="search">搜索</Label>
+                                <Label htmlFor="search">
+                                    {t('common.search')}
+                                </Label>
                                 <Input
                                     id="search"
                                     type="text"
-                                    placeholder="姓名、邮箱或学号..."
+                                    placeholder={t(
+                                        'admin.users.search_placeholder_full',
+                                    )}
                                     value={filters.search || ''}
                                     onChange={(e) =>
                                         router.get(
@@ -250,7 +261,9 @@ export default function UserStatistics({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="role">角色</Label>
+                                <Label htmlFor="role">
+                                    {t('profile.role')}
+                                </Label>
                                 <Select
                                     value={filters.role || 'all'}
                                     onValueChange={(value) =>
@@ -270,11 +283,15 @@ export default function UserStatistics({
                                     }
                                 >
                                     <SelectTrigger id="role">
-                                        <SelectValue placeholder="所有角色" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'admin.users.all_roles',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            所有角色
+                                            {t('admin.users.all_roles')}
                                         </SelectItem>
                                         {roles.map((role) => (
                                             <SelectItem
@@ -289,7 +306,9 @@ export default function UserStatistics({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="sort_by">排序方式</Label>
+                                <Label htmlFor="sort_by">
+                                    {t('admin.users.sort_by')}
+                                </Label>
                                 <Select
                                     value={filters.sort_by || 'total_points'}
                                     onValueChange={(value) =>
@@ -310,23 +329,25 @@ export default function UserStatistics({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="total_points">
-                                            总积分
+                                            {t('points.total_points')}
                                         </SelectItem>
                                         <SelectItem value="redeemable_points">
-                                            可兑换积分
+                                            {t('points.redeemable_points')}
                                         </SelectItem>
                                         <SelectItem value="name">
-                                            姓名
+                                            {t('auth.name')}
                                         </SelectItem>
                                         <SelectItem value="created_at">
-                                            注册时间
+                                            {t('profile.registered_at')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="per_page">每页显示</Label>
+                                <Label htmlFor="per_page">
+                                    {t('admin.users.per_page')}
+                                </Label>
                                 <Select
                                     value={filters.per_page || '20'}
                                     onValueChange={(value) =>
@@ -347,16 +368,24 @@ export default function UserStatistics({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="10">
-                                            10 条
+                                            {t('admin.users.per_page_option', {
+                                                count: 10,
+                                            })}
                                         </SelectItem>
                                         <SelectItem value="20">
-                                            20 条
+                                            {t('admin.users.per_page_option', {
+                                                count: 20,
+                                            })}
                                         </SelectItem>
                                         <SelectItem value="50">
-                                            50 条
+                                            {t('admin.users.per_page_option', {
+                                                count: 50,
+                                            })}
                                         </SelectItem>
                                         <SelectItem value="100">
-                                            100 条
+                                            {t('admin.users.per_page_option', {
+                                                count: 100,
+                                            })}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -370,11 +399,14 @@ export default function UserStatistics({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <BarChart3 className="h-5 w-5" />
-                            积分排行榜
+                            {t('ranking.title')}
                         </CardTitle>
                         <CardDescription>
-                            显示 {users.from} 到 {users.to}，共 {users.total}{' '}
-                            名用户
+                            {t('admin.users.showing', {
+                                from: formatNumber(users.from),
+                                to: formatNumber(users.to),
+                                total: formatNumber(users.total),
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -451,22 +483,24 @@ export default function UserStatistics({
                                                             {widthPercentage >
                                                                 15 && (
                                                                 <span className="text-xs font-medium text-primary-foreground">
-                                                                    {totalPoints.toLocaleString()}
+                                                                    {formatNumber(
+                                                                        totalPoints,
+                                                                    )}
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
                                                     <div className="mt-1 flex items-center justify-between text-xs">
                                                         <span className="text-muted-foreground">
-                                                            总积分:{' '}
+                                                            {t('points.total_points')}:{' '}
                                                             <span className="font-semibold text-primary">
-                                                                {totalPoints.toLocaleString()}
+                                                                {formatNumber(totalPoints)}
                                                             </span>
                                                         </span>
                                                         <span className="text-muted-foreground">
-                                                            可兑换:{' '}
+                                                            {t('dashboard.redeemable')}:{' '}
                                                             <span className="font-semibold text-success">
-                                                                {redeemablePoints.toLocaleString()}
+                                                                {formatNumber(redeemablePoints)}
                                                             </span>
                                                         </span>
                                                     </div>

@@ -16,6 +16,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { formatDate } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface StatCard {
@@ -44,74 +46,76 @@ interface PageProps {
     recentActivities: RecentActivity[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '首页', href: '/' },
-    { title: '学生会', href: '/student-council' },
-];
-
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-    }
-> = {
-    draft: { label: '草稿', variant: 'secondary' },
-    active: { label: '进行中', variant: 'success' },
-    closed: { label: '已结束', variant: 'outline' },
-};
-
 export default function StudentCouncilDashboard({
     stats,
     recentActivities,
 }: PageProps) {
+    // Built inside the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.home'), href: '/' },
+        { title: t('nav.student_council'), href: '/student-council' },
+    ];
+
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+        }
+    > = {
+        draft: { label: t('council.status.draft'), variant: 'secondary' },
+        active: { label: t('council.status.active'), variant: 'success' },
+        closed: { label: t('council.status.closed'), variant: 'outline' },
+    };
+
     const statCards: StatCard[] = [
         {
-            title: '总活动数',
+            title: t('council.dashboard.total_activities'),
             value: stats.total_activities,
-            description: '已创建的活动总数',
+            description: t('council.dashboard.total_activities_description'),
             icon: Calendar,
         },
         {
-            title: '进行中活动',
+            title: t('council.dashboard.active_activities'),
             value: stats.active_activities,
-            description: '当前正在进行的活动',
+            description: t('council.dashboard.active_activities_description'),
             icon: Activity,
         },
         {
-            title: '参与人数',
+            title: t('council.dashboard.total_participants'),
             value: stats.total_participants,
-            description: '活动总参与人次',
+            description: t('council.dashboard.total_participants_description'),
             icon: Users,
         },
         {
-            title: '已发积分',
+            title: t('council.dashboard.points_awarded'),
             value: stats.points_awarded,
-            description: '通过活动发放的积分',
+            description: t('council.dashboard.points_awarded_description'),
             icon: Trophy,
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="学生会管理" />
+            <Head title={t('council.dashboard.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="学生会管理"
-                        description="管理学生会活动和积分奖励"
+                        title={t('council.dashboard.title')}
+                        description={t('council.dashboard.description')}
                     />
                     <Link href="/student-council/activities/create">
                         <button className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50">
                             <Plus className="mr-2 h-4 w-4" />
-                            创建活动
+                            {t('council.activities.create')}
                         </button>
                     </Link>
                 </div>
@@ -147,14 +151,18 @@ export default function StudentCouncilDashboard({
                 {/* Recent Activities */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>最近活动</CardTitle>
-                        <CardDescription>最近创建的5个活动</CardDescription>
+                        <CardTitle>
+                            {t('council.dashboard.recent_activities')}
+                        </CardTitle>
+                        <CardDescription>
+                            {t('council.dashboard.recent_activities_description')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {recentActivities.length === 0 ? (
                             <div className="py-8 text-center text-muted-foreground">
                                 <Activity className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                                <p>暂无活动</p>
+                                <p>{t('council.activities.empty')}</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
@@ -187,24 +195,25 @@ export default function StudentCouncilDashboard({
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {new Date(
+                                                    {formatDate(
                                                         activity.start_date,
-                                                    ).toLocaleDateString(
-                                                        'zh-CN',
                                                     )}{' '}
-                                                    ·
-                                                    {
-                                                        activity.participants_count
-                                                    }
-                                                    /{activity.max_participants}{' '}
-                                                    人参与
+                                                    ·{' '}
+                                                    {t(
+                                                        'council.activities.participants_progress',
+                                                        {
+                                                            current:
+                                                                activity.participants_count,
+                                                            max: activity.max_participants,
+                                                        },
+                                                    )}
                                                 </p>
                                             </div>
                                             <Link
                                                 href={`/student-council/activities/${activity.id}`}
                                             >
                                                 <button className="inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50">
-                                                    查看详情
+                                                    {t('common.view_details')}
                                                 </button>
                                             </Link>
                                         </div>

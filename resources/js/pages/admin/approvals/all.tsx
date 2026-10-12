@@ -10,6 +10,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Role {
@@ -46,30 +47,32 @@ interface PageProps {
     approvals: PaginatedApprovals;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '注册审批', href: '/admin/approvals' },
-    { title: '全部记录', href: '/admin/approvals/all' },
-];
-
 export default function ApprovalsAll({ approvals }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.approvals'), href: '/admin/approvals' },
+        { title: t('admin.approvals.all_records'), href: '/admin/approvals/all' },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="审批记录" />
+            <Head title={t('admin.approvals.records_head')} />
 
             <div className="space-y-6 p-4">
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>全部审批记录</CardTitle>
+                        <CardTitle>
+                            {t('admin.approvals.all_approval_records')}
+                        </CardTitle>
                         <CardDescription>
-                            显示所有未通过审批的用户
+                            {t('admin.approvals.all_records_desc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
                             {approvals.data.length === 0 ? (
                                 <div className="py-8 text-center text-muted-foreground">
-                                    暂无记录
+                                    {t('dashboard.no_records')}
                                 </div>
                             ) : (
                                 approvals.data.map((user) => (
@@ -92,9 +95,9 @@ export default function ApprovalsAll({ approvals }: PageProps) {
                                             <div className="text-xs text-muted-foreground">
                                                 {user.class?.grade?.name ||
                                                     user.grade?.name ||
-                                                    '未分配年级'}
+                                                    t('admin.approvals.no_grade')}
                                                 {user.class?.name
-                                                    ? ` · ${user.class.name}班`
+                                                    ? ` · ${t('welcome.class_name_format', { name: user.class.name })}`
                                                     : ''}
                                             </div>
                                             <div className="flex flex-wrap gap-2">
@@ -118,7 +121,7 @@ export default function ApprovalsAll({ approvals }: PageProps) {
                                                 href={`/admin/approvals/${user.id}`}
                                             >
                                                 <Eye className="mr-2 h-4 w-4" />
-                                                查看
+                                                {t('common.view')}
                                             </Link>
                                         </Button>
                                     </div>

@@ -10,6 +10,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Role {
@@ -68,39 +70,43 @@ interface PageProps {
     userRole: string | null;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '注册审批', href: '/admin/approvals' },
-];
-
 export default function ApprovalsIndex({
     approvals,
     stats,
     userRole,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.approvals'), href: '/admin/approvals' },
+    ];
+
     const roleLabel =
         userRole === 'admin'
-            ? '管理员审批'
+            ? t('admin.approvals.role_admin')
             : userRole === 'grade_director'
-              ? '年级主任审批'
+              ? t('admin.approvals.role_grade_director')
               : userRole === 'head_teacher'
-                ? '班主任审批'
-                : '审批';
+                ? t('admin.approvals.role_head_teacher')
+                : t('admin.approvals.role_generic');
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="注册审批" />
+            <Head title={t('nav.approvals')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-semibold">注册审批</h2>
+                        <h2 className="text-2xl font-semibold">
+                            {t('nav.approvals')}
+                        </h2>
                         <p className="text-sm text-muted-foreground">
                             {roleLabel}
                         </p>
                     </div>
                     <Button asChild variant="outline">
-                        <Link href="/admin/approvals/all">查看全部</Link>
+                        <Link href="/admin/approvals/all">
+                            {t('admin.approvals.view_all')}
+                        </Link>
                     </Button>
                 </div>
 
@@ -108,52 +114,52 @@ export default function ApprovalsIndex({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                待审批总数
+                                {t('admin.approvals.total_pending')}
                             </CardTitle>
                             <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {stats.total.toLocaleString()}
+                                {formatNumber(stats.total)}
                             </div>
                         </CardContent>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                学生
+                                {t('auth.roles.student')}
                             </CardTitle>
                             <ShieldAlert className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {stats.students.toLocaleString()}
+                                {formatNumber(stats.students)}
                             </div>
                         </CardContent>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                教师
+                                {t('auth.roles.teacher')}
                             </CardTitle>
                             <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {stats.teachers.toLocaleString()}
+                                {formatNumber(stats.teachers)}
                             </div>
                         </CardContent>
                     </Card>
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                学生会
+                                {t('nav.student_council')}
                             </CardTitle>
                             <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {stats.student_union_members.toLocaleString()}
+                                {formatNumber(stats.student_union_members)}
                             </div>
                         </CardContent>
                     </Card>
@@ -161,16 +167,18 @@ export default function ApprovalsIndex({
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>待审批列表</CardTitle>
+                        <CardTitle>{t('admin.approvals.pending_list')}</CardTitle>
                         <CardDescription>
-                            共 {approvals.total} 位用户等待审批
+                            {t('admin.approvals.pending_count', {
+                                count: formatNumber(approvals.total),
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
                             {approvals.data.length === 0 ? (
                                 <div className="py-8 text-center text-muted-foreground">
-                                    暂无待审批用户
+                                    {t('admin.approvals.no_pending')}
                                 </div>
                             ) : (
                                 approvals.data.map((user) => (
@@ -196,9 +204,9 @@ export default function ApprovalsIndex({
                                             <div className="text-xs text-muted-foreground">
                                                 {user.class?.grade?.name ||
                                                     user.grade?.name ||
-                                                    '未分配年级'}
+                                                    t('admin.approvals.no_grade')}
                                                 {user.class?.name
-                                                    ? ` · ${user.class.name}班`
+                                                    ? ` · ${t('welcome.class_name_format', { name: user.class.name })}`
                                                     : ''}
                                             </div>
                                         </div>
@@ -211,7 +219,7 @@ export default function ApprovalsIndex({
                                                 href={`/admin/approvals/${user.id}`}
                                             >
                                                 <Eye className="mr-2 h-4 w-4" />
-                                                查看
+                                                {t('common.view')}
                                             </Link>
                                         </Button>
                                     </div>

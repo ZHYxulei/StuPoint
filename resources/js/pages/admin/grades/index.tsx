@@ -20,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Grade {
@@ -41,12 +42,14 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '年级管理', href: '/admin/grades' },
-];
-
 export default function GradeIndex({ grades, filters }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('admin.grades.title'), href: '/admin/grades' },
+    ];
+
     const { get, processing, setData } = useForm({
         search: filters.search || '',
     });
@@ -61,18 +64,18 @@ export default function GradeIndex({ grades, filters }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="年级管理" />
+            <Head title={t('admin.grades.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="年级管理"
-                        description="管理学校年级信息，教师注册时可选"
+                        title={t('admin.grades.title')}
+                        description={t('admin.grades.index_description')}
                     />
                     <Button asChild>
                         <Link href="/admin/grades/create">
                             <Plus className="mr-2 h-4 w-4" />
-                            添加年级
+                            {t('admin.grades.create_title')}
                         </Link>
                     </Button>
                 </div>
@@ -82,7 +85,7 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
-                            搜索年级
+                            {t('admin.grades.search_title')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -91,7 +94,9 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                             className="grid gap-4 md:grid-cols-1"
                         >
                             <div className="space-y-2">
-                                <Label htmlFor="search">搜索</Label>
+                                <Label htmlFor="search">
+                                    {t('common.search')}
+                                </Label>
                                 <Input
                                     id="search"
                                     type="text"
@@ -99,12 +104,14 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                                     onChange={(e) =>
                                         setData('search', e.target.value)
                                     }
-                                    placeholder="搜索年级名称..."
+                                    placeholder={t(
+                                        'admin.grades.search_placeholder',
+                                    )}
                                 />
                             </div>
                             <Button type="submit" disabled={processing}>
                                 <Search className="mr-2 h-4 w-4" />
-                                搜索
+                                {t('common.search')}
                             </Button>
                         </form>
                     </CardContent>
@@ -125,7 +132,7 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                                         </CardTitle>
                                         <CardDescription className="mt-1 flex items-center gap-1">
                                             <GraduationCap className="h-3.5 w-3.5" />
-                                            年级
+                                            {t('admin.grades.grade')}
                                         </CardDescription>
                                     </div>
                                     <Badge
@@ -140,7 +147,9 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                                         ) : (
                                             <XCircle className="mr-1 h-3 w-3" />
                                         )}
-                                        {grade.is_active ? '启用' : '禁用'}
+                                        {grade.is_active
+                                            ? t('admin.grades.active')
+                                            : t('admin.grades.inactive')}
                                     </Badge>
                                 </div>
                             </CardHeader>
@@ -163,7 +172,7 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                                                 className="flex-1"
                                             >
                                                 <Users2 className="mr-1 h-4 w-4" />
-                                                查看详情
+                                                {t('common.view_details')}
                                             </Link>
                                         </Button>
                                         <Button
@@ -176,7 +185,7 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                                                 href={`/admin/grades/${grade.id}/edit`}
                                                 className="flex-1"
                                             >
-                                                编辑
+                                                {t('common.edit')}
                                             </Link>
                                         </Button>
                                     </div>
@@ -190,14 +199,16 @@ export default function GradeIndex({ grades, filters }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <GraduationCap className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                            <p className="text-muted-foreground">暂无年级</p>
+                            <p className="text-muted-foreground">
+                                {t('admin.grades.empty')}
+                            </p>
                             <Button asChild>
                                 <Link
                                     href="/admin/grades/create"
                                     className="mt-4"
                                 >
                                     <Plus className="mr-2 h-4 w-4" />
-                                    添加年级
+                                    {t('admin.grades.create_title')}
                                 </Link>
                             </Button>
                         </CardContent>

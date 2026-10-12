@@ -19,6 +19,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface SchoolClass {
@@ -56,17 +58,17 @@ interface PageProps {
     presets: Preset[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '快速加分', href: '/admin/quick-grading' },
-];
-
 export default function QuickGrading({
     classes,
     selectedClassId,
     students,
     presets,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.quick_grading'), href: '/admin/quick-grading' },
+    ];
+
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(
         null,
     );
@@ -114,7 +116,7 @@ export default function QuickGrading({
         post(`/admin/quick-grading/${selectedStudent.id}/adjust-points`, {
             preserveScroll: true,
             onSuccess: () => {
-                setSuccessMessage('积分调整成功');
+                setSuccessMessage(t('admin.users.points_adjusted'));
                 reset();
                 setTimeout(() => {
                     setDialogOpen(false);
@@ -126,15 +128,17 @@ export default function QuickGrading({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="快速加分" />
+            <Head title={t('nav.quick_grading')} />
 
             <div className="space-y-6 p-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">快速加分</h1>
+                        <h1 className="text-2xl font-bold">
+                            {t('nav.quick_grading')}
+                        </h1>
                         <p className="text-sm text-muted-foreground">
-                            点击学生卡片快速加减积分
+                            {t('admin.quick_grading.description')}
                         </p>
                     </div>
                     <Select
@@ -142,7 +146,11 @@ export default function QuickGrading({
                         onValueChange={handleClassChange}
                     >
                         <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder="选择班级" />
+                            <SelectValue
+                                placeholder={t(
+                                    'admin.quick_grading.select_class',
+                                )}
+                            />
                         </SelectTrigger>
                         <SelectContent>
                             {classes.map((cls) => (
@@ -162,7 +170,7 @@ export default function QuickGrading({
                     <CardContent className="py-3">
                         <div className="flex items-center gap-4 overflow-x-auto">
                             <span className="shrink-0 text-sm font-medium text-muted-foreground">
-                                快捷加分：
+                                {t('admin.quick_grading.quick_add')}
                             </span>
                             {addPresets.slice(0, 4).map((preset, i) => (
                                 <Badge
@@ -175,7 +183,7 @@ export default function QuickGrading({
                                 </Badge>
                             ))}
                             <span className="ml-4 shrink-0 text-sm font-medium text-muted-foreground">
-                                快捷减分：
+                                {t('admin.quick_grading.quick_deduct')}
                             </span>
                             {deductPresets.slice(0, 4).map((preset, i) => (
                                 <Badge
@@ -194,7 +202,7 @@ export default function QuickGrading({
                 {/* Students Grid */}
                 {students.length === 0 ? (
                     <div className="py-16 text-center text-muted-foreground">
-                        <p>请选择一个班级查看学生列表</p>
+                        <p>{t('admin.quick_grading.select_class_hint')}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
@@ -238,7 +246,7 @@ export default function QuickGrading({
                                         <div className="mt-1 flex items-center justify-center gap-1">
                                             <Star className="h-3 w-3 text-warning" />
                                             <span className="text-lg font-bold text-primary">
-                                                {totalPoints.toLocaleString()}
+                                                {formatNumber(totalPoints)}
                                             </span>
                                         </div>
                                     </CardContent>
@@ -254,19 +262,22 @@ export default function QuickGrading({
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
-                            <Zap className="h-5 w-5 text-warning" />为{' '}
-                            {selectedStudent?.name} 调整积分
+                            <Zap className="h-5 w-5 text-warning" />
+                            {t('admin.quick_grading.dialog_title', {
+                                name: selectedStudent?.name ?? '',
+                            })}
                         </DialogTitle>
                         <DialogDescription>
-                            当前积分：
+                            {t('admin.quick_grading.current_points_prefix')}
                             <span className="font-bold text-primary">
                                 {selectedStudent?.points?.total_points ?? 0}
                             </span>
-                            &nbsp;·&nbsp; 排名：第{' '}
+                            &nbsp;·&nbsp;{' '}
+                            {t('admin.quick_grading.rank_prefix')}{' '}
                             <span className="font-bold">
                                 {selectedStudent?.rank}
                             </span>{' '}
-                            名
+                            {t('admin.quick_grading.rank_suffix')}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -279,7 +290,7 @@ export default function QuickGrading({
                     {/* Preset Buttons */}
                     <div className="space-y-3">
                         <p className="text-sm font-medium text-muted-foreground">
-                            快捷加分
+                            {t('admin.quick_grading.quick_add_label')}
                         </p>
                         <div className="flex flex-wrap gap-2">
                             {addPresets.map((preset, i) => (
@@ -299,7 +310,7 @@ export default function QuickGrading({
                         </div>
 
                         <p className="text-sm font-medium text-muted-foreground">
-                            快捷减分
+                            {t('admin.quick_grading.quick_deduct_label')}
                         </p>
                         <div className="flex flex-wrap gap-2">
                             {deductPresets.map((preset, i) => (
@@ -327,7 +338,7 @@ export default function QuickGrading({
                         <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1">
                                 <label className="text-sm font-medium">
-                                    类型
+                                    {t('points.type')}
                                 </label>
                                 <Select
                                     value={data.type}
@@ -339,18 +350,18 @@ export default function QuickGrading({
                                     <SelectContent>
                                         <SelectItem value="add">
                                             <Plus className="mr-1 inline h-3 w-3" />
-                                            加分
+                                            {t('admin.quick_grading.add')}
                                         </SelectItem>
                                         <SelectItem value="deduct">
                                             <Minus className="mr-1 inline h-3 w-3" />
-                                            减分
+                                            {t('admin.quick_grading.deduct')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-1">
                                 <label className="text-sm font-medium">
-                                    分数
+                                    {t('admin.quick_grading.score')}
                                 </label>
                                 <input
                                     type="number"
@@ -360,12 +371,16 @@ export default function QuickGrading({
                                     onChange={(e) =>
                                         setData('amount', e.target.value)
                                     }
-                                    placeholder="输入分数"
+                                    placeholder={t(
+                                        'admin.quick_grading.score_placeholder',
+                                    )}
                                 />
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <label className="text-sm font-medium">原因</label>
+                            <label className="text-sm font-medium">
+                                {t('admin.quick_grading.reason')}
+                            </label>
                             <input
                                 type="text"
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -373,7 +388,9 @@ export default function QuickGrading({
                                 onChange={(e) =>
                                     setData('reason', e.target.value)
                                 }
-                                placeholder="输入加分/减分原因"
+                                placeholder={t(
+                                    'admin.quick_grading.reason_placeholder',
+                                )}
                             />
                         </div>
                         <div className="flex gap-3 pt-2">
@@ -383,7 +400,7 @@ export default function QuickGrading({
                                 className="flex-1"
                                 onClick={() => setDialogOpen(false)}
                             >
-                                取消
+                                {t('common.cancel')}
                             </Button>
                             <Button
                                 type="submit"
@@ -392,7 +409,9 @@ export default function QuickGrading({
                                     processing || !data.amount || !data.reason
                                 }
                             >
-                                {processing ? '处理中...' : '确认调整'}
+                                {processing
+                                    ? t('common.processing')
+                                    : t('admin.users.confirm_adjust')}
                             </Button>
                         </div>
                     </form>

@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Grade {
@@ -28,13 +29,15 @@ interface PageProps {
     grade: Grade;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '年级管理', href: '/admin/grades' },
-    { title: '编辑年级', href: '#' },
-];
-
 export default function EditGrade({ grade }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('admin.grades.title'), href: '/admin/grades' },
+        { title: t('admin.grades.edit_title'), href: '#' },
+    ];
+
     const { data, setData, put, processing, errors } = useForm({
         name: grade.name,
         description: grade.description || '',
@@ -48,7 +51,7 @@ export default function EditGrade({ grade }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="编辑年级" />
+            <Head title={t('admin.grades.edit_title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -57,19 +60,24 @@ export default function EditGrade({ grade }: PageProps) {
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
-                    <Heading title="编辑年级" description="修改年级信息" />
+                    <Heading
+                        title={t('admin.grades.edit_title')}
+                        description={t('admin.grades.edit_description')}
+                    />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>年级信息</CardTitle>
-                        <CardDescription>修改年级的基本信息</CardDescription>
+                        <CardTitle>{t('admin.grades.info_title')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.grades.edit_info_description')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="name">
-                                    年级名称{' '}
+                                    {t('admin.grades.name')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -78,21 +86,27 @@ export default function EditGrade({ grade }: PageProps) {
                                     onChange={(e) =>
                                         setData('name', e.target.value)
                                     }
-                                    placeholder="例如：高一、高二、高三"
+                                    placeholder={t(
+                                        'admin.grades.name_placeholder',
+                                    )}
                                     required
                                 />
                                 <InputError message={errors.name} />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">年级描述</Label>
+                                <Label htmlFor="description">
+                                    {t('admin.grades.description')}
+                                </Label>
                                 <Textarea
                                     id="description"
                                     value={data.description}
                                     onChange={(e) =>
                                         setData('description', e.target.value)
                                     }
-                                    placeholder="简要描述该年级..."
+                                    placeholder={t(
+                                        'admin.grades.description_placeholder',
+                                    )}
                                     rows={3}
                                 />
                                 <InputError message={errors.description} />
@@ -110,10 +124,10 @@ export default function EditGrade({ grade }: PageProps) {
                                             )
                                         }
                                     />
-                                    启用该年级
+                                    {t('admin.grades.enable_label')}
                                 </Label>
                                 <p className="text-sm text-muted-foreground">
-                                    取消勾选后，教师注册时将无法选择此年级
+                                    {t('admin.grades.enable_hint')}
                                 </p>
                                 <InputError message={errors.is_active} />
                             </div>
@@ -121,10 +135,12 @@ export default function EditGrade({ grade }: PageProps) {
                             <div className="flex items-center gap-4 pt-4">
                                 <Button type="submit" disabled={processing}>
                                     <Save className="mr-2 h-4 w-4" />
-                                    保存更改
+                                    {t('admin.grades.save_changes')}
                                 </Button>
                                 <Button asChild type="button" variant="outline">
-                                    <Link href="/admin/grades">取消</Link>
+                                    <Link href="/admin/grades">
+                                        {t('common.cancel')}
+                                    </Link>
                                 </Button>
                             </div>
                         </form>

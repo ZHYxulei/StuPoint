@@ -18,6 +18,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface SchoolClass {
@@ -39,16 +41,20 @@ interface PageProps {
     grade: Grade;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '年级管理', href: '/admin/grades' },
-    { title: '年级详情', href: '#' },
-];
-
 export default function ShowGrade({ grade }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('admin.grades.title'), href: '/admin/grades' },
+        { title: t('admin.grades.detail_title'), href: '#' },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`年级详情 - ${grade.name}`} />
+            <Head
+                title={t('admin.grades.detail_head_title', { name: grade.name })}
+            />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -59,7 +65,7 @@ export default function ShowGrade({ grade }: PageProps) {
                     </Button>
                     <Heading
                         title={grade.name}
-                        description="查看年级详细信息"
+                        description={t('admin.grades.detail_description')}
                     />
                 </div>
 
@@ -73,7 +79,7 @@ export default function ShowGrade({ grade }: PageProps) {
                                 </CardTitle>
                                 <CardDescription className="mt-2 flex items-center gap-1">
                                     <GraduationCap className="h-4 w-4" />
-                                    年级
+                                    {t('admin.grades.grade')}
                                 </CardDescription>
                             </div>
                             <Badge
@@ -87,7 +93,9 @@ export default function ShowGrade({ grade }: PageProps) {
                                 ) : (
                                     <XCircle className="mr-1 h-4 w-4" />
                                 )}
-                                {grade.is_active ? '启用' : '禁用'}
+                                {grade.is_active
+                                    ? t('admin.grades.active')
+                                    : t('admin.grades.inactive')}
                             </Badge>
                         </div>
                     </CardHeader>
@@ -95,31 +103,39 @@ export default function ShowGrade({ grade }: PageProps) {
                         <div className="space-y-4">
                             {grade.description && (
                                 <div>
-                                    <h3 className="mb-2 font-semibold">描述</h3>
+                                    <h3 className="mb-2 font-semibold">
+                                        {t('common.description')}
+                                    </h3>
                                     <p className="text-muted-foreground">
                                         {grade.description}
                                     </p>
                                 </div>
                             )}
                             <div>
-                                <h3 className="mb-2 font-semibold">基本信息</h3>
+                                <h3 className="mb-2 font-semibold">
+                                    {t('admin.grades.basic_info')}
+                                </h3>
                                 <dl className="grid gap-2 text-sm">
                                     <div className="flex items-center justify-between">
                                         <dt className="text-muted-foreground">
-                                            创建时间
+                                            {t('admin.grades.created_at')}
                                         </dt>
                                         <dd className="font-medium">
-                                            {new Date(
-                                                grade.created_at,
-                                            ).toLocaleString('zh-CN')}
+                                            {formatDateTime(grade.created_at)}
                                         </dd>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <dt className="text-muted-foreground">
-                                            班级数量
+                                            {t('admin.grades.class_count')}
                                         </dt>
                                         <dd className="font-medium">
-                                            {grade.classes.length} 个
+                                            {t(
+                                                'admin.grades.class_count_value',
+                                                {
+                                                    count: grade.classes
+                                                        .length,
+                                                },
+                                            )}
                                         </dd>
                                     </div>
                                 </dl>
@@ -130,7 +146,7 @@ export default function ShowGrade({ grade }: PageProps) {
                                         href={`/admin/grades/${grade.id}/edit`}
                                     >
                                         <Settings className="mr-2 h-4 w-4" />
-                                        编辑年级
+                                        {t('admin.grades.edit_title')}
                                     </Link>
                                 </Button>
                             </div>
@@ -143,9 +159,11 @@ export default function ShowGrade({ grade }: PageProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Users2 className="h-5 w-5" />
-                            关联班级
+                            {t('admin.grades.related_classes')}
                         </CardTitle>
-                        <CardDescription>该年级下的所有班级</CardDescription>
+                        <CardDescription>
+                            {t('admin.grades.related_classes_description')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {grade.classes.length > 0 ? (
@@ -171,13 +189,13 @@ export default function ShowGrade({ grade }: PageProps) {
                         ) : (
                             <div className="py-8 text-center text-muted-foreground">
                                 <Users2 className="mx-auto mb-3 h-12 w-12 opacity-50" />
-                                <p>该年级下暂无班级</p>
+                                <p>{t('admin.grades.no_classes')}</p>
                                 <Button asChild variant="outline" size="sm">
                                     <Link
                                         href="/admin/classes/create"
                                         className="mt-4 inline-block"
                                     >
-                                        创建班级
+                                        {t('admin.classes.create_title')}
                                     </Link>
                                 </Button>
                             </div>

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Role {
@@ -80,8 +81,8 @@ export default function ApprovalShow({
     };
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: '管理员', href: '/admin' },
-        { title: '注册审批', href: '/admin/approvals' },
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.approvals'), href: '/admin/approvals' },
         {
             title: approval.nickname || approval.name,
             href: `/admin/approvals/${approval.id}`,
@@ -90,7 +91,7 @@ export default function ApprovalShow({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="审批详情" />
+            <Head title={t('admin.approvals.detail_title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
@@ -98,17 +99,19 @@ export default function ApprovalShow({
                         <Button asChild variant="outline" size="sm">
                             <Link href="/admin/approvals">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                返回
+                                {t('common.back')}
                             </Link>
                         </Button>
                         <div>
-                            <h2 className="text-2xl font-semibold">审批详情</h2>
+                            <h2 className="text-2xl font-semibold">
+                                {t('admin.approvals.detail_title')}
+                            </h2>
                             <p className="text-sm text-muted-foreground">
                                 {userRole === 'admin'
-                                    ? '管理员审批'
+                                    ? t('admin.approvals.role_admin')
                                     : userRole === 'grade_director'
-                                      ? '年级主任审批'
-                                      : '班主任审批'}
+                                      ? t('admin.approvals.role_grade_director')
+                                      : t('admin.approvals.role_head_teacher')}
                             </p>
                         </div>
                     </div>
@@ -116,8 +119,10 @@ export default function ApprovalShow({
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>用户信息</CardTitle>
-                        <CardDescription>注册信息与角色</CardDescription>
+                        <CardTitle>{t('admin.approvals.user_info')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.approvals.registration_info_roles')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex flex-wrap gap-2">
@@ -129,22 +134,41 @@ export default function ApprovalShow({
                         </div>
                         <div className="text-sm">
                             <div>
-                                姓名：{approval.nickname || approval.name}
-                            </div>
-                            <div>学号：{approval.student_id || '—'}</div>
-                            <div>邮箱：{approval.email || '—'}</div>
-                            <div>手机号：{approval.phone || '—'}</div>
-                            <div>
-                                年级：
-                                {approval.class?.grade?.name ||
-                                    approval.grade?.name ||
-                                    '—'}
+                                {t('admin.approvals.label_name', {
+                                    value: approval.nickname || approval.name,
+                                })}
                             </div>
                             <div>
-                                班级：
-                                {approval.class?.name
-                                    ? `${approval.class.name}班`
-                                    : '—'}
+                                {t('admin.approvals.label_student_id', {
+                                    value: approval.student_id || '—',
+                                })}
+                            </div>
+                            <div>
+                                {t('admin.approvals.label_email', {
+                                    value: approval.email || '—',
+                                })}
+                            </div>
+                            <div>
+                                {t('admin.approvals.label_phone', {
+                                    value: approval.phone || '—',
+                                })}
+                            </div>
+                            <div>
+                                {t('admin.approvals.label_grade', {
+                                    value:
+                                        approval.class?.grade?.name ||
+                                        approval.grade?.name ||
+                                        '—',
+                                })}
+                            </div>
+                            <div>
+                                {t('admin.approvals.label_class', {
+                                    value: approval.class?.name
+                                        ? t('welcome.class_name_format', {
+                                              name: approval.class.name,
+                                          })
+                                        : '—',
+                                })}
                             </div>
                         </div>
                     </CardContent>
@@ -155,23 +179,32 @@ export default function ApprovalShow({
                 ) && (
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle>学生会双重审批状态</CardTitle>
+                            <CardTitle>
+                                {t('admin.approvals.dual_approval_status')}
+                            </CardTitle>
                             <CardDescription>
-                                班主任与年级主任审批进度
+                                {t('admin.approvals.dual_approval_desc')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-2 text-sm">
                             <div>
-                                班主任审批：
-                                {approvalStatus.head_teacher_approved_at
-                                    ? '已完成'
-                                    : '未完成'}
+                                {t('admin.approvals.head_teacher_approval', {
+                                    status: approvalStatus.head_teacher_approved_at
+                                        ? t('status.completed')
+                                        : t('admin.approvals.not_completed'),
+                                })}
                             </div>
                             <div>
-                                年级主任审批：
-                                {approvalStatus.grade_director_approved_at
-                                    ? '已完成'
-                                    : '未完成'}
+                                {t(
+                                    'admin.approvals.grade_director_approval',
+                                    {
+                                        status: approvalStatus.grade_director_approved_at
+                                            ? t('status.completed')
+                                            : t(
+                                                  'admin.approvals.not_completed',
+                                              ),
+                                    },
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -182,7 +215,7 @@ export default function ApprovalShow({
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <CheckCircle2 className="h-4 w-4" />
-                                通过审批
+                                {t('admin.approvals.approve_title')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
@@ -192,12 +225,14 @@ export default function ApprovalShow({
                                     onChange={(e) =>
                                         setData('note', e.target.value)
                                     }
-                                    placeholder="备注（可选）"
+                                    placeholder={t(
+                                        'admin.approvals.note_placeholder',
+                                    )}
                                     rows={3}
                                     name="note"
                                 />
                                 <Button type="submit" disabled={processing}>
-                                    通过
+                                    {t('admin.approvals.approve_button')}
                                 </Button>
                             </form>
                         </CardContent>
@@ -207,7 +242,7 @@ export default function ApprovalShow({
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <XCircle className="h-4 w-4" />
-                                拒绝审批
+                                {t('admin.approvals.reject_title')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
@@ -217,7 +252,9 @@ export default function ApprovalShow({
                                     onChange={(e) =>
                                         setData('reason', e.target.value)
                                     }
-                                    placeholder="请输入拒绝原因"
+                                    placeholder={t(
+                                        'admin.approvals.reject_reason_placeholder',
+                                    )}
                                     rows={3}
                                     name="reason"
                                 />
@@ -226,7 +263,7 @@ export default function ApprovalShow({
                                     type="submit"
                                     disabled={processing || !data.reason}
                                 >
-                                    拒绝
+                                    {t('admin.approvals.reject_button')}
                                 </Button>
                             </form>
                         </CardContent>

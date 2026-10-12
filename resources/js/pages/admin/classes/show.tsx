@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Teacher {
@@ -83,17 +84,19 @@ interface PageProps {
     availableStudents: Student[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '班级管理', href: '/admin/classes' },
-    { title: '班级详情', href: '/admin/classes/[id]' },
-];
-
 export default function ShowClass({
     class: classData,
     availableTeachers,
     availableStudents,
 }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.classes'), href: '/admin/classes' },
+        { title: t('admin.classes.detail_title'), href: '/admin/classes/[id]' },
+    ];
+
     const [activeTab, setActiveTab] = useState<'teachers' | 'students'>(
         'teachers',
     );
@@ -134,7 +137,7 @@ export default function ShowClass({
     };
 
     const removeTeacher = (teacherId: string) => {
-        if (confirm('确认移除该任课老师？')) {
+        if (confirm(t('admin.classes.confirm_remove_teacher'))) {
             router.delete(
                 `/admin/classes/${classData.id}/teachers/${teacherId}`,
                 {
@@ -145,7 +148,7 @@ export default function ShowClass({
     };
 
     const removeStudent = (studentId: string) => {
-        if (confirm('确认移除该学生？')) {
+        if (confirm(t('admin.classes.confirm_remove_student'))) {
             router.delete(
                 `/admin/classes/${classData.id}/students/${studentId}`,
                 {
@@ -157,7 +160,11 @@ export default function ShowClass({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`班级详情 - ${classData.full_name}`} />
+            <Head
+                title={t('admin.classes.detail_head_title', {
+                    name: classData.full_name,
+                })}
+            />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -168,7 +175,7 @@ export default function ShowClass({
                     </Button>
                     <Heading
                         title={classData.full_name}
-                        description="管理班级信息、教师和学生"
+                        description={t('admin.classes.detail_description')}
                     />
                 </div>
 
@@ -178,13 +185,13 @@ export default function ShowClass({
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Users2 className="h-4 w-4" />
-                                班级信息
+                                {t('admin.classes.info_title')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">
-                                    年级
+                                    {t('admin.classes.grade')}
                                 </span>
                                 <span className="font-medium">
                                     {classData.grade}
@@ -192,7 +199,7 @@ export default function ShowClass({
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">
-                                    班级
+                                    {t('admin.classes.class')}
                                 </span>
                                 <span className="font-medium">
                                     {classData.name}
@@ -203,7 +210,9 @@ export default function ShowClass({
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base">班主任</CardTitle>
+                            <CardTitle className="text-base">
+                                {t('admin.classes.head_teacher')}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {classData.head_teacher ? (
@@ -218,7 +227,7 @@ export default function ShowClass({
                                 </div>
                             ) : (
                                 <p className="text-sm text-muted-foreground">
-                                    未设置
+                                    {t('profile.not_set')}
                                 </p>
                             )}
                         </CardContent>
@@ -226,23 +235,29 @@ export default function ShowClass({
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base">统计</CardTitle>
+                            <CardTitle className="text-base">
+                                {t('admin.classes.statistics')}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">
-                                    任课老师
+                                    {t('admin.classes.subject_teachers')}
                                 </span>
                                 <span className="font-medium">
-                                    {classData.teachers.length} 人
+                                    {t('admin.classes.people_count', {
+                                        count: classData.teachers.length,
+                                    })}
                                 </span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">
-                                    学生
+                                    {t('admin.classes.students')}
                                 </span>
                                 <span className="font-medium">
-                                    {classData.students.length} 人
+                                    {t('admin.classes.people_count', {
+                                        count: classData.students.length,
+                                    })}
                                 </span>
                             </div>
                         </CardContent>
@@ -257,20 +272,28 @@ export default function ShowClass({
                     <TabsList>
                         <TabsTrigger value="teachers">
                             <Settings2 className="mr-2 h-4 w-4" />
-                            任课老师 ({classData.teachers.length})
+                            {t('admin.classes.teachers_tab', {
+                                count: classData.teachers.length,
+                            })}
                         </TabsTrigger>
                         <TabsTrigger value="students">
                             <Users2 className="mr-2 h-4 w-4" />
-                            学生 ({classData.students.length})
+                            {t('admin.classes.students_tab', {
+                                count: classData.students.length,
+                            })}
                         </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="teachers" className="space-y-4">
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>分配任课老师</CardTitle>
+                                <CardTitle>
+                                    {t('admin.classes.assign_teacher_title')}
+                                </CardTitle>
                                 <CardDescription>
-                                    为班级添加任课老师并指定任教科目
+                                    {t(
+                                        'admin.classes.assign_teacher_description',
+                                    )}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -279,7 +302,9 @@ export default function ShowClass({
                                     className="flex items-end gap-4"
                                 >
                                     <div className="flex-1 space-y-2">
-                                        <Label htmlFor="teacher_id">教师</Label>
+                                        <Label htmlFor="teacher_id">
+                                            {t('admin.classes.teacher')}
+                                        </Label>
                                         <Select
                                             value={teacherData.teacher_id}
                                             onValueChange={(value) =>
@@ -290,7 +315,11 @@ export default function ShowClass({
                                             }
                                         >
                                             <SelectTrigger>
-                                                <SelectValue placeholder="选择教师" />
+                                                <SelectValue
+                                                    placeholder={t(
+                                                        'admin.classes.select_teacher',
+                                                    )}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {availableTeachers.map(
@@ -308,11 +337,13 @@ export default function ShowClass({
                                     </div>
                                     <div className="flex-1 space-y-2">
                                         <Label htmlFor="subject">
-                                            任教科目
+                                            {t('admin.classes.subject')}
                                         </Label>
                                         <Input
                                             id="subject"
-                                            placeholder="例如: 数学、语文"
+                                            placeholder={t(
+                                                'admin.classes.subject_placeholder',
+                                            )}
                                             value={teacherData.subject}
                                             onChange={(e) =>
                                                 setTeacherData(
@@ -327,7 +358,7 @@ export default function ShowClass({
                                         disabled={teacherProcessing}
                                     >
                                         <Plus className="mr-2 h-4 w-4" />
-                                        添加
+                                        {t('admin.classes.add')}
                                     </Button>
                                 </form>
                             </CardContent>
@@ -376,9 +407,13 @@ export default function ShowClass({
                     <TabsContent value="students" className="space-y-4">
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>添加学生</CardTitle>
+                                <CardTitle>
+                                    {t('admin.classes.add_student_title')}
+                                </CardTitle>
                                 <CardDescription>
-                                    将学生添加到当前班级
+                                    {t(
+                                        'admin.classes.add_student_description',
+                                    )}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -387,7 +422,9 @@ export default function ShowClass({
                                     className="flex items-end gap-4"
                                 >
                                     <div className="flex-1 space-y-2">
-                                        <Label htmlFor="student_id">学生</Label>
+                                        <Label htmlFor="student_id">
+                                            {t('admin.classes.students')}
+                                        </Label>
                                         <Select
                                             value={studentData.student_id}
                                             onValueChange={(value) =>
@@ -398,7 +435,11 @@ export default function ShowClass({
                                             }
                                         >
                                             <SelectTrigger>
-                                                <SelectValue placeholder="选择学生" />
+                                                <SelectValue
+                                                    placeholder={t(
+                                                        'admin.classes.select_student',
+                                                    )}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {availableStudents.map(
@@ -421,7 +462,7 @@ export default function ShowClass({
                                         disabled={studentProcessing}
                                     >
                                         <Plus className="mr-2 h-4 w-4" />
-                                        添加
+                                        {t('admin.classes.add')}
                                     </Button>
                                 </form>
                             </CardContent>
@@ -440,11 +481,14 @@ export default function ShowClass({
                                                     {assignment.student.name}
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    学号:{' '}
-                                                    {
-                                                        assignment.student
-                                                            .student_id
-                                                    }
+                                                    {t(
+                                                        'admin.classes.student_id_label',
+                                                        {
+                                                            id: assignment
+                                                                .student
+                                                                .student_id,
+                                                        },
+                                                    )}
                                                 </p>
                                             </div>
                                             <Button

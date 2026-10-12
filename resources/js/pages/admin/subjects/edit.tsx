@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Subject {
@@ -30,13 +31,15 @@ interface PageProps {
     subject: Subject;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '科目管理', href: '/admin/subjects' },
-    { title: '编辑科目', href: '#' },
-];
-
 export default function EditSubject({ subject }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.subjects'), href: '/admin/subjects' },
+        { title: t('admin.subjects.edit_title'), href: '#' },
+    ];
+
     const { data, setData, put, processing, errors } = useForm({
         name: subject.name,
         code: subject.code,
@@ -52,7 +55,7 @@ export default function EditSubject({ subject }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="编辑科目" />
+            <Head title={t('admin.subjects.edit_title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -61,20 +64,25 @@ export default function EditSubject({ subject }: PageProps) {
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
-                    <Heading title="编辑科目" description="修改科目信息" />
+                    <Heading
+                        title={t('admin.subjects.edit_title')}
+                        description={t('admin.subjects.edit_description')}
+                    />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>科目信息</CardTitle>
-                        <CardDescription>修改科目的基本信息</CardDescription>
+                        <CardTitle>{t('admin.subjects.info_title')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.subjects.edit_info_description')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        科目名称{' '}
+                                        {t('admin.subjects.name')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -85,7 +93,9 @@ export default function EditSubject({ subject }: PageProps) {
                                         onChange={(e) =>
                                             setData('name', e.target.value)
                                         }
-                                        placeholder="例如：数学、语文、英语"
+                                        placeholder={t(
+                                            'admin.subjects.name_placeholder',
+                                        )}
                                         required
                                     />
                                     <InputError message={errors.name} />
@@ -93,7 +103,7 @@ export default function EditSubject({ subject }: PageProps) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="code">
-                                        科目代码{' '}
+                                        {t('admin.subjects.code')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -104,7 +114,9 @@ export default function EditSubject({ subject }: PageProps) {
                                         onChange={(e) =>
                                             setData('code', e.target.value)
                                         }
-                                        placeholder="例如：MATH、CHN、ENG"
+                                        placeholder={t(
+                                            'admin.subjects.code_placeholder',
+                                        )}
                                         required
                                     />
                                     <InputError message={errors.code} />
@@ -112,14 +124,18 @@ export default function EditSubject({ subject }: PageProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">科目描述</Label>
+                                <Label htmlFor="description">
+                                    {t('admin.subjects.description')}
+                                </Label>
                                 <Textarea
                                     id="description"
                                     value={data.description}
                                     onChange={(e) =>
                                         setData('description', e.target.value)
                                     }
-                                    placeholder="简要描述该科目..."
+                                    placeholder={t(
+                                        'admin.subjects.description_placeholder',
+                                    )}
                                     rows={3}
                                 />
                                 <InputError message={errors.description} />
@@ -127,7 +143,9 @@ export default function EditSubject({ subject }: PageProps) {
 
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="sort_order">排序顺序</Label>
+                                    <Label htmlFor="sort_order">
+                                        {t('admin.subjects.sort_order')}
+                                    </Label>
                                     <Input
                                         id="sort_order"
                                         type="number"
@@ -155,10 +173,10 @@ export default function EditSubject({ subject }: PageProps) {
                                                 )
                                             }
                                         />
-                                        启用该科目
+                                        {t('admin.subjects.enable_label')}
                                     </Label>
                                     <p className="text-sm text-muted-foreground">
-                                        取消勾选后，教师注册时将无法选择此科目
+                                        {t('admin.subjects.enable_hint')}
                                     </p>
                                     <InputError message={errors.is_active} />
                                 </div>
@@ -167,10 +185,12 @@ export default function EditSubject({ subject }: PageProps) {
                             <div className="flex items-center gap-4 pt-4">
                                 <Button type="submit" disabled={processing}>
                                     <Save className="mr-2 h-4 w-4" />
-                                    保存更改
+                                    {t('admin.subjects.save_changes')}
                                 </Button>
                                 <Button asChild type="button" variant="outline">
-                                    <Link href="/admin/subjects">取消</Link>
+                                    <Link href="/admin/subjects">
+                                        {t('common.cancel')}
+                                    </Link>
                                 </Button>
                             </div>
                         </form>

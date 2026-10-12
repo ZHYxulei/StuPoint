@@ -20,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Subject {
@@ -39,12 +40,14 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '科目管理', href: '/admin/subjects' },
-];
-
 export default function SubjectIndex({ subjects, filters }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.subjects'), href: '/admin/subjects' },
+    ];
+
     const { get, processing, setData } = useForm({
         search: filters.search || '',
     });
@@ -59,18 +62,18 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="科目管理" />
+            <Head title={t('nav.subjects')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="科目管理"
-                        description="管理学校科目信息，教师注册时可选"
+                        title={t('nav.subjects')}
+                        description={t('admin.subjects.index_description')}
                     />
                     <Button asChild>
                         <Link href="/admin/subjects/create">
                             <Plus className="mr-2 h-4 w-4" />
-                            添加科目
+                            {t('admin.subjects.create_title')}
                         </Link>
                     </Button>
                 </div>
@@ -80,7 +83,7 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
-                            搜索科目
+                            {t('admin.subjects.search_title')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -89,7 +92,9 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                             className="grid gap-4 md:grid-cols-1"
                         >
                             <div className="space-y-2">
-                                <Label htmlFor="search">搜索</Label>
+                                <Label htmlFor="search">
+                                    {t('common.search')}
+                                </Label>
                                 <Input
                                     id="search"
                                     type="text"
@@ -97,12 +102,14 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                                     onChange={(e) =>
                                         setData('search', e.target.value)
                                     }
-                                    placeholder="搜索科目名称或代码..."
+                                    placeholder={t(
+                                        'admin.subjects.search_placeholder',
+                                    )}
                                 />
                             </div>
                             <Button type="submit" disabled={processing}>
                                 <Search className="mr-2 h-4 w-4" />
-                                搜索
+                                {t('common.search')}
                             </Button>
                         </form>
                     </CardContent>
@@ -138,7 +145,9 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                                         ) : (
                                             <XCircle className="mr-1 h-3 w-3" />
                                         )}
-                                        {subject.is_active ? '启用' : '禁用'}
+                                        {subject.is_active
+                                            ? t('admin.subjects.active')
+                                            : t('admin.subjects.inactive')}
                                     </Badge>
                                 </div>
                             </CardHeader>
@@ -152,7 +161,7 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="flex items-center gap-1 text-muted-foreground">
                                             <Settings2 className="h-3.5 w-3.5" />
-                                            排序
+                                            {t('admin.subjects.sort')}
                                         </span>
                                         <span className="font-medium">
                                             {subject.sort_order}
@@ -169,7 +178,7 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                                                 href={`/admin/subjects/${subject.id}/edit`}
                                                 className="flex-1"
                                             >
-                                                编辑
+                                                {t('common.edit')}
                                             </Link>
                                         </Button>
                                     </div>
@@ -183,14 +192,16 @@ export default function SubjectIndex({ subjects, filters }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <BookOpen className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                            <p className="text-muted-foreground">暂无科目</p>
+                            <p className="text-muted-foreground">
+                                {t('admin.subjects.empty')}
+                            </p>
                             <Button asChild>
                                 <Link
                                     href="/admin/subjects/create"
                                     className="mt-4"
                                 >
                                     <Plus className="mr-2 h-4 w-4" />
-                                    添加科目
+                                    {t('admin.subjects.create_title')}
                                 </Link>
                             </Button>
                         </CardContent>

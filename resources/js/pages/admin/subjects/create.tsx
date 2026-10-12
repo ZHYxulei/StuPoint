@@ -15,15 +15,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '科目管理', href: '/admin/subjects' },
-    { title: '添加科目', href: '/admin/subjects/create' },
-];
-
 export default function CreateSubject() {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.subjects'), href: '/admin/subjects' },
+        {
+            title: t('admin.subjects.create_title'),
+            href: '/admin/subjects/create',
+        },
+    ];
+
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         code: '',
@@ -39,7 +45,7 @@ export default function CreateSubject() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="添加科目" />
+            <Head title={t('admin.subjects.create_title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -48,20 +54,25 @@ export default function CreateSubject() {
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
-                    <Heading title="添加科目" description="创建新的科目信息" />
+                    <Heading
+                        title={t('admin.subjects.create_title')}
+                        description={t('admin.subjects.create_description')}
+                    />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>科目信息</CardTitle>
-                        <CardDescription>填写科目的基本信息</CardDescription>
+                        <CardTitle>{t('admin.subjects.info_title')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.subjects.create_info_description')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        科目名称{' '}
+                                        {t('admin.subjects.name')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -72,7 +83,9 @@ export default function CreateSubject() {
                                         onChange={(e) =>
                                             setData('name', e.target.value)
                                         }
-                                        placeholder="例如：数学、语文、英语"
+                                        placeholder={t(
+                                            'admin.subjects.name_placeholder',
+                                        )}
                                         required
                                     />
                                     <InputError message={errors.name} />
@@ -80,7 +93,7 @@ export default function CreateSubject() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="code">
-                                        科目代码{' '}
+                                        {t('admin.subjects.code')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -91,7 +104,9 @@ export default function CreateSubject() {
                                         onChange={(e) =>
                                             setData('code', e.target.value)
                                         }
-                                        placeholder="例如：MATH、CHN、ENG"
+                                        placeholder={t(
+                                            'admin.subjects.code_placeholder',
+                                        )}
                                         required
                                     />
                                     <InputError message={errors.code} />
@@ -99,14 +114,18 @@ export default function CreateSubject() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">科目描述</Label>
+                                <Label htmlFor="description">
+                                    {t('admin.subjects.description')}
+                                </Label>
                                 <Textarea
                                     id="description"
                                     value={data.description}
                                     onChange={(e) =>
                                         setData('description', e.target.value)
                                     }
-                                    placeholder="简要描述该科目..."
+                                    placeholder={t(
+                                        'admin.subjects.description_placeholder',
+                                    )}
                                     rows={3}
                                 />
                                 <InputError message={errors.description} />
@@ -114,7 +133,9 @@ export default function CreateSubject() {
 
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="sort_order">排序顺序</Label>
+                                    <Label htmlFor="sort_order">
+                                        {t('admin.subjects.sort_order')}
+                                    </Label>
                                     <Input
                                         id="sort_order"
                                         type="number"
@@ -142,10 +163,10 @@ export default function CreateSubject() {
                                                 )
                                             }
                                         />
-                                        启用该科目
+                                        {t('admin.subjects.enable_label')}
                                     </Label>
                                     <p className="text-sm text-muted-foreground">
-                                        取消勾选后，教师注册时将无法选择此科目
+                                        {t('admin.subjects.enable_hint')}
                                     </p>
                                     <InputError message={errors.is_active} />
                                 </div>
@@ -154,10 +175,12 @@ export default function CreateSubject() {
                             <div className="flex items-center gap-4 pt-4">
                                 <Button type="submit" disabled={processing}>
                                     <Save className="mr-2 h-4 w-4" />
-                                    保存科目
+                                    {t('admin.subjects.save')}
                                 </Button>
                                 <Button asChild type="button" variant="outline">
-                                    <Link href="/admin/subjects">取消</Link>
+                                    <Link href="/admin/subjects">
+                                        {t('common.cancel')}
+                                    </Link>
                                 </Button>
                             </div>
                         </form>

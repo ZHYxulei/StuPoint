@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Teacher {
@@ -31,13 +32,18 @@ interface PageProps {
     teachers: Teacher[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Classes', href: '/admin/classes' },
-    { title: 'Create Class', href: '/admin/classes/create' },
-];
-
 export default function CreateClass({ teachers }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.classes'), href: '/admin/classes' },
+        {
+            title: t('admin.classes.create_title'),
+            href: '/admin/classes/create',
+        },
+    ];
+
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         grade: '',
@@ -51,7 +57,7 @@ export default function CreateClass({ teachers }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create Class" />
+            <Head title={t('admin.classes.create_title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -61,16 +67,16 @@ export default function CreateClass({ teachers }: PageProps) {
                         </Link>
                     </Button>
                     <Heading
-                        title="Create Class"
-                        description="Fill in class information and assign a head teacher"
+                        title={t('admin.classes.create_title')}
+                        description={t('admin.classes.create_description')}
                     />
                 </div>
 
                 <Card className="max-w-2xl border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>Class Information</CardTitle>
+                        <CardTitle>{t('admin.classes.info_title')}</CardTitle>
                         <CardDescription>
-                            Please fill in the basic information of the class
+                            {t('admin.classes.create_info_description')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -78,14 +84,16 @@ export default function CreateClass({ teachers }: PageProps) {
                             <div className="grid gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="grade">
-                                        Grade{' '}
+                                        {t('admin.classes.grade')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
                                     </Label>
                                     <Input
                                         id="grade"
-                                        placeholder="e.g.: Senior 3, Grade 7"
+                                        placeholder={t(
+                                            'admin.classes.grade_placeholder',
+                                        )}
                                         value={data.grade}
                                         onChange={(e) =>
                                             setData('grade', e.target.value)
@@ -100,14 +108,16 @@ export default function CreateClass({ teachers }: PageProps) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        Class Name{' '}
+                                        {t('admin.classes.name')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
                                     </Label>
                                     <Input
                                         id="name"
-                                        placeholder="e.g.: Class 1, Class 2"
+                                        placeholder={t(
+                                            'admin.classes.name_placeholder',
+                                        )}
                                         value={data.name}
                                         onChange={(e) =>
                                             setData('name', e.target.value)
@@ -122,7 +132,7 @@ export default function CreateClass({ teachers }: PageProps) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="head_teacher_id">
-                                        Head Teacher
+                                        {t('admin.classes.head_teacher')}
                                     </Label>
                                     <Select
                                         value={data.head_teacher_id}
@@ -131,7 +141,11 @@ export default function CreateClass({ teachers }: PageProps) {
                                         }
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select head teacher" />
+                                            <SelectValue
+                                                placeholder={t(
+                                                    'admin.classes.select_head_teacher',
+                                                )}
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {teachers.map((teacher) => (
@@ -165,7 +179,7 @@ export default function CreateClass({ teachers }: PageProps) {
                                         href="/admin/classes"
                                         className="flex-1"
                                     >
-                                        Cancel
+                                        {t('common.cancel')}
                                     </Link>
                                 </Button>
                                 <Button
@@ -174,7 +188,7 @@ export default function CreateClass({ teachers }: PageProps) {
                                     disabled={processing}
                                 >
                                     <Save className="mr-2 h-4 w-4" />
-                                    Create Class
+                                    {t('admin.classes.create_title')}
                                 </Button>
                             </div>
                         </form>

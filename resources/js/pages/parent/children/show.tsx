@@ -22,6 +22,8 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Transaction {
@@ -62,27 +64,29 @@ interface PageProps {
     child: ChildData;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '家长中心', href: '/parent' },
-    { title: '我的子女', href: '/parent/children' },
-    { title: '子女详情', href: '/parent/children/[id]' },
-];
-
 export default function ParentChildShow({ child }: PageProps) {
     const [activeTab, setActiveTab] = useState<
         'overview' | 'transactions' | 'orders'
     >('overview');
 
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.parent_center'), href: '/parent' },
+        { title: t('parent.children.title'), href: '/parent/children' },
+        { title: t('parent.children.detail'), href: '/parent/children/[id]' },
+    ];
+
     const getStatusBadge = (status: string) => {
         const statusMap: Record<string, { label: string; variant: any }> = {
-            pending: { label: '待处理', variant: 'secondary' },
-            processing: { label: '处理中', variant: 'default' },
-            completed: { label: '已完成', variant: 'default' },
-            cancelled: { label: '已取消', variant: 'destructive' },
-            failed: { label: '失败', variant: 'destructive' },
+            pending: { label: t('status.pending'), variant: 'secondary' },
+            processing: { label: t('status.processing'), variant: 'default' },
+            completed: { label: t('status.completed'), variant: 'default' },
+            cancelled: { label: t('status.cancelled'), variant: 'destructive' },
+            failed: { label: t('status.failed'), variant: 'destructive' },
         };
         const info = statusMap[status] || {
-            label: status,
+            label: t('status.unknown'),
             variant: 'secondary',
         };
         return <Badge variant={info.variant}>{info.label}</Badge>;
@@ -90,7 +94,9 @@ export default function ParentChildShow({ child }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`子女详情 - ${child.name}`} />
+            <Head
+                title={t('parent.children.show_title', { name: child.name })}
+            />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -101,7 +107,7 @@ export default function ParentChildShow({ child }: PageProps) {
                     </Button>
                     <Heading
                         title={child.name}
-                        description={`学号: ${child.student_id} · ${child.relationship}`}
+                        description={`${t('profile.student_id')}: ${child.student_id} · ${child.relationship}`}
                     />
                 </div>
 
@@ -111,7 +117,7 @@ export default function ParentChildShow({ child }: PageProps) {
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Coins className="h-4 w-4" />
-                                总积分
+                                {t('points.total_points')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -125,7 +131,7 @@ export default function ParentChildShow({ child }: PageProps) {
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Target className="h-4 w-4" />
-                                可兑换积分
+                                {t('points.redeemable_points')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -139,15 +145,19 @@ export default function ParentChildShow({ child }: PageProps) {
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Trophy className="h-4 w-4" />
-                                全校排名
+                                {t('welcome.school_rank')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="text-2xl font-bold">
-                                第 {child.points.rank} 名
+                                {t('parent.children.rank_position', {
+                                    rank: child.points.rank,
+                                })}
                             </p>
                             <p className="mt-1 text-sm text-muted-foreground">
-                                共 {child.points.total_users} 人
+                                {t('parent.children.rank_total', {
+                                    count: child.points.total_users,
+                                })}
                             </p>
                         </CardContent>
                     </Card>
@@ -155,7 +165,7 @@ export default function ParentChildShow({ child }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-3">
                             <CardTitle className="text-base">
-                                年级班级
+                                {t('parent.children.grade_class')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -172,14 +182,16 @@ export default function ParentChildShow({ child }: PageProps) {
                     onValueChange={(v) => setActiveTab(v as any)}
                 >
                     <TabsList>
-                        <TabsTrigger value="overview">概览</TabsTrigger>
+                        <TabsTrigger value="overview">
+                            {t('parent.children.tab_overview')}
+                        </TabsTrigger>
                         <TabsTrigger value="transactions">
                             <History className="mr-2 h-4 w-4" />
-                            积分记录
+                            {t('points.history')}
                         </TabsTrigger>
                         <TabsTrigger value="orders">
                             <ShoppingCart className="mr-2 h-4 w-4" />
-                            兑换记录
+                            {t('parent.orders.title')}
                         </TabsTrigger>
                     </TabsList>
 
@@ -189,13 +201,15 @@ export default function ParentChildShow({ child }: PageProps) {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-base">
-                                        最近积分变动
+                                        {t(
+                                            'parent.children.recent_transactions',
+                                        )}
                                     </CardTitle>
                                     <Button asChild variant="ghost" size="sm">
                                         <Link
                                             href={`/parent/children/${child.id}/transactions`}
                                         >
-                                            查看全部
+                                            {t('points.view_all')}
                                             <Eye className="ml-2 h-3.5 w-3.5" />
                                         </Link>
                                     </Button>
@@ -204,7 +218,7 @@ export default function ParentChildShow({ child }: PageProps) {
                             <CardContent>
                                 {child.recent_transactions.length === 0 ? (
                                     <p className="py-8 text-center text-muted-foreground">
-                                        暂无积分变动记录
+                                        {t('parent.transactions.empty')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -218,10 +232,8 @@ export default function ParentChildShow({ child }: PageProps) {
                                                         {t.description}
                                                     </p>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {new Date(
+                                                        {formatDateTime(
                                                             t.created_at,
-                                                        ).toLocaleString(
-                                                            'zh-CN',
                                                         )}
                                                     </p>
                                                 </div>
@@ -248,13 +260,13 @@ export default function ParentChildShow({ child }: PageProps) {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-base">
-                                        最近兑换
+                                        {t('parent.children.recent_orders')}
                                     </CardTitle>
                                     <Button asChild variant="ghost" size="sm">
                                         <Link
                                             href={`/parent/children/${child.id}/orders`}
                                         >
-                                            查看全部
+                                            {t('points.view_all')}
                                             <Eye className="ml-2 h-3.5 w-3.5" />
                                         </Link>
                                     </Button>
@@ -263,7 +275,7 @@ export default function ParentChildShow({ child }: PageProps) {
                             <CardContent>
                                 {child.recent_orders.length === 0 ? (
                                     <p className="py-8 text-center text-muted-foreground">
-                                        暂无兑换记录
+                                        {t('parent.orders.empty')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -281,10 +293,8 @@ export default function ParentChildShow({ child }: PageProps) {
                                                             {order.product_name}
                                                         </p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            {new Date(
+                                                            {formatDateTime(
                                                                 order.created_at,
-                                                            ).toLocaleString(
-                                                                'zh-CN',
                                                             )}
                                                         </p>
                                                     </div>
@@ -292,7 +302,7 @@ export default function ParentChildShow({ child }: PageProps) {
                                                 <div className="text-right">
                                                     <p className="font-medium text-primary">
                                                         -{order.points_spent}{' '}
-                                                        积分
+                                                        {t('points.title')}
                                                     </p>
                                                     {getStatusBadge(
                                                         order.status,
@@ -309,11 +319,13 @@ export default function ParentChildShow({ child }: PageProps) {
                     <TabsContent value="transactions">
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>提示</CardTitle>
+                                <CardTitle>
+                                    {t('parent.children.tip')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-muted-foreground">
-                                    点击上方"积分记录"标签页查看全部交易记录
+                                    {t('parent.children.tip_transactions')}
                                 </p>
                             </CardContent>
                         </Card>
@@ -322,11 +334,13 @@ export default function ParentChildShow({ child }: PageProps) {
                     <TabsContent value="orders">
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>提示</CardTitle>
+                                <CardTitle>
+                                    {t('parent.children.tip')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-muted-foreground">
-                                    点击上方"兑换记录"标签页查看全部订单记录
+                                    {t('parent.children.tip_orders')}
                                 </p>
                             </CardContent>
                         </Card>

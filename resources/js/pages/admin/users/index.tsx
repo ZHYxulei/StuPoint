@@ -44,6 +44,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatDate, formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Role {
@@ -101,17 +103,17 @@ interface PageProps {
     import_results?: ImportResults;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '用户管理', href: '/admin/users' },
-];
-
 export default function UserIndex({
     users,
     roles,
     filters,
     import_results,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.user_management'), href: '/admin/users' },
+    ];
+
     const { get, processing } = useForm({
         search: filters.search || '',
         role: filters.role || 'all',
@@ -167,13 +169,13 @@ export default function UserIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="用户管理" />
+            <Head title={t('nav.user_management')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="用户管理"
-                        description="管理系统用户和角色权限"
+                        title={t('nav.user_management')}
+                        description={t('admin.users.index_description')}
                     />
                     <div className="flex items-center gap-2">
                         <Dialog
@@ -183,18 +185,17 @@ export default function UserIndex({
                             <DialogTrigger asChild>
                                 <Button variant="outline">
                                     <Upload className="mr-2 h-4 w-4" />
-                                    批量导入
+                                    {t('admin.users.batch_import')}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-md">
                                 <DialogHeader>
                                     <DialogTitle className="flex items-center gap-2">
                                         <FileSpreadsheet className="h-5 w-5" />
-                                        批量导入用户
+                                        {t('admin.users.batch_import_title')}
                                     </DialogTitle>
                                     <DialogDescription>
-                                        通过 CSV
-                                        文件批量导入用户，文件格式须符合模板要求。
+                                        {t('admin.users.batch_import_desc')}
                                     </DialogDescription>
                                 </DialogHeader>
 
@@ -214,32 +215,44 @@ export default function UserIndex({
                                                 ) : (
                                                     <CheckCircle2 className="h-4 w-4 text-success" />
                                                 )}
-                                                导入完成
+                                                {t('admin.users.import_completed')}
                                             </div>
                                             <div className="space-y-1 text-sm">
                                                 <p>
-                                                    成功导入：
+                                                    {t(
+                                                        'admin.users.import_success_label',
+                                                    )}
                                                     <span className="font-semibold text-success">
                                                         {import_results.success}
                                                     </span>{' '}
-                                                    条
+                                                    {t(
+                                                        'admin.users.import_count_unit',
+                                                    )}
                                                 </p>
                                                 <p>
-                                                    跳过空行：
+                                                    {t(
+                                                        'admin.users.import_skipped_label',
+                                                    )}
                                                     <span className="font-semibold text-muted-foreground">
                                                         {import_results.skipped}
                                                     </span>{' '}
-                                                    条
+                                                    {t(
+                                                        'admin.users.import_count_unit',
+                                                    )}
                                                 </p>
                                                 {import_results.failed > 0 && (
                                                     <p>
-                                                        失败：
+                                                        {t(
+                                                            'admin.users.import_failed_label',
+                                                        )}
                                                         <span className="font-semibold text-destructive">
                                                             {
                                                                 import_results.failed
                                                             }
                                                         </span>{' '}
-                                                        条
+                                                        {t(
+                                                            'admin.users.import_count_unit',
+                                                        )}
                                                     </p>
                                                 )}
                                             </div>
@@ -261,10 +274,10 @@ export default function UserIndex({
                                         <FileSpreadsheet className="h-8 w-8 shrink-0 text-muted-foreground" />
                                         <div className="flex-1">
                                             <p className="text-sm font-medium">
-                                                下载导入模板
+                                                {t('admin.users.download_template')}
                                             </p>
                                             <p className="text-xs text-muted-foreground">
-                                                包含表头和示例数据，请按照格式填写
+                                                {t('admin.users.template_desc')}
                                             </p>
                                         </div>
                                         <a
@@ -273,7 +286,7 @@ export default function UserIndex({
                                         >
                                             <Button variant="outline" size="sm">
                                                 <Download className="mr-1 h-3 w-3" />
-                                                下载
+                                                {t('admin.users.download')}
                                             </Button>
                                         </a>
                                     </div>
@@ -314,12 +327,10 @@ export default function UserIndex({
                                                 <>
                                                     <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
                                                     <p className="text-sm text-muted-foreground">
-                                                        点击或拖拽 CSV
-                                                        文件到此处
+                                                        {t('admin.users.drop_hint')}
                                                     </p>
                                                     <p className="text-xs text-muted-foreground">
-                                                        支持 .csv 和 .txt
-                                                        格式，最大 10MB
+                                                        {t('admin.users.file_formats')}
                                                     </p>
                                                 </>
                                             )}
@@ -336,12 +347,12 @@ export default function UserIndex({
                                                 {importProcessing ? (
                                                     <>
                                                         <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                                                        导入中...
+                                                        {t('admin.users.importing')}
                                                     </>
                                                 ) : (
                                                     <>
                                                         <Upload className="mr-2 h-4 w-4" />
-                                                        开始导入
+                                                        {t('admin.users.start_import')}
                                                     </>
                                                 )}
                                             </Button>
@@ -354,7 +365,7 @@ export default function UserIndex({
                         <Button asChild>
                             <Link href="/admin/users/create">
                                 <UserPlus className="mr-2 h-4 w-4" />
-                                添加用户
+                                {t('admin.users.add_user')}
                             </Link>
                         </Button>
                     </div>
@@ -365,7 +376,7 @@ export default function UserIndex({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
-                            筛选用户
+                            {t('admin.users.filter_users')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -374,11 +385,15 @@ export default function UserIndex({
                             className="grid gap-4 md:grid-cols-3"
                         >
                             <div className="grid gap-2">
-                                <Label htmlFor="search">搜索</Label>
+                                <Label htmlFor="search">
+                                    {t('common.search')}
+                                </Label>
                                 <Input
                                     id="search"
                                     type="text"
-                                    placeholder="姓名或邮箱..."
+                                    placeholder={t(
+                                        'admin.users.search_placeholder',
+                                    )}
                                     value={filters.search || ''}
                                     onChange={(e) =>
                                         router.get(
@@ -396,7 +411,9 @@ export default function UserIndex({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="role">角色</Label>
+                                <Label htmlFor="role">
+                                    {t('profile.role')}
+                                </Label>
                                 <Select
                                     value={filters.role || 'all'}
                                     onValueChange={(value) =>
@@ -416,11 +433,15 @@ export default function UserIndex({
                                     }
                                 >
                                     <SelectTrigger id="role">
-                                        <SelectValue placeholder="所有角色" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'admin.users.all_roles',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            所有角色
+                                            {t('admin.users.all_roles')}
                                         </SelectItem>
                                         {roles.map((role) => (
                                             <SelectItem
@@ -441,7 +462,7 @@ export default function UserIndex({
                                     className="w-full"
                                 >
                                     <Search className="mr-2 h-4 w-4" />
-                                    搜索
+                                    {t('common.search')}
                                 </Button>
                             </div>
                         </form>
@@ -451,10 +472,13 @@ export default function UserIndex({
                 {/* Users List */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>用户列表</CardTitle>
+                        <CardTitle>{t('nav.user_list')}</CardTitle>
                         <CardDescription>
-                            显示 {users.from} 到 {users.to}，共 {users.total}{' '}
-                            名用户
+                            {t('admin.users.showing', {
+                                from: formatNumber(users.from),
+                                to: formatNumber(users.to),
+                                total: formatNumber(users.total),
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -478,7 +502,9 @@ export default function UserIndex({
                                                         variant="outline"
                                                         className="text-xs"
                                                     >
-                                                        当前用户
+                                                        {t(
+                                                            'admin.users.current_user',
+                                                        )}
                                                     </Badge>
                                                 )}
                                             </div>
@@ -501,11 +527,13 @@ export default function UserIndex({
                                                     <div className="flex items-center gap-1">
                                                         <Clock className="h-3 w-3" />
                                                         <span>
-                                                            最后登录:{' '}
-                                                            {new Date(
-                                                                user.last_login_at,
-                                                            ).toLocaleDateString(
-                                                                'zh-CN',
+                                                            {t(
+                                                                'admin.users.last_login',
+                                                                {
+                                                                    date: formatDate(
+                                                                        user.last_login_at,
+                                                                    ),
+                                                                },
                                                             )}
                                                         </span>
                                                     </div>
@@ -529,7 +557,9 @@ export default function UserIndex({
                                         {user.points && (
                                             <div className="mb-1 flex items-center gap-1 font-semibold text-primary">
                                                 <Award className="h-4 w-4" />
-                                                {user.points.total_points.toLocaleString()}
+                                                {formatNumber(
+                                                    user.points.total_points,
+                                                )}
                                             </div>
                                         )}
                                         <div className="flex gap-2">
@@ -551,7 +581,12 @@ export default function UserIndex({
                                                     onClick={() => {
                                                         if (
                                                             confirm(
-                                                                `确定要删除用户 "${user.name}" 吗？`,
+                                                                t(
+                                                                    'admin.users.delete_confirm',
+                                                                    {
+                                                                        name: user.name,
+                                                                    },
+                                                                ),
                                                             )
                                                         ) {
                                                             window.location.href = `/admin/users/${user.id}`;

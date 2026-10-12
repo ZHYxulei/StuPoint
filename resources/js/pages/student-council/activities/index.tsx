@@ -20,6 +20,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatDate } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface CouncilActivity {
@@ -54,31 +56,36 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '首页', href: '/' },
-    { title: '学生会', href: '/student-council' },
-    { title: '活动列表', href: '/student-council/activities' },
-];
-
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-    }
-> = {
-    draft: { label: '草稿', variant: 'secondary' },
-    active: { label: '进行中', variant: 'success' },
-    closed: { label: '已结束', variant: 'outline' },
-};
-
 export default function ActivityIndex({ activities, filters }: PageProps) {
+    // Built inside the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.home'), href: '/' },
+        { title: t('nav.student_council'), href: '/student-council' },
+        {
+            title: t('council.activities.title'),
+            href: '/student-council/activities',
+        },
+    ];
+
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+        }
+    > = {
+        draft: { label: t('council.status.draft'), variant: 'secondary' },
+        active: { label: t('council.status.active'), variant: 'success' },
+        closed: { label: t('council.status.closed'), variant: 'outline' },
+    };
+
     const { get } = useForm({});
 
     const handleFilterChange = (key: string, value: string) => {
@@ -90,18 +97,20 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="活动列表" />
+            <Head title={t('council.activities.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="活动列表"
-                        description={`共 ${activities.total} 个活动`}
+                        title={t('council.activities.title')}
+                        description={t('council.activities.count', {
+                            count: activities.total,
+                        })}
                     />
                     <Button asChild>
                         <Link href="/student-council/activities/create">
                             <Plus className="mr-2 h-4 w-4" />
-                            创建活动
+                            {t('council.activities.create')}
                         </Link>
                     </Button>
                 </div>
@@ -109,12 +118,16 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                 {/* Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base">筛选条件</CardTitle>
+                        <CardTitle className="text-base">
+                            {t('council.activities.filters')}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-4 md:grid-cols-3">
                             <div className="space-y-2">
-                                <Label htmlFor="status-filter">活动状态</Label>
+                                <Label htmlFor="status-filter">
+                                    {t('council.activities.status_label')}
+                                </Label>
                                 <Select
                                     value={filters.status || 'all'}
                                     onValueChange={(value) =>
@@ -122,20 +135,26 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                                     }
                                 >
                                     <SelectTrigger id="status-filter">
-                                        <SelectValue placeholder="选择状态" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'council.activities.select_status',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            全部状态
+                                            {t(
+                                                'council.activities.all_statuses',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="draft">
-                                            草稿
+                                            {t('council.status.draft')}
                                         </SelectItem>
                                         <SelectItem value="active">
-                                            进行中
+                                            {t('council.status.active')}
                                         </SelectItem>
                                         <SelectItem value="closed">
-                                            已结束
+                                            {t('council.status.closed')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -150,9 +169,11 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                         {activities.data.length === 0 ? (
                             <div className="py-12 text-center text-muted-foreground">
                                 <Calendar className="mx-auto mb-4 h-16 w-16 opacity-50" />
-                                <p className="mb-2 text-lg">暂无活动</p>
+                                <p className="mb-2 text-lg">
+                                    {t('council.activities.empty')}
+                                </p>
                                 <p className="text-sm">
-                                    点击上方"创建活动"按钮开始创建
+                                    {t('council.activities.empty_description')}
                                 </p>
                             </div>
                         ) : (
@@ -181,21 +202,19 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                                                     </div>
                                                     <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
                                                         {activity.description ||
-                                                            '暂无描述'}
+                                                            t(
+                                                                'shop.no_description',
+                                                            )}
                                                     </p>
                                                     <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
                                                         <div className="flex items-center gap-1">
                                                             <Calendar className="h-4 w-4" />
-                                                            {new Date(
+                                                            {formatDate(
                                                                 activity.start_date,
-                                                            ).toLocaleDateString(
-                                                                'zh-CN',
                                                             )}{' '}
                                                             -{' '}
-                                                            {new Date(
+                                                            {formatDate(
                                                                 activity.end_date,
-                                                            ).toLocaleDateString(
-                                                                'zh-CN',
                                                             )}
                                                         </div>
                                                         <div className="flex items-center gap-1">
@@ -204,21 +223,23 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                                                         </div>
                                                         <div className="flex items-center gap-1">
                                                             <Users className="h-4 w-4" />
-                                                            {
-                                                                activity.participants_count
-                                                            }
-                                                            /
-                                                            {
-                                                                activity.max_participants
-                                                            }{' '}
-                                                            人
+                                                            {t(
+                                                                'council.activities.participants_progress_short',
+                                                                {
+                                                                    current:
+                                                                        activity.participants_count,
+                                                                    max: activity.max_participants,
+                                                                },
+                                                            )}
                                                         </div>
                                                         <div className="flex items-center gap-1">
                                                             <Trophy className="h-4 w-4" />
-                                                            {
-                                                                activity.points_reward
-                                                            }{' '}
-                                                            积分
+                                                            {t(
+                                                                'council.activities.points_badge',
+                                                                {
+                                                                    points: activity.points_reward,
+                                                                },
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -251,8 +272,13 @@ export default function ActivityIndex({ activities, filters }: PageProps) {
                                                 </div>
                                             </div>
                                             <div className="text-xs text-muted-foreground">
-                                                创建者：
-                                                {activity.organizer.name}
+                                                {t(
+                                                    'council.activities.created_by',
+                                                    {
+                                                        name: activity.organizer
+                                                            .name,
+                                                    },
+                                                )}
                                             </div>
                                         </div>
                                     );

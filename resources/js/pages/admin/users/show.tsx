@@ -32,6 +32,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Role {
@@ -65,13 +67,13 @@ interface PageProps {
     availableRoles: Role[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '用户管理', href: '/admin/users' },
-    { title: '用户详情', href: '' },
-];
-
 export default function UserShow({ user, availableRoles }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.user_management'), href: '/admin/users' },
+        { title: t('admin.users.user_detail'), href: '' },
+    ];
+
     const [successMessage, setSuccessMessage] = useState('');
     const [pointsDialogOpen, setPointsDialogOpen] = useState(false);
     const [pointsSuccess, setPointsSuccess] = useState('');
@@ -137,7 +139,8 @@ export default function UserShow({ user, availableRoles }: PageProps) {
         e.preventDefault();
         setSuccessMessage('');
         put(`/admin/users/${user.id}`, {
-            onSuccess: () => setSuccessMessage('用户信息已更新'),
+            onSuccess: () =>
+                setSuccessMessage(t('admin.users.info_updated')),
         });
     };
 
@@ -145,7 +148,8 @@ export default function UserShow({ user, availableRoles }: PageProps) {
         e.preventDefault();
         setSuccessMessage('');
         post(`/admin/users/${user.id}/roles`, {
-            onSuccess: () => setSuccessMessage('用户角色已更新'),
+            onSuccess: () =>
+                setSuccessMessage(t('admin.users.roles_updated')),
         });
     };
 
@@ -154,7 +158,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
         setSuccessMessage('');
         postPassword(`/admin/users/${user.id}/password`, {
             onSuccess: () => {
-                setSuccessMessage('密码已更新');
+                setSuccessMessage(t('admin.users.password_updated'));
                 resetPassword();
             },
         });
@@ -166,12 +170,12 @@ export default function UserShow({ user, availableRoles }: PageProps) {
         clearPointsErrors();
         postPoints(`/admin/users/${user.id}/adjust-points`, {
             onSuccess: () => {
-                setPointsSuccess('积分调整成功');
+                setPointsSuccess(t('admin.users.points_adjusted'));
                 resetPoints();
                 setTimeout(() => {
                     setPointsDialogOpen(false);
                     setPointsSuccess('');
-                    setSuccessMessage('积分调整成功');
+                    setSuccessMessage(t('admin.users.points_adjusted'));
                 }, 1500);
             },
         });
@@ -179,19 +183,23 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`用户: ${user.name}`} />
+            <Head
+                title={t('admin.users.user_head_title', { name: user.name })}
+            />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
                     <Button asChild variant="outline" size="sm">
                         <Link href="/admin/users">
                             <ArrowLeft className="mr-2 h-4 w-4" />
-                            返回
+                            {t('common.back')}
                         </Link>
                     </Button>
                     <Heading
                         title={user.name}
-                        description={`用户 ID: ${user.id}`}
+                        description={t('admin.users.user_id', {
+                            id: user.id,
+                        })}
                     />
                 </div>
 
@@ -207,7 +215,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Edit className="h-5 w-5" />
-                                基本信息
+                                {t('profile.basic_info')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -216,7 +224,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                 className="space-y-4"
                             >
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">姓名</Label>
+                                    <Label htmlFor="name">{t('auth.name')}</Label>
                                     <Input
                                         id="name"
                                         value={data.name}
@@ -233,14 +241,18 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="nickname">昵称</Label>
+                                    <Label htmlFor="nickname">
+                                        {t('auth.nickname')}
+                                    </Label>
                                     <Input
                                         id="nickname"
                                         value={data.nickname}
                                         onChange={(e) =>
                                             setData('nickname', e.target.value)
                                         }
-                                        placeholder="留空则使用姓名"
+                                        placeholder={t(
+                                            'admin.users.nickname_placeholder',
+                                        )}
                                     />
                                     {updateErrors.nickname && (
                                         <p className="text-sm text-destructive">
@@ -250,7 +262,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="id_number">身份证号</Label>
+                                    <Label htmlFor="id_number">
+                                        {t('profile.id_number')}
+                                    </Label>
                                     <Input
                                         id="id_number"
                                         value={data.id_number}
@@ -266,7 +280,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">邮箱</Label>
+                                    <Label htmlFor="email">
+                                        {t('auth.email')}
+                                    </Label>
                                     <Input
                                         id="email"
                                         type="email"
@@ -284,7 +300,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="phone">手机号</Label>
+                                    <Label htmlFor="phone">
+                                        {t('admin.users.phone')}
+                                    </Label>
                                     <Input
                                         id="phone"
                                         value={data.phone}
@@ -295,7 +313,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="student_id">学号</Label>
+                                    <Label htmlFor="student_id">
+                                        {t('profile.student_id')}
+                                    </Label>
                                     <Input
                                         id="student_id"
                                         value={data.student_id}
@@ -310,7 +330,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="grade">年级</Label>
+                                        <Label htmlFor="grade">
+                                            {t('profile.grade')}
+                                        </Label>
                                         <Input
                                             id="grade"
                                             value={data.grade}
@@ -321,7 +343,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="class">班级</Label>
+                                        <Label htmlFor="class">
+                                            {t('profile.class')}
+                                        </Label>
                                         <Input
                                             id="class"
                                             value={data.class}
@@ -344,7 +368,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                         }
                                     />
                                     <Label htmlFor="is_head_teacher">
-                                        班主任
+                                        {t('profile.head_teacher')}
                                     </Label>
                                 </div>
 
@@ -352,7 +376,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                     type="submit"
                                     disabled={updateProcessing}
                                 >
-                                    {updateProcessing ? '保存中...' : '保存'}
+                                    {updateProcessing
+                                        ? t('admin.users.saving')
+                                        : t('common.save')}
                                 </Button>
                             </form>
                         </CardContent>
@@ -363,13 +389,15 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Shield className="h-5 w-5" />
-                                角色权限
+                                {t('admin.users.role_permissions')}
                             </CardTitle>
                             <CardDescription>
-                                当前角色:{' '}
-                                {user.roles.length > 0
-                                    ? user.roles[0].name
-                                    : '无'}
+                                {t('admin.users.current_role', {
+                                    name:
+                                        user.roles.length > 0
+                                            ? user.roles[0].name
+                                            : t('admin.users.none'),
+                                })}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -403,7 +431,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                     type="submit"
                                     disabled={rolesProcessing}
                                 >
-                                    {rolesProcessing ? '保存中...' : '更新角色'}
+                                    {rolesProcessing
+                                        ? t('admin.users.saving')
+                                        : t('admin.users.update_role')}
                                 </Button>
                             </form>
                         </CardContent>
@@ -416,25 +446,29 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Award className="h-5 w-5" />
-                                积分信息
+                                {t('admin.users.points_info')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <p className="text-sm text-muted-foreground">
-                                        总积分
+                                        {t('points.total_points')}
                                     </p>
                                     <p className="text-2xl font-bold text-primary">
-                                        {user.points.total_points.toLocaleString()}
+                                        {formatNumber(
+                                            user.points.total_points,
+                                        )}
                                     </p>
                                 </div>
                                 <div className="space-y-2">
                                     <p className="text-sm text-muted-foreground">
-                                        可兑换积分
+                                        {t('points.redeemable_points')}
                                     </p>
                                     <p className="text-2xl font-bold text-success">
-                                        {user.points.redeemable_points.toLocaleString()}
+                                        {formatNumber(
+                                            user.points.redeemable_points,
+                                        )}
                                     </p>
                                 </div>
                             </div>
@@ -450,17 +484,21 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                             className="w-full"
                                         >
                                             <Award className="mr-2 h-4 w-4" />
-                                            手动调整积分
+                                            {t('admin.users.adjust_points')}
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent className="sm:max-w-[500px]">
                                         <DialogHeader>
                                             <DialogTitle>
-                                                调整用户积分
+                                                {t(
+                                                    'admin.users.adjust_points_title',
+                                                )}
                                             </DialogTitle>
                                             <DialogDescription>
-                                                为 {user.name}{' '}
-                                                手动增加或扣除积分
+                                                {t(
+                                                    'admin.users.adjust_points_desc',
+                                                    { name: user.name },
+                                                )}
                                             </DialogDescription>
                                         </DialogHeader>
 
@@ -475,7 +513,11 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                             className="space-y-4"
                                         >
                                             <div className="grid gap-2">
-                                                <Label>操作类型</Label>
+                                                <Label>
+                                                    {t(
+                                                        'admin.users.operation_type',
+                                                    )}
+                                                </Label>
                                                 <Select
                                                     value={pointsData.type}
                                                     onValueChange={(value) =>
@@ -492,13 +534,17 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                         <SelectItem value="add">
                                                             <div className="flex items-center gap-2">
                                                                 <Plus className="h-4 w-4" />
-                                                                增加积分
+                                                                {t(
+                                                                    'admin.users.add_points',
+                                                                )}
                                                             </div>
                                                         </SelectItem>
                                                         <SelectItem value="deduct">
                                                             <div className="flex items-center gap-2">
                                                                 <Minus className="h-4 w-4" />
-                                                                扣除积分
+                                                                {t(
+                                                                    'admin.users.deduct_points',
+                                                                )}
                                                             </div>
                                                         </SelectItem>
                                                     </SelectContent>
@@ -507,7 +553,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="amount">
-                                                    积分数量
+                                                    {t(
+                                                        'admin.users.points_amount',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="amount"
@@ -531,7 +579,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="reason">
-                                                    调整原因
+                                                    {t(
+                                                        'admin.users.adjust_reason',
+                                                    )}
                                                 </Label>
                                                 <Textarea
                                                     id="reason"
@@ -542,7 +592,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="请输入调整积分的原因..."
+                                                    placeholder={t(
+                                                        'admin.users.adjust_reason_placeholder',
+                                                    )}
                                                     rows={3}
                                                     required
                                                 />
@@ -565,7 +617,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                     }
                                                     disabled={pointsProcessing}
                                                 >
-                                                    取消
+                                                    {t('common.cancel')}
                                                 </Button>
                                                 <Button
                                                     type="submit"
@@ -576,8 +628,10 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                                                     className="flex-1"
                                                 >
                                                     {pointsProcessing
-                                                        ? '处理中...'
-                                                        : '确认调整'}
+                                                        ? t('common.processing')
+                                                        : t(
+                                                              'admin.users.confirm_adjust',
+                                                          )}
                                                 </Button>
                                             </div>
                                         </form>
@@ -593,9 +647,11 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Key className="h-5 w-5" />
-                            修改密码
+                            {t('admin.users.change_password')}
                         </CardTitle>
-                        <CardDescription>为此用户设置新密码</CardDescription>
+                        <CardDescription>
+                            {t('admin.users.set_password_desc')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form
@@ -603,7 +659,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                             className="space-y-4"
                         >
                             <div className="grid gap-2">
-                                <Label htmlFor="password">新密码</Label>
+                                <Label htmlFor="password">
+                                    {t('settings.password.new_password')}
+                                </Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -626,7 +684,7 @@ export default function UserShow({ user, availableRoles }: PageProps) {
 
                             <div className="grid gap-2">
                                 <Label htmlFor="password_confirmation">
-                                    确认密码
+                                    {t('auth.password_confirmation')}
                                 </Label>
                                 <Input
                                     id="password_confirmation"
@@ -643,7 +701,9 @@ export default function UserShow({ user, availableRoles }: PageProps) {
                             </div>
 
                             <Button type="submit" disabled={passwordProcessing}>
-                                {passwordProcessing ? '更新中...' : '更新密码'}
+                                {passwordProcessing
+                                    ? t('admin.users.updating')
+                                    : t('admin.users.update_password')}
                             </Button>
                         </form>
                     </CardContent>

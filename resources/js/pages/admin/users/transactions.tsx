@@ -25,6 +25,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface UserPoints {
@@ -75,20 +77,24 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '用户统计', href: '/admin/users/statistics' },
-    { title: '交易记录', href: '#' },
-];
-
 export default function UserTransactions({
     user,
     transactions,
     filters,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.user_statistics'), href: '/admin/users/statistics' },
+        { title: t('admin.users.transactions'), href: '#' },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`${user.name} - 交易记录`} />
+            <Head
+                title={t('admin.users.transactions_head', {
+                    name: user.name,
+                })}
+            />
 
             <div className="space-y-6 p-4">
                 {/* Header */}
@@ -100,8 +106,12 @@ export default function UserTransactions({
                     </Button>
                     <div className="flex-1">
                         <Heading
-                            title={`${user.name} 的交易记录`}
-                            description="查看该用户的所有积分变动"
+                            title={t('admin.users.transactions_title', {
+                                name: user.name,
+                            })}
+                            description={t(
+                                'admin.users.transactions_description',
+                            )}
                         />
                     </div>
                 </div>
@@ -111,14 +121,14 @@ export default function UserTransactions({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
                             <CardTitle className="text-base">
-                                用户信息
+                                {t('admin.users.user_info')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">
-                                        姓名
+                                        {t('auth.name')}
                                     </span>
                                     <span className="font-medium">
                                         {user.name}
@@ -126,7 +136,7 @@ export default function UserTransactions({
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">
-                                        邮箱
+                                        {t('auth.email')}
                                     </span>
                                     <span className="font-medium">
                                         {user.email}
@@ -135,7 +145,7 @@ export default function UserTransactions({
                                 {user.student_id && (
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">
-                                            学号
+                                            {t('profile.student_id')}
                                         </span>
                                         <span className="font-medium">
                                             {user.student_id}
@@ -145,7 +155,7 @@ export default function UserTransactions({
                                 {user.grade && user.class && (
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">
-                                            班级
+                                            {t('profile.class')}
                                         </span>
                                         <span className="font-medium">
                                             {user.grade} {user.class}
@@ -159,7 +169,7 @@ export default function UserTransactions({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
                             <CardTitle className="text-base">
-                                当前积分
+                                {t('admin.users.current_points')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -167,10 +177,12 @@ export default function UserTransactions({
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
                                         <span className="text-sm text-muted-foreground">
-                                            总积分
+                                            {t('points.total_points')}
                                         </span>
                                         <span className="text-2xl font-bold text-primary">
-                                            {user.points.total_points.toLocaleString()}
+                                            {formatNumber(
+                                                user.points.total_points,
+                                            )}
                                         </span>
                                     </div>
                                     <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -183,10 +195,12 @@ export default function UserTransactions({
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
                                         <span className="text-sm text-muted-foreground">
-                                            可兑换积分
+                                            {t('points.redeemable_points')}
                                         </span>
                                         <span className="text-2xl font-bold text-success">
-                                            {user.points.redeemable_points.toLocaleString()}
+                                            {formatNumber(
+                                                user.points.redeemable_points,
+                                            )}
                                         </span>
                                     </div>
                                     <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -211,14 +225,14 @@ export default function UserTransactions({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Filter className="h-4 w-4" />
-                            筛选记录
+                            {t('admin.users.filter_records')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-4 md:grid-cols-2">
                             <div className="grid gap-2">
                                 <label className="text-sm font-medium">
-                                    积分类型
+                                    {t('admin.users.points_type')}
                                 </label>
                                 <Select
                                     value={filters.type || 'all'}
@@ -243,13 +257,13 @@ export default function UserTransactions({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            全部
+                                            {t('common.all')}
                                         </SelectItem>
                                         <SelectItem value="total">
-                                            总积分
+                                            {t('points.total_points')}
                                         </SelectItem>
                                         <SelectItem value="redeemable">
-                                            可兑换积分
+                                            {t('points.redeemable_points')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -257,7 +271,7 @@ export default function UserTransactions({
 
                             <div className="grid gap-2">
                                 <label className="text-sm font-medium">
-                                    来源
+                                    {t('points.source')}
                                 </label>
                                 <Select
                                     value={filters.source || 'all'}
@@ -282,22 +296,30 @@ export default function UserTransactions({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            全部
+                                            {t('common.all')}
                                         </SelectItem>
                                         <SelectItem value="check_in">
-                                            每日签到
+                                            {t('admin.users.source_check_in')}
                                         </SelectItem>
                                         <SelectItem value="task_complete">
-                                            完成任务
+                                            {t(
+                                                'admin.users.source_task_complete',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="activity_reward">
-                                            活动奖励
+                                            {t(
+                                                'admin.users.source_activity_reward',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="manual_adjust">
-                                            手动调整
+                                            {t(
+                                                'admin.users.source_manual_adjust',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="product_exchange">
-                                            商品兑换
+                                            {t(
+                                                'admin.users.source_product_exchange',
+                                            )}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -311,11 +333,14 @@ export default function UserTransactions({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Calendar className="h-5 w-5" />
-                            交易记录
+                            {t('admin.users.transactions')}
                         </CardTitle>
                         <CardDescription>
-                            显示 {transactions.from} 到 {transactions.to}，共{' '}
-                            {transactions.total} 条记录
+                            {t('admin.users.showing_records', {
+                                from: formatNumber(transactions.from),
+                                to: formatNumber(transactions.to),
+                                total: formatNumber(transactions.total),
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -323,7 +348,7 @@ export default function UserTransactions({
                             <div className="py-12 text-center">
                                 <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                                 <p className="text-muted-foreground">
-                                    暂无交易记录
+                                    {t('points.no_transactions')}
                                 </p>
                             </div>
                         ) : (
@@ -366,17 +391,21 @@ export default function UserTransactions({
                                                 >
                                                     {transaction.type ===
                                                     'total'
-                                                        ? '总积分'
-                                                        : '可兑换'}
+                                                        ? t('points.total_points')
+                                                        : t(
+                                                              'dashboard.redeemable',
+                                                          )}
                                                 </Badge>
                                             </div>
                                             <p className="text-sm text-muted-foreground">
-                                                来源: {transaction.source}
+                                                {t('admin.users.source_inline', {
+                                                    source: transaction.source,
+                                                })}
                                             </p>
                                             <p className="mt-1 text-xs text-muted-foreground">
-                                                {new Date(
+                                                {formatDateTime(
                                                     transaction.created_at,
-                                                ).toLocaleString('zh-CN')}
+                                                )}
                                             </p>
                                         </div>
 
@@ -395,8 +424,10 @@ export default function UserTransactions({
                                                 {transaction.amount}
                                             </p>
                                             <p className="text-xs text-muted-foreground">
-                                                余额:{' '}
-                                                {transaction.balance_after}
+                                                {t('points.balance')}:{' '}
+                                                {formatNumber(
+                                                    transaction.balance_after,
+                                                )}
                                             </p>
                                         </div>
                                     </div>

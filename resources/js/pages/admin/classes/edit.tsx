@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Teacher {
@@ -39,13 +40,15 @@ interface PageProps {
     teachers: Teacher[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '班级管理', href: '/admin/classes' },
-    { title: '编辑班级', href: '/admin/classes/[id]/edit' },
-];
-
 export default function EditClass({ class: classData, teachers }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.classes'), href: '/admin/classes' },
+        { title: t('admin.classes.edit_title'), href: '/admin/classes/[id]/edit' },
+    ];
+
     const { data, setData, put, processing, errors } = useForm({
         name: classData.name,
         grade: classData.grade,
@@ -59,7 +62,7 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="编辑班级" />
+            <Head title={t('admin.classes.edit_title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -69,29 +72,33 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
                         </Link>
                     </Button>
                     <Heading
-                        title="编辑班级"
-                        description="修改班级信息和班主任"
+                        title={t('admin.classes.edit_title')}
+                        description={t('admin.classes.edit_description')}
                     />
                 </div>
 
                 <Card className="max-w-2xl border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>班级信息</CardTitle>
-                        <CardDescription>修改班级的基本信息</CardDescription>
+                        <CardTitle>{t('admin.classes.info_title')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.classes.edit_info_description')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="grade">
-                                        年级{' '}
+                                        {t('admin.classes.grade')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
                                     </Label>
                                     <Input
                                         id="grade"
-                                        placeholder="例如: 高三、初一"
+                                        placeholder={t(
+                                            'admin.classes.grade_placeholder',
+                                        )}
                                         value={data.grade}
                                         onChange={(e) =>
                                             setData('grade', e.target.value)
@@ -106,14 +113,16 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="name">
-                                        班级名称{' '}
+                                        {t('admin.classes.name')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
                                     </Label>
                                     <Input
                                         id="name"
-                                        placeholder="例如: 1班、2班"
+                                        placeholder={t(
+                                            'admin.classes.name_placeholder',
+                                        )}
                                         value={data.name}
                                         onChange={(e) =>
                                             setData('name', e.target.value)
@@ -128,7 +137,7 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="head_teacher_id">
-                                        班主任
+                                        {t('admin.classes.head_teacher')}
                                     </Label>
                                     <Select
                                         value={data.head_teacher_id}
@@ -137,11 +146,17 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
                                         }
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="选择班主任" />
+                                            <SelectValue
+                                                placeholder={t(
+                                                    'admin.classes.select_head_teacher',
+                                                )}
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="">
-                                                无班主任
+                                                {t(
+                                                    'admin.classes.no_head_teacher',
+                                                )}
                                             </SelectItem>
                                             {teachers.map((teacher) => (
                                                 <SelectItem
@@ -174,7 +189,7 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
                                         href={`/admin/classes/${classData.id}`}
                                         className="flex-1"
                                     >
-                                        取消
+                                        {t('common.cancel')}
                                     </Link>
                                 </Button>
                                 <Button
@@ -183,7 +198,7 @@ export default function EditClass({ class: classData, teachers }: PageProps) {
                                     disabled={processing}
                                 >
                                     <Save className="mr-2 h-4 w-4" />
-                                    保存更改
+                                    {t('admin.classes.save_changes')}
                                 </Button>
                             </div>
                         </form>

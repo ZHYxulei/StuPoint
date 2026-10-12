@@ -11,6 +11,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Child {
@@ -31,26 +32,28 @@ interface PageProps {
     children: Child[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '家长中心', href: '/parent' },
-    { title: '我的子女', href: '/parent/children' },
-];
-
 export default function ParentChildrenIndex({ children }: PageProps) {
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.parent_center'), href: '/parent' },
+        { title: t('parent.children.title'), href: '/parent/children' },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="我的子女" />
+            <Head title={t('parent.children.title')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="我的子女"
-                        description="查看和管理您绑定的子女账户"
+                        title={t('parent.children.title')}
+                        description={t('parent.children.index_description')}
                     />
                     <Button asChild>
                         <Link href="/parent/children/create">
                             <Plus className="mr-2 h-4 w-4" />
-                            绑定子女
+                            {t('parent.children.link_child')}
                         </Link>
                     </Button>
                 </div>
@@ -60,7 +63,7 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <Users2 className="mb-4 h-12 w-12 text-muted-foreground/50" />
                             <p className="text-muted-foreground">
-                                暂无绑定的子女
+                                {t('parent.children.empty')}
                             </p>
                             <Button asChild>
                                 <Link
@@ -68,7 +71,7 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                     className="mt-4"
                                 >
                                     <Plus className="mr-2 h-4 w-4" />
-                                    绑定第一个子女
+                                    {t('parent.children.link_first')}
                                 </Link>
                             </Button>
                         </CardContent>
@@ -92,7 +95,9 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                                 </Badge>
                                                 {child.is_approved && (
                                                     <Badge variant="default">
-                                                        已确认
+                                                        {t(
+                                                            'parent.children.approved',
+                                                        )}
                                                     </Badge>
                                                 )}
                                             </CardDescription>
@@ -103,7 +108,7 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="text-muted-foreground">
-                                                学号
+                                                {t('profile.student_id')}
                                             </span>
                                             <span className="font-medium">
                                                 {child.student_id}
@@ -111,7 +116,9 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                         </div>
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="text-muted-foreground">
-                                                年级班级
+                                                {t(
+                                                    'parent.children.grade_class',
+                                                )}
                                             </span>
                                             <span className="font-medium">
                                                 {child.grade} {child.class}
@@ -120,7 +127,7 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="flex items-center gap-1 text-muted-foreground">
                                                 <Coins className="h-3.5 w-3.5" />
-                                                总积分
+                                                {t('points.total_points')}
                                             </span>
                                             <span className="font-bold text-primary">
                                                 {child.points.total_points}
@@ -129,7 +136,7 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="flex items-center gap-1 text-muted-foreground">
                                                 <Award className="h-3.5 w-3.5" />
-                                                可兑换
+                                                {t('dashboard.redeemable')}
                                             </span>
                                             <span className="font-bold text-primary">
                                                 {child.points.redeemable_points}
@@ -148,7 +155,7 @@ export default function ParentChildrenIndex({ children }: PageProps) {
                                                     className="flex-1"
                                                 >
                                                     <Eye className="mr-2 h-3.5 w-3.5" />
-                                                    查看详情
+                                                    {t('common.view_details')}
                                                 </Link>
                                             </Button>
                                         </div>

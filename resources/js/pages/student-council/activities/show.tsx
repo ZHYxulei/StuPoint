@@ -59,6 +59,8 @@ import {
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Participant {
@@ -94,31 +96,36 @@ interface PageProps {
     activity: CouncilActivity;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '首页', href: '/' },
-    { title: '学生会', href: '/student-council' },
-    { title: '活动列表', href: '/student-council/activities' },
-];
-
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-    }
-> = {
-    draft: { label: '草稿', variant: 'secondary' },
-    active: { label: '进行中', variant: 'success' },
-    closed: { label: '已结束', variant: 'outline' },
-};
-
 export default function ShowActivity({ activity }: PageProps) {
+    // Built inside the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.home'), href: '/' },
+        { title: t('nav.student_council'), href: '/student-council' },
+        {
+            title: t('council.activities.title'),
+            href: '/student-council/activities',
+        },
+    ];
+
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+        }
+    > = {
+        draft: { label: t('council.status.draft'), variant: 'secondary' },
+        active: { label: t('council.status.active'), variant: 'success' },
+        closed: { label: t('council.status.closed'), variant: 'outline' },
+    };
+
     const { processing: awardProcessing } = useForm({});
     const { delete: destroyDelete, processing: deleteProcessing } = useForm({});
     const { data, setData } = useForm({
@@ -162,7 +169,7 @@ export default function ShowActivity({ activity }: PageProps) {
                         </Button>
                         <Heading
                             title={activity.title}
-                            description="活动详情和参与人员"
+                            description={t('council.activities.show_description')}
                         />
                     </div>
                     <div className="flex gap-2">
@@ -173,7 +180,7 @@ export default function ShowActivity({ activity }: PageProps) {
                                         href={`/student-council/activities/${activity.id}/edit`}
                                     >
                                         <Edit className="mr-2 h-4 w-4" />
-                                        编辑
+                                        {t('common.edit')}
                                     </Link>
                                 </Button>
                                 <AlertDialog>
@@ -185,24 +192,30 @@ export default function ShowActivity({ activity }: PageProps) {
                                             }
                                         >
                                             <Trash2 className="mr-2 h-4 w-4" />
-                                            删除
+                                            {t('common.delete')}
                                         </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                         <AlertDialogHeader>
                                             <AlertDialogTitle>
-                                                确定要删除这个活动吗？
+                                                {t(
+                                                    'council.activities.delete_confirm_title',
+                                                )}
                                             </AlertDialogTitle>
                                             <AlertDialogDescription>
                                                 {activity.participants.length >
                                                 0
-                                                    ? '活动已有参与者，无法删除。'
-                                                    : '此操作无法撤销，活动将被永久删除。'}
+                                                    ? t(
+                                                          'council.activities.delete_has_participants',
+                                                      )
+                                                    : t(
+                                                          'council.activities.delete_warning',
+                                                      )}
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>
-                                                取消
+                                                {t('common.cancel')}
                                             </AlertDialogCancel>
                                             {activity.participants.length ===
                                                 0 && (
@@ -210,7 +223,9 @@ export default function ShowActivity({ activity }: PageProps) {
                                                     onClick={handleDelete}
                                                     disabled={deleteProcessing}
                                                 >
-                                                    确认删除
+                                                    {t(
+                                                        'council.activities.confirm_delete',
+                                                    )}
                                                 </AlertDialogAction>
                                             )}
                                         </AlertDialogFooter>
@@ -226,7 +241,7 @@ export default function ShowActivity({ activity }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
                             <CardTitle className="text-base">
-                                活动信息
+                                {t('council.activities.info')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -258,13 +273,11 @@ export default function ShowActivity({ activity }: PageProps) {
                                 <div className="flex items-center gap-2">
                                     <Calendar className="h-4 w-4 text-muted-foreground" />
                                     <span>
-                                        {new Date(
+                                        {formatDateTime(
                                             activity.start_date,
-                                        ).toLocaleString('zh-CN')}{' '}
+                                        )}{' '}
                                         -{' '}
-                                        {new Date(
-                                            activity.end_date,
-                                        ).toLocaleString('zh-CN')}
+                                        {formatDateTime(activity.end_date)}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -274,20 +287,30 @@ export default function ShowActivity({ activity }: PageProps) {
                                 <div className="flex items-center gap-2">
                                     <Users className="h-4 w-4 text-muted-foreground" />
                                     <span>
-                                        {activity.participants.length}/
-                                        {activity.max_participants} 人参与
+                                        {t(
+                                            'council.activities.participants_progress',
+                                            {
+                                                current:
+                                                    activity.participants.length,
+                                                max: activity.max_participants,
+                                            },
+                                        )}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Trophy className="h-4 w-4 text-muted-foreground" />
                                     <span>
-                                        {activity.points_reward} 积分奖励
+                                        {t('council.activities.points_reward', {
+                                            points: activity.points_reward,
+                                        })}
                                     </span>
                                 </div>
                             </div>
 
                             <div className="border-t pt-2 text-xs text-muted-foreground">
-                                创建者：{activity.organizer.name}
+                                {t('council.activities.created_by', {
+                                    name: activity.organizer.name,
+                                })}
                             </div>
                         </CardContent>
                     </Card>
@@ -296,9 +319,11 @@ export default function ShowActivity({ activity }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
                             <CardTitle className="text-base">
-                                积分奖励
+                                {t('council.activities.award_card_title')}
                             </CardTitle>
-                            <CardDescription>为参与者发放积分</CardDescription>
+                            <CardDescription>
+                                {t('council.activities.award_card_description')}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -307,7 +332,9 @@ export default function ShowActivity({ activity }: PageProps) {
                                         {activity.participants.length}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
-                                        总参与人数
+                                        {t(
+                                            'council.activities.total_participants',
+                                        )}
                                     </p>
                                 </div>
                                 <div>
@@ -315,20 +342,26 @@ export default function ShowActivity({ activity }: PageProps) {
                                         {awardedCount}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
-                                        已奖励人数
+                                        {t(
+                                            'council.activities.awarded_participants',
+                                        )}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="space-y-2 border-t pt-4">
-                                <Label htmlFor="note">备注（可选）</Label>
+                                <Label htmlFor="note">
+                                    {t('council.activities.note_label')}
+                                </Label>
                                 <Textarea
                                     id="note"
                                     value={data.note}
                                     onChange={(e) =>
                                         setData('note', e.target.value)
                                     }
-                                    placeholder="添加备注信息..."
+                                    placeholder={t(
+                                        'council.activities.note_placeholder',
+                                    )}
                                     rows={3}
                                 />
                             </div>
@@ -340,31 +373,42 @@ export default function ShowActivity({ activity }: PageProps) {
                                         disabled={!canAward || awardProcessing}
                                     >
                                         <Award className="mr-2 h-4 w-4" />
-                                        发放积分
+                                        {t('council.activities.award_button')}
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>确认发放积分</DialogTitle>
+                                        <DialogTitle>
+                                            {t(
+                                                'council.activities.award_confirm_title',
+                                            )}
+                                        </DialogTitle>
                                         <DialogDescription>
-                                            将为{' '}
-                                            {activity.participants.length -
-                                                awardedCount}{' '}
-                                            名未奖励参与者每人发放{' '}
-                                            {activity.points_reward} 积分。
+                                            {t(
+                                                'council.activities.award_confirm_description',
+                                                {
+                                                    count:
+                                                        activity.participants
+                                                            .length -
+                                                        awardedCount,
+                                                    points: activity.points_reward,
+                                                },
+                                            )}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter>
                                         <DialogTrigger asChild>
                                             <Button variant="outline">
-                                                取消
+                                                {t('common.cancel')}
                                             </Button>
                                         </DialogTrigger>
                                         <Button
                                             onClick={handleAwardPoints}
                                             disabled={awardProcessing}
                                         >
-                                            确认发放
+                                            {t(
+                                                'council.activities.award_confirm',
+                                            )}
                                         </Button>
                                     </DialogFooter>
                                 </DialogContent>
@@ -373,8 +417,10 @@ export default function ShowActivity({ activity }: PageProps) {
                             {!canAward && activity.participants.length > 0 && (
                                 <p className="text-center text-xs text-muted-foreground">
                                     {activity.status !== 'closed'
-                                        ? '活动结束后才可发放积分'
-                                        : '所有参与者已获得积分'}
+                                        ? t(
+                                              'council.activities.award_closed_only',
+                                          )
+                                        : t('council.activities.award_all_done')}
                                 </p>
                             )}
                         </CardContent>
@@ -384,27 +430,43 @@ export default function ShowActivity({ activity }: PageProps) {
                 {/* Participants List */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>参与人员</CardTitle>
+                        <CardTitle>
+                            {t('council.activities.participants_title')}
+                        </CardTitle>
                         <CardDescription>
-                            共 {activity.participants.length} 人参与，
-                            {awardedCount} 人已获得积分
+                            {t('council.activities.participants_description', {
+                                count: activity.participants.length,
+                                awarded: awardedCount,
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {activity.participants.length === 0 ? (
                             <div className="py-8 text-center text-muted-foreground">
                                 <Users className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                                <p>暂无参与者</p>
+                                <p>{t('council.activities.no_participants')}</p>
                             </div>
                         ) : (
                             <div className="rounded-md border">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>姓名</TableHead>
-                                            <TableHead>邮箱</TableHead>
-                                            <TableHead>参与时间</TableHead>
-                                            <TableHead>积分状态</TableHead>
+                                            <TableHead>
+                                                {t('auth.name')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t('auth.email')}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'council.activities.participated_at',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'council.activities.points_status',
+                                                )}
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -418,21 +480,23 @@ export default function ShowActivity({ activity }: PageProps) {
                                                         {participant.user.email}
                                                     </TableCell>
                                                     <TableCell>
-                                                        {new Date(
+                                                        {formatDateTime(
                                                             participant.created_at,
-                                                        ).toLocaleString(
-                                                            'zh-CN',
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
                                                         {participant.points_awarded ? (
                                                             <Badge variant="success">
                                                                 <Gift className="mr-1 h-3 w-3" />
-                                                                已发放
+                                                                {t(
+                                                                    'council.activities.awarded',
+                                                                )}
                                                             </Badge>
                                                         ) : (
                                                             <Badge variant="secondary">
-                                                                未发放
+                                                                {t(
+                                                                    'council.activities.not_awarded',
+                                                                )}
                                                             </Badge>
                                                         )}
                                                     </TableCell>

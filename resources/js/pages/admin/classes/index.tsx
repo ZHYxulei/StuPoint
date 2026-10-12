@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Class {
@@ -43,12 +44,14 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '班级管理', href: '/admin/classes' },
-];
-
 export default function ClassIndex({ classes, grades, filters }: PageProps) {
+    // Built here, not at module scope: `t()` would otherwise run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.classes'), href: '/admin/classes' },
+    ];
+
     const { get, setData } = useForm({
         grade: filters.grade || '',
     });
@@ -63,18 +66,18 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="班级管理" />
+            <Head title={t('nav.classes')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="班级管理"
-                        description="管理学校班级、班主任和任课老师"
+                        title={t('nav.classes')}
+                        description={t('admin.classes.index_description')}
                     />
                     <Button asChild>
                         <Link href="/admin/classes/create">
                             <Plus className="mr-2 h-4 w-4" />
-                            创建班级
+                            {t('admin.classes.create_title')}
                         </Link>
                     </Button>
                 </div>
@@ -84,7 +87,7 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
-                            筛选班级
+                            {t('admin.classes.filter_title')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -93,7 +96,9 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                             className="grid gap-4 md:grid-cols-2"
                         >
                             <div className="space-y-2">
-                                <Label htmlFor="grade">年级</Label>
+                                <Label htmlFor="grade">
+                                    {t('admin.classes.grade')}
+                                </Label>
                                 <Select
                                     value={filters.grade || ''}
                                     onValueChange={(value) => {
@@ -108,11 +113,15 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                     }}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="选择年级" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'admin.classes.select_grade',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            全部年级
+                                            {t('admin.classes.all_grades')}
                                         </SelectItem>
                                         {grades.map((grade) => (
                                             <SelectItem
@@ -149,29 +158,35 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-muted-foreground">
-                                            班主任
+                                            {t('admin.classes.head_teacher')}
                                         </span>
                                         <span className="font-medium">
                                             {classItem.head_teacher?.name ||
-                                                '未设置'}
+                                                t('profile.not_set')}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="flex items-center gap-1 text-muted-foreground">
                                             <Users2 className="h-3.5 w-3.5" />
-                                            学生
+                                            {t('admin.classes.students')}
                                         </span>
                                         <span className="font-medium">
-                                            {classItem.student_count} 人
+                                            {t('admin.classes.people_count', {
+                                                count: classItem.student_count,
+                                            })}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="flex items-center gap-1 text-muted-foreground">
                                             <Settings2 className="h-3.5 w-3.5" />
-                                            任课老师
+                                            {t(
+                                                'admin.classes.subject_teachers',
+                                            )}
                                         </span>
                                         <span className="font-medium">
-                                            {classItem.teacher_count} 人
+                                            {t('admin.classes.people_count', {
+                                                count: classItem.teacher_count,
+                                            })}
                                         </span>
                                     </div>
                                     <div className="flex gap-2 pt-2">
@@ -185,7 +200,7 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                                                 href={`/admin/classes/${classItem.id}`}
                                                 className="flex-1"
                                             >
-                                                查看详情
+                                                {t('common.view_details')}
                                             </Link>
                                         </Button>
                                     </div>
@@ -199,14 +214,16 @@ export default function ClassIndex({ classes, grades, filters }: PageProps) {
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <Users2 className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                            <p className="text-muted-foreground">暂无班级</p>
+                            <p className="text-muted-foreground">
+                                {t('admin.classes.empty')}
+                            </p>
                             <Button asChild>
                                 <Link
                                     href="/admin/classes/create"
                                     className="mt-4"
                                 >
                                     <Plus className="mr-2 h-4 w-4" />
-                                    创建班级
+                                    {t('admin.classes.create_title')}
                                 </Link>
                             </Button>
                         </CardContent>

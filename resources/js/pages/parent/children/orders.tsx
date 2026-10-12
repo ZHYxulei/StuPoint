@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Empty } from '@/components/ui/empty';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Paginator<T> {
@@ -40,39 +42,47 @@ interface PageProps {
     orders: Paginator<Order>;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '家长中心', href: '/parent' },
-    { title: '我的子女', href: '/parent/children' },
-    { title: '兑换记录', href: '/parent/children/[id]/orders' },
-];
-
 export default function ParentChildOrders({ child, orders }: PageProps) {
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.parent_center'), href: '/parent' },
+        { title: t('parent.children.title'), href: '/parent/children' },
+        {
+            title: t('parent.orders.title'),
+            href: '/parent/children/[id]/orders',
+        },
+    ];
+
     const getStatusBadge = (status: string) => {
         const statusMap: Record<string, { label: string; tone: StatusTone }> = {
-            pending: { label: '待处理', tone: 'warning' },
-            processing: { label: '处理中', tone: 'info' },
-            completed: { label: '已完成', tone: 'success' },
-            cancelled: { label: '已取消', tone: 'secondary' },
-            failed: { label: '失败', tone: 'destructive' },
+            pending: { label: t('status.pending'), tone: 'warning' },
+            processing: { label: t('status.processing'), tone: 'info' },
+            completed: { label: t('status.completed'), tone: 'success' },
+            cancelled: { label: t('status.cancelled'), tone: 'secondary' },
+            failed: { label: t('status.failed'), tone: 'destructive' },
         };
-        const info = statusMap[status] || { label: status, tone: 'secondary' };
+        const info = statusMap[status] || {
+            label: t('status.unknown'),
+            tone: 'secondary',
+        };
 
         return <StatusBadge tone={info.tone} label={info.label} />;
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`${child.name} - 兑换记录`} />
+            <Head title={t('parent.orders.head_title', { name: child.name })} />
 
             <div className="space-y-6 p-4">
                 <PageHeader
-                    title={`${child.name} 的兑换记录`}
-                    description={`学号: ${child.student_id}`}
+                    title={t('parent.orders.page_title', { name: child.name })}
+                    description={`${t('profile.student_id')}: ${child.student_id}`}
                     actions={
                         <Button asChild variant="outline">
                             <Link href={`/parent/children/${child.id}`}>
                                 <ArrowLeft className="size-4" />
-                                返回详情
+                                {t('parent.back_to_detail')}
                             </Link>
                         </Button>
                     }
@@ -82,15 +92,17 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <ShoppingCart className="h-4 w-4" />
-                            全部兑换记录
+                            {t('parent.orders.all_records')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         {orders.data.length === 0 ? (
                             <Empty
                                 icon={Package}
-                                title="暂无兑换记录"
-                                description="孩子完成积分兑换后，订单会显示在这里。"
+                                title={t('parent.orders.empty')}
+                                description={t(
+                                    'parent.orders.empty_description',
+                                )}
                             />
                         ) : (
                             <div className="space-y-3">
@@ -108,12 +120,13 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                                                     {order.product_name}
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    订单号: {order.order_no}
+                                                    {t('shop.order_number')}:{' '}
+                                                    {order.order_no}
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {new Date(
+                                                    {formatDateTime(
                                                         order.created_at,
-                                                    ).toLocaleString('zh-CN')}
+                                                    )}
                                                 </p>
                                             </div>
                                         </div>
@@ -123,7 +136,7 @@ export default function ParentChildOrders({ child, orders }: PageProps) {
                                                     -{order.points_spent}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground">
-                                                    积分
+                                                    {t('points.title')}
                                                 </p>
                                             </div>
                                             {getStatusBadge(order.status)}

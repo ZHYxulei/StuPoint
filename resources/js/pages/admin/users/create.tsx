@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Role {
@@ -63,15 +64,6 @@ interface PageProps {
     defaultRole?: string;
 }
 
-const roleDescriptions = {
-    student: '需要填写身份证号、姓名、班级等信息',
-    teacher: '需要选择授课班级和科目',
-    parent: '只需填写联系方式，后续可绑定子女',
-    head_teacher: '班级的班主任，负责管理班级学生',
-    grade_director: '负责管理整个年级的事务',
-    principal: '学校校长，负责学校整体管理',
-};
-
 const roleIcons: Record<string, any> = {
     student: User,
     teacher: GraduationCap,
@@ -82,18 +74,29 @@ const roleIcons: Record<string, any> = {
     super_admin: UserCog,
 };
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '用户管理', href: '/admin/users' },
-    { title: '添加用户', href: '/admin/users/create' },
-];
-
 export default function CreateUser({
     roles,
     classes,
     subjects,
     defaultRole,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.user_management'), href: '/admin/users' },
+        { title: t('admin.users.add_user'), href: '/admin/users/create' },
+    ];
+
+    // Built in the component: at module scope `t()` would run on import, before
+    // the locale is known, and freeze the default language.
+    const roleDescriptions: Record<string, string> = {
+        student: t('admin.users.role_desc_student'),
+        teacher: t('admin.users.role_desc_teacher'),
+        parent: t('admin.users.role_desc_parent'),
+        head_teacher: t('admin.users.role_desc_head_teacher'),
+        grade_director: t('admin.users.role_desc_grade_director'),
+        principal: t('admin.users.role_desc_principal'),
+    };
+
     const [selectedRole, setSelectedRole] = useState<string>(
         defaultRole || 'student',
     );
@@ -143,7 +146,7 @@ export default function CreateUser({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="添加用户" />
+            <Head title={t('admin.users.add_user')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -152,13 +155,18 @@ export default function CreateUser({
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
-                    <Heading title="添加用户" description="创建新的用户账户" />
+                    <Heading
+                        title={t('admin.users.add_user')}
+                        description={t('admin.users.create_description')}
+                    />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>用户角色</CardTitle>
-                        <CardDescription>选择用户的角色</CardDescription>
+                        <CardTitle>{t('admin.users.user_role')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.users.select_role')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <RadioGroup
@@ -205,8 +213,10 @@ export default function CreateUser({
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>用户信息</CardTitle>
-                        <CardDescription>填写用户的基本信息</CardDescription>
+                        <CardTitle>{t('admin.users.user_info')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.users.fill_basic_info')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -216,7 +226,7 @@ export default function CreateUser({
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="id_number">
-                                                身份证号/学号{' '}
+                                                {t('auth.register.id_number')}{' '}
                                                 <span className="text-destructive">
                                                     *
                                                 </span>
@@ -230,7 +240,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="身份证号或学号"
+                                                placeholder={t(
+                                                    'auth.register.id_number_placeholder',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.id_number}
@@ -239,7 +251,7 @@ export default function CreateUser({
 
                                         <div className="space-y-2">
                                             <Label htmlFor="student_id">
-                                                学号
+                                                {t('profile.student_id')}
                                             </Label>
                                             <Input
                                                 id="student_id"
@@ -250,7 +262,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="学号（可选）"
+                                                placeholder={t(
+                                                    'admin.users.student_id_optional',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.student_id}
@@ -261,7 +275,7 @@ export default function CreateUser({
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="name">
-                                                姓名{' '}
+                                                {t('auth.name')}{' '}
                                                 <span className="text-destructive">
                                                     *
                                                 </span>
@@ -275,14 +289,16 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="真实姓名"
+                                                placeholder={t(
+                                                    'auth.register.name_placeholder',
+                                                )}
                                             />
                                             <InputError message={errors.name} />
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="nickname">
-                                                昵称
+                                                {t('auth.nickname')}
                                             </Label>
                                             <Input
                                                 id="nickname"
@@ -293,7 +309,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="昵称（可选）"
+                                                placeholder={t(
+                                                    'auth.register.nickname_placeholder',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.nickname}
@@ -303,7 +321,7 @@ export default function CreateUser({
 
                                     <div className="space-y-2">
                                         <Label htmlFor="class_id">
-                                            所在班级
+                                            {t('auth.register.class')}
                                         </Label>
                                         <Select
                                             value={data.class_id}
@@ -312,7 +330,11 @@ export default function CreateUser({
                                             }
                                         >
                                             <SelectTrigger>
-                                                <SelectValue placeholder="选择班级（可选）" />
+                                                <SelectValue
+                                                    placeholder={t(
+                                                        'admin.users.select_class_optional',
+                                                    )}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {classes.map((cls) => (
@@ -331,7 +353,7 @@ export default function CreateUser({
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="email">
-                                                电子邮箱
+                                                {t('profile.email')}
                                             </Label>
                                             <Input
                                                 id="email"
@@ -343,7 +365,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="电子邮箱（可选）"
+                                                placeholder={t(
+                                                    'admin.users.email_optional',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.email}
@@ -352,7 +376,7 @@ export default function CreateUser({
 
                                         <div className="space-y-2">
                                             <Label htmlFor="phone">
-                                                手机号
+                                                {t('admin.users.phone')}
                                             </Label>
                                             <Input
                                                 id="phone"
@@ -363,7 +387,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="手机号（可选）"
+                                                placeholder={t(
+                                                    'admin.users.phone_optional',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.phone}
@@ -378,7 +404,7 @@ export default function CreateUser({
                                 <>
                                     <div className="space-y-2">
                                         <Label htmlFor="email">
-                                            电子邮箱{' '}
+                                            {t('profile.email')}{' '}
                                             <span className="text-destructive">
                                                 *
                                             </span>
@@ -390,13 +416,15 @@ export default function CreateUser({
                                             onChange={(e) =>
                                                 setData('email', e.target.value)
                                             }
-                                            placeholder="电子邮箱"
+                                            placeholder={t('profile.email')}
                                         />
                                         <InputError message={errors.email} />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>授课班级（可多选）</Label>
+                                        <Label>
+                                            {t('auth.register.teaching_classes')}
+                                        </Label>
                                         <div className="grid max-h-40 gap-2 overflow-y-auto rounded-md border p-3">
                                             {classes.map((cls) => (
                                                 <label
@@ -436,7 +464,7 @@ export default function CreateUser({
                                         </div>
                                         {classes.length === 0 && (
                                             <p className="text-sm text-muted-foreground">
-                                                暂无班级可选
+                                                {t('auth.register.no_classes')}
                                             </p>
                                         )}
                                         <InputError
@@ -445,7 +473,7 @@ export default function CreateUser({
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>任课科目（可多选）</Label>
+                                        <Label>{t('auth.register.subjects')}</Label>
                                         <div className="grid max-h-40 gap-2 overflow-y-auto rounded-md border p-3">
                                             {subjects.map((subject) => (
                                                 <label
@@ -486,7 +514,7 @@ export default function CreateUser({
                                         </div>
                                         {subjects.length === 0 && (
                                             <p className="text-sm text-muted-foreground">
-                                                暂无科目可选
+                                                {t('auth.register.no_subjects')}
                                             </p>
                                         )}
                                         <InputError message={errors.subjects} />
@@ -506,7 +534,7 @@ export default function CreateUser({
                                             htmlFor="is_head_teacher"
                                             className="cursor-pointer"
                                         >
-                                            班主任
+                                            {t('profile.head_teacher')}
                                         </Label>
                                     </div>
                                     <InputError
@@ -521,7 +549,7 @@ export default function CreateUser({
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="parent_email">
-                                                电子邮箱
+                                                {t('profile.email')}
                                             </Label>
                                             <Input
                                                 id="parent_email"
@@ -533,7 +561,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="电子邮箱（可选）"
+                                                placeholder={t(
+                                                    'admin.users.email_optional',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.email}
@@ -542,7 +572,7 @@ export default function CreateUser({
 
                                         <div className="space-y-2">
                                             <Label htmlFor="parent_phone">
-                                                手机号
+                                                {t('admin.users.phone')}
                                             </Label>
                                             <Input
                                                 id="parent_phone"
@@ -553,7 +583,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="手机号（可选）"
+                                                placeholder={t(
+                                                    'admin.users.phone_optional',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.phone}
@@ -562,7 +594,7 @@ export default function CreateUser({
                                     </div>
 
                                     <p className="text-sm text-muted-foreground">
-                                        家长账户创建后，可以在家长中心绑定子女账号，查看其积分、排名和兑换记录。
+                                        {t('admin.users.parent_note')}
                                     </p>
                                 </>
                             )}
@@ -575,7 +607,7 @@ export default function CreateUser({
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="name">
-                                                姓名{' '}
+                                                {t('auth.name')}{' '}
                                                 <span className="text-destructive">
                                                     *
                                                 </span>
@@ -589,7 +621,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="真实姓名"
+                                                placeholder={t(
+                                                    'auth.register.name_placeholder',
+                                                )}
                                                 required
                                             />
                                             <InputError message={errors.name} />
@@ -597,7 +631,7 @@ export default function CreateUser({
 
                                         <div className="space-y-2">
                                             <Label htmlFor="nickname">
-                                                昵称
+                                                {t('auth.nickname')}
                                             </Label>
                                             <Input
                                                 id="nickname"
@@ -608,7 +642,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="昵称（可选）"
+                                                placeholder={t(
+                                                    'auth.register.nickname_placeholder',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.nickname}
@@ -619,7 +655,7 @@ export default function CreateUser({
                                     <div className="grid gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="email">
-                                                电子邮箱
+                                                {t('profile.email')}
                                             </Label>
                                             <Input
                                                 id="email"
@@ -631,7 +667,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="电子邮箱（可选）"
+                                                placeholder={t(
+                                                    'admin.users.email_optional',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.email}
@@ -640,7 +678,7 @@ export default function CreateUser({
 
                                         <div className="space-y-2">
                                             <Label htmlFor="phone">
-                                                手机号
+                                                {t('admin.users.phone')}
                                             </Label>
                                             <Input
                                                 id="phone"
@@ -651,7 +689,9 @@ export default function CreateUser({
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="手机号（可选）"
+                                                placeholder={t(
+                                                    'admin.users.phone_optional',
+                                                )}
                                             />
                                             <InputError
                                                 message={errors.phone}
@@ -665,7 +705,7 @@ export default function CreateUser({
                             <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="password">
-                                        密码{' '}
+                                        {t('auth.password')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -677,14 +717,14 @@ export default function CreateUser({
                                         onChange={(e) =>
                                             setData('password', e.target.value)
                                         }
-                                        placeholder="密码"
+                                        placeholder={t('auth.password')}
                                     />
                                     <InputError message={errors.password} />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="password_confirmation">
-                                        确认密码{' '}
+                                        {t('auth.password_confirmation')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -699,7 +739,9 @@ export default function CreateUser({
                                                 e.target.value,
                                             )
                                         }
-                                        placeholder="确认密码"
+                                        placeholder={t(
+                                            'auth.password_confirmation',
+                                        )}
                                     />
                                     <InputError
                                         message={errors.password_confirmation}
@@ -710,10 +752,12 @@ export default function CreateUser({
                             <div className="flex items-center gap-4 pt-4">
                                 <Button type="submit" disabled={processing}>
                                     <Save className="mr-2 h-4 w-4" />
-                                    创建用户
+                                    {t('admin.users.create_user')}
                                 </Button>
                                 <Button asChild type="button" variant="outline">
-                                    <Link href="/admin/users">取消</Link>
+                                    <Link href="/admin/users">
+                                        {t('common.cancel')}
+                                    </Link>
                                 </Button>
                             </div>
                         </form>

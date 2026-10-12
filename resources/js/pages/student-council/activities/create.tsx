@@ -20,20 +20,29 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface PageProps {
     // 可以添加预填充数据
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '首页', href: '/' },
-    { title: '学生会', href: '/student-council' },
-    { title: '活动列表', href: '/student-council/activities' },
-    { title: '创建活动', href: '/student-council/activities/create' },
-];
-
 export default function CreateActivity({}: PageProps) {
+    // Built inside the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.home'), href: '/' },
+        { title: t('nav.student_council'), href: '/student-council' },
+        {
+            title: t('council.activities.title'),
+            href: '/student-council/activities',
+        },
+        {
+            title: t('council.activities.create'),
+            href: '/student-council/activities/create',
+        },
+    ];
+
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         description: '',
@@ -52,7 +61,7 @@ export default function CreateActivity({}: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="创建活动" />
+            <Head title={t('council.activities.create')} />
 
             <div className="mx-auto max-w-3xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -62,29 +71,37 @@ export default function CreateActivity({}: PageProps) {
                         </Link>
                     </Button>
                     <Heading
-                        title="创建活动"
-                        description="填写活动信息并发布"
+                        title={t('council.activities.create')}
+                        description={t(
+                            'council.activities.create_description',
+                        )}
                     />
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle>基本信息</CardTitle>
+                            <CardTitle>{t('council.activities.basic_info')}</CardTitle>
                             <CardDescription>
-                                填写活动的基本信息
+                                {t(
+                                    'council.activities.create_basic_info_description',
+                                )}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="title">活动标题 *</Label>
+                                <Label htmlFor="title">
+                                    {t('council.activities.form.title')}
+                                </Label>
                                 <Input
                                     id="title"
                                     value={data.title}
                                     onChange={(e) =>
                                         setData('title', e.target.value)
                                     }
-                                    placeholder="输入活动标题"
+                                    placeholder={t(
+                                        'council.activities.form.title_placeholder',
+                                    )}
                                     required
                                 />
                                 {errors.title && (
@@ -95,14 +112,18 @@ export default function CreateActivity({}: PageProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">活动描述</Label>
+                                <Label htmlFor="description">
+                                    {t('council.activities.form.description')}
+                                </Label>
                                 <Textarea
                                     id="description"
                                     value={data.description}
                                     onChange={(e) =>
                                         setData('description', e.target.value)
                                     }
-                                    placeholder="描述活动内容、目的等"
+                                    placeholder={t(
+                                        'council.activities.form.description_placeholder',
+                                    )}
                                     rows={4}
                                 />
                                 {errors.description && (
@@ -115,7 +136,9 @@ export default function CreateActivity({}: PageProps) {
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="start_date">
-                                        开始时间 *
+                                        {t(
+                                            'council.activities.form.start_date',
+                                        )}
                                     </Label>
                                     <Input
                                         id="start_date"
@@ -137,7 +160,9 @@ export default function CreateActivity({}: PageProps) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="end_date">结束时间 *</Label>
+                                    <Label htmlFor="end_date">
+                                        {t('council.activities.form.end_date')}
+                                    </Label>
                                     <Input
                                         id="end_date"
                                         type="datetime-local"
@@ -156,14 +181,18 @@ export default function CreateActivity({}: PageProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="location">活动地点 *</Label>
+                                <Label htmlFor="location">
+                                    {t('council.activities.form.location')}
+                                </Label>
                                 <Input
                                     id="location"
                                     value={data.location}
                                     onChange={(e) =>
                                         setData('location', e.target.value)
                                     }
-                                    placeholder="输入活动地点"
+                                    placeholder={t(
+                                        'council.activities.form.location_placeholder',
+                                    )}
                                     required
                                 />
                                 {errors.location && (
@@ -177,16 +206,22 @@ export default function CreateActivity({}: PageProps) {
 
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle>活动设置</CardTitle>
+                            <CardTitle>
+                                {t('council.activities.settings')}
+                            </CardTitle>
                             <CardDescription>
-                                设置参与人数和积分奖励
+                                {t(
+                                    'council.activities.create_settings_description',
+                                )}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="max_participants">
-                                        最大参与人数 *
+                                        {t(
+                                            'council.activities.form.max_participants',
+                                        )}
                                     </Label>
                                     <Input
                                         id="max_participants"
@@ -199,7 +234,9 @@ export default function CreateActivity({}: PageProps) {
                                                 e.target.value,
                                             )
                                         }
-                                        placeholder="输入最大人数"
+                                        placeholder={t(
+                                            'council.activities.form.max_participants_placeholder',
+                                        )}
                                         required
                                     />
                                     {errors.max_participants && (
@@ -211,7 +248,9 @@ export default function CreateActivity({}: PageProps) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="points_reward">
-                                        积分奖励 *
+                                        {t(
+                                            'council.activities.form.points_reward',
+                                        )}
                                     </Label>
                                     <Input
                                         id="points_reward"
@@ -224,7 +263,9 @@ export default function CreateActivity({}: PageProps) {
                                                 e.target.value,
                                             )
                                         }
-                                        placeholder="输入积分数量"
+                                        placeholder={t(
+                                            'council.activities.form.points_reward_placeholder',
+                                        )}
                                         required
                                     />
                                     {errors.points_reward && (
@@ -236,7 +277,9 @@ export default function CreateActivity({}: PageProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="status">活动状态 *</Label>
+                                <Label htmlFor="status">
+                                    {t('council.activities.form.status')}
+                                </Label>
                                 <Select
                                     value={data.status}
                                     onValueChange={(value) =>
@@ -244,17 +287,21 @@ export default function CreateActivity({}: PageProps) {
                                     }
                                 >
                                     <SelectTrigger id="status">
-                                        <SelectValue placeholder="选择状态" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'council.activities.select_status',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="draft">
-                                            草稿
+                                            {t('council.status.draft')}
                                         </SelectItem>
                                         <SelectItem value="active">
-                                            进行中
+                                            {t('council.status.active')}
                                         </SelectItem>
                                         <SelectItem value="closed">
-                                            已结束
+                                            {t('council.status.closed')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -269,10 +316,12 @@ export default function CreateActivity({}: PageProps) {
 
                     <div className="flex gap-4">
                         <Button type="submit" disabled={processing}>
-                            创建活动
+                            {t('council.activities.create')}
                         </Button>
                         <Button asChild type="button" variant="outline">
-                            <Link href="/student-council/activities">取消</Link>
+                            <Link href="/student-council/activities">
+                                {t('common.cancel')}
+                            </Link>
                         </Button>
                     </div>
                 </form>

@@ -20,15 +20,21 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '家长中心', href: '/parent' },
-    { title: '我的子女', href: '/parent/children' },
-    { title: '绑定子女', href: '/parent/children/create' },
-];
-
 export default function ParentChildCreate() {
+    // Built in the component: at module scope `t()` would run on import,
+    // before the locale is known, and freeze the default language.
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.parent_center'), href: '/parent' },
+        { title: t('parent.children.title'), href: '/parent/children' },
+        {
+            title: t('parent.children.link_child'),
+            href: '/parent/children/create',
+        },
+    ];
+
     const { data, setData, post, processing, errors } = useForm({
         child_student_id: '',
         relationship: '',
@@ -41,7 +47,7 @@ export default function ParentChildCreate() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="绑定子女" />
+            <Head title={t('parent.children.link_child')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center gap-4">
@@ -51,28 +57,30 @@ export default function ParentChildCreate() {
                         </Link>
                     </Button>
                     <Heading
-                        title="绑定子女"
-                        description="输入子女的学号以绑定账户"
+                        title={t('parent.children.link_child')}
+                        description={t('parent.children.create_description')}
                     />
                 </div>
 
                 <Card className="max-w-2xl border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>绑定子女</CardTitle>
+                        <CardTitle>{t('parent.children.link_child')}</CardTitle>
                         <CardDescription>
-                            请输入子女的学号和您与子女的关系
+                            {t('parent.children.create_card_description')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="child_student_id">
-                                    子女学号{' '}
+                                    {t('parent.children.child_student_id')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
                                     id="child_student_id"
-                                    placeholder="请输入子女的学号"
+                                    placeholder={t(
+                                        'parent.children.child_student_id_placeholder',
+                                    )}
                                     value={data.child_student_id}
                                     onChange={(e) =>
                                         setData(
@@ -83,13 +91,13 @@ export default function ParentChildCreate() {
                                 />
                                 <InputError message={errors.child_student_id} />
                                 <p className="text-sm text-muted-foreground">
-                                    子女学号可以在子女的个人资料中找到
+                                    {t('parent.children.child_student_id_hint')}
                                 </p>
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="relationship">
-                                    关系{' '}
+                                    {t('parent.children.relationship')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Select
@@ -99,17 +107,21 @@ export default function ParentChildCreate() {
                                     }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="选择您与子女的关系" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'parent.children.relationship_placeholder',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="父亲">
-                                            父亲
+                                            {t('parent.relationship.father')}
                                         </SelectItem>
                                         <SelectItem value="母亲">
-                                            母亲
+                                            {t('parent.relationship.mother')}
                                         </SelectItem>
                                         <SelectItem value="其他">
-                                            其他
+                                            {t('parent.relationship.other')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -118,8 +130,7 @@ export default function ParentChildCreate() {
 
                             <div className="rounded-lg bg-muted/50 p-4">
                                 <p className="text-sm text-muted-foreground">
-                                    绑定后，您可以查看子女的积分、排名、兑换记录等信息。
-                                    绑定关系需要经过确认后方可查看详细信息。
+                                    {t('parent.children.link_note')}
                                 </p>
                             </div>
 
@@ -135,7 +146,7 @@ export default function ParentChildCreate() {
                                         href="/parent/children"
                                         className="flex-1"
                                     >
-                                        取消
+                                        {t('common.cancel')}
                                     </Link>
                                 </Button>
                                 <Button
@@ -144,7 +155,7 @@ export default function ParentChildCreate() {
                                     disabled={processing}
                                 >
                                     <Save className="mr-2 h-4 w-4" />
-                                    确认绑定
+                                    {t('parent.children.confirm_link')}
                                 </Button>
                             </div>
                         </form>
