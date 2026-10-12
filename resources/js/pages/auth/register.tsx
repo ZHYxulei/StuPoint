@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
+import { t } from '@/lib/i18n';
 import { login } from '@/routes';
 
 interface Role {
@@ -24,33 +25,6 @@ interface Role {
     icon: React.ComponentType<{ className?: string }>;
     description: string;
 }
-
-const roles: Role[] = [
-    {
-        value: 'student',
-        label: '学生',
-        icon: User,
-        description: '我是学生，需要填写身份证号、姓名等信息',
-    },
-    {
-        value: 'teacher',
-        label: '教师',
-        icon: GraduationCap,
-        description: '我是教师，需要选择年级、授课班级和科目',
-    },
-    {
-        value: 'student_union_member',
-        label: '学生会成员',
-        icon: Users,
-        description: '我是学生会成员，需要填写部门和班级信息',
-    },
-    {
-        value: 'parent',
-        label: '家长',
-        icon: Baby,
-        description: '我是家长，绑定子女后可查看其信息',
-    },
-];
 
 interface SchoolClass {
     id: number;
@@ -83,6 +57,33 @@ export default function Register({
     const [selectedClasses, setSelectedClasses] = useState<number[]>([]);
     const [selectedSubjects, setSelectedSubjects] = useState<number[]>([]);
     const [isHeadTeacher, setIsHeadTeacher] = useState(false);
+
+    const roles: Role[] = [
+        {
+            value: 'student',
+            label: t('auth.roles.student'),
+            icon: User,
+            description: t('auth.roles.student_description'),
+        },
+        {
+            value: 'teacher',
+            label: t('auth.roles.teacher'),
+            icon: GraduationCap,
+            description: t('auth.roles.teacher_description'),
+        },
+        {
+            value: 'student_union_member',
+            label: t('auth.roles.student_union_member'),
+            icon: Users,
+            description: t('auth.roles.student_union_member_description'),
+        },
+        {
+            value: 'parent',
+            label: t('auth.roles.parent'),
+            icon: Baby,
+            description: t('auth.roles.parent_description'),
+        },
+    ];
 
     const { data, setData, post, processing, errors } = useForm({
         role: 'student',
@@ -137,8 +138,11 @@ export default function Register({
     const currentRole = roles.find((r) => r.value === selectedRole);
 
     return (
-        <AuthLayout title="创建账户" description="请选择您的角色并填写相应信息">
-            <Head title="注册" />
+        <AuthLayout
+            title={t('auth.register.title')}
+            description={t('auth.register.description')}
+        >
+            <Head title={t('nav.register')} />
 
             <div className="space-y-6">
                 {/* Role Selector */}
@@ -181,7 +185,7 @@ export default function Register({
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="id_number">
-                                    身份证号/学号{' '}
+                                    {t('auth.register.id_number')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -194,14 +198,16 @@ export default function Register({
                                     onChange={(e) =>
                                         setData('id_number', e.target.value)
                                     }
-                                    placeholder="身份证号或学号"
+                                    placeholder={t(
+                                        'auth.register.id_number_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.id_number} />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="name">
-                                    姓名{' '}
+                                    {t('auth.name')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -213,13 +219,17 @@ export default function Register({
                                     onChange={(e) =>
                                         setData('name', e.target.value)
                                     }
-                                    placeholder="真实姓名"
+                                    placeholder={t(
+                                        'auth.register.name_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.name} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="nickname">昵称</Label>
+                                <Label htmlFor="nickname">
+                                    {t('auth.nickname')}
+                                </Label>
                                 <Input
                                     id="nickname"
                                     type="text"
@@ -228,14 +238,16 @@ export default function Register({
                                     onChange={(e) =>
                                         setData('nickname', e.target.value)
                                     }
-                                    placeholder="昵称（可选）"
+                                    placeholder={t(
+                                        'auth.register.nickname_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.nickname} />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="class_id">
-                                    所在班级{' '}
+                                    {t('auth.register.class')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Select
@@ -245,7 +257,11 @@ export default function Register({
                                     }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="选择班级" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'auth.register.select_class',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {classes.map((cls) => (
@@ -260,13 +276,13 @@ export default function Register({
                                 </Select>
                                 <InputError message={errors.class_id} />
                                 <p className="text-xs text-muted-foreground">
-                                    注册后需要班主任审核通过才能使用
+                                    {t('auth.register.class_approval_note')}
                                 </p>
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="email_or_phone">
-                                    手机号或电子邮箱{' '}
+                                    {t('auth.register.email_or_phone')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -285,7 +301,9 @@ export default function Register({
                                             setData('email', '');
                                         }
                                     }}
-                                    placeholder="手机号或电子邮箱"
+                                    placeholder={t(
+                                        'auth.register.email_or_phone',
+                                    )}
                                 />
                                 <InputError
                                     message={errors.email || errors.phone}
@@ -299,7 +317,7 @@ export default function Register({
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="grade_id">
-                                    所属年级{' '}
+                                    {t('auth.register.grade')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Select
@@ -309,7 +327,11 @@ export default function Register({
                                     }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="选择年级" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'auth.register.select_grade',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {grades.map((grade) => (
@@ -324,13 +346,13 @@ export default function Register({
                                 </Select>
                                 <InputError message={errors.grade_id} />
                                 <p className="text-xs text-muted-foreground">
-                                    注册后需要该年级的年级主任审核通过才能使用
+                                    {t('auth.register.grade_approval_note')}
                                 </p>
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="teacher_email">
-                                    电子邮箱{' '}
+                                    {t('auth.register.teacher_email')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -343,13 +365,17 @@ export default function Register({
                                     onChange={(e) =>
                                         setData('email', e.target.value)
                                     }
-                                    placeholder="电子邮箱"
+                                    placeholder={t(
+                                        'auth.register.teacher_email',
+                                    )}
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label>授课班级（可多选）</Label>
+                                <Label>
+                                    {t('auth.register.teaching_classes')}
+                                </Label>
                                 <div className="grid max-h-40 gap-2 overflow-y-auto rounded-md border p-3">
                                     {classes.map((cls) => (
                                         <label
@@ -385,14 +411,14 @@ export default function Register({
                                 </div>
                                 {classes.length === 0 && (
                                     <p className="text-sm text-muted-foreground">
-                                        暂无班级可选
+                                        {t('auth.register.no_classes')}
                                     </p>
                                 )}
                                 <InputError message={errors.teaching_classes} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label>任课科目（可多选）</Label>
+                                <Label>{t('auth.register.subjects')}</Label>
                                 <div className="grid max-h-40 gap-2 overflow-y-auto rounded-md border p-3">
                                     {subjects.map((subject) => (
                                         <label
@@ -428,7 +454,7 @@ export default function Register({
                                 </div>
                                 {subjects.length === 0 && (
                                     <p className="text-sm text-muted-foreground">
-                                        暂无科目可选
+                                        {t('auth.register.no_subjects')}
                                     </p>
                                 )}
                                 <InputError message={errors.subjects} />
@@ -446,7 +472,7 @@ export default function Register({
                                     htmlFor="is_head_teacher"
                                     className="cursor-pointer"
                                 >
-                                    我是班主任
+                                    {t('auth.register.is_head_teacher')}
                                 </Label>
                             </div>
                             <InputError message={errors.is_head_teacher} />
@@ -458,7 +484,7 @@ export default function Register({
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="id_number">
-                                    身份证号/学号{' '}
+                                    {t('auth.register.id_number')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -471,14 +497,16 @@ export default function Register({
                                     onChange={(e) =>
                                         setData('id_number', e.target.value)
                                     }
-                                    placeholder="身份证号或学号"
+                                    placeholder={t(
+                                        'auth.register.id_number_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.id_number} />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="name">
-                                    姓名{' '}
+                                    {t('auth.name')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -490,13 +518,17 @@ export default function Register({
                                     onChange={(e) =>
                                         setData('name', e.target.value)
                                     }
-                                    placeholder="真实姓名"
+                                    placeholder={t(
+                                        'auth.register.name_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.name} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="nickname">昵称</Label>
+                                <Label htmlFor="nickname">
+                                    {t('auth.nickname')}
+                                </Label>
                                 <Input
                                     id="nickname"
                                     type="text"
@@ -505,14 +537,16 @@ export default function Register({
                                     onChange={(e) =>
                                         setData('nickname', e.target.value)
                                     }
-                                    placeholder="昵称（可选）"
+                                    placeholder={t(
+                                        'auth.register.nickname_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.nickname} />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="class_id">
-                                    所在班级{' '}
+                                    {t('auth.register.class')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Select
@@ -522,7 +556,11 @@ export default function Register({
                                     }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="选择班级" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'auth.register.select_class',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {classes.map((cls) => (
@@ -540,7 +578,7 @@ export default function Register({
 
                             <div className="grid gap-2">
                                 <Label htmlFor="student_union_department">
-                                    学生会部门{' '}
+                                    {t('auth.register.department')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -555,19 +593,23 @@ export default function Register({
                                             e.target.value,
                                         )
                                     }
-                                    placeholder="例如：学习部、文艺部、体育部"
+                                    placeholder={t(
+                                        'auth.register.department_placeholder',
+                                    )}
                                 />
                                 <InputError
                                     message={errors.student_union_department}
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    注册后需要班主任和年级主任双重审核通过才能使用
+                                    {t(
+                                        'auth.register.department_approval_note',
+                                    )}
                                 </p>
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="email_or_phone">
-                                    手机号或电子邮箱{' '}
+                                    {t('auth.register.email_or_phone')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -586,7 +628,9 @@ export default function Register({
                                             setData('email', '');
                                         }
                                     }}
-                                    placeholder="手机号或电子邮箱"
+                                    placeholder={t(
+                                        'auth.register.email_or_phone',
+                                    )}
                                 />
                                 <InputError
                                     message={errors.email || errors.phone}
@@ -600,7 +644,7 @@ export default function Register({
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="parent_email_or_phone">
-                                    手机号或电子邮箱{' '}
+                                    {t('auth.register.email_or_phone')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
@@ -620,7 +664,9 @@ export default function Register({
                                             setData('email', '');
                                         }
                                     }}
-                                    placeholder="手机号或电子邮箱"
+                                    placeholder={t(
+                                        'auth.register.email_or_phone',
+                                    )}
                                 />
                                 <InputError
                                     message={errors.email || errors.phone}
@@ -628,7 +674,7 @@ export default function Register({
                             </div>
 
                             <p className="text-sm text-muted-foreground">
-                                注册成功后，您可以在家长中心绑定子女账号，查看其积分、排名和兑换记录。
+                                {t('auth.register.parent_note')}
                             </p>
                         </>
                     )}
@@ -636,7 +682,8 @@ export default function Register({
                     {/* Password Fields (for all roles) */}
                     <div className="grid gap-2">
                         <Label htmlFor="password">
-                            密码 <span className="text-destructive">*</span>
+                            {t('auth.password')}{' '}
+                            <span className="text-destructive">*</span>
                         </Label>
                         <Input
                             id="password"
@@ -647,14 +694,15 @@ export default function Register({
                             onChange={(e) =>
                                 setData('password', e.target.value)
                             }
-                            placeholder="密码"
+                            placeholder={t('auth.password')}
                         />
                         <InputError message={errors.password} />
                     </div>
 
                     <div className="grid gap-2">
                         <Label htmlFor="password_confirmation">
-                            确认密码 <span className="text-destructive">*</span>
+                            {t('auth.password_confirmation')}{' '}
+                            <span className="text-destructive">*</span>
                         </Label>
                         <Input
                             id="password_confirmation"
@@ -665,7 +713,7 @@ export default function Register({
                             onChange={(e) =>
                                 setData('password_confirmation', e.target.value)
                             }
-                            placeholder="确认密码"
+                            placeholder={t('auth.password_confirmation')}
                         />
                         <InputError message={errors.password_confirmation} />
                     </div>
@@ -676,11 +724,12 @@ export default function Register({
                         disabled={processing}
                     >
                         {processing && <Spinner />}
-                        创建账户
+                        {t('auth.register.submit')}
                     </Button>
 
                     <div className="text-center text-sm text-muted-foreground">
-                        已有账户？ <TextLink href={login()}>登录</TextLink>
+                        {t('auth.register.have_account')}{' '}
+                        <TextLink href={login()}>{t('nav.login')}</TextLink>
                     </div>
                 </form>
             </div>

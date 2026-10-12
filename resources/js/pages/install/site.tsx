@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { t } from '@/lib/i18n';
 
 interface InstallSiteProps {
     form: {
@@ -36,7 +37,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
 
     return (
         <>
-            <Head title="站点配置 - 安装向导">
+            <Head title={t('install.site.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -45,7 +46,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
-                            <CardTitle>站点配置 (6/7)</CardTitle>
+                            <CardTitle>{t('install.site.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form
@@ -66,7 +67,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                 />
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        站点名称
+                                        {t('install.site.app_name')}
                                     </label>
                                     <input
                                         type="text"
@@ -82,7 +83,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
 
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        站点URL
+                                        {t('install.site.app_url')}
                                     </label>
                                     <input
                                         type="url"
@@ -91,7 +92,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                         className="w-full rounded-md border border-border bg-background px-3 py-2 focus:ring-2 focus:ring-ring focus:outline-none"
                                     />
                                     <p className="mt-1 text-xs text-muted-foreground">
-                                        请输入完整的访问地址，例如：http://your-domain.com
+                                        {t('install.site.app_url_hint')}
                                     </p>
                                     <InputError
                                         message={errors.app_url}
@@ -101,15 +102,19 @@ export default function InstallSite({ form }: InstallSiteProps) {
 
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        默认语言
+                                        {t('install.site.locale')}
                                     </label>
                                     <select
                                         name="locale"
                                         defaultValue={locale}
                                         className="w-full rounded-md border border-border bg-background px-3 py-2 focus:ring-2 focus:ring-ring focus:outline-none"
                                     >
-                                        <option value="zh-CN">简体中文</option>
-                                        <option value="en">English</option>
+                                        <option value="zh-CN">
+                                            {t('install.site.locale_zh')}
+                                        </option>
+                                        <option value="en">
+                                            {t('install.site.locale_en')}
+                                        </option>
                                     </select>
                                     <InputError
                                         message={errors.locale}
@@ -119,7 +124,7 @@ export default function InstallSite({ form }: InstallSiteProps) {
 
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        班级积分计算方式
+                                        {t('install.site.class_points_mode')}
                                     </label>
                                     <div className="space-y-3">
                                         <label className="flex items-start gap-2 text-sm text-foreground">
@@ -133,10 +138,11 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                                 className="mt-1"
                                             />
                                             <span>
-                                                学生总分平均值
+                                                {t('install.site.mode_avg')}
                                                 <span className="mt-1 block text-xs text-muted-foreground">
-                                                    班级积分 =
-                                                    同班学生总积分平均值
+                                                    {t(
+                                                        'install.site.mode_avg_desc',
+                                                    )}
                                                 </span>
                                             </span>
                                         </label>
@@ -151,10 +157,11 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                                 className="mt-1"
                                             />
                                             <span>
-                                                学生总分累加
+                                                {t('install.site.mode_sum')}
                                                 <span className="mt-1 block text-xs text-muted-foreground">
-                                                    班级积分 =
-                                                    同班学生总积分之和
+                                                    {t(
+                                                        'install.site.mode_sum_desc',
+                                                    )}
                                                 </span>
                                             </span>
                                         </label>
@@ -170,15 +177,21 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                                 className="mt-1"
                                             />
                                             <span>
-                                                独立班级积分
+                                                {t(
+                                                    'install.site.mode_separate',
+                                                )}
                                                 <span className="mt-1 block text-xs text-muted-foreground">
-                                                    班级积分单独计算，不依赖学生积分
+                                                    {t(
+                                                        'install.site.mode_separate_desc',
+                                                    )}
                                                 </span>
                                             </span>
                                         </label>
                                     </div>
                                     <p className="mt-2 text-xs text-muted-foreground">
-                                        该设置安装完成后不可修改
+                                        {t(
+                                            'install.site.class_points_mode_note',
+                                        )}
                                     </p>
                                     <InputError
                                         message={errors.class_points_mode}
@@ -193,11 +206,11 @@ export default function InstallSite({ form }: InstallSiteProps) {
                                             className="w-full"
                                             type="button"
                                         >
-                                            返回
+                                            {t('common.back')}
                                         </Button>
                                     </a>
                                     <Button type="submit" className="flex-1">
-                                        下一步{' '}
+                                        {t('install.next')}{' '}
                                         <ChevronRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>

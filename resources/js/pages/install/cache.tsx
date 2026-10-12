@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { t } from '@/lib/i18n';
 
 interface InstallCacheProps {
     form: {
@@ -24,7 +25,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
 
     return (
         <>
-            <Head title="缓存配置 - 安装向导">
+            <Head title={t('install.cache.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -33,7 +34,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
-                            <CardTitle>缓存配置 (5/7)</CardTitle>
+                            <CardTitle>{t('install.cache.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form
@@ -54,7 +55,7 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                 />
                                 <div>
                                     <label className="mb-3 block text-sm font-medium text-foreground">
-                                        缓存驱动
+                                        {t('install.cache.driver')}
                                     </label>
                                     <div className="space-y-2">
                                         <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:bg-accent">
@@ -69,10 +70,12 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                             />
                                             <div>
                                                 <div className="font-medium text-foreground">
-                                                    文件缓存
+                                                    {t('install.cache.file')}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">
-                                                    使用文件系统存储缓存数据，简单易用
+                                                    {t(
+                                                        'install.cache.file_desc',
+                                                    )}
                                                 </div>
                                             </div>
                                         </label>
@@ -88,10 +91,14 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                             />
                                             <div>
                                                 <div className="font-medium text-foreground">
-                                                    数据库缓存
+                                                    {t(
+                                                        'install.cache.database',
+                                                    )}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">
-                                                    使用数据库存储缓存数据
+                                                    {t(
+                                                        'install.cache.database_desc',
+                                                    )}
                                                 </div>
                                             </div>
                                         </label>
@@ -107,16 +114,18 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                             />
                                             <div>
                                                 <div className="font-medium text-foreground">
-                                                    Redis缓存
+                                                    {t('install.cache.redis')}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">
-                                                    高性能缓存服务，需要配置Redis
+                                                    {t(
+                                                        'install.cache.redis_desc',
+                                                    )}
                                                 </div>
                                             </div>
                                         </label>
                                     </div>
                                     <p className="mt-2 text-xs text-muted-foreground">
-                                        会话存储将使用文件驱动，队列使用数据库
+                                        {t('install.cache.note')}
                                     </p>
                                     <InputError
                                         message={errors.driver}
@@ -131,11 +140,11 @@ export default function InstallCache({ form }: InstallCacheProps) {
                                             className="w-full"
                                             type="button"
                                         >
-                                            返回
+                                            {t('common.back')}
                                         </Button>
                                     </a>
                                     <Button type="submit" className="flex-1">
-                                        下一步{' '}
+                                        {t('install.next')}{' '}
                                         <ChevronRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>

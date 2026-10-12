@@ -3,6 +3,7 @@ import { User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { t } from '@/lib/i18n';
 
 interface InstallAccountProps {
     siteConfig: {
@@ -27,7 +28,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
 
     return (
         <>
-            <Head title="创建管理员 - 安装向导">
+            <Head title={t('install.account.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -36,13 +37,13 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
-                            <CardTitle>创建管理员账号 (7/7)</CardTitle>
+                            <CardTitle>{t('install.account.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        昵称{' '}
+                                        {t('install.account.nickname')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -59,7 +60,9 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                 )
                                             }
                                             className="w-full rounded-md border border-border bg-background py-2 pr-3 pl-10 focus:ring-2 focus:ring-ring focus:outline-none"
-                                            placeholder="请输入管理员昵称"
+                                            placeholder={t(
+                                                'install.account.nickname_placeholder',
+                                            )}
                                         />
                                     </div>
                                     <InputError
@@ -70,7 +73,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
 
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        邮箱{' '}
+                                        {t('install.account.email')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -95,7 +98,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
 
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        密码{' '}
+                                        {t('install.account.password')}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -112,7 +115,9 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                 )
                                             }
                                             className="w-full rounded-md border border-border bg-background py-2 pr-3 pl-10 focus:ring-2 focus:ring-ring focus:outline-none"
-                                            placeholder="至少8位字符"
+                                            placeholder={t(
+                                                'install.account.password_placeholder',
+                                            )}
                                         />
                                     </div>
                                     <InputError
@@ -123,7 +128,9 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
 
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        确认密码{' '}
+                                        {t(
+                                            'install.account.password_confirmation',
+                                        )}{' '}
                                         <span className="text-destructive">
                                             *
                                         </span>
@@ -140,7 +147,9 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                                 )
                                             }
                                             className="w-full rounded-md border border-border bg-background py-2 pr-3 pl-10 focus:ring-2 focus:ring-ring focus:outline-none"
-                                            placeholder="请再次输入密码，必须与上面一致"
+                                            placeholder={t(
+                                                'install.account.password_confirmation_placeholder',
+                                            )}
                                         />
                                     </div>
                                     <InputError
@@ -161,11 +170,14 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                 <div className="rounded-lg bg-info-soft p-4">
                                     <p className="text-sm text-info">
                                         <CheckCircle className="mr-1 inline h-4 w-4" />
-                                        点击"完成安装"后，系统将一次性写入配置并自动创建数据库表、初始化数据
+                                        {t('install.account.info')}
                                     </p>
                                     {siteConfig.app_name && (
                                         <p className="mt-2 text-xs text-info">
-                                            当前站点名称：{siteConfig.app_name}
+                                            {t(
+                                                'install.account.current_site_name',
+                                                { name: siteConfig.app_name },
+                                            )}
                                         </p>
                                     )}
                                 </div>
@@ -178,7 +190,7 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                             type="button"
                                             disabled={processing}
                                         >
-                                            返回
+                                            {t('common.back')}
                                         </Button>
                                     </a>
                                     <Button
@@ -186,7 +198,9 @@ export default function InstallAccount({ siteConfig }: InstallAccountProps) {
                                         className="flex-1"
                                         disabled={processing}
                                     >
-                                        {processing ? '安装中...' : '完成安装'}{' '}
+                                        {processing
+                                            ? t('install.account.installing')
+                                            : t('install.account.submit')}{' '}
                                         <CheckCircle className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>

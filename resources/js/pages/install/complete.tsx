@@ -1,11 +1,12 @@
 import { Head, Link } from '@inertiajs/react';
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { t } from '@/lib/i18n';
 
 export default function InstallComplete() {
     return (
         <>
-            <Head title="安装完成 - 学生积分管理系统">
+            <Head title={t('install.complete.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -19,36 +20,46 @@ export default function InstallComplete() {
                                 <CheckCircle2 className="h-10 w-10 text-success" />
                             </div>
                             <h1 className="text-3xl font-bold text-foreground">
-                                安装完成！
+                                {t('install.complete.title')}
                             </h1>
                             <p className="mt-2 text-muted-foreground">
-                                学生积分管理系统已准备就绪
+                                {t('install.complete.subtitle')}
                             </p>
                         </div>
 
                         <div className="space-y-4">
                             <div className="rounded-md bg-success-soft p-4">
                                 <h3 className="font-semibold text-success-foreground">
-                                    接下来您可以：
+                                    {t('install.complete.next_steps')}
                                 </h3>
                                 <ul className="mt-2 space-y-2 text-sm text-success">
-                                    <li>• 使用管理员账号登录系统</li>
-                                    <li>• 配置角色和权限</li>
-                                    <li>• 设置积分规则和分类</li>
-                                    <li>• 添加学生和教师</li>
-                                    <li>• 安装插件以扩展功能</li>
+                                    <li>
+                                        • {t('install.complete.step_login')}
+                                    </li>
+                                    <li>
+                                        • {t('install.complete.step_roles')}
+                                    </li>
+                                    <li>
+                                        • {t('install.complete.step_points')}
+                                    </li>
+                                    <li>
+                                        • {t('install.complete.step_users')}
+                                    </li>
+                                    <li>
+                                        • {t('install.complete.step_plugins')}
+                                    </li>
                                 </ul>
                             </div>
 
                             <Button asChild className="w-full" size="lg">
                                 <Link href="/" className="block">
-                                    前往系统首页
+                                    {t('install.complete.go_home')}
                                 </Link>
                             </Button>
                         </div>
 
                         <div className="mt-6 text-center text-xs text-muted-foreground">
-                            感谢使用学生积分管理系统！
+                            {t('install.complete.thanks')}
                         </div>
                     </div>
                 </div>

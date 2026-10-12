@@ -7,16 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { t } from '@/lib/i18n';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
 
 export default function ForgotPassword({ status }: { status?: string }) {
     return (
         <AuthLayout
-            title="忘记密码"
-            description="输入您的邮箱以接收密码重置链接"
+            title={t('auth.forgot_password.title')}
+            description={t('auth.forgot_password.description')}
         >
-            <Head title="忘记密码" />
+            <Head title={t('auth.forgot_password.title')} />
 
             {status && (
                 <div className="mb-4 text-center text-sm font-medium text-success">
@@ -29,7 +30,9 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="email">邮箱地址</Label>
+                                <Label htmlFor="email">
+                                    {t('auth.email_address')}
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -51,7 +54,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                     {processing && (
                                         <LoaderCircle className="h-4 w-4 animate-spin" />
                                     )}
-                                    发送密码重置链接
+                                    {t('auth.forgot_password.submit')}
                                 </Button>
                             </div>
                         </>
@@ -59,8 +62,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 </Form>
 
                 <div className="space-x-1 text-center text-sm text-muted-foreground">
-                    <span>或返回</span>
-                    <TextLink href={login()}>登录</TextLink>
+                    <span>{t('auth.forgot_password.or_return')}</span>
+                    <TextLink href={login()}>{t('nav.login')}</TextLink>
                 </div>
             </div>
         </AuthLayout>

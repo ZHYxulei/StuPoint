@@ -23,6 +23,22 @@ it('stores the chosen locale in the session', function () {
         ->assertSessionHas('locale', 'en');
 });
 
+it('also persists the locale as a cookie so it survives logout', function () {
+    // Signing out invalidates the whole session, which would otherwise reset
+    // the language the user picked.
+    $this->post('/settings/locale', ['locale' => 'en'])
+        ->assertCookie('locale', 'en');
+});
+
+it('resolves the locale from the cookie when the session has none', function () {
+    // The state right after a logout: session flushed, cookie kept.
+    $this->withSession([])
+        ->withCookie('locale', 'en')
+        ->get('/login')
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->where('locale', 'en'));
+});
+
 it('rejects a locale the frontend has no bundle for', function () {
     $this->post('/settings/locale', ['locale' => 'ja'])
         ->assertSessionHasErrors('locale');

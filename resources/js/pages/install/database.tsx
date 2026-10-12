@@ -4,6 +4,7 @@ import { useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { t } from '@/lib/i18n';
 
 interface InstallDatabaseProps {
     form: {
@@ -40,7 +41,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
 
     return (
         <>
-            <Head title="数据库配置 - 安装向导">
+            <Head title={t('install.database.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -49,7 +50,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
-                            <CardTitle>数据库配置 (3/7)</CardTitle>
+                            <CardTitle>{t('install.database.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form
@@ -70,7 +71,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                 />
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        数据库类型
+                                        {t('install.database.connection_type')}
                                     </label>
                                     <select
                                         name="connection"
@@ -84,7 +85,9 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                         className="w-full rounded-md border border-border bg-background px-3 py-2 focus:ring-2 focus:ring-ring focus:outline-none"
                                     >
                                         <option value="sqlite">
-                                            SQLite (推荐)
+                                            {t(
+                                                'install.database.sqlite_recommended',
+                                            )}
                                         </option>
                                         <option value="mysql">MySQL</option>
                                         <option value="pgsql">
@@ -103,7 +106,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                     <div className="space-y-4">
                                         <div>
                                             <label className="mb-2 block text-sm font-medium text-foreground">
-                                                主机
+                                                {t('install.database.host')}
                                             </label>
                                             <input
                                                 type="text"
@@ -118,7 +121,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                         </div>
                                         <div>
                                             <label className="mb-2 block text-sm font-medium text-foreground">
-                                                端口
+                                                {t('install.database.port')}
                                             </label>
                                             <input
                                                 type="text"
@@ -138,7 +141,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                         </div>
                                         <div>
                                             <label className="mb-2 block text-sm font-medium text-foreground">
-                                                用户名
+                                                {t('install.database.username')}
                                             </label>
                                             <input
                                                 type="text"
@@ -153,7 +156,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                         </div>
                                         <div>
                                             <label className="mb-2 block text-sm font-medium text-foreground">
-                                                密码
+                                                {t('install.database.password')}
                                             </label>
                                             <input
                                                 type="password"
@@ -171,7 +174,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
 
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-foreground">
-                                        数据库名称
+                                        {t('install.database.database_name')}
                                     </label>
                                     <input
                                         type="text"
@@ -180,7 +183,7 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                         className="w-full rounded-md border border-border bg-background px-3 py-2 focus:ring-2 focus:ring-ring focus:outline-none"
                                     />
                                     <p className="mt-1 text-xs text-muted-foreground">
-                                        SQLite使用相对路径，MySQL/PostgreSQL使用数据库名
+                                        {t('install.database.database_hint')}
                                     </p>
                                     <InputError
                                         message={errors.database}
@@ -195,11 +198,11 @@ export default function InstallDatabase({ form }: InstallDatabaseProps) {
                                             className="w-full"
                                             type="button"
                                         >
-                                            返回
+                                            {t('common.back')}
                                         </Button>
                                     </a>
                                     <Button type="submit" className="flex-1">
-                                        下一步{' '}
+                                        {t('install.next')}{' '}
                                         <ChevronRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>

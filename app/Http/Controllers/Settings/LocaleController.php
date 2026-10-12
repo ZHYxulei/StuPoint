@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Locale;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Validation\Rule;
 
 class LocaleController extends Controller
@@ -23,7 +24,13 @@ class LocaleController extends Controller
             'locale' => ['required', Rule::in(Locale::supported())],
         ]);
 
-        $request->session()->put('locale', Locale::normalize($validated['locale']));
+        $locale = Locale::normalize($validated['locale']);
+
+        $request->session()->put('locale', $locale);
+
+        // Also a cookie: signing out flushes the session, and the language
+        // should not reset just because the user logged out.
+        Cookie::queue('locale', $locale, 60 * 24 * 365);
 
         return back();
     }

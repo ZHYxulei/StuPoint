@@ -4,6 +4,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { t } from '@/lib/i18n';
 
 interface InstallRedisProps {
     form: {
@@ -37,7 +38,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
 
     return (
         <>
-            <Head title="Redis配置 - 安装向导">
+            <Head title={t('install.redis.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -46,7 +47,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
-                            <CardTitle>Redis配置 (4/7) - 可选</CardTitle>
+                            <CardTitle>{t('install.redis.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form
@@ -76,11 +77,11 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             className="h-5 w-5 rounded border-border"
                                         />
                                         <span className="text-sm font-medium text-foreground">
-                                            启用Redis缓存（推荐）
+                                            {t('install.redis.enable')}
                                         </span>
                                     </label>
                                     <p className="mt-2 text-xs text-muted-foreground">
-                                        Redis可以提供更好的缓存性能，如果您的服务器没有安装Redis，请保持未选中状态
+                                        {t('install.redis.enable_hint')}
                                     </p>
                                     <InputError
                                         message={errors.redis || errors.enabled}
@@ -90,7 +91,9 @@ export default function InstallRedis({ form }: InstallRedisProps) {
 
                                 <div className="space-y-4">
                                     <div>
-                                        <Label htmlFor="host">主机</Label>
+                                        <Label htmlFor="host">
+                                            {t('install.redis.host')}
+                                        </Label>
                                         <input
                                             id="host"
                                             type="text"
@@ -104,7 +107,9 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="port">端口</Label>
+                                        <Label htmlFor="port">
+                                            {t('install.redis.port')}
+                                        </Label>
                                         <input
                                             id="port"
                                             type="text"
@@ -119,7 +124,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                     </div>
                                     <div>
                                         <Label htmlFor="database">
-                                            数据库 (0-15)
+                                            {t('install.redis.database')}
                                         </Label>
                                         <input
                                             id="database"
@@ -131,7 +136,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             className="w-full rounded-md border border-border bg-background px-3 py-2 focus:ring-2 focus:ring-ring focus:outline-none"
                                         />
                                         <p className="mt-1 text-xs text-muted-foreground">
-                                            Redis支持0-15共16个数据库，默认使用0
+                                            {t('install.redis.database_hint')}
                                         </p>
                                         <InputError
                                             message={errors.database}
@@ -140,7 +145,7 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                     </div>
                                     <div>
                                         <Label htmlFor="password">
-                                            密码（可选）
+                                            {t('install.redis.password')}
                                         </Label>
                                         <input
                                             id="password"
@@ -166,11 +171,11 @@ export default function InstallRedis({ form }: InstallRedisProps) {
                                             className="w-full"
                                             type="button"
                                         >
-                                            返回
+                                            {t('common.back')}
                                         </Button>
                                     </a>
                                     <Button type="submit" className="flex-1">
-                                        下一步{' '}
+                                        {t('install.next')}{' '}
                                         <ChevronRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>

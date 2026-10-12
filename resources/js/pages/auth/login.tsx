@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
+import { t } from '@/lib/i18n';
 import { register, dashboard } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
@@ -23,8 +24,11 @@ export default function Login({
     canRegister,
 }: Props) {
     return (
-        <AuthLayout title="登录您的账户" description="请输入邮箱和密码登录">
-            <Head title="登录" />
+        <AuthLayout
+            title={t('auth.login.title')}
+            description={t('auth.login.description')}
+        >
+            <Head title={t('nav.login')} />
 
             <Form
                 {...store.form()}
@@ -38,7 +42,9 @@ export default function Login({
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="login">账号</Label>
+                                <Label htmlFor="login">
+                                    {t('auth.login.account')}
+                                </Label>
                                 <Input
                                     id="login"
                                     type="text"
@@ -47,21 +53,25 @@ export default function Login({
                                     autoFocus
                                     tabIndex={1}
                                     autoComplete="username"
-                                    placeholder="用户名、手机号或邮箱"
+                                    placeholder={t(
+                                        'auth.login.account_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.login} />
                             </div>
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">密码</Label>
+                                    <Label htmlFor="password">
+                                        {t('auth.password')}
+                                    </Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
                                             className="ml-auto text-sm"
                                             tabIndex={5}
                                         >
-                                            忘记密码？
+                                            {t('auth.login.forgot_password')}
                                         </TextLink>
                                     )}
                                 </div>
@@ -72,7 +82,7 @@ export default function Login({
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="密码"
+                                    placeholder={t('auth.password')}
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -83,7 +93,9 @@ export default function Login({
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">记住我</Label>
+                                <Label htmlFor="remember">
+                                    {t('auth.remember_me')}
+                                </Label>
                             </div>
 
                             <Button
@@ -94,15 +106,15 @@ export default function Login({
                                 data-test="login-button"
                             >
                                 {processing && <Spinner />}
-                                登录
+                                {t('nav.login')}
                             </Button>
                         </div>
 
                         {canRegister && (
                             <div className="text-center text-sm text-muted-foreground">
-                                还没有账户？{' '}
+                                {t('auth.login.no_account')}{' '}
                                 <TextLink href={register()} tabIndex={5}>
-                                    立即注册
+                                    {t('auth.login.register_now')}
                                 </TextLink>
                             </div>
                         )}

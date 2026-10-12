@@ -221,6 +221,114 @@ const en: Translations = {
         exchange_failed: 'Exchange failed',
     },
 
+    // Authentication
+    auth: {
+        email: 'Email',
+        email_address: 'Email address',
+        password: 'Password',
+        password_confirmation: 'Confirm password',
+        name: 'Name',
+        nickname: 'Nickname',
+        remember_me: 'Remember me',
+        login: {
+            title: 'Sign in to your account',
+            description: 'Enter your email and password to sign in',
+            account: 'Account',
+            account_placeholder: 'Username, phone number or email',
+            forgot_password: 'Forgot your password?',
+            no_account: "Don't have an account?",
+            register_now: 'Sign up now',
+        },
+        register: {
+            title: 'Create account',
+            description:
+                'Choose your role and fill in the corresponding information',
+            id_number: 'ID number / student number',
+            id_number_placeholder: 'ID number or student number',
+            name_placeholder: 'Real name',
+            nickname_placeholder: 'Nickname (optional)',
+            class: 'Class',
+            select_class: 'Select class',
+            class_approval_note:
+                'You can use your account only after your head teacher approves your registration',
+            email_or_phone: 'Phone number or email',
+            grade: 'Grade',
+            select_grade: 'Select grade',
+            grade_approval_note:
+                'You can use your account only after your grade director approves your registration',
+            teacher_email: 'Email',
+            teaching_classes: 'Teaching classes (multiple)',
+            no_classes: 'No classes available',
+            subjects: 'Subjects taught (multiple)',
+            no_subjects: 'No subjects available',
+            is_head_teacher: 'I am a head teacher',
+            department: 'Student council department',
+            department_placeholder:
+                'e.g. Study Department, Arts Department, Sports Department',
+            department_approval_note:
+                'You can use your account only after both your head teacher and grade director approve your registration',
+            parent_note:
+                "After registration, you can link your child's account in the Parent Centre to view their points, ranking and redemption history",
+            submit: 'Create account',
+            have_account: 'Already have an account?',
+        },
+        roles: {
+            student: 'Student',
+            student_description:
+                'I am a student and need to provide my ID number, name and other details',
+            teacher: 'Teacher',
+            teacher_description:
+                'I am a teacher and need to choose my grade, teaching classes and subjects',
+            student_union_member: 'Student council member',
+            student_union_member_description:
+                'I am a student council member and need to provide my department and class details',
+            parent: 'Parent',
+            parent_description:
+                "I am a parent and can view my child's information after linking their account",
+        },
+        forgot_password: {
+            title: 'Forgot password',
+            description: 'Enter your email to receive a password reset link',
+            submit: 'Email password reset link',
+            or_return: 'Or return to',
+        },
+        reset_password: {
+            title: 'Reset password',
+            description: 'Please enter your new password below',
+            submit: 'Reset password',
+        },
+        confirm_password: {
+            title: 'Confirm your password',
+            head_title: 'Confirm password',
+            description:
+                'This is a secure area of the application. Please confirm your password before continuing.',
+            submit: 'Confirm password',
+        },
+        verify_email: {
+            title: 'Verify email',
+            head_title: 'Email verification',
+            description:
+                'Please verify your email address by clicking on the link we just emailed to you.',
+            link_sent:
+                'A new verification link has been sent to the email address you provided during registration.',
+            resend: 'Resend verification email',
+        },
+        two_factor: {
+            title: 'Two-Factor Authentication',
+            recovery_title: 'Recovery Code',
+            recovery_description:
+                'Please confirm access to your account by entering one of your emergency recovery codes.',
+            use_auth_code: 'login using an authentication code',
+            auth_title: 'Authentication Code',
+            auth_description:
+                'Enter the authentication code provided by your authenticator application.',
+            use_recovery_code: 'login using a recovery code',
+            recovery_placeholder: 'Enter recovery code',
+            continue: 'Continue',
+            or_you_can: 'or you can',
+        },
+    },
+
     // Public landing page
     welcome: {
         greeting: 'Welcome back, {{name}}!',
@@ -411,6 +519,118 @@ const en: Translations = {
         step_completed: 'Completed',
         step_current: 'Current step',
         step_pending: 'Not started',
+        next: 'Next',
+        welcome: {
+            head_title: 'Installation Wizard - Student Points System',
+            subtitle: 'Welcome to the installation wizard',
+            start: 'Start Installation',
+            step_language: 'Choose Language',
+            step_environment: 'PHP Environment Check',
+            step_database: 'Database Configuration',
+            step_redis: 'Redis Configuration (Optional)',
+            step_cache: 'Cache Configuration',
+            step_site: 'Site Configuration',
+            step_account: 'Create Administrator',
+        },
+        check: {
+            head_title: 'Environment Check - Installation Wizard',
+            title: 'Environment Check',
+            checking: 'Checking...',
+            all_passed: 'All required requirements met, you can continue',
+            some_failed: 'Your server does not meet all required requirements',
+        },
+        database: {
+            head_title: 'Database Configuration - Installation Wizard',
+            title: 'Database Configuration (3/7)',
+            connection_type: 'Database Type',
+            sqlite_recommended: 'SQLite (recommended)',
+            host: 'Host',
+            port: 'Port',
+            username: 'Username',
+            password: 'Password',
+            database_name: 'Database Name',
+            database_hint:
+                'SQLite uses a relative path; MySQL/PostgreSQL use the database name',
+        },
+        redis: {
+            head_title: 'Redis Configuration - Installation Wizard',
+            title: 'Redis Configuration (4/7) - Optional',
+            enable: 'Enable Redis cache (recommended)',
+            enable_hint:
+                'Redis provides better cache performance. If Redis is not installed on your server, leave this unchecked.',
+            host: 'Host',
+            port: 'Port',
+            database: 'Database (0-15)',
+            database_hint:
+                'Redis supports 16 databases, 0-15; 0 is used by default',
+            password: 'Password (optional)',
+        },
+        cache: {
+            head_title: 'Cache Configuration - Installation Wizard',
+            title: 'Cache Configuration (5/7)',
+            driver: 'Cache Driver',
+            file: 'File Cache',
+            file_desc:
+                'Store cache data on the file system — simple and easy to use',
+            database: 'Database Cache',
+            database_desc: 'Store cache data in the database',
+            redis: 'Redis Cache',
+            redis_desc:
+                'High-performance cache service; requires Redis to be configured',
+            note: 'Sessions will use the file driver and the queue will use the database',
+        },
+        site: {
+            head_title: 'Site Configuration - Installation Wizard',
+            title: 'Site Configuration (6/7)',
+            app_name: 'Site Name',
+            app_url: 'Site URL',
+            app_url_hint:
+                'Enter the full access address, e.g. http://your-domain.com',
+            locale: 'Default Language',
+            locale_zh: '简体中文',
+            locale_en: 'English',
+            class_points_mode: 'Class Points Calculation',
+            mode_avg: "Average of students' total points",
+            mode_avg_desc:
+                'Class points = average of the total points of students in the class',
+            mode_sum: "Sum of students' total points",
+            mode_sum_desc:
+                'Class points = sum of the total points of students in the class',
+            mode_separate: 'Independent class points',
+            mode_separate_desc:
+                'Class points are calculated separately and do not depend on student points',
+            class_points_mode_note:
+                'This setting cannot be changed after installation',
+        },
+        account: {
+            head_title: 'Create Administrator - Installation Wizard',
+            title: 'Create Administrator Account (7/7)',
+            nickname: 'Nickname',
+            nickname_placeholder: 'Enter the administrator nickname',
+            email: 'Email',
+            password: 'Password',
+            password_placeholder: 'At least 8 characters',
+            password_confirmation: 'Confirm Password',
+            password_confirmation_placeholder:
+                'Enter the password again; it must match the one above',
+            info: 'After you click "Finish Installation", the system writes the configuration in one go and automatically creates the database tables and initial data',
+            current_site_name: 'Current site name: {{name}}',
+            installing: 'Installing...',
+            submit: 'Finish Installation',
+        },
+        complete: {
+            head_title: 'Installation Complete - Student Points System',
+            title: 'Installation Complete!',
+            subtitle: 'The Student Points System is ready',
+            next_steps: 'Next, you can:',
+            step_login: 'Sign in to the system with your administrator account',
+            step_roles: 'Configure roles and permissions',
+            step_points: 'Set up point rules and categories',
+            step_users: 'Add students and teachers',
+            step_plugins: 'Install plugins to extend functionality',
+            go_home: 'Go to the site home page',
+            thanks: 'Thank you for using the Student Points System!',
+        },
     },
 
     // Errors

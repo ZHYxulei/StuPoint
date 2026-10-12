@@ -2,6 +2,15 @@ import { Head } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+/**
+ * Deliberately does NOT use `t()`.
+ *
+ * No locale has been chosen yet at this point, so there is nothing to
+ * translate against. The language names must also stay in their own script
+ * (autonyms): someone who cannot read the language currently in effect still
+ * has to be able to find their own. The surrounding chrome is therefore
+ * written bilingually instead.
+ */
 const languages = [
     { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -10,7 +19,7 @@ const languages = [
 export default function InstallLanguage() {
     return (
         <>
-            <Head title="语言选择 - 安装向导">
+            <Head title="选择语言 / Select Language">
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -19,7 +28,7 @@ export default function InstallLanguage() {
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
-                            <CardTitle>语言选择</CardTitle>
+                            <CardTitle>选择语言 / Select Language</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form
@@ -64,7 +73,7 @@ export default function InstallLanguage() {
                                 ))}
                                 <div className="flex gap-4 pt-4">
                                     <Button type="submit" className="w-full">
-                                        下一步
+                                        下一步 / Next
                                     </Button>
                                 </div>
                             </form>

@@ -3,6 +3,7 @@ import { Check, X, AlertTriangle, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { t } from '@/lib/i18n';
 
 interface Requirement {
     name: string;
@@ -20,38 +21,6 @@ interface PageProps {
 export default function InstallCheck({ locale = 'zh' }: PageProps) {
     const [requirements, setRequirements] = useState<Requirement[]>([]);
     const [isChecking, setIsChecking] = useState(true);
-
-    const texts = {
-        zh: {
-            title: '环境检测',
-            description: '检查您的服务器是否满足系统要求',
-            checking: '检测中...',
-            next: '下一步',
-            requirements: '系统要求',
-            all_passed: '所有必选要求已满足，可以继续安装',
-            some_failed: '您的服务器不满足必选要求，请解决后继续',
-        },
-        en: {
-            title: 'Environment Check',
-            description: 'Check if your server meets the system requirements',
-            checking: 'Checking...',
-            next: 'Next',
-            requirements: 'System Requirements',
-            all_passed: 'All required requirements met, you can continue',
-            some_failed: 'Your server does not meet all required requirements',
-        },
-        ja: {
-            title: '環境チェック',
-            description: 'サーバーーがシステム要件を満たしているか確認',
-            checking: 'チェック中...',
-            next: '次へ',
-            requirements: 'システム要件',
-            all_passed: '必須要件を満たしています',
-            some_failed: 'サーバーーが必須要件を満たしていません',
-        },
-    };
-
-    const t = texts[locale as keyof typeof texts] ?? texts.zh;
 
     useEffect(() => {
         const checkRequirements = async () => {
@@ -100,7 +69,7 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
 
     return (
         <>
-            <Head title="环境检测 - 安装向导">
+            <Head title={t('install.check.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -109,14 +78,14 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                 <div className="w-full max-w-2xl">
                     <Card className="p-8">
                         <CardHeader>
-                            <CardTitle>{t.title}</CardTitle>
+                            <CardTitle>{t('install.check.title')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {isChecking ? (
                                 <div className="py-12 text-center">
                                     <AlertTriangle className="mx-auto mb-4 h-12 w-12 animate-spin text-info" />
                                     <p className="text-muted-foreground">
-                                        {t.checking}
+                                        {t('install.check.checking')}
                                     </p>
                                 </div>
                             ) : (
@@ -158,7 +127,7 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                         <div className="mt-6 rounded-lg border border-success/30 bg-success-soft p-4">
                                             <p className="flex items-center gap-2 text-sm text-success">
                                                 <Check className="h-4 w-4" />
-                                                {t.all_passed}
+                                                {t('install.check.all_passed')}
                                             </p>
                                         </div>
                                     ) : (
@@ -168,7 +137,9 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                             <div className="mt-6 rounded-lg border border-destructive/30 bg-destructive/10 p-4">
                                                 <p className="flex items-center gap-2 text-sm text-destructive">
                                                     <X className="h-4 w-4" />
-                                                    {t.some_failed}
+                                                    {t(
+                                                        'install.check.some_failed',
+                                                    )}
                                                 </p>
                                             </div>
                                         )
@@ -185,13 +156,13 @@ export default function InstallCheck({ locale = 'zh' }: PageProps) {
                                 className="w-full"
                                 type="button"
                             >
-                                返回
+                                {t('common.back')}
                             </Button>
                         </a>
                         {requiredPassed && (
                             <a href="/install/database" className="flex-1">
                                 <Button className="w-full" type="button">
-                                    {t.next}{' '}
+                                    {t('install.next')}{' '}
                                     <ChevronRight className="ml-2 h-4 w-4" />
                                 </Button>
                             </a>

@@ -2,11 +2,12 @@ import { Head } from '@inertiajs/react';
 import { Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { t } from '@/lib/i18n';
 
 export default function InstallWelcome() {
     return (
         <>
-            <Head title="安装向导 - 学生积分管理系统">
+            <Head title={t('install.welcome.head_title')}>
                 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
                 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -19,10 +20,10 @@ export default function InstallWelcome() {
                                 <Rocket className="h-8 w-8" />
                             </div>
                             <h1 className="mb-2 text-4xl font-bold text-foreground">
-                                学生积分管理系统
+                                {t('common.app_name')}
                             </h1>
                             <p className="text-muted-foreground">
-                                欢迎使用安装向导
+                                {t('install.welcome.subtitle')}
                             </p>
                         </div>
 
@@ -32,7 +33,7 @@ export default function InstallWelcome() {
                                     1
                                 </div>
                                 <span className="text-foreground">
-                                    语言选择
+                                    {t('install.welcome.step_language')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
@@ -40,7 +41,7 @@ export default function InstallWelcome() {
                                     2
                                 </div>
                                 <span className="text-foreground">
-                                    PHP环境检测
+                                    {t('install.welcome.step_environment')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
@@ -48,7 +49,7 @@ export default function InstallWelcome() {
                                     3
                                 </div>
                                 <span className="text-foreground">
-                                    数据库配置
+                                    {t('install.welcome.step_database')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
@@ -56,7 +57,7 @@ export default function InstallWelcome() {
                                     4
                                 </div>
                                 <span className="text-foreground">
-                                    Redis配置（可选）
+                                    {t('install.welcome.step_redis')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
@@ -64,7 +65,7 @@ export default function InstallWelcome() {
                                     5
                                 </div>
                                 <span className="text-foreground">
-                                    缓存配置
+                                    {t('install.welcome.step_cache')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
@@ -72,7 +73,7 @@ export default function InstallWelcome() {
                                     6
                                 </div>
                                 <span className="text-foreground">
-                                    站点配置
+                                    {t('install.welcome.step_site')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3">
@@ -80,14 +81,14 @@ export default function InstallWelcome() {
                                     7
                                 </div>
                                 <span className="text-foreground">
-                                    创建管理员
+                                    {t('install.welcome.step_account')}
                                 </span>
                             </div>
                         </div>
 
                         <a href="/install/language" className="block">
                             <Button className="w-full" size="lg">
-                                开始安装
+                                {t('install.welcome.start')}
                             </Button>
                         </a>
                     </Card>

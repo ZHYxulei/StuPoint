@@ -22,10 +22,14 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Cookie as well as session: signing out invalidates the whole
+        // session, and a display preference should outlive that.
+        $stored = $request->session()->get('locale') ?? $request->cookie('locale');
+
         App::setLocale(
-            Locale::normalize(
-                $request->session()->get('locale') ?? config('app.locale')
-            )
+            $stored !== null
+                ? Locale::normalize($stored)
+                : Locale::normalize(config('app.locale'))
         );
 
         return $next($request);
