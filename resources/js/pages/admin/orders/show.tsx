@@ -42,6 +42,8 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem, SharedData } from '@/types';
 
 interface ProductCategory {
@@ -104,64 +106,64 @@ interface PageProps {
 
 type VerificationMethod = 'code' | 'password' | 'id_card' | 'direct';
 
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-        icon: React.ElementType;
-        color: string;
-    }
-> = {
-    pending: {
-        label: '待处理',
-        variant: 'warning',
-        icon: Clock,
-        color: 'text-warning',
-    },
-    processing: {
-        label: '处理中',
-        variant: 'default',
-        icon: AlertCircle,
-        color: 'text-info',
-    },
-    completed: {
-        label: '已完成',
-        variant: 'success',
-        icon: CheckCircle2,
-        color: 'text-success',
-    },
-    cancelled: {
-        label: '已取消',
-        variant: 'destructive',
-        icon: AlertCircle,
-        color: 'text-destructive',
-    },
-    failed: {
-        label: '失败',
-        variant: 'destructive',
-        icon: AlertCircle,
-        color: 'text-destructive',
-    },
-};
-
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '订单管理', href: '/admin/orders' },
-    { title: '订单详情', href: '' },
-];
-
 export default function OrderShow({
     order: initialOrder,
     verification_code,
     verification_code_expired,
 }: PageProps) {
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+            icon: React.ElementType;
+            color: string;
+        }
+    > = {
+        pending: {
+            label: t('status.pending'),
+            variant: 'warning',
+            icon: Clock,
+            color: 'text-warning',
+        },
+        processing: {
+            label: t('status.processing'),
+            variant: 'default',
+            icon: AlertCircle,
+            color: 'text-info',
+        },
+        completed: {
+            label: t('status.completed'),
+            variant: 'success',
+            icon: CheckCircle2,
+            color: 'text-success',
+        },
+        cancelled: {
+            label: t('status.cancelled'),
+            variant: 'destructive',
+            icon: AlertCircle,
+            color: 'text-destructive',
+        },
+        failed: {
+            label: t('status.failed'),
+            variant: 'destructive',
+            icon: AlertCircle,
+            color: 'text-destructive',
+        },
+    };
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.orders'), href: '/admin/orders' },
+        { title: t('shop.order_details'), href: '' },
+    ];
+
     const { auth } = usePage<SharedData>().props;
     const [localOrder, setLocalOrder] = React.useState(initialOrder);
     const currentUser = auth.user;
@@ -259,15 +261,20 @@ export default function OrderShow({
                 };
                 setLocalOrder(updatedOrder);
                 // Show success message and reset form
-                setVerificationSuccess(data.message || '核销成功！');
+                setVerificationSuccess(
+                    data.message ||
+                        t('admin.orders.verified_success_message'),
+                );
                 verificationForm.reset();
                 // Force re-render immediately to ensure UI updates
                 forceUpdate();
             } else {
-                setVerificationError(data.message || '核销失败');
+                setVerificationError(
+                    data.message || t('admin.orders.verify_failed'),
+                );
             }
         } catch (error) {
-            setVerificationError('网络错误，请稍后重试');
+            setVerificationError(t('admin.orders.network_error'));
         } finally {
             setIsVerifying(false);
         }
@@ -310,7 +317,9 @@ export default function OrderShow({
                 };
                 setLocalOrder(updatedOrder);
                 // Show success message and reset form
-                setVerificationSuccess(data.message || '直接核销成功！');
+                setVerificationSuccess(
+                    data.message || t('admin.orders.direct_verify_success'),
+                );
                 verificationForm.reset();
                 // Force re-render to ensure UI updates
                 forceUpdate();
@@ -320,10 +329,12 @@ export default function OrderShow({
                     setVerificationSuccess('');
                 }, 2000);
             } else {
-                setVerificationError(data.message || '核销失败');
+                setVerificationError(
+                    data.message || t('admin.orders.verify_failed'),
+                );
             }
         } catch (error) {
-            setVerificationError('网络错误，请稍后重试');
+            setVerificationError(t('admin.orders.network_error'));
         } finally {
             setIsVerifying(false);
         }
@@ -335,14 +346,18 @@ export default function OrderShow({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`订单: ${localOrder.order_no}`} />
+            <Head
+                title={t('admin.orders.head_title', {
+                    no: localOrder.order_no,
+                })}
+            />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Button asChild variant="outline" size="sm">
                         <Link href="/admin/orders">
                             <ArrowLeft className="mr-2 h-4 w-4" />
-                            返回
+                            {t('common.back')}
                         </Link>
                     </Button>
                     <div className="flex items-center gap-3">
@@ -365,7 +380,9 @@ export default function OrderShow({
                         {/* Product Info */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>商品信息</CardTitle>
+                                <CardTitle>
+                                    {t('shop.product_information')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex gap-4">
@@ -394,7 +411,9 @@ export default function OrderShow({
                         {/* User Info */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>用户信息</CardTitle>
+                                <CardTitle>
+                                    {t('admin.users.user_info')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-start gap-3">
@@ -414,14 +433,16 @@ export default function OrderShow({
                         {/* Shipping Info */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>收货信息</CardTitle>
+                                <CardTitle>
+                                    {t('shop.shipping_information')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-start gap-3">
                                     <User className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">
-                                            收货人
+                                            {t('shop.recipient')}
                                         </p>
                                         <p className="font-medium">
                                             {localOrder.shipping_info.name}
@@ -433,7 +454,7 @@ export default function OrderShow({
                                     <Phone className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">
-                                            联系电话
+                                            {t('shop.contact_phone')}
                                         </p>
                                         <p className="font-medium">
                                             {localOrder.shipping_info.phone}
@@ -445,7 +466,7 @@ export default function OrderShow({
                                     <MapPin className="mt-0.5 h-5 w-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">
-                                            收货地址
+                                            {t('shop.delivery_address')}
                                         </p>
                                         <p className="font-medium whitespace-pre-wrap">
                                             {localOrder.shipping_info.address}
@@ -458,7 +479,9 @@ export default function OrderShow({
                         {/* Order Timeline */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>订单时间线</CardTitle>
+                                <CardTitle>
+                                    {t('shop.order_timeline')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
@@ -499,9 +522,9 @@ export default function OrderShow({
                                                                 className="text-xs"
                                                             >
                                                                 <Calendar className="mr-1 h-3 w-3" />
-                                                                {new Date(
+                                                                {formatDateTime(
                                                                     history.created_at,
-                                                                ).toLocaleString()}
+                                                                )}
                                                             </Badge>
                                                         </div>
                                                         {history.note && (
@@ -511,12 +534,14 @@ export default function OrderShow({
                                                         )}
                                                         {history.operator && (
                                                             <p className="mt-1 text-xs text-muted-foreground">
-                                                                操作者:{' '}
-                                                                {
-                                                                    history
-                                                                        .operator
-                                                                        .name
-                                                                }
+                                                                {t(
+                                                                    'admin.orders.operator',
+                                                                    {
+                                                                        name: history
+                                                                            .operator
+                                                                            .name,
+                                                                    },
+                                                                )}
                                                             </p>
                                                         )}
                                                     </div>
@@ -525,7 +550,7 @@ export default function OrderShow({
                                         )
                                     ) : (
                                         <p className="py-4 text-center text-sm text-muted-foreground">
-                                            暂无订单状态历史记录
+                                            {t('admin.orders.no_history')}
                                         </p>
                                     )}
                                 </div>
@@ -538,12 +563,14 @@ export default function OrderShow({
                         {/* Order Summary */}
                         <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                             <CardHeader>
-                                <CardTitle>订单摘要</CardTitle>
+                                <CardTitle>
+                                    {t('shop.order_summary')}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        订单号
+                                        {t('shop.order_number')}
                                     </span>
                                     <span className="font-mono text-sm font-medium">
                                         {localOrder.order_no}
@@ -552,39 +579,41 @@ export default function OrderShow({
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        下单时间
+                                        {t('shop.order_date')}
                                     </span>
                                     <span className="text-sm">
-                                        {new Date(
+                                        {formatDateTime(
                                             localOrder.created_at,
-                                        ).toLocaleString()}
+                                        )}
                                     </span>
                                 </div>
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        最后更新
+                                        {t('shop.last_updated')}
                                     </span>
                                     <span className="text-sm">
-                                        {new Date(
+                                        {formatDateTime(
                                             localOrder.updated_at,
-                                        ).toLocaleString()}
+                                        )}
                                     </span>
                                 </div>
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        消耗积分
+                                        {t('shop.points_spent')}
                                     </span>
                                     <div className="flex items-center gap-1 text-lg font-bold text-primary">
                                         <Coins className="h-5 w-5" />
-                                        {localOrder.points_spent.toLocaleString()}
+                                        {formatNumber(
+                                            localOrder.points_spent,
+                                        )}
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
-                                        订单状态
+                                        {t('shop.order_status')}
                                     </span>
                                     <Badge
                                         variant={
@@ -605,13 +634,15 @@ export default function OrderShow({
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-base">
                                         <Package className="h-4 w-4" />
-                                        第三方订单
+                                        {t('shop.third_party_order')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-2">
                                         <p className="text-sm text-muted-foreground">
-                                            外部订单ID
+                                            {t(
+                                                'admin.orders.external_order_id',
+                                            )}
                                         </p>
                                         <p className="font-mono text-sm">
                                             {localOrder.third_party_order_id}
@@ -627,12 +658,14 @@ export default function OrderShow({
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-base">
                                         <Shield className="h-4 w-4" />
-                                        订单核销
+                                        {t('admin.orders.verify_title')}
                                     </CardTitle>
                                     <CardDescription>
                                         {isOrderVerified
-                                            ? '该订单已完成核销'
-                                            : '请选择核销方式'}
+                                            ? t(
+                                                  'admin.orders.already_verified',
+                                              )
+                                            : t('admin.orders.select_method')}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -641,14 +674,14 @@ export default function OrderShow({
                                             <div className="flex items-center gap-2 text-success">
                                                 <ShieldCheck className="h-5 w-5" />
                                                 <span className="font-medium">
-                                                    已核销
+                                                    {t('admin.orders.verified')}
                                                 </span>
                                             </div>
                                             <Separator />
                                             {verification_code && (
                                                 <div>
                                                     <p className="mb-1 text-sm text-muted-foreground">
-                                                        验证码
+                                                        {t('admin.orders.code')}
                                                     </p>
                                                     <p className="font-mono text-lg font-bold tracking-wider">
                                                         {verification_code}
@@ -658,12 +691,14 @@ export default function OrderShow({
                                             <Separator />
                                             <div>
                                                 <p className="mb-1 text-sm text-muted-foreground">
-                                                    核销时间
+                                                    {t(
+                                                        'admin.orders.verified_at',
+                                                    )}
                                                 </p>
                                                 <p className="text-sm">
-                                                    {new Date(
+                                                    {formatDateTime(
                                                         localOrder.verified_at!,
-                                                    ).toLocaleString()}
+                                                    )}
                                                 </p>
                                             </div>
                                             {localOrder.verifiedBy && (
@@ -671,7 +706,9 @@ export default function OrderShow({
                                                     <Separator />
                                                     <div>
                                                         <p className="mb-1 text-sm text-muted-foreground">
-                                                            核销人
+                                                            {t(
+                                                                'admin.orders.verified_by',
+                                                            )}
                                                         </p>
                                                         <p className="text-sm font-medium">
                                                             {
@@ -728,25 +765,27 @@ export default function OrderShow({
                                                         value="code"
                                                         className="text-xs"
                                                     >
-                                                        验证码
+                                                        {t('admin.orders.code')}
                                                     </TabsTrigger>
                                                     <TabsTrigger
                                                         value="password"
                                                         className="text-xs"
                                                     >
-                                                        密码
+                                                        {t('auth.password')}
                                                     </TabsTrigger>
                                                     <TabsTrigger
                                                         value="id_card"
                                                         className="text-xs"
                                                     >
-                                                        身份证
+                                                        {t(
+                                                            'admin.orders.id_card',
+                                                        )}
                                                     </TabsTrigger>
                                                     <TabsTrigger
                                                         value="direct"
                                                         className="text-xs"
                                                     >
-                                                        直接核销
+                                                        {t('admin.orders.direct')}
                                                     </TabsTrigger>
                                                 </TabsList>
 
@@ -758,7 +797,9 @@ export default function OrderShow({
                                                         <>
                                                             <div className="rounded-lg bg-muted/50 p-3 text-center">
                                                                 <p className="mb-1 text-xs text-muted-foreground">
-                                                                    验证码
+                                                                    {t(
+                                                                        'admin.orders.code',
+                                                                    )}
                                                                 </p>
                                                                 <p className="font-mono text-xl font-bold tracking-wider">
                                                                     {
@@ -768,11 +809,15 @@ export default function OrderShow({
                                                             </div>
                                                             <div className="space-y-2">
                                                                 <Label htmlFor="code">
-                                                                    输入验证码
+                                                                    {t(
+                                                                        'admin.orders.input_code',
+                                                                    )}
                                                                 </Label>
                                                                 <Input
                                                                     id="code"
-                                                                    placeholder="请输入6位验证码"
+                                                                    placeholder={t(
+                                                                        'admin.orders.code_placeholder',
+                                                                    )}
                                                                     maxLength={
                                                                         6
                                                                     }
@@ -804,7 +849,9 @@ export default function OrderShow({
                                                         </>
                                                     ) : (
                                                         <p className="py-4 text-center text-sm text-muted-foreground">
-                                                            该订单暂未生成验证码
+                                                            {t(
+                                                                'admin.orders.no_code',
+                                                            )}
                                                         </p>
                                                     )}
                                                 </TabsContent>
@@ -815,17 +862,23 @@ export default function OrderShow({
                                                 >
                                                     <div className="rounded-lg bg-muted/50 p-3">
                                                         <p className="text-xs text-muted-foreground">
-                                                            使用下单账号的密码进行核销
+                                                            {t(
+                                                                'admin.orders.password_hint',
+                                                            )}
                                                         </p>
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor="password">
-                                                            密码
+                                                            {t(
+                                                                'auth.password',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="password"
                                                             type="password"
-                                                            placeholder="请输入用户密码"
+                                                            placeholder={t(
+                                                                'admin.orders.user_password_placeholder',
+                                                            )}
                                                             value={
                                                                 verificationForm
                                                                     .data
@@ -855,16 +908,22 @@ export default function OrderShow({
                                                 >
                                                     <div className="rounded-lg bg-muted/50 p-3">
                                                         <p className="text-xs text-muted-foreground">
-                                                            使用下单人的身份证号和姓名进行核销
+                                                            {t(
+                                                                'admin.orders.id_card_hint',
+                                                            )}
                                                         </p>
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor="id_number">
-                                                            身份证号
+                                                            {t(
+                                                                'admin.orders.id_number',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="id_number"
-                                                            placeholder="请输入身份证号"
+                                                            placeholder={t(
+                                                                'admin.orders.id_number_placeholder',
+                                                            )}
                                                             value={
                                                                 verificationForm
                                                                     .data
@@ -888,11 +947,13 @@ export default function OrderShow({
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor="name">
-                                                            姓名
+                                                            {t('auth.name')}
                                                         </Label>
                                                         <Input
                                                             id="name"
-                                                            placeholder="请输入姓名"
+                                                            placeholder={t(
+                                                                'admin.orders.name_placeholder',
+                                                            )}
                                                             value={
                                                                 verificationForm
                                                                     .data.name
@@ -920,17 +981,23 @@ export default function OrderShow({
                                                 >
                                                     <div className="rounded-lg bg-muted/50 p-3">
                                                         <p className="text-center text-sm text-muted-foreground">
-                                                            直接核销需要输入当前管理员密码确认
+                                                            {t(
+                                                                'admin.orders.direct_hint',
+                                                            )}
                                                         </p>
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label htmlFor="admin_password">
-                                                            管理员密码
+                                                            {t(
+                                                                'admin.orders.admin_password',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="admin_password"
                                                             type="password"
-                                                            placeholder="请输入您的密码"
+                                                            placeholder={t(
+                                                                'admin.orders.admin_password_placeholder',
+                                                            )}
                                                             value={
                                                                 verificationForm
                                                                     .data
@@ -961,15 +1028,21 @@ export default function OrderShow({
                                                 disabled={isVerifying}
                                             >
                                                 {isVerifying
-                                                    ? '核销中...'
-                                                    : '确认核销'}
+                                                    ? t(
+                                                          'admin.orders.verifying',
+                                                      )
+                                                    : t(
+                                                          'admin.orders.confirm_verify',
+                                                      )}
                                             </Button>
                                         </form>
                                     ) : localOrder.status === 'cancelled' ? (
                                         <div className="flex items-center gap-2 text-muted-foreground">
                                             <ShieldX className="h-5 w-5" />
                                             <span className="text-sm">
-                                                已取消的订单无法核销
+                                                {t(
+                                                    'admin.orders.cancelled_cannot_verify',
+                                                )}
                                             </span>
                                         </div>
                                     ) : null}
@@ -986,10 +1059,13 @@ export default function OrderShow({
                 >
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>确认直接核销</AlertDialogTitle>
+                            <AlertDialogTitle>
+                                {t('admin.orders.confirm_direct_title')}
+                            </AlertDialogTitle>
                             <AlertDialogDescription>
-                                您确定要直接核销订单 {localOrder.order_no}{' '}
-                                吗？此操作需要输入您的管理员密码进行确认，核销后订单状态将变更为已完成。
+                                {t('admin.orders.direct_confirm_description', {
+                                    no: localOrder.order_no,
+                                })}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         {verificationSuccess && (
@@ -1013,12 +1089,14 @@ export default function OrderShow({
                         )}
                         <div className="space-y-2 py-4">
                             <Label htmlFor="dialog_admin_password">
-                                管理员密码
+                                {t('admin.orders.admin_password')}
                             </Label>
                             <Input
                                 id="dialog_admin_password"
                                 type="password"
-                                placeholder="请输入您的密码"
+                                placeholder={t(
+                                    'admin.orders.admin_password_placeholder',
+                                )}
                                 value={verificationForm.data.admin_password}
                                 onChange={(e) =>
                                     verificationForm.setData(
@@ -1033,7 +1111,7 @@ export default function OrderShow({
                         </div>
                         <AlertDialogFooter>
                             <AlertDialogCancel disabled={isVerifying}>
-                                取消
+                                {t('common.cancel')}
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={(e) => {
@@ -1046,8 +1124,8 @@ export default function OrderShow({
                                 }
                             >
                                 {verificationForm.processing
-                                    ? '核销中...'
-                                    : '确认核销'}
+                                    ? t('admin.orders.verifying')
+                                    : t('admin.orders.confirm_verify')}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface ProductCategory {
@@ -46,13 +47,13 @@ interface PageProps {
     categories: ProductCategory[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '商品管理', href: '/admin/products' },
-    { title: '编辑商品', href: '' },
-];
-
 export default function ProductEdit({ product, categories }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.products'), href: '/admin/products' },
+        { title: t('admin.products.edit_page_title'), href: '' },
+    ];
+
     const { data, setData, put, processing, errors } = useForm({
         name: product.name,
         description: product.description || '',
@@ -71,55 +72,74 @@ export default function ProductEdit({ product, categories }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`编辑: ${product.name}`} />
+            <Head
+                title={t('admin.products.edit_head_title', {
+                    name: product.name,
+                })}
+            />
 
             <div className="max-w-2xl space-y-6 p-4">
                 <div className="flex items-center gap-4">
                     <Button asChild variant="outline" size="sm">
                         <Link href="/admin/products">
                             <ArrowLeft className="mr-2 h-4 w-4" />
-                            返回
+                            {t('common.back')}
                         </Link>
                     </Button>
-                    <Heading title={product.name} description="编辑商品信息" />
+                    <Heading
+                        title={product.name}
+                        description={t('admin.products.edit_description')}
+                    />
                 </div>
 
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>商品信息</CardTitle>
-                        <CardDescription>更新商品的详细信息</CardDescription>
+                        <CardTitle>{t('shop.product_information')}</CardTitle>
+                        <CardDescription>
+                            {t('admin.products.edit_info_description')}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="name">商品名称 *</Label>
+                                <Label htmlFor="name">
+                                    {t('admin.products.name_label')}
+                                </Label>
                                 <Input
                                     id="name"
                                     value={data.name}
                                     onChange={(e) =>
                                         setData('name', e.target.value)
                                     }
-                                    placeholder="输入商品名称"
+                                    placeholder={t(
+                                        'admin.products.name_placeholder',
+                                    )}
                                     required
                                 />
                                 <InputError message={errors.name} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="description">商品描述</Label>
+                                <Label htmlFor="description">
+                                    {t('admin.products.description_label')}
+                                </Label>
                                 <Textarea
                                     id="description"
                                     value={data.description}
                                     onChange={(e) =>
                                         setData('description', e.target.value)
                                     }
-                                    placeholder="输入商品描述..."
+                                    placeholder={t(
+                                        'admin.products.description_placeholder',
+                                    )}
                                     rows={4}
                                 />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="image">商品图片</Label>
+                                <Label htmlFor="image">
+                                    {t('admin.products.image_label')}
+                                </Label>
                                 <div className="flex items-center gap-4">
                                     <div className="flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed bg-muted">
                                         {data.image ? (
@@ -155,8 +175,7 @@ export default function ProductEdit({ product, categories }: PageProps) {
                                             className="cursor-pointer"
                                         />
                                         <p className="mt-1 text-xs text-muted-foreground">
-                                            留空则保持原图片，支持 JPG, PNG, GIF
-                                            格式，最大 2MB
+                                            {t('admin.products.image_hint_edit')}
                                         </p>
                                         <InputError message={errors.image} />
                                     </div>
@@ -165,7 +184,7 @@ export default function ProductEdit({ product, categories }: PageProps) {
 
                             <div className="grid gap-2">
                                 <Label htmlFor="points_required">
-                                    所需积分 *
+                                    {t('admin.products.points_required_label')}
                                 </Label>
                                 <Input
                                     id="points_required"
@@ -185,7 +204,9 @@ export default function ProductEdit({ product, categories }: PageProps) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="stock">库存数量</Label>
+                                <Label htmlFor="stock">
+                                    {t('admin.products.stock_label')}
+                                </Label>
                                 <Input
                                     id="stock"
                                     type="number"
@@ -197,13 +218,15 @@ export default function ProductEdit({ product, categories }: PageProps) {
                                     placeholder="-1"
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    设置为 -1 表示库存无限
+                                    {t('admin.products.stock_hint')}
                                 </p>
                                 <InputError message={errors.stock} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="category_id">商品分类</Label>
+                                <Label htmlFor="category_id">
+                                    {t('admin.products.category_label')}
+                                </Label>
                                 <Select
                                     value={data.category_id}
                                     onValueChange={(value) =>
@@ -211,7 +234,11 @@ export default function ProductEdit({ product, categories }: PageProps) {
                                     }
                                 >
                                     <SelectTrigger id="category_id">
-                                        <SelectValue placeholder="选择分类" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'admin.products.select_category',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {categories.map((category) => (
@@ -238,12 +265,14 @@ export default function ProductEdit({ product, categories }: PageProps) {
                                     }
                                 />
                                 <Label htmlFor="is_third_party">
-                                    第三方商品
+                                    {t('admin.products.third_party_label')}
                                 </Label>
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="status">状态</Label>
+                                <Label htmlFor="status">
+                                    {t('common.status')}
+                                </Label>
                                 <Select
                                     value={data.status}
                                     onValueChange={(value) =>
@@ -255,13 +284,17 @@ export default function ProductEdit({ product, categories }: PageProps) {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="active">
-                                            上架
+                                            {t(
+                                                'admin.products.status_active',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="inactive">
-                                            下架
+                                            {t(
+                                                'admin.products.status_inactive',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="out_of_stock">
-                                            缺货
+                                            {t('shop.out_of_stock')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -278,7 +311,7 @@ export default function ProductEdit({ product, categories }: PageProps) {
                                         href="/admin/products"
                                         className="flex-1"
                                     >
-                                        取消
+                                        {t('common.cancel')}
                                     </Link>
                                 </Button>
                                 <Button
@@ -286,7 +319,9 @@ export default function ProductEdit({ product, categories }: PageProps) {
                                     disabled={processing}
                                     className="flex-1"
                                 >
-                                    {processing ? '保存中...' : '保存更改'}
+                                    {processing
+                                        ? t('admin.products.saving')
+                                        : t('admin.products.save_changes')}
                                 </Button>
                             </div>
                         </form>

@@ -29,6 +29,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface ProductCategory {
@@ -80,35 +82,41 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '商品管理', href: '/admin/products' },
-];
-
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-    }
-> = {
-    active: { label: '上架', variant: 'success' },
-    inactive: { label: '下架', variant: 'secondary' },
-    out_of_stock: { label: '缺货', variant: 'destructive' },
-};
-
 export default function ProductIndex({
     products,
     categories,
     stats,
     filters,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.products'), href: '/admin/products' },
+    ];
+
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+        }
+    > = {
+        active: { label: t('admin.products.status_active'), variant: 'success' },
+        inactive: {
+            label: t('admin.products.status_inactive'),
+            variant: 'secondary',
+        },
+        out_of_stock: {
+            label: t('shop.out_of_stock'),
+            variant: 'destructive',
+        },
+    };
+
     const { get } = useForm({
         search: filters.search || '',
         status: filters.status || 'all',
@@ -125,18 +133,18 @@ export default function ProductIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="商品管理" />
+            <Head title={t('nav.products')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="商品管理"
-                        description="管理商城商品和库存"
+                        title={t('nav.products')}
+                        description={t('admin.products.index_description')}
                     />
                     <Button asChild>
                         <Link href="/admin/products/create">
                             <Plus className="mr-2 h-4 w-4" />
-                            添加商品
+                            {t('admin.products.create_title')}
                         </Link>
                     </Button>
                 </div>
@@ -146,7 +154,7 @@ export default function ProductIndex({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium">
-                                商品总数
+                                {t('admin.products.stats_total')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -159,7 +167,7 @@ export default function ProductIndex({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-success">
-                                上架商品
+                                {t('admin.products.stats_active')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -172,7 +180,7 @@ export default function ProductIndex({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-destructive">
-                                缺货商品
+                                {t('admin.products.stats_out_of_stock')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -185,7 +193,7 @@ export default function ProductIndex({
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium">
-                                总兑换次数
+                                {t('admin.products.stats_total_exchanges')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -201,7 +209,7 @@ export default function ProductIndex({
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <Search className="h-4 w-4" />
-                            筛选商品
+                            {t('admin.products.filter_title')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -210,11 +218,15 @@ export default function ProductIndex({
                             className="grid gap-4 md:grid-cols-3"
                         >
                             <div className="grid gap-2">
-                                <Label htmlFor="search">搜索</Label>
+                                <Label htmlFor="search">
+                                    {t('common.search')}
+                                </Label>
                                 <Input
                                     id="search"
                                     type="text"
-                                    placeholder="商品名称..."
+                                    placeholder={t(
+                                        'admin.products.search_placeholder',
+                                    )}
                                     value={filters.search || ''}
                                     onChange={(e) =>
                                         router.get(
@@ -232,7 +244,9 @@ export default function ProductIndex({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="status">状态</Label>
+                                <Label htmlFor="status">
+                                    {t('common.status')}
+                                </Label>
                                 <Select
                                     value={filters.status || 'all'}
                                     onValueChange={(value) =>
@@ -252,27 +266,37 @@ export default function ProductIndex({
                                     }
                                 >
                                     <SelectTrigger id="status">
-                                        <SelectValue placeholder="所有状态" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'shop.all_statuses',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            所有状态
+                                            {t('shop.all_statuses')}
                                         </SelectItem>
                                         <SelectItem value="active">
-                                            上架
+                                            {t(
+                                                'admin.products.status_active',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="inactive">
-                                            下架
+                                            {t(
+                                                'admin.products.status_inactive',
+                                            )}
                                         </SelectItem>
                                         <SelectItem value="out_of_stock">
-                                            缺货
+                                            {t('shop.out_of_stock')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="category">分类</Label>
+                                <Label htmlFor="category">
+                                    {t('shop.category')}
+                                </Label>
                                 <Select
                                     value={filters.category || 'all'}
                                     onValueChange={(value) =>
@@ -292,11 +316,15 @@ export default function ProductIndex({
                                     }
                                 >
                                     <SelectTrigger id="category">
-                                        <SelectValue placeholder="所有分类" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'shop.all_categories',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            所有分类
+                                            {t('shop.all_categories')}
                                         </SelectItem>
                                         {categories.map((category) => (
                                             <SelectItem
@@ -316,10 +344,13 @@ export default function ProductIndex({
                 {/* Products List */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>商品列表</CardTitle>
+                        <CardTitle>{t('admin.products.list_title')}</CardTitle>
                         <CardDescription>
-                            显示 {products.from} 到 {products.to}，共{' '}
-                            {products.total} 件商品
+                            {t('admin.products.showing_range', {
+                                from: formatNumber(products.from),
+                                to: formatNumber(products.to),
+                                total: formatNumber(products.total),
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -365,19 +396,28 @@ export default function ProductIndex({
                                         )}
                                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                             <span>
-                                                积分:{' '}
-                                                {product.points_required.toLocaleString()}
+                                                {t('admin.products.points', {
+                                                    points: formatNumber(
+                                                        product.points_required,
+                                                    ),
+                                                })}
                                             </span>
                                             <span>•</span>
                                             <span>
-                                                库存:{' '}
-                                                {product.stock === -1
-                                                    ? '无限'
-                                                    : product.stock}
+                                                {t('admin.products.stock', {
+                                                    stock:
+                                                        product.stock === -1
+                                                            ? t(
+                                                                  'admin.products.unlimited',
+                                                              )
+                                                            : product.stock,
+                                                })}
                                             </span>
                                             <span>•</span>
                                             <span>
-                                                兑换: {product.orders_count}次
+                                                {t('admin.products.exchanges', {
+                                                    count: product.orders_count,
+                                                })}
                                             </span>
                                         </div>
                                     </div>
@@ -400,7 +440,12 @@ export default function ProductIndex({
                                             onClick={() => {
                                                 if (
                                                     confirm(
-                                                        `确定要删除商品 "${product.name}" 吗？`,
+                                                        t(
+                                                            'admin.products.delete_confirm',
+                                                            {
+                                                                name: product.name,
+                                                            },
+                                                        ),
                                                     )
                                                 ) {
                                                     // Use a form submission for DELETE

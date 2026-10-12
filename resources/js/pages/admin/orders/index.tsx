@@ -42,6 +42,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem, SharedData } from '@/types';
 
 interface ProductCategory {
@@ -106,34 +108,34 @@ interface PageProps {
 
 type VerificationMethod = 'code' | 'password' | 'id_card' | 'direct';
 
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-    }
-> = {
-    pending: { label: '待处理', variant: 'warning' },
-    processing: { label: '处理中', variant: 'default' },
-    completed: { label: '已完成', variant: 'success' },
-    cancelled: { label: '已取消', variant: 'destructive' },
-    failed: { label: '失败', variant: 'destructive' },
-};
-
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '订单管理', href: '/admin/orders' },
-];
-
 export default function OrderIndex({ orders, stats, filters }: PageProps) {
     const { auth } = usePage<SharedData>().props;
     const [successMessage, setSuccessMessage] = useState('');
+
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+        }
+    > = {
+        pending: { label: t('status.pending'), variant: 'warning' },
+        processing: { label: t('status.processing'), variant: 'default' },
+        completed: { label: t('status.completed'), variant: 'success' },
+        cancelled: { label: t('status.cancelled'), variant: 'destructive' },
+        failed: { label: t('status.failed'), variant: 'destructive' },
+    };
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.orders'), href: '/admin/orders' },
+    ];
 
     const { get, setData, processing } = useForm({
         status: filters.status || 'all',
@@ -151,7 +153,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="订单管理" />
+            <Head title={t('nav.orders')} />
 
             <div className="space-y-6 p-4">
                 {/* Stats Cards */}
@@ -161,7 +163,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-muted-foreground">
-                                        总订单
+                                        {t('admin.orders.stats_total')}
                                     </p>
                                     <p className="text-2xl font-bold">
                                         {stats.total}
@@ -176,7 +178,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-muted-foreground">
-                                        待处理
+                                        {t('status.pending')}
                                     </p>
                                     <p className="text-2xl font-bold">
                                         {stats.pending}
@@ -191,7 +193,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-muted-foreground">
-                                        处理中
+                                        {t('status.processing')}
                                     </p>
                                     <p className="text-2xl font-bold">
                                         {stats.processing}
@@ -206,7 +208,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-muted-foreground">
-                                        已完成
+                                        {t('status.completed')}
                                     </p>
                                     <p className="text-2xl font-bold">
                                         {stats.completed}
@@ -221,10 +223,12 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-muted-foreground">
-                                        消耗积分
+                                        {t('shop.points_spent')}
                                     </p>
                                     <p className="text-2xl font-bold">
-                                        {stats.total_points_spent.toLocaleString()}
+                                        {formatNumber(
+                                            stats.total_points_spent,
+                                        )}
                                     </p>
                                 </div>
                                 <User className="h-8 w-8 text-primary" />
@@ -236,7 +240,9 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                 {/* Search and Filters */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle className="text-base">搜索和筛选</CardTitle>
+                        <CardTitle className="text-base">
+                            {t('admin.orders.search_and_filter')}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form
@@ -244,12 +250,16 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                             className="grid gap-4 md:grid-cols-4"
                         >
                             <div className="space-y-2">
-                                <Label htmlFor="search">搜索订单</Label>
+                                <Label htmlFor="search">
+                                    {t('admin.orders.search_orders')}
+                                </Label>
                                 <div className="relative">
                                     <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                     <Input
                                         id="search"
-                                        placeholder="订单号..."
+                                        placeholder={t(
+                                            'admin.orders.search_placeholder',
+                                        )}
                                         value={filters.search || ''}
                                         onChange={(e) =>
                                             setData('search', e.target.value)
@@ -259,7 +269,9 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="status">订单状态</Label>
+                                <Label htmlFor="status">
+                                    {t('shop.order_status')}
+                                </Label>
                                 <Select
                                     value={filters.status || 'all'}
                                     onValueChange={(value) =>
@@ -267,32 +279,40 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                     }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="选择状态" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'admin.orders.select_status',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            全部
+                                            {t('common.all')}
                                         </SelectItem>
                                         <SelectItem value="pending">
-                                            待处理
+                                            {t('status.pending')}
                                         </SelectItem>
                                         <SelectItem value="processing">
-                                            处理中
+                                            {t('status.processing')}
                                         </SelectItem>
                                         <SelectItem value="completed">
-                                            已完成
+                                            {t('status.completed')}
                                         </SelectItem>
                                         <SelectItem value="cancelled">
-                                            已取消
+                                            {t('status.cancelled')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="product">商品</Label>
+                                <Label htmlFor="product">
+                                    {t('shop.product')}
+                                </Label>
                                 <Input
                                     id="product"
-                                    placeholder="商品名称..."
+                                    placeholder={t(
+                                        'admin.orders.product_placeholder',
+                                    )}
                                     value={filters.product || ''}
                                     onChange={(e) =>
                                         setData('product', e.target.value)
@@ -305,7 +325,7 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                     disabled={processing}
                                     className="w-full"
                                 >
-                                    搜索
+                                    {t('common.search')}
                                 </Button>
                             </div>
                         </form>
@@ -323,9 +343,11 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                 {/* Orders Table */}
                 <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                     <CardHeader>
-                        <CardTitle>订单列表</CardTitle>
+                        <CardTitle>{t('admin.orders.list_title')}</CardTitle>
                         <CardDescription>
-                            共 {orders.total} 个订单
+                            {t('admin.orders.total_orders', {
+                                count: formatNumber(orders.total),
+                            })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -334,28 +356,30 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                 <thead>
                                     <tr className="border-b">
                                         <th className="p-3 text-left text-sm font-medium">
-                                            订单号
+                                            {t('shop.order_number')}
                                         </th>
                                         <th className="p-3 text-left text-sm font-medium">
-                                            商品
+                                            {t('shop.product')}
                                         </th>
                                         <th className="p-3 text-left text-sm font-medium">
-                                            用户
+                                            {t('admin.orders.user')}
                                         </th>
                                         <th className="p-3 text-left text-sm font-medium">
-                                            积分
+                                            {t('admin.orders.points')}
                                         </th>
                                         <th className="p-3 text-left text-sm font-medium">
-                                            状态
+                                            {t('common.status')}
                                         </th>
                                         <th className="p-3 text-left text-sm font-medium">
-                                            核销状态
+                                            {t(
+                                                'admin.orders.verification_status',
+                                            )}
                                         </th>
                                         <th className="p-3 text-left text-sm font-medium">
-                                            下单时间
+                                            {t('shop.order_date')}
                                         </th>
                                         <th className="p-3 text-left text-sm font-medium">
-                                            操作
+                                            {t('common.actions')}
                                         </th>
                                     </tr>
                                 </thead>
@@ -383,7 +407,9 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                                 </div>
                                             </td>
                                             <td className="p-3 text-sm font-medium">
-                                                {order.points_spent.toLocaleString()}
+                                                {formatNumber(
+                                                    order.points_spent,
+                                                )}
                                             </td>
                                             <td className="p-3">
                                                 <Badge
@@ -404,18 +430,22 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                                 {order.verified_at ? (
                                                     <span className="flex items-center gap-1 text-xs text-success">
                                                         <Package className="h-3 w-3" />
-                                                        已核销
+                                                        {t(
+                                                            'admin.orders.verified',
+                                                        )}
                                                     </span>
                                                 ) : (
                                                     <span className="text-xs text-muted-foreground">
-                                                        未核销
+                                                        {t(
+                                                            'admin.orders.unverified',
+                                                        )}
                                                     </span>
                                                 )}
                                             </td>
                                             <td className="p-3 text-sm">
-                                                {new Date(
+                                                {formatDateTime(
                                                     order.created_at,
-                                                ).toLocaleString()}
+                                                )}
                                             </td>
                                             <td className="p-3">
                                                 <div className="flex gap-2">
@@ -427,7 +457,9 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                                         <Link
                                                             href={`/admin/orders/${order.id}`}
                                                         >
-                                                            查看详情
+                                                            {t(
+                                                                'common.view_details',
+                                                            )}
                                                         </Link>
                                                     </Button>
                                                     {order.status ===
@@ -440,7 +472,9 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                                             <Link
                                                                 href={`/admin/orders/${order.id}/edit`}
                                                             >
-                                                                更新状态
+                                                                {t(
+                                                                    'admin.orders.update_status',
+                                                                )}
                                                             </Link>
                                                         </Button>
                                                     )}
@@ -458,7 +492,9 @@ export default function OrderIndex({ orders, stats, filters }: PageProps) {
                                                                 }
                                                                 onSuccess={() =>
                                                                     setSuccessMessage(
-                                                                        '订单核销成功',
+                                                                        t(
+                                                                            'admin.orders.verify_success',
+                                                                        ),
                                                                     )
                                                                 }
                                                             />
@@ -587,7 +623,10 @@ function VerifyOrderDialog({
             const result = await response.json();
 
             if (result.success) {
-                setSuccessMessage(result.message || '核销成功！');
+                setSuccessMessage(
+                    result.message ||
+                        t('admin.orders.verified_success_message'),
+                );
                 setShowSuccess(true);
                 verificationSuccessfulRef.current = true;
                 reset();
@@ -620,7 +659,7 @@ function VerifyOrderDialog({
             }
         } catch (error) {
             console.error('Verification failed:', error);
-            setErrors({ __all__: '核销失败，请稍后重试' });
+            setErrors({ __all__: t('admin.orders.verify_failed_retry') });
         }
     };
 
@@ -647,13 +686,15 @@ function VerifyOrderDialog({
             <DialogTrigger asChild>
                 <Button variant="default" size="sm">
                     <ShieldCheck className="mr-2 h-4 w-4" />
-                    核销
+                    {t('admin.orders.verify')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                    <DialogTitle>订单核销</DialogTitle>
-                    <DialogDescription>订单号: {orderNo}</DialogDescription>
+                    <DialogTitle>{t('admin.orders.verify_title')}</DialogTitle>
+                    <DialogDescription>
+                        {t('shop.order_number')}: {orderNo}
+                    </DialogDescription>
                 </DialogHeader>
 
                 {/* Show global error if any */}
@@ -686,28 +727,28 @@ function VerifyOrderDialog({
                     >
                         <TabsList className="grid w-full grid-cols-4">
                             <TabsTrigger value="code" className="text-xs">
-                                验证码
+                                {t('admin.orders.code')}
                             </TabsTrigger>
                             <TabsTrigger value="password" className="text-xs">
-                                密码
+                                {t('auth.password')}
                             </TabsTrigger>
                             <TabsTrigger value="id_card" className="text-xs">
-                                身份证
+                                {t('admin.orders.id_card')}
                             </TabsTrigger>
                             <TabsTrigger value="direct" className="text-xs">
-                                直接核销
+                                {t('admin.orders.direct')}
                             </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="code" className="mt-4 space-y-3">
                             <div className="rounded-lg bg-muted/50 p-3">
                                 <p className="text-xs text-muted-foreground">
-                                    使用6位验证码进行核销
+                                    {t('admin.orders.code_hint')}
                                 </p>
                             </div>
                             <div className="space-y-2">
                                 <Label>
-                                    验证码{' '}
+                                    {t('admin.orders.code')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <div className="flex justify-center gap-2">
@@ -748,18 +789,20 @@ function VerifyOrderDialog({
                         >
                             <div className="rounded-lg bg-muted/50 p-3">
                                 <p className="text-xs text-muted-foreground">
-                                    使用下单账号的密码进行核销
+                                    {t('admin.orders.password_hint')}
                                 </p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="password">
-                                    密码{' '}
+                                    {t('auth.password')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
                                     id="password"
                                     type="password"
-                                    placeholder="请输入用户密码"
+                                    placeholder={t(
+                                        'admin.orders.user_password_placeholder',
+                                    )}
                                     value={data.password}
                                     onChange={(e) =>
                                         setData('password', e.target.value)
@@ -772,17 +815,19 @@ function VerifyOrderDialog({
                         <TabsContent value="id_card" className="mt-4 space-y-3">
                             <div className="rounded-lg bg-muted/50 p-3">
                                 <p className="text-xs text-muted-foreground">
-                                    使用下单人的身份证号和姓名进行核销
+                                    {t('admin.orders.id_card_hint')}
                                 </p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="id_number">
-                                    身份证号{' '}
+                                    {t('admin.orders.id_number')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
                                     id="id_number"
-                                    placeholder="请输入身份证号"
+                                    placeholder={t(
+                                        'admin.orders.id_number_placeholder',
+                                    )}
                                     value={data.id_number}
                                     onChange={(e) =>
                                         setData('id_number', e.target.value)
@@ -792,12 +837,14 @@ function VerifyOrderDialog({
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="name">
-                                    姓名{' '}
+                                    {t('auth.name')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
                                     id="name"
-                                    placeholder="请输入姓名"
+                                    placeholder={t(
+                                        'admin.orders.name_placeholder',
+                                    )}
                                     value={data.name}
                                     onChange={(e) =>
                                         setData('name', e.target.value)
@@ -810,18 +857,20 @@ function VerifyOrderDialog({
                         <TabsContent value="direct" className="mt-4 space-y-3">
                             <div className="rounded-lg bg-muted/50 p-3">
                                 <p className="text-center text-sm text-muted-foreground">
-                                    直接核销需要输入当前管理员密码确认
+                                    {t('admin.orders.direct_hint')}
                                 </p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="admin_password">
-                                    管理员密码{' '}
+                                    {t('admin.orders.admin_password')}{' '}
                                     <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
                                     id="admin_password"
                                     type="password"
-                                    placeholder="请输入您的密码"
+                                    placeholder={t(
+                                        'admin.orders.admin_password_placeholder',
+                                    )}
                                     value={data.admin_password}
                                     onChange={(e) =>
                                         setData(
@@ -842,7 +891,7 @@ function VerifyOrderDialog({
                                 variant="outline"
                                 className="flex-1"
                             >
-                                取消
+                                {t('common.cancel')}
                             </Button>
                         </DialogTrigger>
                         <Button
@@ -850,7 +899,9 @@ function VerifyOrderDialog({
                             disabled={processing}
                             className="flex-1"
                         >
-                            {processing ? '核销中...' : '确认核销'}
+                            {processing
+                                ? t('admin.orders.verifying')
+                                : t('admin.orders.confirm_verify')}
                         </Button>
                     </div>
                 </form>

@@ -30,6 +30,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface Plugin {
@@ -62,43 +63,43 @@ interface PageProps {
     pluginSources: PluginSource[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '插件管理', href: '/admin/plugins' },
-];
-
-const statusConfig: Record<
-    string,
-    {
-        label: string;
-        variant:
-            | 'default'
-            | 'secondary'
-            | 'destructive'
-            | 'outline'
-            | 'success'
-            | 'warning';
-        icon: any;
-    }
-> = {
-    installed: {
-        label: '已安装',
-        variant: 'secondary',
-        icon: Settings,
-    },
-    enabled: {
-        label: '已启用',
-        variant: 'success',
-        icon: Power,
-    },
-    disabled: {
-        label: '已禁用',
-        variant: 'destructive',
-        icon: PowerOff,
-    },
-};
-
 export default function PluginIndex({ plugins, pluginSources }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.plugins'), href: '/admin/plugins' },
+    ];
+
+    const statusConfig: Record<
+        string,
+        {
+            label: string;
+            variant:
+                | 'default'
+                | 'secondary'
+                | 'destructive'
+                | 'outline'
+                | 'success'
+                | 'warning';
+            icon: any;
+        }
+    > = {
+        installed: {
+            label: t('admin.plugins.status.installed'),
+            variant: 'secondary',
+            icon: Settings,
+        },
+        enabled: {
+            label: t('admin.plugins.status.enabled'),
+            variant: 'success',
+            icon: Power,
+        },
+        disabled: {
+            label: t('admin.plugins.status.disabled'),
+            variant: 'destructive',
+            icon: PowerOff,
+        },
+    };
+
     const { post, processing, setData } = useForm({});
     const [showUploadForm, setShowUploadForm] = useState(false);
     const [showSourceForm, setShowSourceForm] = useState(false);
@@ -152,15 +153,19 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    alert('插件上传成功');
+                    alert(t('admin.plugins.upload_success'));
                     window.location.reload();
                 } else {
-                    alert(data.message || '上传失败');
+                    alert(data.message || t('admin.plugins.upload_failed'));
                 }
             })
             .catch((error) => {
                 console.error('Upload error:', error);
-                alert('上传失败: ' + error.message);
+                alert(
+                    t('admin.plugins.upload_failed_detail', {
+                        error: error.message,
+                    }),
+                );
             });
     };
 
@@ -210,8 +215,10 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
         } catch (error) {
             console.error('Search error:', error);
             alert(
-                '搜索失败: ' +
-                    (error instanceof Error ? error.message : String(error)),
+                t('admin.plugins.search_failed_detail', {
+                    error:
+                        error instanceof Error ? error.message : String(error),
+                }),
             );
         } finally {
             setSearching(false);
@@ -229,13 +236,13 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="插件管理" />
+            <Head title={t('nav.plugins')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="插件管理"
-                        description="管理系统插件和扩展功能"
+                        title={t('nav.plugins')}
+                        description={t('admin.plugins.description')}
                     />
                     <div className="flex gap-2">
                         <Button
@@ -243,13 +250,13 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                             onClick={() => setShowSourceForm(!showSourceForm)}
                         >
                             <Globe className="mr-2 h-4 w-4" />
-                            插件源
+                            {t('admin.plugins.sources')}
                         </Button>
                         <Button
                             onClick={() => setShowUploadForm(!showUploadForm)}
                         >
                             <Upload className="mr-2 h-4 w-4" />
-                            上传插件
+                            {t('admin.plugins.upload')}
                         </Button>
                     </div>
                 </div>
@@ -260,9 +267,13 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <CardTitle>插件源设置</CardTitle>
+                                    <CardTitle>
+                                        {t('admin.plugins.source_settings')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        管理插件市场源，用于浏览和安装远程插件
+                                        {t(
+                                            'admin.plugins.source_settings_description',
+                                        )}
                                     </CardDescription>
                                 </div>
                                 <Button
@@ -296,7 +307,7 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                     variant="success"
                                                     className="ml-2"
                                                 >
-                                                    活跃
+                                                    {t('admin.plugins.active')}
                                                 </Badge>
                                             )}
                                         </div>
@@ -314,7 +325,7 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                 >
                                     <Link href="/admin/settings#plugin-sources">
                                         <Plus className="mr-2 h-4 w-4" />
-                                        添加插件源
+                                        {t('admin.plugins.add_source')}
                                     </Link>
                                 </Button>
                             </div>
@@ -328,10 +339,11 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <CardTitle>上传插件</CardTitle>
+                                    <CardTitle>
+                                        {t('admin.plugins.upload')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        上传 ZIP
-                                        格式的插件包，系统会自动解压并安装
+                                        {t('admin.plugins.upload_description')}
                                     </CardDescription>
                                 </div>
                                 <Button
@@ -362,14 +374,14 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                 >
                                     <FileArchive className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                                     <p className="mb-2 text-sm text-muted-foreground">
-                                        拖拽 ZIP 文件到这里，或
+                                        {t('admin.plugins.drop_hint')}
                                     </p>
                                     <Label
                                         htmlFor="file-upload"
                                         className="cursor-pointer"
                                     >
                                         <span className="text-primary hover:underline">
-                                            点击选择文件
+                                            {t('admin.plugins.click_to_select')}
                                         </span>
                                     </Label>
                                     <Input
@@ -380,7 +392,7 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                         onChange={handleFileSelect}
                                     />
                                     <p className="mt-2 text-xs text-muted-foreground">
-                                        最大 50MB
+                                        {t('admin.plugins.max_size')}
                                     </p>
                                 </div>
 
@@ -415,28 +427,32 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                 {/* Plugin Info */}
                                 <div className="rounded-lg bg-muted/50 p-4 text-sm">
                                     <h4 className="mb-2 font-semibold">
-                                        插件包要求：
+                                        {t('admin.plugins.package_requirements')}
                                     </h4>
                                     <ul className="space-y-1 text-muted-foreground">
                                         <li className="flex items-start gap-2">
                                             <span className="text-primary">
                                                 •
                                             </span>
-                                            <span>ZIP 格式压缩包</span>
+                                            <span>{t('admin.plugins.req_zip')}</span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <span className="text-primary">
                                                 •
                                             </span>
                                             <span>
-                                                包含 plugin.json 配置文件
+                                                {t('admin.plugins.req_config')}
                                             </span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <span className="text-primary">
                                                 •
                                             </span>
-                                            <span>声明依赖项（如有）</span>
+                                            <span>
+                                                {t(
+                                                    'admin.plugins.req_dependencies',
+                                                )}
+                                            </span>
                                         </li>
                                     </ul>
                                 </div>
@@ -446,7 +462,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                     disabled={!uploadFile || processing}
                                     className="w-full"
                                 >
-                                    {processing ? '上传中...' : '开始上传'}
+                                    {processing
+                                        ? t('admin.plugins.uploading')
+                                        : t('admin.plugins.start_upload')}
                                 </Button>
                             </form>
                         </CardContent>
@@ -461,7 +479,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                 <div className="relative flex-1">
                                     <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                     <Input
-                                        placeholder="搜索已安装插件..."
+                                        placeholder={t(
+                                            'admin.plugins.search_installed_placeholder',
+                                        )}
                                         value={searchQuery}
                                         onChange={(e) =>
                                             setSearchQuery(e.target.value)
@@ -475,7 +495,11 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                     disabled={searching}
                                 >
                                     <Globe className="mr-2 h-4 w-4" />
-                                    {searching ? '搜索中...' : '搜索插件市场'}
+                                    {searching
+                                        ? t('admin.plugins.searching')
+                                        : t(
+                                              'admin.plugins.search_marketplace',
+                                          )}
                                 </Button>
                             </div>
                         </CardContent>
@@ -484,16 +508,20 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                     {/* Installed Plugins */}
                     <Card className="border-sidebar-border/70 dark:border-sidebar-border">
                         <CardHeader>
-                            <CardTitle>已安装插件</CardTitle>
+                            <CardTitle>
+                                {t('admin.plugins.installed_plugins')}
+                            </CardTitle>
                             <CardDescription>
-                                共 {filteredPlugins.length} 个插件
+                                {t('admin.plugins.count', {
+                                    count: filteredPlugins.length,
+                                })}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             {filteredPlugins.length === 0 ? (
                                 <div className="py-8 text-center text-muted-foreground">
                                     <Puzzle className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                                    <p>暂无已安装的插件</p>
+                                    <p>{t('admin.plugins.empty_installed')}</p>
                                 </div>
                             ) : (
                                 <div className="space-y-3">
@@ -530,7 +558,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                     </div>
                                                     <p className="mb-1 line-clamp-1 text-sm text-muted-foreground">
                                                         {plugin.description ||
-                                                            '无描述'}
+                                                            t(
+                                                                'admin.plugins.no_description',
+                                                            )}
                                                     </p>
                                                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                                         <span>
@@ -560,10 +590,12 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                     {plugin.permissions_count >
                                                         0 && (
                                                         <p className="text-xs text-muted-foreground">
-                                                            {
-                                                                plugin.permissions_count
-                                                            }{' '}
-                                                            个权限
+                                                            {t(
+                                                                'admin.plugins.permissions_count',
+                                                                {
+                                                                    count: plugin.permissions_count,
+                                                                },
+                                                            )}
                                                         </p>
                                                     )}
                                                     {plugin.github_url && (
@@ -609,7 +641,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                             }
                                                         >
                                                             <Download className="mr-1 h-4 w-4" />
-                                                            启用
+                                                            {t(
+                                                                'admin.plugins.enable',
+                                                            )}
                                                         </Button>
                                                     )}
                                                     {plugin.status ===
@@ -624,7 +658,12 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                                     e.stopPropagation();
                                                                     if (
                                                                         confirm(
-                                                                            `确定要停用插件 "${plugin.name}" 吗？`,
+                                                                            t(
+                                                                                'admin.plugins.confirm_disable',
+                                                                                {
+                                                                                    name: plugin.name,
+                                                                                },
+                                                                            ),
                                                                         )
                                                                     ) {
                                                                         post(
@@ -642,7 +681,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                                 }
                                                             >
                                                                 <PowerOff className="mr-1 h-4 w-4" />
-                                                                停用
+                                                                {t(
+                                                                    'admin.plugins.disable',
+                                                                )}
                                                             </Button>
                                                             <a
                                                                 href={`/admin/plugins/${plugin.id}`}
@@ -655,7 +696,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                                     variant="outline"
                                                                 >
                                                                     <Settings className="mr-1 h-4 w-4" />
-                                                                    设置
+                                                                    {t(
+                                                                        'admin.plugins.settings',
+                                                                    )}
                                                                 </Button>
                                                             </a>
                                                         </>
@@ -667,7 +710,12 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                             onClick={() => {
                                                                 if (
                                                                     confirm(
-                                                                        `确定要重新启用插件 "${plugin.name}" 吗？`,
+                                                                        t(
+                                                                            'admin.plugins.confirm_enable',
+                                                                            {
+                                                                                name: plugin.name,
+                                                                            },
+                                                                        ),
                                                                     )
                                                                 ) {
                                                                     post(
@@ -685,7 +733,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                             }
                                                         >
                                                             <Power className="mr-1 h-4 w-4" />
-                                                            启用
+                                                            {t(
+                                                                'admin.plugins.enable',
+                                                            )}
                                                         </Button>
                                                     )}
                                                 </div>
@@ -703,10 +753,10 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Globe className="h-5 w-5" />
-                                    插件市场
+                                    {t('admin.plugins.marketplace')}
                                 </CardTitle>
                                 <CardDescription>
-                                    从远程插件源浏览和安装插件
+                                    {t('admin.plugins.marketplace_description')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -725,7 +775,9 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                 </div>
                                                 <p className="mb-1 line-clamp-1 text-sm text-muted-foreground">
                                                     {plugin.description ||
-                                                        '无描述'}
+                                                        t(
+                                                            'admin.plugins.no_description',
+                                                        )}
                                                 </p>
                                                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                                     <span>
@@ -746,7 +798,7 @@ export default function PluginIndex({ plugins, pluginSources }: PageProps) {
                                                 }
                                             >
                                                 <Download className="mr-1 h-4 w-4" />
-                                                查看
+                                                {t('common.view')}
                                             </Button>
                                         </div>
                                     ))}

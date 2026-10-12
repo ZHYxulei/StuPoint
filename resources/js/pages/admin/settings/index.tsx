@@ -34,6 +34,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { t } from '@/lib/i18n';
 import type { BreadcrumbItem } from '@/types';
 
 interface PluginSource {
@@ -66,11 +67,6 @@ interface PageProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: '管理员', href: '/admin' },
-    { title: '系统设置', href: '/admin/settings' },
-];
-
 export default function SystemSettings({
     pluginSources,
     siteSettingsForm,
@@ -81,6 +77,11 @@ export default function SystemSettings({
     smsSettings,
     captchaSettings,
 }: PageProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.settings'), href: '/admin/settings' },
+    ];
+
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingSource, setEditingSource] = useState<PluginSource | null>(
         null,
@@ -207,7 +208,7 @@ export default function SystemSettings({
     };
 
     const handleDelete = (id: number) => {
-        if (confirm('确定要删除这个插件源吗？')) {
+        if (confirm(t('admin.settings.delete_source_confirm'))) {
             destroy(`/admin/settings/plugin-sources/${id}`);
         }
     };
@@ -218,13 +219,13 @@ export default function SystemSettings({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="系统设置" />
+            <Head title={t('nav.settings')} />
 
             <div className="space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <Heading
-                        title="系统设置"
-                        description="配置系统参数和插件源"
+                        title={t('nav.settings')}
+                        description={t('admin.settings.description')}
                     />
                 </div>
 
@@ -232,18 +233,46 @@ export default function SystemSettings({
                     {/* Sidebar Navigation */}
                     <nav className="w-48 shrink-0 space-y-1">
                         {[
-                            { key: 'site', icon: Palette, label: '站点设置' },
-                            { key: 'contact', icon: Mail, label: '联系信息' },
+                            {
+                                key: 'site',
+                                icon: Palette,
+                                label: t('admin.settings.tab_site'),
+                            },
+                            {
+                                key: 'contact',
+                                icon: Mail,
+                                label: t('admin.settings.tab_contact'),
+                            },
                             {
                                 key: 'footer',
                                 icon: Copyright,
-                                label: '页脚设置',
+                                label: t('admin.settings.tab_footer'),
                             },
-                            { key: 'social', icon: Share2, label: '社交媒体' },
-                            { key: 'plugins', icon: Globe, label: '插件源' },
-                            { key: 'mail', icon: Send, label: '邮件配置' },
-                            { key: 'sms', icon: Zap, label: '短信配置' },
-                            { key: 'captcha', icon: Shield, label: '人机验证' },
+                            {
+                                key: 'social',
+                                icon: Share2,
+                                label: t('admin.settings.tab_social'),
+                            },
+                            {
+                                key: 'plugins',
+                                icon: Globe,
+                                label: t('admin.settings.tab_plugins'),
+                            },
+                            {
+                                key: 'mail',
+                                icon: Send,
+                                label: t('admin.settings.tab_mail'),
+                            },
+                            {
+                                key: 'sms',
+                                icon: Zap,
+                                label: t('admin.settings.tab_sms'),
+                            },
+                            {
+                                key: 'captcha',
+                                icon: Shield,
+                                label: t('admin.settings.tab_captcha'),
+                            },
                         ].map(({ key, icon: Icon, label }) => (
                             <button
                                 key={key}
@@ -268,10 +297,10 @@ export default function SystemSettings({
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Palette className="h-5 w-5" />
-                                        站点设置
+                                        {t('admin.settings.tab_site')}
                                     </CardTitle>
                                     <CardDescription>
-                                        配置网站的基本信息
+                                        {t('admin.settings.site_description')}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -282,7 +311,7 @@ export default function SystemSettings({
                                         <div className="grid gap-6 md:grid-cols-2">
                                             <div className="grid gap-2">
                                                 <Label htmlFor="site_name">
-                                                    网站名称
+                                                    {t('admin.settings.site_name')}
                                                 </Label>
                                                 <Input
                                                     id="site_name"
@@ -295,13 +324,17 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="StuPoint 学生积分管理系统"
+                                                    placeholder={t(
+                                                        'admin.settings.site_name_placeholder',
+                                                    )}
                                                 />
                                             </div>
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="site_keywords">
-                                                    网站关键词
+                                                    {t(
+                                                        'admin.settings.site_keywords',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="site_keywords"
@@ -315,13 +348,17 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="学生管理,积分系统,校园"
+                                                    placeholder={t(
+                                                        'admin.settings.site_keywords_placeholder',
+                                                    )}
                                                 />
                                             </div>
 
                                             <div className="grid gap-2 md:col-span-2">
                                                 <Label htmlFor="site_description">
-                                                    网站描述
+                                                    {t(
+                                                        'admin.settings.site_description_label',
+                                                    )}
                                                 </Label>
                                                 <Textarea
                                                     id="site_description"
@@ -335,14 +372,18 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="一个现代化的学生积分管理系统"
+                                                    placeholder={t(
+                                                        'admin.settings.site_description_placeholder',
+                                                    )}
                                                     rows={3}
                                                 />
                                             </div>
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="site_logo">
-                                                    网站 Logo URL
+                                                    {t(
+                                                        'admin.settings.site_logo_url',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="site_logo"
@@ -358,13 +399,17 @@ export default function SystemSettings({
                                                     placeholder="https://example.com/logo.png"
                                                 />
                                                 <p className="text-xs text-muted-foreground">
-                                                    建议尺寸: 200x60 像素
+                                                    {t(
+                                                        'admin.settings.site_logo_hint',
+                                                    )}
                                                 </p>
                                             </div>
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="site_favicon">
-                                                    网站 Favicon URL
+                                                    {t(
+                                                        'admin.settings.site_favicon_url',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="site_favicon"
@@ -381,14 +426,17 @@ export default function SystemSettings({
                                                     placeholder="https://example.com/favicon.ico"
                                                 />
                                                 <p className="text-xs text-muted-foreground">
-                                                    建议尺寸: 32x32 或 64x64
-                                                    像素
+                                                    {t(
+                                                        'admin.settings.site_favicon_hint',
+                                                    )}
                                                 </p>
                                             </div>
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="site_favicon_upload">
-                                                    上传网站图标
+                                                    {t(
+                                                        'admin.settings.upload_favicon',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="site_favicon_upload"
@@ -404,8 +452,9 @@ export default function SystemSettings({
                                                     }
                                                 />
                                                 <p className="text-xs text-muted-foreground">
-                                                    支持 PNG/ICO/WebP，最大
-                                                    2MB，优先使用上传图标
+                                                    {t(
+                                                        'admin.settings.upload_favicon_hint',
+                                                    )}
                                                 </p>
                                             </div>
                                         </div>
@@ -416,8 +465,10 @@ export default function SystemSettings({
                                                 disabled={siteForm.processing}
                                             >
                                                 {siteForm.processing
-                                                    ? '保存中...'
-                                                    : '保存设置'}
+                                                    ? t('admin.settings.saving')
+                                                    : t(
+                                                          'admin.settings.save_settings',
+                                                      )}
                                             </Button>
                                         </div>
                                     </form>
@@ -431,10 +482,12 @@ export default function SystemSettings({
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Mail className="h-5 w-5" />
-                                        联系信息
+                                        {t('admin.settings.tab_contact')}
                                     </CardTitle>
                                     <CardDescription>
-                                        配置网站的联系信息
+                                        {t(
+                                            'admin.settings.contact_description',
+                                        )}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -445,7 +498,9 @@ export default function SystemSettings({
                                         <div className="grid gap-6 md:grid-cols-2">
                                             <div className="grid gap-2">
                                                 <Label htmlFor="contact_email">
-                                                    联系邮箱
+                                                    {t(
+                                                        'admin.settings.contact_email',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="contact_email"
@@ -466,7 +521,9 @@ export default function SystemSettings({
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="contact_phone">
-                                                    联系电话
+                                                    {t(
+                                                        'admin.settings.contact_phone',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="contact_phone"
@@ -493,8 +550,10 @@ export default function SystemSettings({
                                                 }
                                             >
                                                 {contactForm.processing
-                                                    ? '保存中...'
-                                                    : '保存设置'}
+                                                    ? t('admin.settings.saving')
+                                                    : t(
+                                                          'admin.settings.save_settings',
+                                                      )}
                                             </Button>
                                         </div>
                                     </form>
@@ -508,10 +567,12 @@ export default function SystemSettings({
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Copyright className="h-5 w-5" />
-                                        页脚设置
+                                        {t('admin.settings.tab_footer')}
                                     </CardTitle>
                                     <CardDescription>
-                                        配置网站页脚显示的信息
+                                        {t(
+                                            'admin.settings.footer_description',
+                                        )}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -522,7 +583,9 @@ export default function SystemSettings({
                                         <div className="grid gap-6 md:grid-cols-2">
                                             <div className="grid gap-2 md:col-span-2">
                                                 <Label htmlFor="footer_copyright">
-                                                    版权信息
+                                                    {t(
+                                                        'admin.settings.copyright',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="footer_copyright"
@@ -542,7 +605,7 @@ export default function SystemSettings({
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="footer_icp">
-                                                    ICP 备案号
+                                                    {t('admin.settings.icp')}
                                                 </Label>
                                                 <Input
                                                     id="footer_icp"
@@ -556,13 +619,17 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="京ICP备xxxxxxxx号"
+                                                    placeholder={t(
+                                                        'admin.settings.icp_placeholder',
+                                                    )}
                                                 />
                                             </div>
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="footer_police">
-                                                    公安备案号
+                                                    {t(
+                                                        'admin.settings.police',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="footer_police"
@@ -576,7 +643,9 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="京公网安备xxxxxxxx号"
+                                                    placeholder={t(
+                                                        'admin.settings.police_placeholder',
+                                                    )}
                                                 />
                                             </div>
                                         </div>
@@ -587,8 +656,10 @@ export default function SystemSettings({
                                                 disabled={footerForm.processing}
                                             >
                                                 {footerForm.processing
-                                                    ? '保存中...'
-                                                    : '保存设置'}
+                                                    ? t('admin.settings.saving')
+                                                    : t(
+                                                          'admin.settings.save_settings',
+                                                      )}
                                             </Button>
                                         </div>
                                     </form>
@@ -602,10 +673,12 @@ export default function SystemSettings({
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Share2 className="h-5 w-5" />
-                                        社交媒体
+                                        {t('admin.settings.tab_social')}
                                     </CardTitle>
                                     <CardDescription>
-                                        配置网站的社交媒体账号
+                                        {t(
+                                            'admin.settings.social_description',
+                                        )}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -616,7 +689,7 @@ export default function SystemSettings({
                                         <div className="grid gap-6 md:grid-cols-2">
                                             <div className="grid gap-2">
                                                 <Label htmlFor="social_wechat">
-                                                    微信公众号
+                                                    {t('admin.settings.wechat')}
                                                 </Label>
                                                 <Input
                                                     id="social_wechat"
@@ -630,13 +703,15 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="微信公众号名称或ID"
+                                                    placeholder={t(
+                                                        'admin.settings.wechat_placeholder',
+                                                    )}
                                                 />
                                             </div>
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="social_weibo">
-                                                    微博
+                                                    {t('admin.settings.weibo')}
                                                 </Label>
                                                 <Input
                                                     id="social_weibo"
@@ -650,7 +725,9 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="@用户名"
+                                                    placeholder={t(
+                                                        'admin.settings.weibo_placeholder',
+                                                    )}
                                                 />
                                             </div>
 
@@ -670,7 +747,9 @@ export default function SystemSettings({
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="QQ号码"
+                                                    placeholder={t(
+                                                        'admin.settings.qq_placeholder',
+                                                    )}
                                                 />
                                             </div>
                                         </div>
@@ -681,8 +760,10 @@ export default function SystemSettings({
                                                 disabled={socialForm.processing}
                                             >
                                                 {socialForm.processing
-                                                    ? '保存中...'
-                                                    : '保存设置'}
+                                                    ? t('admin.settings.saving')
+                                                    : t(
+                                                          'admin.settings.save_settings',
+                                                      )}
                                             </Button>
                                         </div>
                                     </form>
@@ -698,10 +779,14 @@ export default function SystemSettings({
                                         <div>
                                             <CardTitle className="flex items-center gap-2">
                                                 <Globe className="h-5 w-5" />
-                                                插件源管理
+                                                {t(
+                                                    'admin.settings.plugin_sources_title',
+                                                )}
                                             </CardTitle>
                                             <CardDescription>
-                                                配置第三方插件市场源，从中浏览和安装插件
+                                                {t(
+                                                    'admin.settings.plugin_sources_description',
+                                                )}
                                             </CardDescription>
                                         </div>
                                         {!showAddForm && (
@@ -711,7 +796,7 @@ export default function SystemSettings({
                                                 }
                                             >
                                                 <Plus className="mr-2 h-4 w-4" />
-                                                添加插件源
+                                                {t('admin.settings.add_source')}
                                             </Button>
                                         )}
                                     </div>
@@ -722,8 +807,12 @@ export default function SystemSettings({
                                         <div className="rounded-lg border border-sidebar-border/70 bg-muted/50 p-4 dark:border-sidebar-border">
                                             <h3 className="mb-4 font-semibold">
                                                 {editingSource
-                                                    ? '编辑插件源'
-                                                    : '添加新插件源'}
+                                                    ? t(
+                                                          'admin.settings.edit_source',
+                                                      )
+                                                    : t(
+                                                          'admin.settings.add_new_source',
+                                                      )}
                                             </h3>
                                             <form
                                                 onSubmit={handleSubmit}
@@ -732,7 +821,9 @@ export default function SystemSettings({
                                                 <div className="grid gap-4 md:grid-cols-2">
                                                     <div className="grid gap-2">
                                                         <Label htmlFor="name">
-                                                            名称 *
+                                                            {t(
+                                                                'admin.settings.name_required',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="name"
@@ -744,7 +835,9 @@ export default function SystemSettings({
                                                                         .value,
                                                                 )
                                                             }
-                                                            placeholder="例如：官方插件市场"
+                                                            placeholder={t(
+                                                                'admin.settings.name_placeholder',
+                                                            )}
                                                             required
                                                         />
                                                         {errors.name && (
@@ -756,7 +849,9 @@ export default function SystemSettings({
 
                                                     <div className="grid gap-2">
                                                         <Label htmlFor="slug">
-                                                            标识符 *
+                                                            {t(
+                                                                'admin.settings.slug_required',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="slug"
@@ -781,7 +876,9 @@ export default function SystemSettings({
 
                                                     <div className="grid gap-2 md:col-span-2">
                                                         <Label htmlFor="url">
-                                                            API 地址 *
+                                                            {t(
+                                                                'admin.settings.api_url_required',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="url"
@@ -806,7 +903,9 @@ export default function SystemSettings({
 
                                                     <div className="grid gap-2">
                                                         <Label htmlFor="api_key">
-                                                            API 密钥
+                                                            {t(
+                                                                'admin.settings.api_key',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="api_key"
@@ -819,7 +918,9 @@ export default function SystemSettings({
                                                                         .value,
                                                                 )
                                                             }
-                                                            placeholder="可选"
+                                                            placeholder={t(
+                                                                'admin.settings.optional',
+                                                            )}
                                                         />
                                                         {errors.api_key && (
                                                             <p className="text-sm text-destructive">
@@ -830,7 +931,9 @@ export default function SystemSettings({
 
                                                     <div className="grid gap-2">
                                                         <Label htmlFor="sort_order">
-                                                            排序
+                                                            {t(
+                                                                'admin.settings.sort',
+                                                            )}
                                                         </Label>
                                                         <Input
                                                             id="sort_order"
@@ -853,7 +956,9 @@ export default function SystemSettings({
 
                                                     <div className="grid gap-2 md:col-span-2">
                                                         <Label htmlFor="description">
-                                                            描述
+                                                            {t(
+                                                                'common.description',
+                                                            )}
                                                         </Label>
                                                         <Textarea
                                                             id="description"
@@ -867,7 +972,9 @@ export default function SystemSettings({
                                                                         .value,
                                                                 )
                                                             }
-                                                            placeholder="插件源的描述信息"
+                                                            placeholder={t(
+                                                                'admin.settings.source_description_placeholder',
+                                                            )}
                                                             rows={2}
                                                         />
                                                     </div>
@@ -888,7 +995,9 @@ export default function SystemSettings({
                                                             }
                                                         />
                                                         <Label htmlFor="is_active">
-                                                            启用此插件源
+                                                            {t(
+                                                                'admin.settings.enable_source',
+                                                            )}
                                                         </Label>
                                                     </div>
                                                 </div>
@@ -899,10 +1008,16 @@ export default function SystemSettings({
                                                         disabled={processing}
                                                     >
                                                         {processing
-                                                            ? '保存中...'
+                                                            ? t(
+                                                                  'admin.settings.saving',
+                                                              )
                                                             : editingSource
-                                                              ? '更新'
-                                                              : '添加'}
+                                                              ? t(
+                                                                    'common.update',
+                                                                )
+                                                              : t(
+                                                                    'admin.settings.add',
+                                                                )}
                                                     </Button>
                                                     <Button
                                                         type="button"
@@ -910,7 +1025,7 @@ export default function SystemSettings({
                                                         onClick={handleCancel}
                                                         disabled={processing}
                                                     >
-                                                        取消
+                                                        {t('common.cancel')}
                                                     </Button>
                                                 </div>
                                             </form>
@@ -922,9 +1037,15 @@ export default function SystemSettings({
                                         {pluginSources.length === 0 ? (
                                             <div className="py-12 text-center text-muted-foreground">
                                                 <Globe className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                                                <p>暂无插件源</p>
+                                                <p>
+                                                    {t(
+                                                        'admin.settings.empty_sources',
+                                                    )}
+                                                </p>
                                                 <p className="text-sm">
-                                                    点击上方按钮添加插件源
+                                                    {t(
+                                                        'admin.settings.empty_sources_hint',
+                                                    )}
                                                 </p>
                                             </div>
                                         ) : (
@@ -964,13 +1085,19 @@ export default function SystemSettings({
                                                                     }
                                                                 >
                                                                     {source.is_active
-                                                                        ? '已启用'
-                                                                        : '已停用'}
+                                                                        ? t(
+                                                                              'admin.settings.enabled',
+                                                                          )
+                                                                        : t(
+                                                                              'admin.settings.disabled',
+                                                                          )}
                                                                 </Badge>
                                                             </div>
                                                             <p className="text-sm text-muted-foreground">
                                                                 {source.description ||
-                                                                    '无描述'}
+                                                                    t(
+                                                                        'admin.settings.no_description',
+                                                                    )}
                                                             </p>
                                                             <p className="mt-1 text-xs text-muted-foreground">
                                                                 API:{' '}
@@ -1078,10 +1205,10 @@ function MailSettingsTab({
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Server className="h-5 w-5" />
-                    SMTP 邮件服务器
+                    {t('admin.settings.mail_title')}
                 </CardTitle>
                 <CardDescription>
-                    配置 SMTP 服务器用于发送验证码和通知邮件
+                    {t('admin.settings.mail_description')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1094,7 +1221,7 @@ function MailSettingsTab({
                 >
                     <div className="grid grid-cols-3 gap-4">
                         <div className="grid gap-2">
-                            <Label>SMTP 主机</Label>
+                            <Label>{t('admin.settings.mail_host')}</Label>
                             <Input
                                 value={data.mail_host}
                                 onChange={(e) =>
@@ -1104,7 +1231,7 @@ function MailSettingsTab({
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label>端口</Label>
+                            <Label>{t('admin.settings.mail_port')}</Label>
                             <Input
                                 value={data.mail_port}
                                 onChange={(e) =>
@@ -1114,7 +1241,7 @@ function MailSettingsTab({
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label>加密方式</Label>
+                            <Label>{t('admin.settings.mail_encryption')}</Label>
                             <select
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                                 value={data.mail_encryption}
@@ -1124,13 +1251,15 @@ function MailSettingsTab({
                             >
                                 <option value="tls">TLS</option>
                                 <option value="ssl">SSL</option>
-                                <option value="none">无</option>
+                                <option value="none">
+                                    {t('admin.settings.encryption_none')}
+                                </option>
                             </select>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label>用户名</Label>
+                            <Label>{t('admin.settings.mail_username')}</Label>
                             <Input
                                 value={data.mail_username}
                                 onChange={(e) =>
@@ -1139,14 +1268,18 @@ function MailSettingsTab({
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label>密码</Label>
+                            <Label>{t('admin.settings.mail_password')}</Label>
                             <Input
                                 type="password"
                                 value={data.mail_password}
                                 placeholder={
                                     mailSettings.mail_password_set
-                                        ? '已配置，留空保持不变'
-                                        : '请输入 SMTP 密码'
+                                        ? t(
+                                              'admin.settings.secret_configured',
+                                          )
+                                        : t(
+                                              'admin.settings.mail_password_placeholder',
+                                          )
                                 }
                                 onChange={(e) =>
                                     setData('mail_password', e.target.value)
@@ -1156,7 +1289,7 @@ function MailSettingsTab({
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label>发件人邮箱</Label>
+                            <Label>{t('admin.settings.mail_from_address')}</Label>
                             <Input
                                 type="email"
                                 value={data.mail_from_address}
@@ -1166,7 +1299,7 @@ function MailSettingsTab({
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label>发件人名称</Label>
+                            <Label>{t('admin.settings.mail_from_name')}</Label>
                             <Input
                                 value={data.mail_from_name}
                                 onChange={(e) =>
@@ -1177,14 +1310,16 @@ function MailSettingsTab({
                     </div>
                     <div className="flex gap-3">
                         <Button type="submit" disabled={processing}>
-                            {processing ? '保存中...' : '保存配置'}
+                            {processing
+                                ? t('admin.settings.saving')
+                                : t('admin.settings.save_config')}
                         </Button>
                         <Button
                             type="button"
                             variant="outline"
                             onClick={() => post('/admin/settings/mail/test')}
                         >
-                            发送测试邮件
+                            {t('admin.settings.send_test_mail')}
                         </Button>
                     </div>
                 </form>
@@ -1222,9 +1357,11 @@ function SmsSettingsTab({
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Send className="h-5 w-5" />
-                    短信服务配置
+                    {t('admin.settings.sms_title')}
                 </CardTitle>
-                <CardDescription>配置短信服务商用于发送验证码</CardDescription>
+                <CardDescription>
+                    {t('admin.settings.sms_description')}
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <form
@@ -1235,7 +1372,7 @@ function SmsSettingsTab({
                     className="space-y-6"
                 >
                     <div className="grid gap-2">
-                        <Label>短信服务商</Label>
+                        <Label>{t('admin.settings.sms_provider')}</Label>
                         <select
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                             value={data.sms_provider}
@@ -1243,16 +1380,22 @@ function SmsSettingsTab({
                                 setData('sms_provider', e.target.value)
                             }
                         >
-                            <option value="log">测试模式 (日志)</option>
-                            <option value="aliyun">阿里云</option>
-                            <option value="tencent">腾讯云</option>
+                            <option value="log">
+                                {t('admin.settings.sms_provider_log')}
+                            </option>
+                            <option value="aliyun">
+                                {t('admin.settings.sms_provider_aliyun')}
+                            </option>
+                            <option value="tencent">
+                                {t('admin.settings.sms_provider_tencent')}
+                            </option>
                         </select>
                     </div>
 
                     {data.sms_provider === 'aliyun' && (
                         <div className="space-y-4 rounded-lg border p-4">
                             <h4 className="text-sm font-medium">
-                                阿里云短信配置
+                                {t('admin.settings.sms_aliyun_title')}
                             </h4>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
@@ -1276,7 +1419,9 @@ function SmsSettingsTab({
                                         }
                                         placeholder={
                                             smsSettings.sms_aliyun_access_key_secret_set
-                                                ? '已配置，留空保持不变'
+                                                ? t(
+                                                      'admin.settings.secret_configured',
+                                                  )
                                                 : ''
                                         }
                                         onChange={(e) =>
@@ -1290,7 +1435,7 @@ function SmsSettingsTab({
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label>短信签名</Label>
+                                    <Label>{t('admin.settings.sms_sign_name')}</Label>
                                     <Input
                                         value={data.sms_aliyun_sign_name}
                                         onChange={(e) =>
@@ -1303,7 +1448,9 @@ function SmsSettingsTab({
                                     />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label>模板代码</Label>
+                                    <Label>
+                                        {t('admin.settings.sms_template_code')}
+                                    </Label>
                                     <Input
                                         value={data.sms_aliyun_template_code}
                                         onChange={(e) =>
@@ -1322,7 +1469,7 @@ function SmsSettingsTab({
                     {data.sms_provider === 'tencent' && (
                         <div className="space-y-4 rounded-lg border p-4">
                             <h4 className="text-sm font-medium">
-                                腾讯云短信配置
+                                {t('admin.settings.sms_tencent_title')}
                             </h4>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
@@ -1344,7 +1491,9 @@ function SmsSettingsTab({
                                         value={data.sms_tencent_secret_key}
                                         placeholder={
                                             smsSettings.sms_tencent_secret_key_set
-                                                ? '已配置，留空保持不变'
+                                                ? t(
+                                                      'admin.settings.secret_configured',
+                                                  )
                                                 : ''
                                         }
                                         onChange={(e) =>
@@ -1370,7 +1519,9 @@ function SmsSettingsTab({
                                     />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label>模板 ID</Label>
+                                    <Label>
+                                        {t('admin.settings.sms_template_id')}
+                                    </Label>
                                     <Input
                                         value={data.sms_tencent_template_id}
                                         onChange={(e) =>
@@ -1382,7 +1533,7 @@ function SmsSettingsTab({
                                     />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label>短信签名</Label>
+                                    <Label>{t('admin.settings.sms_sign_name')}</Label>
                                     <Input
                                         value={data.sms_tencent_sign_name}
                                         onChange={(e) =>
@@ -1398,7 +1549,9 @@ function SmsSettingsTab({
                     )}
 
                     <Button type="submit" disabled={processing}>
-                        {processing ? '保存中...' : '保存配置'}
+                        {processing
+                            ? t('admin.settings.saving')
+                            : t('admin.settings.save_config')}
                     </Button>
                 </form>
             </CardContent>
@@ -1431,10 +1584,10 @@ function CaptchaSettingsTab({
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Shield className="h-5 w-5" />
-                    人机验证配置
+                    {t('admin.settings.captcha_title')}
                 </CardTitle>
                 <CardDescription>
-                    配置人机验证以防止恶意登录和注册
+                    {t('admin.settings.captcha_description')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1446,7 +1599,7 @@ function CaptchaSettingsTab({
                     className="space-y-6"
                 >
                     <div className="grid gap-2">
-                        <Label>验证服务商</Label>
+                        <Label>{t('admin.settings.captcha_provider')}</Label>
                         <select
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                             value={data.captcha_provider}
@@ -1454,7 +1607,9 @@ function CaptchaSettingsTab({
                                 setData('captcha_provider', e.target.value)
                             }
                         >
-                            <option value="log">关闭 (测试模式)</option>
+                            <option value="log">
+                                {t('admin.settings.captcha_provider_log')}
+                            </option>
                             <option value="cloudflare">
                                 Cloudflare Turnstile
                             </option>
@@ -1465,7 +1620,7 @@ function CaptchaSettingsTab({
                     {data.captcha_provider === 'cloudflare' && (
                         <div className="space-y-4 rounded-lg border p-4">
                             <h4 className="text-sm font-medium">
-                                Cloudflare Turnstile 配置
+                                {t('admin.settings.captcha_cloudflare_title')}
                             </h4>
                             <div className="grid gap-2">
                                 <Label>Site Key</Label>
@@ -1486,7 +1641,9 @@ function CaptchaSettingsTab({
                                     value={data.captcha_cloudflare_secret_key}
                                     placeholder={
                                         captchaSettings.captcha_cloudflare_secret_key_set
-                                            ? '已配置，留空保持不变'
+                                            ? t(
+                                                  'admin.settings.secret_configured',
+                                              )
                                             : ''
                                     }
                                     onChange={(e) =>
@@ -1503,7 +1660,7 @@ function CaptchaSettingsTab({
                     {data.captcha_provider === 'google' && (
                         <div className="space-y-4 rounded-lg border p-4">
                             <h4 className="text-sm font-medium">
-                                Google reCAPTCHA 配置
+                                {t('admin.settings.captcha_google_title')}
                             </h4>
                             <div className="grid gap-2">
                                 <Label>Site Key</Label>
@@ -1524,7 +1681,9 @@ function CaptchaSettingsTab({
                                     value={data.captcha_google_secret_key}
                                     placeholder={
                                         captchaSettings.captcha_google_secret_key_set
-                                            ? '已配置，留空保持不变'
+                                            ? t(
+                                                  'admin.settings.secret_configured',
+                                              )
                                             : ''
                                     }
                                     onChange={(e) =>
@@ -1539,7 +1698,9 @@ function CaptchaSettingsTab({
                     )}
 
                     <Button type="submit" disabled={processing}>
-                        {processing ? '保存中...' : '保存配置'}
+                        {processing
+                            ? t('admin.settings.saving')
+                            : t('admin.settings.save_config')}
                     </Button>
                 </form>
             </CardContent>
