@@ -19,6 +19,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import PublicLayout from '@/layouts/public-layout';
+import { formatNumber } from '@/lib/format';
+import { t } from '@/lib/i18n';
 import { dashboard, login, register, ranking } from '@/routes';
 import type { SharedData } from '@/types';
 
@@ -46,7 +48,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
     const { auth, footerSettings } = usePage<SharedData>().props;
     const user = auth.user;
 
-    const siteName = '学生积分管理系统';
+    const siteName = t('common.app_name');
     const copyright =
         footerSettings?.copyright ||
         `© ${new Date().getFullYear()} ${siteName}`;
@@ -67,11 +69,14 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             {/* Welcome Message */}
                             <div className="mb-8">
                                 <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-                                    欢迎回来，
-                                    {localStats.nickname || localStats.name}！
+                                    {t('welcome.greeting', {
+                                        name:
+                                            localStats.nickname ||
+                                            localStats.name,
+                                    })}
                                 </h1>
                                 <p className="mt-1 text-muted-foreground">
-                                    查看你的积分统计和排名
+                                    {t('welcome.subtitle')}
                                 </p>
                             </div>
 
@@ -82,16 +87,20 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                     <CardHeader className="pb-2">
                                         <CardTitle className="flex items-center gap-2 text-sm font-medium text-warning-foreground">
                                             <Coins className="h-4 w-4" />
-                                            总积分
+                                            {t('points.total_points')}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-3xl font-bold text-warning-foreground">
-                                            {localStats.total_points.toLocaleString()}
+                                            {formatNumber(
+                                                localStats.total_points,
+                                            )}
                                         </div>
                                         <p className="mt-1 text-xs text-warning-foreground/70">
-                                            可兑换:{' '}
-                                            {localStats.redeemable_points.toLocaleString()}
+                                            {t('welcome.redeemable')}:{' '}
+                                            {formatNumber(
+                                                localStats.redeemable_points,
+                                            )}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -113,7 +122,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                             ) : (
                                                 <TrendingDown className="h-4 w-4" />
                                             )}
-                                            今日变化
+                                            {t('welcome.today_change')}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
@@ -123,10 +132,12 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                             {localStats.today_change >= 0
                                                 ? '+'
                                                 : ''}
-                                            {localStats.today_change.toLocaleString()}
+                                            {formatNumber(
+                                                localStats.today_change,
+                                            )}
                                         </div>
                                         <p className="mt-1 text-xs text-muted-foreground">
-                                            积分变动
+                                            {t('welcome.points_change')}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -136,7 +147,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                     <CardHeader className="pb-2">
                                         <CardTitle className="flex items-center gap-2 text-sm font-medium text-info-foreground">
                                             <Trophy className="h-4 w-4" />
-                                            全校排名
+                                            {t('welcome.school_rank')}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
@@ -144,7 +155,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                             #{localStats.school_rank}
                                         </div>
                                         <p className="mt-1 text-xs text-info-foreground/70">
-                                            全校学生
+                                            {t('welcome.all_students')}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -154,7 +165,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                     <CardHeader className="pb-2">
                                         <CardTitle className="flex items-center gap-2 text-sm font-medium text-primary">
                                             <Award className="h-4 w-4" />
-                                            班级排名
+                                            {t('welcome.class_rank')}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
@@ -165,7 +176,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                         </div>
                                         <p className="mt-1 text-xs text-primary/70">
                                             {localStats.class_name ||
-                                                '未分配班级'}
+                                                t('welcome.no_class')}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -174,18 +185,20 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                     <CardHeader className="pb-2">
                                         <CardTitle className="flex items-center gap-2 text-sm font-medium text-success">
                                             <Users className="h-4 w-4" />
-                                            当前班级积分
+                                            {t('welcome.class_points')}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-3xl font-bold text-success">
                                             {localStats.class_points !== null
-                                                ? localStats.class_points.toLocaleString()
+                                                ? formatNumber(
+                                                      localStats.class_points,
+                                                  )
                                                 : '--'}
                                         </div>
                                         <p className="mt-1 text-xs text-success/70">
                                             {localStats.class_name ||
-                                                '未分配班级'}
+                                                t('welcome.no_class')}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -195,17 +208,25 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                                     <CardHeader className="pb-2">
                                         <CardTitle className="flex items-center gap-2 text-sm font-medium text-info">
                                             <School className="h-4 w-4" />
-                                            所属班级
+                                            {t('welcome.my_class')}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-xl font-bold text-info">
-                                            {localStats.grade_name || '未分配'}
+                                            {localStats.grade_name ||
+                                                t('welcome.not_assigned')}
                                         </div>
                                         <p className="mt-1 text-xs text-info/70">
                                             {localStats.class_name
-                                                ? `${localStats.class_name}班`
-                                                : '请完善班级信息'}
+                                                ? t(
+                                                      'welcome.class_name_format',
+                                                      {
+                                                          name: localStats.class_name,
+                                                      },
+                                                  )
+                                                : t(
+                                                      'welcome.complete_class_info',
+                                                  )}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -215,13 +236,13 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                                 <Button asChild size="lg">
                                     <Link href={dashboard()}>
-                                        进入仪表盘
+                                        {t('welcome.enter_dashboard')}
                                         <ArrowRight className="size-5" />
                                     </Link>
                                 </Button>
                                 <Button asChild size="lg" variant="outline">
                                     <Link href={ranking()}>
-                                        查看排行榜
+                                        {t('welcome.view_ranking')}
                                         <Trophy className="size-5" />
                                     </Link>
                                 </Button>
@@ -233,20 +254,23 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                     <div className="container px-4 py-20">
                         <div className="mx-auto max-w-4xl text-center">
                             <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground sm:text-6xl">
-                                学生积分管理系统
+                                {t('common.app_name')}
                             </h1>
                             <p className="mx-auto mt-4 max-w-2xl text-xl text-muted-foreground">
-                                通过积分激励学习，记录每一次进步。支持学生、教师、家长多角色管理，
-                                让教育更有趣。
+                                {t('welcome.hero_description')}
                             </p>
 
                             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                                 <Button asChild size="lg">
-                                    <Link href={login()}>立即登录</Link>
+                                    <Link href={login()}>
+                                        {t('welcome.login_now')}
+                                    </Link>
                                 </Button>
                                 {canRegister && (
                                     <Button asChild size="lg" variant="outline">
-                                        <Link href={register()}>注册账户</Link>
+                                        <Link href={register()}>
+                                            {t('welcome.register_account')}
+                                        </Link>
                                     </Button>
                                 )}
                             </div>
@@ -258,15 +282,19 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                 <div className="container px-4 py-16">
                     <div className="mx-auto max-w-6xl">
                         <h2 className="mb-12 text-center text-3xl font-bold">
-                            功能特色
+                            {t('welcome.features_title')}
                         </h2>
                         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                             <Card>
                                 <CardHeader>
                                     <Coins className="mb-2 h-10 w-10 text-primary" />
-                                    <CardTitle>积分管理</CardTitle>
+                                    <CardTitle>
+                                        {t('welcome.feature_points_management')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        完整的积分系统，支持总积分和可兑换积分，记录每次积分变动
+                                        {t(
+                                            'welcome.feature_points_management_desc',
+                                        )}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -274,9 +302,11 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             <Card>
                                 <CardHeader>
                                     <Trophy className="mb-2 h-10 w-10 text-primary" />
-                                    <CardTitle>积分排行</CardTitle>
+                                    <CardTitle>
+                                        {t('welcome.feature_ranking')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        实时积分排行榜，支持全校、年级、班级多种排名方式
+                                        {t('welcome.feature_ranking_desc')}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -284,9 +314,11 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             <Card>
                                 <CardHeader>
                                     <Package className="mb-2 h-10 w-10 text-primary" />
-                                    <CardTitle>积分商城</CardTitle>
+                                    <CardTitle>
+                                        {t('welcome.feature_shop')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        使用积分兑换奖品，激励学生积极参与学习和活动
+                                        {t('welcome.feature_shop_desc')}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -294,9 +326,11 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             <Card>
                                 <CardHeader>
                                     <Users className="mb-2 h-10 w-10 text-primary" />
-                                    <CardTitle>角色权限</CardTitle>
+                                    <CardTitle>
+                                        {t('welcome.feature_roles')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        支持学生、教师、家长、管理员等多种角色，权限分级管理
+                                        {t('welcome.feature_roles_desc')}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -304,9 +338,11 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             <Card>
                                 <CardHeader>
                                     <TrendingUp className="mb-2 h-10 w-10 text-primary" />
-                                    <CardTitle>数据统计</CardTitle>
+                                    <CardTitle>
+                                        {t('welcome.feature_analytics')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        详细的积分统计和图表分析，帮助教师了解学生学习情况
+                                        {t('welcome.feature_analytics_desc')}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -314,9 +350,11 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             <Card>
                                 <CardHeader>
                                     <Users className="mb-2 h-10 w-10 text-primary" />
-                                    <CardTitle>家长中心</CardTitle>
+                                    <CardTitle>
+                                        {t('nav.parent_center')}
+                                    </CardTitle>
                                     <CardDescription>
-                                        家长可绑定子女账户，实时查看孩子的积分和排名情况
+                                        {t('welcome.feature_parent_desc')}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -331,17 +369,17 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                             <Card className="border-primary/20 bg-primary/5">
                                 <CardHeader>
                                     <CardTitle className="text-center text-2xl">
-                                        开始使用积分系统
+                                        {t('welcome.cta_title')}
                                     </CardTitle>
                                     <CardDescription className="text-center text-base">
-                                        注册账户，开启积分学习之旅
+                                        {t('welcome.cta_description')}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="text-center">
                                     {canRegister && (
                                         <Button asChild size="lg">
                                             <Link href={register()}>
-                                                免费注册
+                                                {t('welcome.register_free')}
                                                 <ArrowRight className="size-5" />
                                             </Link>
                                         </Button>
@@ -358,7 +396,7 @@ export default function Welcome({ canRegister, userStats }: WelcomeProps) {
                         <p>{copyright}</p>
                         {icp && <p className="mt-1">{icp}</p>}
                         {police && <p className="mt-1">{police}</p>}
-                        <p className="mt-1">基于 Laravel + React 构建</p>
+                        <p className="mt-1">{t('welcome.built_with')}</p>
                     </div>
                 </div>
             </div>

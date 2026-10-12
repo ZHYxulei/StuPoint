@@ -18,6 +18,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime, formatNumber } from '@/lib/format';
 import { t } from '@/lib/i18n';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
@@ -98,10 +99,10 @@ export default function Dashboard({
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-2xl font-bold">
-                                        {totalUsers.toLocaleString()}
+                                        {formatNumber(totalUsers)}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        系统注册用户
+                                        {t('dashboard.registered_users')}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -115,10 +116,10 @@ export default function Dashboard({
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-2xl font-bold text-success">
-                                        +{todayAdded.toLocaleString()}
+                                        +{formatNumber(todayAdded)}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        总积分增加
+                                        {t('dashboard.points_added')}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -132,10 +133,10 @@ export default function Dashboard({
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-2xl font-bold text-destructive">
-                                        -{todayDeducted.toLocaleString()}
+                                        -{formatNumber(todayDeducted)}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        总积分扣除
+                                        {t('dashboard.points_deducted')}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -149,10 +150,10 @@ export default function Dashboard({
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-2xl font-bold">
-                                        {todayTransactions.toLocaleString()}
+                                        {formatNumber(todayTransactions)}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        交易笔数
+                                        {t('dashboard.transaction_count')}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -168,7 +169,9 @@ export default function Dashboard({
                                 <Coins className="h-5 w-5 text-primary" />
                                 {t('dashboard.your_points')}
                             </CardTitle>
-                            <CardDescription>您的积分概览</CardDescription>
+                            <CardDescription>
+                                {t('dashboard.points_overview')}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {userPoints ? (
@@ -179,7 +182,9 @@ export default function Dashboard({
                                                 {t('dashboard.total_points')}
                                             </span>
                                             <span className="text-lg font-bold text-primary">
-                                                {userPoints.total_points.toLocaleString()}
+                                                {formatNumber(
+                                                    userPoints.total_points,
+                                                )}
                                             </span>
                                         </div>
                                         <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -197,7 +202,9 @@ export default function Dashboard({
                                                 )}
                                             </span>
                                             <span className="text-lg font-bold text-success">
-                                                {userPoints.redeemable_points.toLocaleString()}
+                                                {formatNumber(
+                                                    userPoints.redeemable_points,
+                                                )}
                                             </span>
                                         </div>
                                         <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -216,7 +223,7 @@ export default function Dashboard({
                                 </>
                             ) : (
                                 <p className="py-4 text-center text-sm text-muted-foreground">
-                                    加载中...
+                                    {t('common.loading')}
                                 </p>
                             )}
                         </CardContent>
@@ -229,7 +236,9 @@ export default function Dashboard({
                                     <Trophy className="h-5 w-5 text-warning" />
                                     {t('dashboard.top_10_users')}
                                 </CardTitle>
-                                <CardDescription>积分排行榜</CardDescription>
+                                <CardDescription>
+                                    {t('ranking.title')}
+                                </CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-2">
@@ -265,11 +274,18 @@ export default function Dashboard({
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-bold text-primary">
-                                                        {user.total_points.toLocaleString()}
+                                                        {formatNumber(
+                                                            user.total_points,
+                                                        )}
                                                     </p>
                                                     <p className="text-xs text-muted-foreground">
-                                                        可兑换:{' '}
-                                                        {user.redeemable_points.toLocaleString()}
+                                                        {t(
+                                                            'dashboard.redeemable',
+                                                        )}
+                                                        :{' '}
+                                                        {formatNumber(
+                                                            user.redeemable_points,
+                                                        )}
                                                     </p>
                                                 </div>
                                             </div>
@@ -277,7 +293,7 @@ export default function Dashboard({
                                     ))}
                                     {topUsers.length === 0 && (
                                         <p className="py-8 text-center text-muted-foreground">
-                                            暂无数据
+                                            {t('common.no_data')}
                                         </p>
                                     )}
                                 </div>
@@ -296,8 +312,8 @@ export default function Dashboard({
                                 </CardTitle>
                                 <CardDescription>
                                     {canViewGlobalDashboard
-                                        ? '最新的积分变动记录'
-                                        : '您的最近积分变动记录'}
+                                        ? t('dashboard.recent_global')
+                                        : t('dashboard.recent_own')}
                                 </CardDescription>
                             </div>
                             <Button
@@ -319,7 +335,7 @@ export default function Dashboard({
                         <CardContent>
                             {recentTransactions.length === 0 ? (
                                 <p className="py-8 text-center text-muted-foreground">
-                                    暂无记录
+                                    {t('dashboard.no_records')}
                                 </p>
                             ) : (
                                 <div className="space-y-2">
@@ -343,8 +359,12 @@ export default function Dashboard({
                                                         >
                                                             {transaction.type ===
                                                             'total'
-                                                                ? '总积分'
-                                                                : '可兑换'}
+                                                                ? t(
+                                                                      'points.total_points',
+                                                                  )
+                                                                : t(
+                                                                      'dashboard.redeemable',
+                                                                  )}
                                                         </span>
                                                     </div>
                                                     <p className="truncate text-sm text-muted-foreground">
@@ -352,10 +372,8 @@ export default function Dashboard({
                                                             transaction.source}
                                                     </p>
                                                     <p className="text-xs text-muted-foreground">
-                                                        {new Date(
+                                                        {formatDateTime(
                                                             transaction.created_at,
-                                                        ).toLocaleString(
-                                                            'zh-CN',
                                                         )}
                                                     </p>
                                                 </div>
@@ -374,10 +392,10 @@ export default function Dashboard({
                                                         {transaction.amount}
                                                     </p>
                                                     <p className="text-xs text-muted-foreground">
-                                                        余额:{' '}
-                                                        {
-                                                            transaction.balance_after
-                                                        }
+                                                        {t('points.balance')}:{' '}
+                                                        {formatNumber(
+                                                            transaction.balance_after,
+                                                        )}
                                                     </p>
                                                 </div>
                                             </div>

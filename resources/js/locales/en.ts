@@ -31,6 +31,7 @@ const en: Translations = {
         back: 'Back',
         unknown: 'Unknown',
         app_name: 'Student Points System',
+        no_data: 'No data',
         pagination_label: 'Pagination',
         previous: 'Previous',
         next: 'Next',
@@ -99,6 +100,15 @@ const en: Translations = {
         total_points: 'Total Points',
         redeemable_points: 'Redeemable Points',
         recent_transactions: 'Recent Transactions',
+        registered_users: 'Registered users',
+        points_added: 'Total points added',
+        points_deducted: 'Total points deducted',
+        transaction_count: 'Transactions',
+        points_overview: 'Your points overview',
+        redeemable: 'Redeemable',
+        recent_own: 'Your latest point activity',
+        recent_global: 'Latest point activity',
+        no_records: 'No records',
     },
 
     // Points
@@ -211,6 +221,78 @@ const en: Translations = {
         exchange_failed: 'Exchange failed',
     },
 
+    // Public landing page
+    welcome: {
+        greeting: 'Welcome back, {{name}}!',
+        subtitle: 'View your points statistics and ranking',
+        redeemable: 'Redeemable',
+        today_change: "Today's Change",
+        points_change: 'Points change',
+        school_rank: 'School Rank',
+        all_students: 'All students',
+        class_rank: 'Class Rank',
+        no_class: 'No class assigned',
+        class_points: 'Current Class Points',
+        my_class: 'My Class',
+        not_assigned: 'Not assigned',
+        class_name_format: 'Class {{name}}',
+        complete_class_info: 'Please complete your class information',
+        enter_dashboard: 'Go to Dashboard',
+        view_ranking: 'View Ranking',
+        hero_description:
+            'Motivate learning through points and record every step of progress. With support for students, teachers, and parents, education becomes more engaging.',
+        login_now: 'Sign in now',
+        register_account: 'Create account',
+        features_title: 'Features',
+        feature_points_management: 'Points Management',
+        feature_points_management_desc:
+            'A complete points system with total and redeemable points, recording every change',
+        feature_ranking: 'Points Ranking',
+        feature_ranking_desc:
+            'A live points leaderboard with school-wide, grade, and class rankings',
+        feature_shop: 'Points Shop',
+        feature_shop_desc:
+            'Redeem points for rewards to encourage students to take part in learning and activities',
+        feature_roles: 'Role Permissions',
+        feature_roles_desc:
+            'Supports students, teachers, parents, and admins with tiered permission management',
+        feature_analytics: 'Data Analytics',
+        feature_analytics_desc:
+            'Detailed points statistics and charts that help teachers understand student progress',
+        feature_parent_desc:
+            "Parents can link their child's account to view points and rankings in real time",
+        cta_title: 'Get Started with the Points System',
+        cta_description:
+            'Create an account and start your points learning journey',
+        register_free: 'Sign up for free',
+        built_with: 'Built with Laravel + React',
+    },
+
+    // The signed-in user's own profile
+    profile: {
+        subtitle: 'View your account information',
+        basic_info: 'Basic Information',
+        basic_info_description: 'Your basic personal information',
+        name: 'Name',
+        nickname: 'Nickname',
+        not_set: 'Not set',
+        id_number: 'ID Number',
+        student_id: 'Student ID',
+        email: 'Email',
+        verified: 'Verified',
+        unverified: 'Unverified',
+        roles_and_grade: 'Roles & Grade',
+        roles_and_grade_description: 'Your role and grade information',
+        role: 'Role',
+        position: 'Position',
+        head_teacher: 'Head Teacher',
+        grade: 'Grade',
+        class: 'Class',
+        registered_at: 'Registered At',
+        last_login: 'Last Login',
+        edit_account_info: 'Edit Account Information',
+    },
+
     // Ranking
     ranking: {
         title: 'Points Ranking',
@@ -243,7 +325,10 @@ const en: Translations = {
 
     // Settings
     settings: {
+        saved: 'Saved',
         appearance: {
+            title: 'Appearance settings',
+            description: "Update your account's appearance settings",
             language: 'Language',
             language_description:
                 'Switch the interface language — takes effect immediately',
@@ -264,6 +349,47 @@ const en: Translations = {
                 amber: 'Amber',
                 slate: 'Slate',
             },
+        },
+        profile: {
+            title: 'Profile settings',
+            heading: 'Profile information',
+            description: 'Update your name and email address',
+            avatar: 'Avatar',
+            upload_avatar: 'Upload avatar',
+            avatar_hint: 'Supports JPG, PNG, GIF, WebP formats, up to 5MB',
+            avatar_too_large: 'Avatar size cannot exceed 5MB',
+            avatar_invalid_type: 'Please select an image file',
+            name: 'Name',
+            name_placeholder: 'Full name',
+            email: 'Email address',
+            unverified: 'Your email address is unverified.',
+            resend_verification: 'Click here to resend the verification email.',
+            verification_sent:
+                'A new verification link has been sent to your email address.',
+        },
+        password: {
+            title: 'Password settings',
+            heading: 'Update password',
+            description:
+                'Ensure your account is using a long, random password to stay secure',
+            current_password: 'Current password',
+            new_password: 'New password',
+            confirm_password: 'Confirm password',
+            submit: 'Save password',
+        },
+        two_factor: {
+            title: 'Two-Factor Authentication',
+            page_title: 'Two-Factor Authentication Settings',
+            description: 'Manage your two-factor authentication settings',
+            enabled: 'Enabled',
+            enabled_description:
+                'With two-factor authentication enabled, you will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.',
+            disable: 'Disable 2FA',
+            disabled: 'Disabled',
+            disabled_description:
+                'When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.',
+            continue_setup: 'Continue Setup',
+            enable: 'Enable 2FA',
         },
     },
 

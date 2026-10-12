@@ -25,6 +25,7 @@ export default {
         back: '返回',
         unknown: '未知',
         app_name: '学生积分管理系统',
+        no_data: '暂无数据',
         pagination_label: '分页导航',
         previous: '上一页',
         next: '下一页',
@@ -93,6 +94,15 @@ export default {
         total_points: '总积分',
         redeemable_points: '可兑换积分',
         recent_transactions: '最近交易',
+        registered_users: '系统注册用户',
+        points_added: '总积分增加',
+        points_deducted: '总积分扣除',
+        transaction_count: '交易笔数',
+        points_overview: '您的积分概览',
+        redeemable: '可兑换',
+        recent_own: '您的最近积分变动记录',
+        recent_global: '最新的积分变动记录',
+        no_records: '暂无记录',
     },
 
     // Points
@@ -199,6 +209,75 @@ export default {
         exchange_failed: '兑换失败',
     },
 
+    // Public landing page
+    welcome: {
+        greeting: '欢迎回来，{{name}}！',
+        subtitle: '查看你的积分统计和排名',
+        redeemable: '可兑换',
+        today_change: '今日变化',
+        points_change: '积分变动',
+        school_rank: '全校排名',
+        all_students: '全校学生',
+        class_rank: '班级排名',
+        no_class: '未分配班级',
+        class_points: '当前班级积分',
+        my_class: '所属班级',
+        not_assigned: '未分配',
+        class_name_format: '{{name}}班',
+        complete_class_info: '请完善班级信息',
+        enter_dashboard: '进入仪表盘',
+        view_ranking: '查看排行榜',
+        hero_description:
+            '通过积分激励学习，记录每一次进步。支持学生、教师、家长多角色管理，让教育更有趣。',
+        login_now: '立即登录',
+        register_account: '注册账户',
+        features_title: '功能特色',
+        feature_points_management: '积分管理',
+        feature_points_management_desc:
+            '完整的积分系统，支持总积分和可兑换积分，记录每次积分变动',
+        feature_ranking: '积分排行',
+        feature_ranking_desc:
+            '实时积分排行榜，支持全校、年级、班级多种排名方式',
+        feature_shop: '积分商城',
+        feature_shop_desc: '使用积分兑换奖品，激励学生积极参与学习和活动',
+        feature_roles: '角色权限',
+        feature_roles_desc:
+            '支持学生、教师、家长、管理员等多种角色，权限分级管理',
+        feature_analytics: '数据统计',
+        feature_analytics_desc:
+            '详细的积分统计和图表分析，帮助教师了解学生学习情况',
+        feature_parent_desc: '家长可绑定子女账户，实时查看孩子的积分和排名情况',
+        cta_title: '开始使用积分系统',
+        cta_description: '注册账户，开启积分学习之旅',
+        register_free: '免费注册',
+        built_with: '基于 Laravel + React 构建',
+    },
+
+    // The signed-in user's own profile
+    profile: {
+        subtitle: '查看您的账户信息',
+        basic_info: '基本信息',
+        basic_info_description: '您的个人基本信息',
+        name: '姓名',
+        nickname: '昵称',
+        not_set: '未设置',
+        id_number: '身份证号',
+        student_id: '学号',
+        email: '电子邮箱',
+        verified: '已验证',
+        unverified: '未验证',
+        roles_and_grade: '角色与年级',
+        roles_and_grade_description: '您的角色和年级信息',
+        role: '角色',
+        position: '职务',
+        head_teacher: '班主任',
+        grade: '年级',
+        class: '班级',
+        registered_at: '注册时间',
+        last_login: '最后登录',
+        edit_account_info: '编辑账户信息',
+    },
+
     // Ranking
     ranking: {
         title: '积分排行榜',
@@ -229,7 +308,10 @@ export default {
 
     // Settings
     settings: {
+        saved: '已保存',
         appearance: {
+            title: '外观设置',
+            description: '更新您账户的外观设置',
             language: '语言',
             language_description: '切换界面语言，立即生效',
             mode: '模式',
@@ -249,6 +331,45 @@ export default {
                 amber: '琥珀',
                 slate: '石板灰',
             },
+        },
+        profile: {
+            title: '个人资料设置',
+            heading: '个人资料信息',
+            description: '更新您的姓名和邮箱地址',
+            avatar: '头像',
+            upload_avatar: '上传头像',
+            avatar_hint: '支持 JPG、PNG、GIF、WebP 格式，最大5MB',
+            avatar_too_large: '头像大小不能超过5MB',
+            avatar_invalid_type: '请选择图片文件',
+            name: '姓名',
+            name_placeholder: '请输入姓名',
+            email: '邮箱地址',
+            unverified: '您的邮箱地址尚未验证。',
+            resend_verification: '点击此处重新发送验证邮件。',
+            verification_sent: '新的验证链接已发送到您的邮箱。',
+        },
+        password: {
+            title: '密码设置',
+            heading: '更新密码',
+            description: '确保您的账户使用足够长且随机的密码以保持安全',
+            current_password: '当前密码',
+            new_password: '新密码',
+            confirm_password: '确认密码',
+            submit: '保存密码',
+        },
+        two_factor: {
+            title: '双因素认证',
+            page_title: '双因素认证设置',
+            description: '管理您的双因素认证设置',
+            enabled: '已启用',
+            enabled_description:
+                '启用双因素认证后，登录时会要求您输入一个安全的随机 PIN 码，该 PIN 码可从手机上的 TOTP 应用获取。',
+            disable: '禁用 2FA',
+            disabled: '已禁用',
+            disabled_description:
+                '启用双因素认证后，登录时会要求您输入一个安全 PIN 码。该 PIN 码可从手机上的 TOTP 应用获取。',
+            continue_setup: '继续设置',
+            enable: '启用 2FA',
         },
     },
 

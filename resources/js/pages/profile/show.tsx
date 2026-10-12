@@ -22,6 +22,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import PublicLayout from '@/layouts/public-layout';
+import { formatDate } from '@/lib/format';
+import { t } from '@/lib/i18n';
 
 interface UserRole {
     id: number;
@@ -53,14 +55,6 @@ interface PageProps {
 }
 
 export default function ProfileShow({ user }: PageProps) {
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('zh-CN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-    };
-
     // Helper function to get display name
     const getDisplayName = (user: ProfileUser) => {
         return user.nickname || user.name;
@@ -68,7 +62,7 @@ export default function ProfileShow({ user }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title="账户信息" />
+            <Head title={t('nav.account')} />
 
             <div className="min-h-screen bg-background">
                 {/* Header */}
@@ -91,7 +85,7 @@ export default function ProfileShow({ user }: PageProps) {
                                     {getDisplayName(user)}
                                 </h1>
                                 <p className="mt-1 text-muted-foreground">
-                                    查看您的账户信息
+                                    {t('profile.subtitle')}
                                 </p>
                             </div>
                         </div>
@@ -105,16 +99,16 @@ export default function ProfileShow({ user }: PageProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <User className="h-5 w-5" />
-                                    基本信息
+                                    {t('profile.basic_info')}
                                 </CardTitle>
                                 <CardDescription>
-                                    您的个人基本信息
+                                    {t('profile.basic_info_description')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        姓名
+                                        {t('profile.name')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md bg-muted p-2">
                                         <User className="h-4 w-4 text-muted-foreground" />
@@ -126,51 +120,58 @@ export default function ProfileShow({ user }: PageProps) {
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        昵称
+                                        {t('profile.nickname')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <User className="h-4 w-4" />
-                                        <span>{user.nickname || '未设置'}</span>
+                                        <span>
+                                            {user.nickname ||
+                                                t('profile.not_set')}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        身份证号
+                                        {t('profile.id_number')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md bg-muted p-2">
                                         <IdCard className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-muted-foreground">
-                                            {user.id_number || '未设置'}
+                                            {user.id_number ||
+                                                t('profile.not_set')}
                                         </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        学号
+                                        {t('profile.student_id')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Award className="h-4 w-4" />
                                         <span>
-                                            {user.student_id || '未设置'}
+                                            {user.student_id ||
+                                                t('profile.not_set')}
                                         </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        手机号码
+                                        {t('shop.phone_number')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Phone className="h-4 w-4" />
-                                        <span>{user.phone || '未设置'}</span>
+                                        <span>
+                                            {user.phone || t('profile.not_set')}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        电子邮箱
+                                        {t('profile.email')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Mail className="h-4 w-4" />
@@ -180,14 +181,14 @@ export default function ProfileShow({ user }: PageProps) {
                                                 variant="success"
                                                 className="ml-auto"
                                             >
-                                                已验证
+                                                {t('profile.verified')}
                                             </Badge>
                                         ) : (
                                             <Badge
                                                 variant="warning"
                                                 className="ml-auto"
                                             >
-                                                未验证
+                                                {t('profile.unverified')}
                                             </Badge>
                                         )}
                                     </div>
@@ -200,16 +201,16 @@ export default function ProfileShow({ user }: PageProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Shield className="h-5 w-5" />
-                                    角色与年级
+                                    {t('profile.roles_and_grade')}
                                 </CardTitle>
                                 <CardDescription>
-                                    您的角色和年级信息
+                                    {t('profile.roles_and_grade_description')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        角色
+                                        {t('profile.role')}
                                     </label>
                                     <div className="flex flex-wrap gap-2">
                                         {user.roles.map((role) => (
@@ -226,11 +227,11 @@ export default function ProfileShow({ user }: PageProps) {
                                 {user.is_head_teacher && (
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-muted-foreground">
-                                            职务
+                                            {t('profile.position')}
                                         </label>
                                         <div className="rounded-md border border-info/20 bg-info-soft p-2">
                                             <span className="text-info-foreground">
-                                                班主任
+                                                {t('profile.head_teacher')}
                                             </span>
                                         </div>
                                     </div>
@@ -238,27 +239,31 @@ export default function ProfileShow({ user }: PageProps) {
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        年级
+                                        {t('profile.grade')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <UserIcon className="h-4 w-4" />
-                                        <span>{user.grade || '未设置'}</span>
+                                        <span>
+                                            {user.grade || t('profile.not_set')}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        班级
+                                        {t('profile.class')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <User className="h-4 w-4" />
-                                        <span>{user.class || '未设置'}</span>
+                                        <span>
+                                            {user.class || t('profile.not_set')}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-muted-foreground">
-                                        注册时间
+                                        {t('profile.registered_at')}
                                     </label>
                                     <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                         <Calendar className="h-4 w-4" />
@@ -271,7 +276,7 @@ export default function ProfileShow({ user }: PageProps) {
                                 {user.last_login_at && (
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-muted-foreground">
-                                            最后登录
+                                            {t('profile.last_login')}
                                         </label>
                                         <div className="flex items-center gap-2 rounded-md border bg-background p-2">
                                             <Clock className="h-4 w-4" />
@@ -288,7 +293,9 @@ export default function ProfileShow({ user }: PageProps) {
                     {/* Actions */}
                     <div className="mt-6 flex justify-end">
                         <Button asChild>
-                            <Link href="/settings/profile">编辑账户信息</Link>
+                            <Link href="/settings/profile">
+                                {t('profile.edit_account_info')}
+                            </Link>
                         </Button>
                     </div>
                 </div>
